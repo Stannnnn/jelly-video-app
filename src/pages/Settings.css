@@ -1,0 +1,553 @@
+.settings-page {
+    margin-bottom: 20px;
+}
+
+.settings-page > .section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.settings-page > .section:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.settings-page > .section > .title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.settings-page > .section .btn {
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--font-color-inverted);
+    cursor: pointer;
+    padding: 7px 13px;
+    border-radius: 6px;
+    background-color: var(--btn-brand-color);
+    transition: background-color 0.2s ease-out;
+}
+
+.settings-page > .section .btn:hover:not(:disabled) {
+    background-color: var(--btn-brand-color-hover);
+}
+
+.settings-page > .section .btn:disabled {
+    background-color: var(--btn-brand-color-disabled);
+    cursor: not-allowed;
+}
+
+/* Appearance */
+.settings-page > .section.appearance {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    row-gap: 4px;
+}
+
+.settings-page > .section.appearance > .container > .options.primary {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 4px;
+}
+
+.settings-page > .section.appearance > .container > .options.primary > .option {
+    cursor: pointer;
+}
+
+.settings-page > .section.appearance > .container > .options.primary > .option > .visual {
+    position: relative;
+    width: 98px;
+    height: 62px;
+    border-radius: 10px;
+    outline: 3px solid rgba(0, 0, 0, 0);
+    background-size: cover;
+    background-color: var(--bg-color-secondary);
+    transition: outline-color 0.2s ease-out;
+}
+
+.settings-page > .section.appearance > .container > .options.primary > .option.active > .visual {
+    outline-color: var(--brand-color);
+}
+
+.settings-page > .section.appearance > .container > .options.primary > .option.light > .visual {
+    background-image: url(/light-variant-tiny.webp);
+}
+
+.settings-page > .section.appearance > .container > .options.primary > .option.dark > .visual {
+    background-image: url(/dark-variant-tiny.webp);
+}
+
+.settings-page > .section.appearance > .container > .options.primary > .option.system > .visual {
+    background-image: url(/dark-light-variant-tiny-split.webp);
+    background-image: url(/light-dark-variant-tiny-split.webp);
+}
+
+.settings-page > .section.appearance > .container > .options.primary > .option > .desc {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--font-color-tertiary);
+    margin-top: 10px;
+    transition: color 0.2s ease-out;
+}
+
+.settings-page > .section.appearance > .container > .options.primary > .option.active > .desc {
+    color: var(--font-color);
+}
+
+.settings-page > .section.appearance > .container > .options.secondary {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 24px;
+    border-radius: 10px;
+    background-color: var(--bg-color-secondary);
+}
+
+.settings-page > .section.appearance > .container > .options.secondary > .option {
+    cursor: pointer;
+    padding: 8px 22.5px;
+    border-right: 1px solid var(--border-color);
+}
+
+.settings-page > .section.appearance > .container > .options.secondary > .option:last-of-type {
+    border-right: none;
+}
+
+.settings-page > .section.appearance > .container > .options.secondary > .option > .desc {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--font-color-tertiary);
+    transition: color 0.2s ease-out;
+}
+
+.settings-page > .section.appearance > .container > .options.secondary > .option.active > .desc {
+    color: var(--brand-color);
+}
+
+/* Quality */
+.settings-page > .section.quality {
+    padding-bottom: 10px;
+}
+
+.settings-page > .section.quality > .container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.settings-page > .section.quality > .container > .info > .subtitle {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--font-color-secondary);
+    margin-bottom: 4px;
+}
+
+.settings-page > .section.quality > .container > .info > .subdesc {
+    font-size: 0.725rem;
+    line-height: 1.4;
+    color: var(--font-color-tertiary);
+}
+
+.settings-page > .section.quality > .container > .options {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.settings-page > .section.quality > .container > .options > .option {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    padding: 6px 12px;
+    margin: 0 -10px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-out;
+}
+
+.settings-page > .section.quality > .container > .options > .option:hover {
+    background-color: var(--bg-color-secondary);
+}
+
+.settings-page > .section.quality > .container > .options > .option.active:hover {
+    cursor: initial;
+    background-color: unset;
+}
+
+.settings-page > .section.quality > .container > .options > .option > .details > .title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: var(--font-color-secondary);
+    transition: color 0.2s ease-out;
+}
+
+.settings-page > .section.quality > .container > .options > .option.active > .details > .title {
+    color: var(--font-color-active);
+}
+
+.settings-page > .section.quality > .container > .options > .option > .details > .title > .bitrate {
+    font-size: 0.625rem;
+    color: var(--font-color-tertiary);
+    margin-left: 2px;
+}
+
+.settings-page > .section.quality > .container > .options > .option > .details > .desc {
+    font-size: 0.725rem;
+    line-height: 1.4;
+    color: var(--font-color-tertiary);
+    transition: color 0.2s ease-out;
+}
+
+.settings-page > .section.quality > .container > .options > .option.active > .details > .desc {
+    color: var(--font-color-secondary);
+}
+
+.settings-page > .section.quality > .container > .options > .option > .status {
+    color: var(--brand-color);
+    margin-top: 2px;
+    margin-right: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+}
+
+.settings-page > .section.quality > .container > .options > .option.active > .status {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Switch */
+.switch {
+    position: relative;
+    display: block;
+    width: 28px;
+    height: 17px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.switch > input {
+    display: none;
+}
+
+.switch > .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    border: 1px solid var(--border-color-secondary);
+    background-color: var(--bg-color-tertiary);
+    transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
+}
+
+.switch > input:checked + .slider {
+    background-color: var(--brand-color);
+    border-color: var(--brand-color);
+}
+
+.switch > .slider:before {
+    position: absolute;
+    content: '';
+    height: 11px;
+    width: 11px;
+    left: 2px;
+    bottom: 2px;
+    border-radius: 50%;
+    background-color: var(--font-color-tertiary);
+    transition: transform 0.2s ease-out, background-color 0.2s ease-out;
+}
+
+.switch > input:checked + .slider:before {
+    transform: translateX(11px);
+    background-color: var(--font-color-inverted);
+}
+
+/* Offline Sync and Crossfade */
+.settings-page > .section > .primary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.settings-page > .section > .primary > .container > .title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.settings-page > .section > .primary > .container > .desc {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--font-color-secondary);
+}
+
+.settings-page > .section > .primary > .container > .desc > .number {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Crossfade */
+.settings-page > .section.crossfade > .primary > .container > .title {
+    margin-bottom: 0;
+}
+
+.settings-page > .section > .primary > .options {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    row-gap: 6px;
+}
+
+.settings-page > .section.crossfade > .primary > .options {
+    flex-wrap: wrap-reverse;
+}
+
+.settings-page > .section > .primary > .options > .option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.settings-page > .section.crossfade > .primary > .options > .option {
+    transition: opacity 0.2s ease-out;
+}
+
+.settings-page > .section.crossfade.disabled > .primary > .options > .option.adjustable {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.settings-page > .section.crossfade > .primary > .options > .option > .number {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--font-color-tertiary);
+    transition: color 0.2s ease-out;
+}
+
+.settings-page > .section.crossfade:not(.disabled) > .primary > .options > .option > .number.current {
+    color: var(--brand-color);
+}
+
+.settings-page > .section.crossfade > .primary > .options > .option > .slider {
+    display: flex;
+}
+
+.settings-page > .section.crossfade > .primary > .options > .option > .slider > input {
+    cursor: pointer;
+    width: 100%;
+    height: 7px;
+    border-radius: 20px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+}
+
+.settings-page > .section.crossfade > .primary > .options > .option > .slider > input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 100%;
+    background-color: var(--volume-dot-color);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease-out;
+}
+
+.settings-page > .section.crossfade > .primary > .options > .option > .slider > input::-webkit-slider-thumb:active {
+    background-color: var(--volume-dot-color-active);
+}
+
+.settings-page > .section.crossfade > .primary > .options > .option > .slider > input::-moz-range-thumb {
+    appearance: none;
+    border: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 100%;
+    background-color: var(--volume-dot-color);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease-out;
+}
+
+.settings-page > .section.crossfade > .primary > .options > .option > .slider > input::-moz-range-thumb:active {
+    background-color: var(--volume-dot-color-active);
+}
+
+/* Preload */
+.settings-page > .section.preload > .primary > .container > .title {
+    margin-bottom: 0;
+}
+
+.settings-page > .section.preload > .primary > .options {
+    flex-wrap: wrap-reverse;
+}
+
+.settings-page > .section.preload > .primary > .options > .option {
+    transition: opacity 0.2s ease-out;
+}
+
+.settings-page > .section.preload.disabled > .primary > .options > .option.adjustable {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.settings-page > .section.preload > .primary > .options > .option > .number {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--font-color-tertiary);
+    transition: color 0.2s ease-out;
+}
+
+.settings-page > .section.preload:not(.disabled) > .primary > .options > .option > .number.current {
+    color: var(--brand-color);
+}
+
+.settings-page > .section.preload > .primary > .options > .option > .slider {
+    display: flex;
+}
+
+.settings-page > .section.preload > .primary > .options > .option > .slider > input {
+    cursor: pointer;
+    width: 100%;
+    height: 7px;
+    border-radius: 20px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+}
+
+.settings-page > .section.preload > .primary > .options > .option > .slider > input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 100%;
+    background-color: var(--volume-dot-color);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease-out;
+}
+
+.settings-page > .section.preload > .primary > .options > .option > .slider > input::-webkit-slider-thumb:active {
+    background-color: var(--volume-dot-color-active);
+}
+
+.settings-page > .section.preload > .primary > .options > .option > .slider > input::-moz-range-thumb {
+    appearance: none;
+    border: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 100%;
+    background-color: var(--volume-dot-color);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease-out;
+}
+
+.settings-page > .section.preload > .primary > .options > .option > .slider > input::-moz-range-thumb:active {
+    background-color: var(--volume-dot-color-active);
+}
+
+/* Lyrics */
+.settings-page > .section.lyrics > .inner:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.settings-page > .section.lyrics .desc > .subtitle {
+    margin-bottom: 0;
+}
+
+.settings-page > .section.lyrics .desc > .subdesc {
+    color: var(--font-color-tertiary);
+}
+
+.settings-page > .section.lyrics > .inner > .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+/* About and Session */
+.settings-page > .section .desc {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--font-color-secondary);
+}
+
+.settings-page > .section .desc > .subtitle {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.settings-page > .section .desc > .subfooter {
+    margin-top: 14px;
+}
+
+.settings-page > .section .desc > p > .mantra {
+    font-style: italic;
+}
+
+.settings-page > .section > .actions {
+    margin-top: 14px;
+}
+
+.settings-page > .section > .actions .btn.reload {
+    margin-left: 10px;
+}
+
+.settings-page > .section .desc > .info {
+    color: var(--font-color-tertiary);
+}
+
+/* Interface */
+.settings-page > .section.interface-ui > .inner:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.settings-page > .section.interface-ui .desc > .subtitle {
+    margin-bottom: 0;
+}
+
+.settings-page > .section.interface-ui .desc > .subdesc {
+    color: var(--font-color-tertiary);
+}
+
+.settings-page > .section.interface-ui > .inner {
+    width: 100%;
+}
+
+.settings-page > .section.interface-ui > .inner > .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+/* Responsive */
+@media only screen and (max-width: 390px) {
+    .settings-page > .section.appearance > .container > .options.secondary {
+        gap: 10px;
+        border-radius: unset;
+        background-color: unset;
+    }
+
+    .settings-page > .section.appearance > .container > .options.secondary > .option {
+        border-radius: 10px;
+        border-right: unset;
+        background-color: var(--bg-color-secondary);
+    }
+}

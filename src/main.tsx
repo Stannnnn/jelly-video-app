@@ -1,9 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { App } from './App.tsx'
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <React.StrictMode>
+const savedTheme = localStorage.getItem('theme') || 'light'
+const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+const themeClass = savedTheme === 'system' ? (isSystemDark ? 'dark' : 'light') : savedTheme
+document.documentElement.classList.add(themeClass)
+
+createRoot(document.getElementById('root')!).render(
+    <StrictMode>
         <App />
-    </React.StrictMode>
+    </StrictMode>
 )

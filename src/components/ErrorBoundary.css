@@ -1,0 +1,134 @@
+.error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 0 20px;
+    max-width: 100%;
+    min-height: 100%;
+    color: var(--font-color);
+    background-color: var(--bg-color);
+}
+
+.error-page > .error_header {
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+
+.error-page > .error_header > .logo {
+    display: block;
+    width: 80px;
+    height: 80px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url(/logo.webp);
+}
+
+.error-page > .error-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 100px;
+}
+
+.error-page > .error-content > .container {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 40px;
+}
+
+.error-page > .error-content > .container > .title {
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--error-font);
+    margin-bottom: 1rem;
+}
+
+.error-page > .error-content > .container > .description {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.error-page > .error-content > .container > .error-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap-reverse;
+    gap: 1rem;
+    row-gap: 0.75rem;
+    column-gap: 1rem;
+}
+
+.error-page > .error-content > .container > .error-actions .btn-details,
+.error-page > .error-content > .container > .error-actions .btn-reload {
+    flex: 1;
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--font-color-inverted);
+    cursor: pointer;
+    min-width: 98px;
+    padding: 7px 13px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease-out;
+}
+
+.error-page > .error-content > .container > .error-actions .btn-details {
+    color: var(--error-font);
+    background-color: var(--error-background);
+}
+
+.error-page > .error-content > .container > .error-actions .btn-details:hover {
+    background-color: var(--error-background-hover);
+}
+
+.error-page > .error-content > .container > .error-actions .btn-reload {
+    color: var(--font-color-inverted);
+    background-color: var(--btn-brand-color);
+}
+
+.error-page > .error-content > .container > .error-actions .btn-reload:hover {
+    background-color: var(--btn-brand-color-hover);
+}
+
+.error-page > .error-content > .error-details {
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--error-font);
+    white-space: pre-wrap;
+    word-break: break-word;
+    position: relative;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--error-border);
+    background-color: var(--error-background);
+}
+
+.error-page > .error-content > .error-details.hidden {
+    display: none;
+}
+
+.error-page > .error-content > .error-details.visible {
+    display: block;
+}
+
+.error-page > .disclaimer {
+    margin-top: auto;
+    padding: 12px 20px;
+    font-size: 0.725rem;
+    font-weight: 300;
+    color: var(--font-color-tertiary);
+    text-align: center;
+}
+
+/* Responsive */
+@media only screen and (pointer: coarse) {
+    .error-page > .disclaimer {
+        padding-bottom: min(34px, env(safe-area-inset-bottom, 20px));
+    }
+
+    html.safeAreaFallback .error-page > .disclaimer {
+        padding-bottom: 12px;
+    }
+}

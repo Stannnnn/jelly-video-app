@@ -13,10 +13,20 @@
         "tauri:dev": "tauri dev"
     },
     "dependencies": {
+        "@fontsource-variable/inter": "^5.2.8",
+        "@jellyfin/sdk": "^0.13.0",
+        "@primer/octicons-react": "^19.21.0",
+        "@tanstack/query-sync-storage-persister": "^5.90.13",
+        "@tanstack/react-query": "^5.90.11",
+        "@tanstack/react-query-persist-client": "^5.90.13",
         "@tauri-apps/api": "^2.9.0",
         "@tauri-apps/plugin-dialog": "^2.4.2",
+        "@types/node": "^24.10.1",
+        "axios": "^1.13.2",
+        "figma-squircle": "^1.1.0",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
+        "react-router-dom": "^7.9.6",
         "tauri-plugin-libmpv-api": "^0.3.2"
     },
     "devDependencies": {

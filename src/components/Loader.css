@@ -1,0 +1,45 @@
+.loading_container {
+    position: relative;
+    height: calc(100vh - 220px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading_container > .loading {
+    overflow: visible;
+    width: 28px;
+    height: 28px;
+}
+
+.loading_container > .loading > circle {
+    position: absolute;
+    fill: none;
+    stroke-width: 3;
+    stroke-dasharray: 124;
+    stroke-linecap: round;
+    transform: translate(0px, 0px);
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.loading_container > .loading > circle:nth-child(1) {
+    stroke-dashoffset: 0;
+    stroke: var(--bg-color-tertiary);
+}
+
+.loading_container > .loading > circle:nth-child(2) {
+    stroke-dashoffset: 94;
+    stroke: var(--brand-color);
+    animation: loaderForward 0.8s linear infinite;
+    transition: stroke-dashoffset 0.8s linear infinite;
+}
+
+@keyframes loaderForward {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
