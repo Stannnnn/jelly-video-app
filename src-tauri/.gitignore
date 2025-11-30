@@ -1,0 +1,7 @@
+# Cargo build output
+/target/
+
+# Tauri generated schemas
+/gen/schemas
+
+lib
