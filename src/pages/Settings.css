@@ -1,23 +1,20 @@
 .settings-page {
+    max-width: 600px;
     margin-bottom: 20px;
 }
 
 .settings-page > .section {
+    padding: 12px 16px;
     margin-bottom: 20px;
-    padding-bottom: 20px;
+    border-radius: 12px;
     border-bottom: 1px solid var(--border-color);
-}
-
-.settings-page > .section:last-of-type {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
+    background-color: var(--bg-color-secondary);
 }
 
 .settings-page > .section > .title {
     font-size: 0.85rem;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .settings-page > .section .btn {
@@ -50,7 +47,7 @@
     row-gap: 4px;
 }
 
-.settings-page > .section.appearance > .container > .options.primary {
+.settings-page > .section.appearance > .container > .options {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -58,11 +55,11 @@
     margin-top: 4px;
 }
 
-.settings-page > .section.appearance > .container > .options.primary > .option {
+.settings-page > .section.appearance > .container > .options > .option {
     cursor: pointer;
 }
 
-.settings-page > .section.appearance > .container > .options.primary > .option > .visual {
+.settings-page > .section.appearance > .container > .options > .option > .visual {
     position: relative;
     width: 98px;
     height: 62px;
@@ -73,24 +70,24 @@
     transition: outline-color 0.2s ease-out;
 }
 
-.settings-page > .section.appearance > .container > .options.primary > .option.active > .visual {
+.settings-page > .section.appearance > .container > .options > .option.active > .visual {
     outline-color: var(--brand-color);
 }
 
-.settings-page > .section.appearance > .container > .options.primary > .option.light > .visual {
+.settings-page > .section.appearance > .container > .options > .option.light > .visual {
     background-image: url(/light-variant-tiny.webp);
 }
 
-.settings-page > .section.appearance > .container > .options.primary > .option.dark > .visual {
+.settings-page > .section.appearance > .container > .options > .option.dark > .visual {
     background-image: url(/dark-variant-tiny.webp);
 }
 
-.settings-page > .section.appearance > .container > .options.primary > .option.system > .visual {
+.settings-page > .section.appearance > .container > .options > .option.system > .visual {
     background-image: url(/dark-light-variant-tiny-split.webp);
     background-image: url(/light-dark-variant-tiny-split.webp);
 }
 
-.settings-page > .section.appearance > .container > .options.primary > .option > .desc {
+.settings-page > .section.appearance > .container > .options > .option > .desc {
     font-size: 0.75rem;
     font-weight: 600;
     text-align: center;
@@ -99,134 +96,8 @@
     transition: color 0.2s ease-out;
 }
 
-.settings-page > .section.appearance > .container > .options.primary > .option.active > .desc {
+.settings-page > .section.appearance > .container > .options > .option.active > .desc {
     color: var(--font-color);
-}
-
-.settings-page > .section.appearance > .container > .options.secondary {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 24px;
-    border-radius: 10px;
-    background-color: var(--bg-color-secondary);
-}
-
-.settings-page > .section.appearance > .container > .options.secondary > .option {
-    cursor: pointer;
-    padding: 8px 22.5px;
-    border-right: 1px solid var(--border-color);
-}
-
-.settings-page > .section.appearance > .container > .options.secondary > .option:last-of-type {
-    border-right: none;
-}
-
-.settings-page > .section.appearance > .container > .options.secondary > .option > .desc {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-align: center;
-    color: var(--font-color-tertiary);
-    transition: color 0.2s ease-out;
-}
-
-.settings-page > .section.appearance > .container > .options.secondary > .option.active > .desc {
-    color: var(--brand-color);
-}
-
-/* Quality */
-.settings-page > .section.quality {
-    padding-bottom: 10px;
-}
-
-.settings-page > .section.quality > .container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.settings-page > .section.quality > .container > .info > .subtitle {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--font-color-secondary);
-    margin-bottom: 4px;
-}
-
-.settings-page > .section.quality > .container > .info > .subdesc {
-    font-size: 0.725rem;
-    line-height: 1.4;
-    color: var(--font-color-tertiary);
-}
-
-.settings-page > .section.quality > .container > .options {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    width: 100%;
-}
-
-.settings-page > .section.quality > .container > .options > .option {
-    display: flex;
-    align-items: flex-start;
-    cursor: pointer;
-    padding: 6px 12px;
-    margin: 0 -10px;
-    border-radius: 8px;
-    transition: background-color 0.2s ease-out;
-}
-
-.settings-page > .section.quality > .container > .options > .option:hover {
-    background-color: var(--bg-color-secondary);
-}
-
-.settings-page > .section.quality > .container > .options > .option.active:hover {
-    cursor: initial;
-    background-color: unset;
-}
-
-.settings-page > .section.quality > .container > .options > .option > .details > .title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-bottom: 2px;
-    color: var(--font-color-secondary);
-    transition: color 0.2s ease-out;
-}
-
-.settings-page > .section.quality > .container > .options > .option.active > .details > .title {
-    color: var(--font-color-active);
-}
-
-.settings-page > .section.quality > .container > .options > .option > .details > .title > .bitrate {
-    font-size: 0.625rem;
-    color: var(--font-color-tertiary);
-    margin-left: 2px;
-}
-
-.settings-page > .section.quality > .container > .options > .option > .details > .desc {
-    font-size: 0.725rem;
-    line-height: 1.4;
-    color: var(--font-color-tertiary);
-    transition: color 0.2s ease-out;
-}
-
-.settings-page > .section.quality > .container > .options > .option.active > .details > .desc {
-    color: var(--font-color-secondary);
-}
-
-.settings-page > .section.quality > .container > .options > .option > .status {
-    color: var(--brand-color);
-    margin-top: 2px;
-    margin-right: 10px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
-}
-
-.settings-page > .section.quality > .container > .options > .option.active > .status {
-    opacity: 1;
-    visibility: visible;
 }
 
 /* Switch */
@@ -277,7 +148,7 @@
     background-color: var(--font-color-inverted);
 }
 
-/* Offline Sync and Crossfade */
+/* Offline Sync and Crossfade
 .settings-page > .section > .primary {
     display: flex;
     align-items: center;
@@ -302,40 +173,39 @@
 .settings-page > .section > .primary > .container > .desc > .number {
     font-variant-numeric: tabular-nums;
 }
+*/
 
-/* Crossfade */
-.settings-page > .section.crossfade > .primary > .container > .title {
+/* Player */
+.settings-page > .section.player-ui > .inner:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.settings-page > .section.player-ui .desc > .subtitle {
     margin-bottom: 0;
 }
 
-.settings-page > .section > .primary > .options {
+.settings-page > .section.player-ui .desc > .subdesc {
+    color: var(--font-color-tertiary);
+}
+
+.settings-page > .section.player-ui > .inner {
+    width: 100%;
+}
+
+.settings-page > .section.player-ui > .inner > .container {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    row-gap: 6px;
+    justify-content: space-between;
+    gap: 8px;
 }
 
-.settings-page > .section.crossfade > .primary > .options {
-    flex-wrap: wrap-reverse;
-}
-
-.settings-page > .section > .primary > .options > .option {
+.settings-page > .section.player-ui > .inner > .container > .option {
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.settings-page > .section.crossfade > .primary > .options > .option {
-    transition: opacity 0.2s ease-out;
-}
-
-.settings-page > .section.crossfade.disabled > .primary > .options > .option.adjustable {
-    opacity: 0.4;
-    pointer-events: none;
-}
-
-.settings-page > .section.crossfade > .primary > .options > .option > .number {
+.settings-page > .section.player-ui > .inner > .container > .option > .number {
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 1px;
@@ -343,15 +213,11 @@
     transition: color 0.2s ease-out;
 }
 
-.settings-page > .section.crossfade:not(.disabled) > .primary > .options > .option > .number.current {
-    color: var(--brand-color);
-}
-
-.settings-page > .section.crossfade > .primary > .options > .option > .slider {
+.settings-page > .section.player-ui > .inner > .container > .option > .slider {
     display: flex;
 }
 
-.settings-page > .section.crossfade > .primary > .options > .option > .slider > input {
+.settings-page > .section.player-ui > .inner > .container > .option > .slider > input {
     cursor: pointer;
     width: 100%;
     height: 7px;
@@ -360,7 +226,7 @@
     border: 1px solid var(--border-color);
 }
 
-.settings-page > .section.crossfade > .primary > .options > .option > .slider > input::-webkit-slider-thumb {
+.settings-page > .section.player-ui > .inner > .container > .option > .slider > input::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 13px;
     height: 13px;
@@ -370,11 +236,11 @@
     transition: background-color 0.2s ease-out;
 }
 
-.settings-page > .section.crossfade > .primary > .options > .option > .slider > input::-webkit-slider-thumb:active {
+.settings-page > .section.player-ui > .inner > .container > .option > .slider > input::-webkit-slider-thumb:active {
     background-color: var(--volume-dot-color-active);
 }
 
-.settings-page > .section.crossfade > .primary > .options > .option > .slider > input::-moz-range-thumb {
+.settings-page > .section.player-ui > .inner > .container > .option > .slider > input::-moz-range-thumb {
     appearance: none;
     border: none;
     width: 13px;
@@ -385,100 +251,8 @@
     transition: background-color 0.2s ease-out;
 }
 
-.settings-page > .section.crossfade > .primary > .options > .option > .slider > input::-moz-range-thumb:active {
+.settings-page > .section.player-ui > .inner > .container > .option > .slider > input::-moz-range-thumb:active {
     background-color: var(--volume-dot-color-active);
-}
-
-/* Preload */
-.settings-page > .section.preload > .primary > .container > .title {
-    margin-bottom: 0;
-}
-
-.settings-page > .section.preload > .primary > .options {
-    flex-wrap: wrap-reverse;
-}
-
-.settings-page > .section.preload > .primary > .options > .option {
-    transition: opacity 0.2s ease-out;
-}
-
-.settings-page > .section.preload.disabled > .primary > .options > .option.adjustable {
-    opacity: 0.4;
-    pointer-events: none;
-}
-
-.settings-page > .section.preload > .primary > .options > .option > .number {
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 1px;
-    color: var(--font-color-tertiary);
-    transition: color 0.2s ease-out;
-}
-
-.settings-page > .section.preload:not(.disabled) > .primary > .options > .option > .number.current {
-    color: var(--brand-color);
-}
-
-.settings-page > .section.preload > .primary > .options > .option > .slider {
-    display: flex;
-}
-
-.settings-page > .section.preload > .primary > .options > .option > .slider > input {
-    cursor: pointer;
-    width: 100%;
-    height: 7px;
-    border-radius: 20px;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-}
-
-.settings-page > .section.preload > .primary > .options > .option > .slider > input::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 13px;
-    height: 13px;
-    border-radius: 100%;
-    background-color: var(--volume-dot-color);
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
-    transition: background-color 0.2s ease-out;
-}
-
-.settings-page > .section.preload > .primary > .options > .option > .slider > input::-webkit-slider-thumb:active {
-    background-color: var(--volume-dot-color-active);
-}
-
-.settings-page > .section.preload > .primary > .options > .option > .slider > input::-moz-range-thumb {
-    appearance: none;
-    border: none;
-    width: 13px;
-    height: 13px;
-    border-radius: 100%;
-    background-color: var(--volume-dot-color);
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
-    transition: background-color 0.2s ease-out;
-}
-
-.settings-page > .section.preload > .primary > .options > .option > .slider > input::-moz-range-thumb:active {
-    background-color: var(--volume-dot-color-active);
-}
-
-/* Lyrics */
-.settings-page > .section.lyrics > .inner:not(:last-child) {
-    margin-bottom: 10px;
-}
-
-.settings-page > .section.lyrics .desc > .subtitle {
-    margin-bottom: 0;
-}
-
-.settings-page > .section.lyrics .desc > .subdesc {
-    color: var(--font-color-tertiary);
-}
-
-.settings-page > .section.lyrics > .inner > .container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
 }
 
 /* About and Session */
@@ -511,30 +285,6 @@
 
 .settings-page > .section .desc > .info {
     color: var(--font-color-tertiary);
-}
-
-/* Interface */
-.settings-page > .section.interface-ui > .inner:not(:last-child) {
-    margin-bottom: 10px;
-}
-
-.settings-page > .section.interface-ui .desc > .subtitle {
-    margin-bottom: 0;
-}
-
-.settings-page > .section.interface-ui .desc > .subdesc {
-    color: var(--font-color-tertiary);
-}
-
-.settings-page > .section.interface-ui > .inner {
-    width: 100%;
-}
-
-.settings-page > .section.interface-ui > .inner > .container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
 }
 
 /* Responsive */

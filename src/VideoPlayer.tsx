@@ -1,3 +1,15 @@
+import {
+    ArrowLeftIcon,
+    ArrowsPointingInIcon,
+    ArrowsPointingOutIcon,
+    Cog8ToothIcon,
+    PauseIcon,
+    PlayCircleIcon,
+    PlayIcon,
+    SpeakerWaveIcon,
+    SpeakerXMarkIcon,
+} from '@heroicons/react/20/solid'
+import { ChevronRightIcon } from '@primer/octicons-react'
 import { open } from '@tauri-apps/plugin-dialog'
 import { useEffect, useRef, useState } from 'react'
 import {
@@ -42,6 +54,7 @@ function VideoPlayer() {
     const [isFullscreen, setIsFullscreen] = useState(false)
     const [videoLoaded, setVideoLoaded] = useState(false)
     const hideControlsTimeoutRef = useRef<number | null>(null)
+    const [showMenu, setShowMenu] = useState(false)
 
     useEffect(() => {
         let unlisten: (() => void) | undefined
@@ -190,6 +203,16 @@ function VideoPlayer() {
         }
     }
 
+    const toggleMute = async () => {
+        if (!isInitialized) return
+        const newValue = volume === 0 ? 100 : 0
+        await setProperty('volume', newValue)
+    }
+
+    const toggleMenu = () => {
+        setShowMenu(v => !v)
+    }
+
     const handleSpeedChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (isInitialized) {
             try {
@@ -254,7 +277,7 @@ function VideoPlayer() {
             if (!isPaused) {
                 setShowControls(false)
             }
-        }, 3000)
+        }, 1000)
     }
 
     useEffect(() => {
@@ -300,107 +323,151 @@ function VideoPlayer() {
     }, [isInitialized, volume, isPaused])
 
     return (
-        <div className="video-container" onMouseMove={handleMouseMove}>
+        <div className={isPaused ? 'video-container' : 'video-container playing'} onMouseMove={handleMouseMove}>
             {!videoLoaded && (
                 <div className="no-video-overlay">
                     <button onClick={handleOpenFile} className="open-file-btn">
                         📁 Open Video File
                     </button>
-                    <p className="keyboard-hint">
-                        Keyboard shortcuts: Space (play/pause), F (fullscreen), ←→ (skip 5s), ↑↓ (volume), M (mute)
-                    </p>
                 </div>
             )}
-            <div className={`controls-overlay ${showControls || isPaused ? 'visible' : 'hidden'}`}>
-                <div className="top-controls">
-                    <button onClick={handleOpenFile} className="control-btn" title="Open File">
-                        📁
-                    </button>
-                    <button onClick={toggleFullscreen} className="control-btn" title="Fullscreen (F)">
-                        {isFullscreen ? '🗗' : '⛶'}
+
+            <div className={`video-header ${showControls || isPaused ? 'visible' : 'hidden'}`}>
+                <div className="return" title="Return">
+                    <ArrowLeftIcon className="heroicons" />
+                </div>
+                <div className="video-title">Giant (1956)</div>
+            </div>
+
+            <div className="video-play-icon">
+                <PlayCircleIcon className="heroicons" />
+            </div>
+
+            <div className={`video-controls ${showControls || isPaused ? 'visible' : 'hidden'}`}>
+                <div className="playback">
+                    <button
+                        onClick={togglePlayPause}
+                        className="play-pause controls-btn"
+                        title={isPaused ? 'Play (Space)' : 'Pause (Space)'}
+                    >
+                        {isPaused ? <PlayIcon className="heroicons" /> : <PauseIcon className="heroicons" />}
                     </button>
                 </div>
-                <div className="main-controls">
-                    <button onClick={() => skip(-10)} className="control-btn" title="Skip -10s">
-                        ⏪
-                    </button>
-                    <button onClick={togglePlayPause} className="play-pause-btn" title="Play/Pause (Space)">
-                        {isPaused ? '▶' : '⏸'}
-                    </button>
-                    <button onClick={() => skip(10)} className="control-btn" title="Skip +10s">
-                        ⏩
-                    </button>
-                </div>
-                <div className="seek-bar">
+                <div className="progress">
                     <span className="time">{formatTime(timePos)}</span>
-                    <input
-                        type="range"
-                        min="0"
-                        max={duration || 0}
-                        value={timePos}
-                        onChange={handleSeek}
-                        step="0.1"
-                        className="slider"
-                        title="Seek"
-                    />
+                    <div className="progress-container">
+                        <input
+                            type="range"
+                            min="0"
+                            max={duration || 0}
+                            value={timePos}
+                            onChange={handleSeek}
+                            step="0.1"
+                            className="progress-bar"
+                        />
+                        <div className="progress-indicator controls-tooltip" style={{ left: `${volume}%` }}>
+                            {volume}%
+                        </div>
+                    </div>
                     <span className="time">{formatTime(duration)}</span>
                 </div>
-                <div className="bottom-controls">
-                    <div className="volume-control">
-                        <span className="control-label">🔊</span>
+                <div className="volume">
+                    <button
+                        className="volume-toggle controls-btn"
+                        onClick={toggleMute}
+                        title={volume === 0 ? 'Unmute (M)' : 'Mute (M)'}
+                    >
+                        {volume === 0 ? (
+                            <SpeakerXMarkIcon className="heroicons" />
+                        ) : (
+                            <SpeakerWaveIcon className="heroicons" />
+                        )}
+                    </button>
+                    <div className="volume-container">
                         <input
                             type="range"
                             min="0"
                             max="100"
                             value={volume}
                             onChange={handleVolumeChange}
-                            className="volume-slider"
-                            title="Volume (↑↓)"
+                            className="volume-bar"
                         />
-                        <span className="volume-value">{volume}%</span>
-                    </div>
-                    <div className="speed-control">
-                        <label htmlFor="speed-select" className="control-label">
-                            Speed:
-                        </label>
-                        <select
-                            id="speed-select"
-                            value={speed}
-                            onChange={handleSpeedChange}
-                            className="speed-dropdown"
-                            title="Playback Speed"
-                        >
-                            <option value="0.25">0.25x</option>
-                            <option value="0.5">0.5x</option>
-                            <option value="0.75">0.75x</option>
-                            <option value="1">1x</option>
-                            <option value="1.25">1.25x</option>
-                            <option value="1.5">1.5x</option>
-                            <option value="1.75">1.75x</option>
-                            <option value="2">2x</option>
-                        </select>
-                    </div>
-                    {subtitleTracks.length > 0 && (
-                        <div className="subtitle-selector">
-                            <label htmlFor="subtitle-select" className="control-label">
-                                Subs:
-                            </label>
-                            <select
-                                id="subtitle-select"
-                                value={currentSubtitleId?.toString() || 'no'}
-                                onChange={handleSubtitleChange}
-                                className="subtitle-dropdown"
-                                title="Subtitles"
-                            >
-                                <option value="no">None</option>
-                                {subtitleTracks.map(track => (
-                                    <option key={track.id} value={track.id}>
-                                        {track.title || track.lang || `Track ${track.id}`}
-                                    </option>
-                                ))}
-                            </select>
+                        <div className="volume-indicator controls-tooltip" style={{ left: `${volume}%` }}>
+                            {volume}%
                         </div>
-                    )}
+                    </div>
+                </div>
+                <div className="actions">
+                    <div className="video-menu">
+                        <button
+                            className={showMenu ? 'menu-toggle controls-btn active' : 'menu-toggle controls-btn'}
+                            onClick={toggleMenu}
+                            title="Settings"
+                        >
+                            <Cog8ToothIcon className="heroicons" />
+                        </button>
+                        <div className="menu-container">
+                            {subtitleTracks.length > 0 && (
+                                <div className="menu-item">
+                                    <div className="text">Subtitles</div>
+                                    <ChevronRightIcon className="heroicons" />
+                                    <select
+                                        id="subtitle-select"
+                                        value={currentSubtitleId?.toString() || 'no'}
+                                        onChange={handleSubtitleChange}
+                                        className="subtitle-dropdown"
+                                        title="Subtitles"
+                                    >
+                                        <option value="no">Disabled</option>
+                                        {subtitleTracks.map(track => (
+                                            <option key={track.id} value={track.id}>
+                                                {track.title || track.lang || `Track ${track.id}`}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+
+                            <div className="menu-item">
+                                <div className="text">Speed</div>
+                                <ChevronRightIcon className="heroicons" />
+                                <select
+                                    id="speed-select"
+                                    value={speed}
+                                    onChange={handleSpeedChange}
+                                    className="speed-dropdown"
+                                    title="Playback Speed"
+                                >
+                                    <option value="0.25">0.25x</option>
+                                    <option value="0.5">0.5x</option>
+                                    <option value="0.75">0.75x</option>
+                                    <option value="1">1x</option>
+                                    <option value="1.25">1.25x</option>
+                                    <option value="1.5">1.5x</option>
+                                    <option value="1.75">1.75x</option>
+                                    <option value="2">2x</option>
+                                </select>
+                            </div>
+
+                            <div className="menu-item">
+                                <div className="text">Statistics</div>
+                                <ChevronRightIcon className="heroicons" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="fullscreen">
+                        <button
+                            onClick={toggleFullscreen}
+                            className="controls-btn"
+                            title={isFullscreen ? 'Exit Fullscreen (F)' : 'Fullscreen (F)'}
+                        >
+                            {isFullscreen ? (
+                                <ArrowsPointingInIcon className="heroicons" />
+                            ) : (
+                                <ArrowsPointingOutIcon className="heroicons" />
+                            )}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -114,7 +114,7 @@ const RoutedApp = () => {
     }, [])
 
     const actualApp = (
-        <div className="music-app">
+        <div className="video-app">
             <Routes>
                 <Route path="/login" element={auth ? <Navigate to="/" /> : <Login onLogin={handleLogin} />} />
                 <Route

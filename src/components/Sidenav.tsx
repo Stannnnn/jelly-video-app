@@ -1,3 +1,4 @@
+import { GearIcon } from '@primer/octicons-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import '../App.css'
@@ -69,6 +70,21 @@ export const Sidenav = (props: { username: string }) => {
                                 Home
                             </NavLink>
                         </li>
+                        <li>
+                            <NavLink to="/a" onClick={closeSidenav}>
+                                Libraries
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/b" onClick={closeSidenav}>
+                                Collections
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/c" onClick={closeSidenav}>
+                                Favorites
+                            </NavLink>
+                        </li>
                     </ul>
 
                     <div className="search">
@@ -89,7 +105,21 @@ export const Sidenav = (props: { username: string }) => {
                         <div className="search_results">{searchQuery && <></>}</div>
                     </div>
                 </nav>
-                <div className="sidenav_footer"></div>
+                <div className="sidenav_footer">
+                    <div className="account">
+                        <div className="status">
+                            <div className="indicator">Connected</div>
+                            <div className="username" title={props.username}>
+                                {props.username}
+                            </div>
+                        </div>
+                        <div className="actions">
+                            <NavLink to="/settings" className="icon settings" onClick={closeSidenav} title="Settings">
+                                <GearIcon size={16} />
+                            </NavLink>
+                        </div>
+                    </div>
+                </div>
             </div>
         </aside>
     )

@@ -97,7 +97,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
             <div className="section appearance">
                 <div className="title">Appearance</div>
                 <div className="container">
-                    <div className="options primary noSelect">
+                    <div className="options noSelect">
                         <div
                             className={`option light ${theme === 'light' ? 'active' : ''}`}
                             onClick={() => toggleTheme('light')}
@@ -123,11 +123,92 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
             </div>
 
+            <div className="section player-ui">
+                <div className="title">Player</div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Trickplay</div>
+                            <div className="subdesc">Display preview images while scrubbing</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    //checked={playback.isPreloadActive}
+                                    //onChange={e => playback.setIsPreloadActive(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Seek back increment</div>
+                            <div className="subdesc">Seconds to skip back (left arrow key)</div>
+                        </div>
+                        <div className="option">
+                            <div className="number current">1s</div>
+                            <div className="slider">
+                                <input
+                                    type="range"
+                                    id="preload"
+                                    name="preload"
+                                    min="1"
+                                    max="60"
+                                    step="1"
+                                    //value={playback.preloadDuration}
+                                    //onChange={e => playback.setPreloadDuration(Number(e.target.value))}
+                                />
+                            </div>
+                            <div className="number">30s</div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Seek forward increment</div>
+                            <div className="subdesc">Seconds to skip forward (right arrow key)</div>
+                        </div>
+                        <div className="option">
+                            <div className="number current">1s</div>
+                            <div className="slider">
+                                <input
+                                    type="range"
+                                    id="preload"
+                                    name="preload"
+                                    min="1"
+                                    max="60"
+                                    step="1"
+                                    //value={playback.preloadDuration}
+                                    //onChange={e => playback.setPreloadDuration(Number(e.target.value))}
+                                />
+                            </div>
+                            <div className="number">30s</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="section shortcuts">
+                <div className="title">Shortcuts</div>
+                <div className="desc">
+                    <p>Left/right arrow keys to skip back/forward</p>
+                    <p>Arrow up/down to adjust volume</p>
+                    <p>Space bar pause/unpauses</p>
+                    <p>F key to fullscreen</p>
+                    <p>ESC key to exit fullscreen</p>
+                </div>
+            </div>
+
             <div className="section about">
                 <div className="title">About</div>
                 <div className="desc">
                     <p className="subtitle">Jelly Video App - Version {__VERSION__}</p>
-                    <p>An open source music player for Jellyfin</p>
+                    <p>An open source video player for Jellyfin</p>
                     <p>
                         Carefully crafted with great attention to detail, aiming to reduce noise and distractions with a
                         minimalistic & lightweight interface:
@@ -139,7 +220,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="textlink"
-                            href="https://github.com/Stannnnn/jelly-app"
+                            href="https://github.com/Stannnnn/jelly-video-app"
                         >
                             GitHub
                         </a>

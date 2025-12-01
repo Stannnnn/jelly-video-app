@@ -85,23 +85,10 @@ export const MainContent = ({
         )
     }, [Content])
 
-    const memoFooter = useMemo(() => {
-        return (
-            <div className="main_footer">
-                <div>
-                    <Progressbar />
-
-                    <div className="container"></div>
-                </div>
-            </div>
-        )
-    }, [])
-
     return (
         <main className="main">
             {memoHeader}
             {memoContent}
-            {memoFooter}
         </main>
     )
 }

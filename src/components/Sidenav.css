@@ -1,13 +1,13 @@
 .sidenav {
     position: relative;
-    flex-basis: 200px;
+    flex-basis: 220px;
     transition: flex-basis 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
 }
 
 .sidenav > .sidenav_wrapper {
     position: fixed;
     z-index: 3;
-    width: 200px;
+    width: 220px;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -99,15 +99,15 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > ul > li {
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > ul > li > a {
     display: flex;
     font-size: 0.85rem;
     font-weight: 500;
-    margin: 0 12px;
-    padding: 7px 12px;
+    margin: 0 16px;
+    padding: 7px 14px;
     border-radius: 8px;
     transition: background-color 0.2s ease-out, color 0.2s ease-out;
 }
@@ -129,7 +129,7 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     position: sticky;
     z-index: 1;
     top: 0;
-    padding: 12px 14px;
+    padding: 12px 16px;
     padding-bottom: 2px;
     margin-bottom: 12px;
     background-color: var(--bg-color-secondary);
