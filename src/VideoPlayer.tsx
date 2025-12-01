@@ -10,10 +10,13 @@ import {
     SpeakerXMarkIcon,
 } from '@heroicons/react/20/solid'
 import { ChevronRightIcon } from '@primer/octicons-react'
+import { useRef, useState } from 'react'
+import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
 import './VideoPlayer.css'
 
 export const VideoPlayer = () => {
+    const api = useJellyfinContext()
     const {
         isPaused,
         timePos,
@@ -42,10 +45,60 @@ export const VideoPlayer = () => {
         toggleMenu,
     } = usePlaybackContext()
 
+    const [previewTime, setPreviewTime] = useState<number | null>(null)
+    const [previewPosition, setPreviewPosition] = useState(0)
+    const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
+    const [previewImageError, setPreviewImageError] = useState(false)
+    const [trickplayTile, setTrickplayTile] = useState<{
+        url: string
+        tileWidth: number
+        tileHeight: number
+        col: number
+        tilesPerRow: number
+    } | null>(null)
+    const progressBarRef = useRef<HTMLInputElement>(null)
+
     const handleContainerClick = () => {
         if (isPaused && videoLoaded) {
             togglePlayPause()
         }
+    }
+
+    const handleProgressMouseMove = (e: React.MouseEvent<HTMLInputElement>) => {
+        if (!progressBarRef.current || !duration || !currentTrack) return
+
+        const rect = progressBarRef.current.getBoundingClientRect()
+        const offsetX = e.clientX - rect.left
+        const percentage = Math.max(0, Math.min(1, offsetX / rect.width))
+        const time = percentage * duration
+
+        setPreviewTime(time)
+        // Clamp preview position to keep it on screen (80px on each side for the thumbnail width/2)
+        const clampedPercentage = Math.max(10, Math.min(90, percentage * 100))
+        setPreviewPosition(clampedPercentage)
+
+        // Get trickplay preview image - only if trickplay data is available
+        if (currentTrack.Trickplay) {
+            const tileData = api.getTrickplayUrl(currentTrack, time, 320)
+            if (tileData) {
+                setTrickplayTile(tileData)
+                setPreviewImageUrl(tileData.url)
+                setPreviewImageError(false)
+            } else {
+                setTrickplayTile(null)
+                setPreviewImageUrl(null)
+            }
+        } else {
+            setTrickplayTile(null)
+            setPreviewImageUrl(null)
+        }
+    }
+
+    const handleProgressMouseLeave = () => {
+        setPreviewTime(null)
+        setPreviewImageUrl(null)
+        setPreviewImageError(false)
+        setTrickplayTile(null)
     }
 
     return (
@@ -88,14 +141,48 @@ export const VideoPlayer = () => {
                     <span className="time">{formatTime(timePos)}</span>
                     <div className="progress-container">
                         <input
+                            ref={progressBarRef}
                             type="range"
                             min="0"
                             max={duration || 0}
                             value={timePos}
                             onChange={e => handleSeek(parseFloat(e.target.value))}
+                            onMouseMove={handleProgressMouseMove}
+                            onMouseLeave={handleProgressMouseLeave}
                             step="0.1"
                             className="progress-bar"
                         />
+                        {previewTime !== null && (
+                            <div className="progress-preview" style={{ left: `${previewPosition}%` }}>
+                                <div className="preview-thumbnail">
+                                    {previewImageUrl && !previewImageError && trickplayTile ? (
+                                        <div
+                                            style={{
+                                                width: `${trickplayTile.tileWidth}px`,
+                                                height: `${trickplayTile.tileHeight}px`,
+                                                overflow: 'hidden',
+                                            }}
+                                        >
+                                            <img
+                                                src={previewImageUrl}
+                                                alt="Preview"
+                                                onError={() => setPreviewImageError(true)}
+                                                loading="eager"
+                                                style={{
+                                                    transform: `translate(-${
+                                                        trickplayTile.col * trickplayTile.tileWidth
+                                                    }px, 0)`,
+                                                    display: 'block',
+                                                }}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="preview-placeholder">Preview</div>
+                                    )}
+                                </div>
+                                <div className="preview-time">{formatTime(previewTime)}</div>
+                            </div>
+                        )}
                         <div
                             className="progress-indicator controls-tooltip"
                             style={{ left: `${(timePos / (duration || 1)) * 100}%` }}

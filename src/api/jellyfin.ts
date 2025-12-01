@@ -107,6 +107,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortOrder,
             recursive: true, // false
             includeItemTypes: [BaseItemKind.Movie], // BaseItemKind.CollectionFolder
+            fields: ['Trickplay'],
         })
 
         return await parseItemDtos(response.data.Items)
@@ -222,6 +223,55 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return `${serverUrl}/Videos/${trackId}/stream?UserId=${userId}&api_key=${token}`
     }
 
+    const getTrickplayUrl = (item: MediaItem, timestamp: number, preferredWidth?: number) => {
+        if (!item.Trickplay) return null
+
+        // Get the trickplay data - first key is the hash
+        const trickplayHash = Object.keys(item.Trickplay)[0]
+        if (!trickplayHash) return null
+
+        const resolutions = item.Trickplay[trickplayHash]
+
+        // Find the best matching width or use the first available
+        const availableWidths = Object.keys(resolutions).map(Number)
+        const selectedWidth = preferredWidth
+            ? availableWidths.reduce((prev, curr) =>
+                  Math.abs(curr - preferredWidth) < Math.abs(prev - preferredWidth) ? curr : prev
+              )
+            : availableWidths[0]
+
+        const config = resolutions[selectedWidth]
+        if (
+            !config ||
+            !config.Interval ||
+            !config.ThumbnailCount ||
+            !config.TileWidth ||
+            !config.Width ||
+            !config.Height
+        )
+            return null
+
+        // Calculate which tile index we need based on timestamp and interval
+        const intervalMs = config.Interval
+        const tileIndex = Math.floor((timestamp * 1000) / intervalMs)
+
+        // Clamp to available thumbnails
+        const clampedIndex = Math.min(tileIndex, config.ThumbnailCount - 1)
+
+        // Calculate tile position in the sprite sheet
+        const row = Math.floor(clampedIndex / config.TileWidth)
+        const col = clampedIndex % config.TileWidth
+
+        // Build the URL - format: /Videos/{itemId}/Trickplay/{width}/{index}.jpg
+        return {
+            url: `${serverUrl}/Videos/${item.Id}/Trickplay/${selectedWidth}/${row}.jpg?api_key=${token}`,
+            tileWidth: config.Width,
+            tileHeight: config.Height,
+            col,
+            tilesPerRow: config.TileWidth,
+        }
+    }
+
     return {
         loginToJellyfin,
         getAllLibraries,
@@ -235,5 +285,6 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         reportPlaybackStopped,
         getImageUrl,
         getStreamUrl,
+        getTrickplayUrl,
     }
 }

@@ -179,26 +179,28 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
             <Route
                 path="*"
                 element={
-                    <div className={`interface` + (false ? ' touchBlocked' : '')}>
+                    <div className="mainLayout">
                         {playback.currentTrack && <VideoPlayer />}
 
-                        {!playback.currentTrack && (
-                            <>
-                                <div
-                                    className={showSidenav || false ? 'dimmer active noSelect' : 'dimmer noSelect'}
-                                    onClick={showSidenav ? toggleSidenav : undefined}
-                                />
+                        <div className={`interface` + (false ? ' touchBlocked' : '')}>
+                            {!playback.currentTrack && (
+                                <>
+                                    <div
+                                        className={showSidenav || false ? 'dimmer active noSelect' : 'dimmer noSelect'}
+                                        onClick={showSidenav ? toggleSidenav : undefined}
+                                    />
 
-                                <Sidenav username={auth.username} />
+                                    <Sidenav username={auth.username} />
 
-                                <Routes>
-                                    <Route path="/" element={<Main content={Home}></Main>} />
-                                    <Route path="/settings" element={<Main content={memoSettings} />} />
-                                    <Route path="/libraries" element={<Main content={Libraries} />} />
-                                    <Route path="*" element={<Navigate to="/" />} />
-                                </Routes>
-                            </>
-                        )}
+                                    <Routes>
+                                        <Route path="/" element={<Main content={Home}></Main>} />
+                                        <Route path="/settings" element={<Main content={memoSettings} />} />
+                                        <Route path="/libraries" element={<Main content={Libraries} />} />
+                                        <Route path="*" element={<Navigate to="/" />} />
+                                    </Routes>
+                                </>
+                            )}
+                        </div>
                     </div>
                 }
             />
