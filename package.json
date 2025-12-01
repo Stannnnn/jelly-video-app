@@ -6,6 +6,7 @@
     "packageManager": "yarn@1.22.22",
     "scripts": {
         "dev": "vite",
+        "dev:nocache": "vite",
         "build": "tsc && vite build",
         "preview": "vite preview",
         "tauri": "tauri",
@@ -28,6 +29,7 @@
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
         "react-router-dom": "^7.9.6",
+        "react-virtuoso": "^4.16.1",
         "tauri-plugin-libmpv-api": "^0.3.2"
     },
     "devDependencies": {

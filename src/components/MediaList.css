@@ -1,0 +1,490 @@
+.media-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: -4px;
+}
+
+.media-list .media-item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    margin: 0 -8px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-out;
+}
+
+.media-list .media-item:hover {
+    background-color: var(--bg-color-secondary);
+}
+
+.media-list .media-item.active {
+    background-color: var(--bg-color-secondary);
+}
+
+.media-list .media-item > .media-state {
+    position: relative;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    margin-right: 12px;
+    border-radius: 6px;
+}
+
+.media-list .media-item.artist-item > .media-state {
+    width: 36px;
+    height: 36px;
+    border-radius: 20px;
+}
+
+.media-list .media-item.genre-item > .media-state {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+}
+
+.media-list .media-item > .media-state > .thumbnail {
+    display: block;
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 6px;
+    background-color: var(--bg-color-secondary);
+}
+
+.media-list .media-item.artist-item > .media-state > .thumbnail {
+    width: 36px;
+    height: 36px;
+    border-radius: 20px;
+}
+
+.media-list .media-item.genre-item > .media-state > .thumbnail {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+}
+
+.media-list .media-item > .media-state > .fallback-thumbnail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: inherit;
+    background-color: var(--bg-color-tertiary);
+}
+
+.media-list .media-item.artist-item > .media-state > .fallback-thumbnail {
+    width: 36px;
+    height: 36px;
+    border-radius: 20px;
+}
+
+.media-list .media-item.genre-item > .media-state > .fallback-thumbnail {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+}
+
+.media-list .media-item > .media-state > .fallback-thumbnail > svg {
+    fill: var(--font-color-tertiary);
+    opacity: 0.6;
+    margin-left: -4%;
+}
+
+/* Hide thumbnail overlay by default */
+.media-list .media-item > .media-state > .overlay {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    background-color: var(--overlay-bg);
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+}
+
+/* Show thumbnail overlay when hovering a track/playlist/item */
+.media-list .media-item:hover > .media-state > .overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Show thumbnail overlay (and it's children divs, important!) when a track is playing or paused */
+.media-list .media-item.playing > .media-state > .overlay,
+.media-list .media-item.paused > .media-state > .overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.media-list .media-item > .media-state > .overlay > .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.media-list .media-item > .media-state > .overlay > .container > .play {
+    position: absolute;
+    cursor: pointer;
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+}
+
+/* Hide play button when a track is playing or paused */
+.media-list .media-item.playing > .media-state > .overlay > .container > .play,
+.media-list .media-item.paused > .media-state > .overlay > .container > .play {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Show play button when a track is paused and you hover the track/playlist/item */
+.media-list .media-item.paused:hover > .media-state > .overlay > .container > .play {
+    opacity: 1;
+    visibility: visible;
+}
+
+.media-list .media-item > .media-state > .overlay > .container > .play > .play-icon {
+    display: block;
+    width: 26px;
+    height: 23px;
+    background-color: var(--font-color-inverted);
+    mask-repeat: no-repeat;
+    mask-image: url(/play.svg);
+}
+
+/* Hide pause button by default */
+.media-list .media-item > .media-state > .overlay > .container > .pause {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    cursor: pointer;
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+}
+
+/* Hide pause button when a track is paused */
+.media-list .media-item.paused > .media-state > .overlay > .container > .pause {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Show pause button when a track is playing and you hover the track/playlist/item */
+.media-list .media-item.playing:hover > .media-state > .overlay > .container > .pause {
+    opacity: 1;
+    visibility: visible;
+}
+
+.media-list .media-item > .media-state > .overlay > .container > .pause > .pause-icon {
+    display: block;
+    width: 26px;
+    height: 23px;
+    background-color: var(--font-color-inverted);
+    mask-repeat: no-repeat;
+    mask-image: url(/pause.svg);
+}
+
+/* Hide play-state animation by default */
+.media-list .media-item > .media-state > .overlay > .play-state-animation {
+    margin-left: 1px;
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+}
+
+/* Show play-state animation when a track is playing or paused */
+.media-list .media-item.playing > .media-state > .overlay > .play-state-animation,
+.media-list .media-item.paused > .media-state > .overlay > .play-state-animation {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Hide play-state animation when you hover the track/playlist/item */
+.media-list .media-item:hover > .media-state > .overlay > .play-state-animation {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Play-state animation */
+.media-list .media-item > .media-state > .overlay > .play-state-animation > .sound-bars {
+    animation-play-state: paused;
+}
+
+/* Animation is active when a track is playing */
+.media-list .media-item.playing > .media-state > .overlay > .play-state-animation > .sound-bars {
+    animation-play-state: running;
+}
+
+/* Animation is paused when a track is stopped */
+.media-list .media-item.paused > .media-state > .overlay > .play-state-animation > .sound-bars {
+    animation-play-state: paused;
+}
+
+/* The individual sound-bars will inherit the play state from parent */
+.media-list .media-item > .media-state > .overlay > .play-state-animation > .sound-bars > .bar {
+    animation-play-state: inherit !important;
+    transform-origin: bottom;
+    fill: var(--font-color-inverted);
+}
+
+.media-list .media-item > .media-state > .overlay > .play-state-animation > .sound-bars > .bar1 {
+    animation: MediaListbounce 0.5s infinite ease-in-out;
+}
+
+.media-list .media-item > .media-state > .overlay > .play-state-animation > .sound-bars > .bar2 {
+    animation: MediaListbounce 0.55s infinite ease-in-out;
+}
+
+.media-list .media-item > .media-state > .overlay > .play-state-animation > .sound-bars > .bar3 {
+    animation: MediaListbounce 0.45s infinite ease-in-out;
+}
+
+.media-list .media-item > .media-state > .overlay > .play-state-animation > .sound-bars > .bar4 {
+    animation: MediaListbounce 0.6s infinite ease-in-out;
+}
+
+.media-list .media-item > .media-state > .overlay > .play-state-animation > .sound-bars > .bar5 {
+    animation: MediaListbounce 0.5s infinite ease-in-out;
+}
+
+.media-list .media-item > .media-state > .overlay > .play-state-animation > .sound-bars > .bar6 {
+    animation: MediaListbounce 0.55s infinite ease-in-out;
+}
+
+@keyframes MediaListbounce {
+    0%,
+    100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(1.8);
+    }
+}
+
+.media-list .media-item > .media-details {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.media-list .media-item > .media-details > .container {
+    line-height: 1;
+}
+
+.media-list .media-item > .media-details > .song-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    /* Help with CJK letter spacing */
+    line-height: 1rem;
+    margin-bottom: 1px;
+    transition: color 0.2s ease-out;
+}
+
+.media-list .media-item.artist-item > .media-details > .song-name {
+    margin-bottom: 0;
+}
+
+.media-list .media-item.genre-item > .media-details > .song-name {
+    margin-bottom: 0;
+}
+
+.media-list .media-item.playing > .media-details > .song-name,
+.media-list .media-item.paused > .media-details > .song-name {
+    color: var(--font-color-active);
+}
+
+.media-list .media-item.playlist-item > .media-details > .song-name {
+    margin-bottom: 6px;
+}
+
+.media-list .media-item > .media-details > .container > .artist {
+    display: inline;
+    font-size: 0.725rem;
+    font-weight: 600;
+    color: var(--font-color-tertiary);
+    transition: color 0.2s ease-out;
+}
+
+.media-list .media-item.playing > .media-details > .container > .artist,
+.media-list .media-item.paused > .media-details > .container > .artist {
+    color: var(--font-color-secondary);
+}
+
+.media-list .media-item > .media-details > .container > .divider {
+    display: inline-block;
+    vertical-align: middle;
+    width: 2px;
+    height: 2px;
+    margin: 0 4px;
+    margin-top: 2px;
+    border-radius: 50%;
+    background-color: var(--font-color-tertiary);
+    transition: background-color 0.2s ease-out;
+}
+
+.media-list .media-item.playing > .media-details > .container > .divider,
+.media-list .media-item.paused > .media-details > .container > .divider {
+    background-color: var(--font-color-secondary);
+}
+
+.media-list .media-item > .media-details > .container > .album {
+    display: inline;
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--font-color-tertiary);
+    transition: color 0.2s ease-out;
+}
+
+.media-list .media-item.playing > .media-details > .container > .album,
+.media-list .media-item.paused > .media-details > .container > .album {
+    color: var(--font-color-secondary);
+}
+
+.media-list .media-item > .media-details > .container > .year {
+    display: inline;
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--font-color-tertiary);
+}
+
+.media-list .media-item > .media-details > .container:has(.year ~ .divider ~ .artist) > .artist {
+    font-weight: 500;
+}
+
+.media-list .media-item > .media-details > .container > .track-amount {
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--font-color-tertiary);
+}
+
+.media-list .media-item > .media-indicators {
+    display: flex;
+    align-items: center;
+}
+
+.media-list .media-item > .media-indicators:has(.favorited, .download-state) {
+    margin-left: 8px;
+}
+
+.media-list .media-item > .media-indicators > .download-state {
+    display: flex;
+    align-items: center;
+}
+
+.media-list .media-item > .media-indicators > .download-state > .icon {
+    padding: 6px;
+    fill: var(--font-color-tertiary);
+    transition: fill 0.2s ease-out;
+}
+
+.media-list .media-item.playing > .media-indicators > .download-state > .icon,
+.media-list .media-item.paused > .media-indicators > .download-state > .icon {
+    fill: var(--font-color-secondary);
+}
+
+.media-list .media-item > .media-indicators > .download-state > .icon.downloading.active-sync > svg path:last-child {
+    clip-path: inset(100% 0 0 0);
+    animation: syncColorSweepML 1.6s linear infinite;
+}
+
+@keyframes syncColorSweepML {
+    0% {
+        clip-path: inset(0 0 100% 0);
+    }
+    50% {
+        clip-path: inset(0% 0 0 0);
+    }
+    100% {
+        clip-path: inset(100% 0 0 0);
+    }
+}
+
+.media-list .media-item > .media-indicators > .favorited {
+    padding: 6px;
+    color: var(--font-color-tertiary);
+    transition: color 0.2s ease-out;
+}
+
+.media-list .media-item.playing > .media-indicators > .favorited,
+.media-list .media-item.paused > .media-indicators > .favorited {
+    color: var(--font-color-secondary);
+}
+
+.media-list .media-item > .media-indicators > .draggable {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+    touch-action: none;
+}
+
+.media-list .media-item > .media-indicators > .draggable > .grid {
+    display: grid;
+    grid-template: repeat(3, 3px) / repeat(3, 3px);
+    gap: 2px;
+    justify-content: center;
+    align-content: center;
+}
+
+.media-list .media-item > .media-indicators > .draggable > .grid > .dot {
+    width: 2px;
+    height: 2px;
+    /* Force pixel alignment, on some devices the dots are uneven... subpixel rendering */
+    will-change: transform;
+    transform: translateZ(0);
+    background-color: var(--font-color-tertiary);
+    transition: background-color 0.2s ease-out, transform 0.2s ease-out;
+}
+
+.media-list .media-item > .media-indicators > .draggable:hover > .grid > .dot {
+    background-color: var(--font-color-secondary);
+}
+
+/* Top-left */
+.media-list .media-item > .media-indicators > .draggable:hover > .grid > .dot:nth-child(1) {
+    transform: translate(-1px, -1px) translateZ(0);
+}
+
+/* Top-center */
+.media-list .media-item > .media-indicators > .draggable:hover > .grid > .dot:nth-child(2) {
+    transform: translate(0, -1px) translateZ(0);
+}
+
+/* Top-right */
+.media-list .media-item > .media-indicators > .draggable:hover > .grid > .dot:nth-child(3) {
+    transform: translate(1px, -1px) translateZ(0);
+}
+
+/* Middle-left */
+.media-list .media-item > .media-indicators > .draggable:hover > .grid > .dot:nth-child(4) {
+    transform: translate(-1px, 0) translateZ(0);
+}
+
+/* Middle-right */
+.media-list .media-item > .media-indicators > .draggable:hover > .grid > .dot:nth-child(6) {
+    transform: translate(1px, 0) translateZ(0);
+}
+
+/* Bottom-left */
+.media-list .media-item > .media-indicators > .draggable:hover > .grid > .dot:nth-child(7) {
+    transform: translate(-1px, 1px) translateZ(0);
+}
+
+/* Bottom-center */
+.media-list .media-item > .media-indicators > .draggable:hover > .grid > .dot:nth-child(8) {
+    transform: translate(0, 1px) translateZ(0);
+}
+
+/* Bottom-right */
+.media-list .media-item > .media-indicators > .draggable:hover > .grid > .dot:nth-child(9) {
+    transform: translate(1px, 1px) translateZ(0);
+}

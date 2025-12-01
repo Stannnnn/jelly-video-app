@@ -7,18 +7,23 @@ import './App.css'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Main } from './components/Main'
 import { Sidenav } from './components/Sidenav'
+import { AudioStorageContextProvider } from './context/AudioStorageContext/AudioStorageContextProvider'
 import { HistoryContextProvider } from './context/HistoryContext/HistoryContextProvider'
 import { JellyfinContextProvider } from './context/JellyfinContext/JellyfinContextProvider'
 import { PageTitleProvider } from './context/PageTitleContext/PageTitleProvider'
+import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
+import { PlaybackContextProvider } from './context/PlaybackContext/PlaybackContextProvider'
 import { ScrollContextProvider } from './context/ScrollContext/ScrollContextProvider'
 import { useSidenavContext } from './context/SidenavContext/SidenavContext'
 import { SidenavContextProvider } from './context/SidenavContext/SidenavContextProvider'
 import { ThemeContextProvider } from './context/ThemeContext/ThemeContextProvider'
 import { useDocumentTitle } from './hooks/useDocumentTitle'
 import { Home } from './pages/Home'
+import { Libraries } from './pages/Libraries'
 import { Login } from './pages/Login'
 import { Settings } from './pages/Settings'
 import { persister, queryClient } from './queryClient'
+import VideoPlayer from './VideoPlayer'
 
 export const App = () => {
     return (
@@ -122,9 +127,13 @@ const RoutedApp = () => {
                     element={
                         auth ? (
                             <JellyfinContextProvider auth={auth}>
-                                <SidenavContextProvider>
-                                    <MainLayout auth={auth} handleLogout={handleLogout} />
-                                </SidenavContextProvider>
+                                <AudioStorageContextProvider>
+                                    <SidenavContextProvider>
+                                        <PlaybackContextProvider initialVolume={0.5} clearOnLogout={isLoggingOut}>
+                                            <MainLayout auth={auth} handleLogout={handleLogout} />
+                                        </PlaybackContextProvider>
+                                    </SidenavContextProvider>
+                                </AudioStorageContextProvider>
                             </JellyfinContextProvider>
                         ) : (
                             <Navigate to="/login" />
@@ -158,6 +167,7 @@ interface AuthData {
 const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () => void }) => {
     useDocumentTitle()
 
+    const playback = usePlaybackContext()
     const { showSidenav, toggleSidenav } = useSidenavContext()
 
     const memoSettings = useCallback(() => {
@@ -170,18 +180,25 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                 path="*"
                 element={
                     <div className={`interface` + (false ? ' touchBlocked' : '')}>
-                        <div
-                            className={showSidenav || false ? 'dimmer active noSelect' : 'dimmer noSelect'}
-                            onClick={showSidenav ? toggleSidenav : undefined}
-                        />
+                        {playback.currentTrack && <VideoPlayer />}
 
-                        <Sidenav username={auth.username} />
+                        {!playback.currentTrack && (
+                            <>
+                                <div
+                                    className={showSidenav || false ? 'dimmer active noSelect' : 'dimmer noSelect'}
+                                    onClick={showSidenav ? toggleSidenav : undefined}
+                                />
 
-                        <Routes>
-                            <Route path="/" element={<Main content={Home}></Main>} />
-                            <Route path="/settings" element={<Main content={memoSettings} />} />
-                            <Route path="*" element={<Navigate to="/" />} />
-                        </Routes>
+                                <Sidenav username={auth.username} />
+
+                                <Routes>
+                                    <Route path="/" element={<Main content={Home}></Main>} />
+                                    <Route path="/settings" element={<Main content={memoSettings} />} />
+                                    <Route path="/libraries" element={<Main content={Libraries} />} />
+                                    <Route path="*" element={<Navigate to="/" />} />
+                                </Routes>
+                            </>
+                        )}
                     </div>
                 }
             />

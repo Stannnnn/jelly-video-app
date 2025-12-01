@@ -1,6 +1,5 @@
 import { Loader } from '../components/Loader'
 import { useJellyfinHomeData } from '../hooks/Jellyfin/useJellyfinHomeData'
-import VideoPlayer from '../VideoPlayer'
 
 export const Home = () => {
     const { recentlyPlayed, frequentlyPlayed, recentlyAdded, recentGenres, isLoading, error } = useJellyfinHomeData()
@@ -13,9 +12,5 @@ export const Home = () => {
         return <div className="error">{error}</div>
     }
 
-    return (
-        <div className="home-page">
-            <VideoPlayer />
-        </div>
-    )
+    return <div className="home-page"></div>
 }

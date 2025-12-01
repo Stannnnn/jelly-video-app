@@ -71,7 +71,7 @@ export const Sidenav = (props: { username: string }) => {
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/a" onClick={closeSidenav}>
+                            <NavLink to="/libraries" onClick={closeSidenav}>
                                 Libraries
                             </NavLink>
                         </li>

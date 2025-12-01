@@ -1,7 +1,6 @@
 import { QueryFunction, useInfiniteQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
 import { ApiError, MediaItem } from '../../../api/jellyfin'
-import { IReviver } from '../../../components/PlaybackManager'
 import { getAllTracks } from '../../../utils/getAllTracks'
 
 export type IJellyfinInfiniteProps = Parameters<typeof useJellyfinInfiniteData>[0]
@@ -10,7 +9,6 @@ export const useJellyfinInfiniteData = ({
     queryKey,
     queryFn,
     initialPageParam = 0,
-    queryFnReviver,
     allowDuplicates = false,
     enabled = true,
     staleTime,
@@ -18,7 +16,6 @@ export const useJellyfinInfiniteData = ({
     queryKey: unknown[]
     queryFn: QueryFunction<MediaItem[], readonly unknown[], unknown>
     initialPageParam?: number
-    queryFnReviver: IReviver['queryFn']
     allowDuplicates?: boolean
     enabled?: boolean
     staleTime?: number
@@ -63,9 +60,5 @@ export const useJellyfinInfiniteData = ({
         error: error ? error.message : null,
         hasNextPage,
         loadMore,
-        reviver: {
-            queryKey,
-            queryFn: queryFnReviver,
-        },
     }
 }

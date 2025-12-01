@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { ApiError } from '../../../api/jellyfin'
-import { ___PAGE_PARAM_INDEX___ } from '../../../components/PlaybackManager'
 import { useFilterContext } from '../../../context/FilterContext/FilterContext'
 import { useJellyfinContext } from '../../../context/JellyfinContext/JellyfinContext'
 import { useJellyfinInfiniteData } from './useJellyfinInfiniteData'
@@ -35,10 +34,6 @@ export const useJellyfinGenreTracks = (genre: string) => {
         queryFn: async ({ pageParam = 0 }) => {
             const startIndex = (pageParam as number) * itemsPerPage
             return await api.getGenreTracks(genre, startIndex, itemsPerPage, jellySort.sortBy, jellySort.sortOrder)
-        },
-        queryFnReviver: {
-            fn: 'getGenreTracks',
-            params: [genre, ___PAGE_PARAM_INDEX___, itemsPerPage, jellySort.sortBy, jellySort.sortOrder],
         },
     })
 
