@@ -23,7 +23,7 @@ import { Libraries } from './pages/Libraries'
 import { Login } from './pages/Login'
 import { Settings } from './pages/Settings'
 import { persister, queryClient } from './queryClient'
-import VideoPlayer from './VideoPlayer'
+import { VideoPlayer } from './VideoPlayer'
 
 export const App = () => {
     return (

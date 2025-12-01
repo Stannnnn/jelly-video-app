@@ -13,7 +13,7 @@ import { ChevronRightIcon } from '@primer/octicons-react'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
 import './VideoPlayer.css'
 
-function VideoPlayer() {
+export const VideoPlayer = () => {
     const {
         isPaused,
         timePos,
@@ -42,8 +42,18 @@ function VideoPlayer() {
         toggleMenu,
     } = usePlaybackContext()
 
+    const handleContainerClick = () => {
+        if (isPaused && videoLoaded) {
+            togglePlayPause()
+        }
+    }
+
     return (
-        <div className={isPaused ? 'video-container' : 'video-container playing'} onMouseMove={handleMouseMove}>
+        <div
+            className={isPaused ? 'video-container' : 'video-container playing'}
+            onMouseMove={handleMouseMove}
+            onClick={handleContainerClick}
+        >
             {!videoLoaded && (
                 <div className="no-video-overlay">
                     <div className="no-video-message">Select a video from the media list to start playing</div>
@@ -64,7 +74,10 @@ function VideoPlayer() {
             <div className={`video-controls ${showControls || isPaused ? 'visible' : 'hidden'}`}>
                 <div className="playback">
                     <button
-                        onClick={togglePlayPause}
+                        onClick={e => {
+                            e.stopPropagation()
+                            togglePlayPause()
+                        }}
                         className="play-pause controls-btn"
                         title={isPaused ? 'Play (Space)' : 'Pause (Space)'}
                     >
@@ -194,5 +207,3 @@ function VideoPlayer() {
         </div>
     )
 }
-
-export default VideoPlayer

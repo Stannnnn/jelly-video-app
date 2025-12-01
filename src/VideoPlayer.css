@@ -12,6 +12,10 @@
     color: #ffffff;
 }
 
+.video-container:not(.playing) {
+    cursor: pointer;
+}
+
 /* temp */
 .no-video-overlay {
     position: absolute;

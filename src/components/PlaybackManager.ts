@@ -11,6 +11,8 @@ import { MediaItem } from '../api/jellyfin'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 
+// NOTES; Do not use `command('set_property')`; use setProperty instead!
+
 // Define observed properties with their types
 const OBSERVED_PROPERTIES = [
     ['pause', 'flag'],
@@ -48,7 +50,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     useEffect(() => localStorage.setItem('rememberFilters', rememberFilters ? 'on' : 'off'), [rememberFilters])
 
     // MPV state
-    const [isPaused, setIsPaused] = useState(true)
+    const [isPaused, setIsPaused] = useState(false)
     const [timePos, setTimePos] = useState(0)
     const [duration, setDuration] = useState(0)
     const [isInitialized, setIsInitialized] = useState(false)
@@ -258,6 +260,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 const videoUrl = offlineUrl?.url || streamUrl
 
                 await command('loadfile', [videoUrl])
+                await setProperty('pause', false)
+
                 setVideoLoaded(true)
             } catch (error) {
                 console.error('Failed to load video:', error)
