@@ -367,14 +367,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         }
     }, [isInitialized]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Sync volume changes to MPV and localStorage
-    useEffect(() => {
-        localStorage.setItem('volume', volume.toString())
-        if (isInitialized) {
-            setProperty('volume', volume).catch(console.error)
-        }
-    }, [isInitialized, volume])
-
     // Set up Media Session API for next/previous actions
     useEffect(() => {
         if ('mediaSession' in navigator) {
@@ -438,7 +430,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             if (isInitialized) {
                 try {
                     await setProperty('volume', newVolume)
-                    setVolume(newVolume)
+                    localStorage.setItem('volume', newVolume.toString())
+                    // Let MPV observer update the state to avoid race conditions
                 } catch (error) {
                     console.error('Failed to change volume:', error)
                 }
@@ -451,7 +444,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         if (!isInitialized) return
         const newValue = volume === 0 ? 100 : 0
         await setProperty('volume', newValue)
-        setVolume(newValue)
+        localStorage.setItem('volume', newValue.toString())
+        // Let MPV observer update the state to avoid race conditions
     }, [isInitialized, volume])
 
     const handleSpeedChange = useCallback(
