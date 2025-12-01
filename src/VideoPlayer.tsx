@@ -83,8 +83,11 @@ function VideoPlayer() {
                             step="0.1"
                             className="progress-bar"
                         />
-                        <div className="progress-indicator controls-tooltip" style={{ left: `${volume}%` }}>
-                            {volume}%
+                        <div
+                            className="progress-indicator controls-tooltip"
+                            style={{ left: `${(timePos / (duration || 1)) * 100}%` }}
+                        >
+                            {formatTime(timePos)}
                         </div>
                     </div>
                     <span className="time">{formatTime(duration)}</span>

@@ -161,6 +161,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
                 // Listen to property changes
                 unlisten = await observeProperties(OBSERVED_PROPERTIES, ({ name, data }) => {
+                    console.log(`[MPV] Property changed: ${name} =`, data)
+
                     switch (name) {
                         case 'pause':
                             if (typeof data === 'boolean') {
