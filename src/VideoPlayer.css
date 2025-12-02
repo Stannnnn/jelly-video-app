@@ -274,13 +274,7 @@
     user-select: none;
 }
 
-.video-container
-    > .video-controls
-    > .progress
-    > .progress-container
-    > .progress-preview
-    > .preview-thumbnail
-    > .hidden {
+.video-container .hidden {
     display: none !important;
 }
 

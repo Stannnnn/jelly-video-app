@@ -174,12 +174,14 @@ export const VideoPlayer = () => {
                             className="progress-bar"
                         />
                         <div
-                            className={previewTime === null ? 'progress-preview' : 'progress-preview active'}
+                            className={
+                                (previewTime === null ? 'progress-preview' : 'progress-preview active') +
+                                (!previewImageUrl || previewImageError || !trickplayTile ? ' hidden' : '')
+                            }
                             style={{ left: `${previewPosition}%` }}
                         >
                             <div className="preview-thumbnail">
                                 <div
-                                    className={!previewImageUrl || previewImageError || !trickplayTile ? 'hidden' : ''}
                                     style={{
                                         width: `${trickplayTile?.tileWidth || 0}px`,
                                         height: `${trickplayTile?.tileHeight || 0}px`,
