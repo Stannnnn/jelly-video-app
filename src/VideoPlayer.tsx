@@ -125,7 +125,10 @@ export const VideoPlayer = () => {
                 <button className="return" title="Return" onClick={clearCurrentTrack}>
                     <ArrowLeftIcon className="heroicons" />
                 </button>
-                <div className="video-title">{currentTrack?.Name || 'Unknown Title'} (1956)</div>
+                <div className="video-title">
+                    {currentTrack?.Name || 'Unknown Title'}
+                    {currentTrack?.PremiereDate && ` (${new Date(currentTrack.PremiereDate).getFullYear()})`}
+                </div>
             </div>
 
             <div className="video-play-icon noSelect" onClick={handleContainerClick}>
