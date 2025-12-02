@@ -484,13 +484,30 @@
     padding: 6px 12px;
 }
 
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view > .menu-item.stats-header {
+    cursor: default;
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .video-container
     > .video-controls
     > .actions
     > .video-menu
     > .menu-container
     > .menu-view
-    > .menu-item.stats-item:hover {
+    > .menu-item.stats-item:hover,
+.video-container
+    > .video-controls
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    > .menu-item.stats-header:hover {
     background-color: transparent;
 }
 

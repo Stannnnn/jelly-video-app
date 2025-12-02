@@ -22,6 +22,20 @@ const OBSERVED_PROPERTIES = [
     ['sid', 'int64'],
     ['volume', 'int64'],
     ['speed', 'double'],
+    ['video-codec', 'string'],
+    ['audio-codec', 'string'],
+    ['width', 'int64'],
+    ['height', 'int64'],
+    ['estimated-vf-fps', 'double'],
+    ['video-bitrate', 'double'],
+    ['audio-bitrate', 'double'],
+    ['audio-params/channel-count', 'int64'],
+    ['audio-params/samplerate', 'int64'],
+    ['hwdec-current', 'string'],
+    ['container-fps', 'double'],
+    ['video-format', 'string'],
+    ['audio-codec-name', 'string'],
+    ['file-size', 'int64'],
 ] as const satisfies MpvObservableProperty[]
 
 interface SubtitleTrack {
@@ -58,6 +72,22 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [currentSubtitleId, setCurrentSubtitleId] = useState<number | null>(null)
     const [speed, setSpeed] = useState(1.0)
     const [videoLoaded, setVideoLoaded] = useState(false)
+
+    // Video statistics
+    const [videoCodec, setVideoCodec] = useState<string>('N/A')
+    const [audioCodec, setAudioCodec] = useState<string>('N/A')
+    const [videoWidth, setVideoWidth] = useState<number>(0)
+    const [videoHeight, setVideoHeight] = useState<number>(0)
+    const [fps, setFps] = useState<number>(0)
+    const [videoBitrate, setVideoBitrate] = useState<number>(0)
+    const [audioBitrate, setAudioBitrate] = useState<number>(0)
+    const [audioChannels, setAudioChannels] = useState<number>(0)
+    const [audioSampleRate, setAudioSampleRate] = useState<number>(0)
+    const [hwdec, setHwdec] = useState<string>('N/A')
+    const [containerFps, setContainerFps] = useState<number>(0)
+    const [videoFormat, setVideoFormat] = useState<string>('N/A')
+    const [audioCodecName, setAudioCodecName] = useState<string>('N/A')
+    const [fileSize, setFileSize] = useState<number>(0)
 
     // UI state
     const [showControls, setShowControls] = useState(true)
@@ -205,6 +235,76 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                         case 'speed':
                             if (typeof data === 'number') {
                                 setSpeed(data)
+                            }
+                            break
+                        case 'video-codec':
+                            if (typeof data === 'string') {
+                                setVideoCodec(data)
+                            }
+                            break
+                        case 'audio-codec':
+                            if (typeof data === 'string') {
+                                setAudioCodec(data)
+                            }
+                            break
+                        case 'width':
+                            if (typeof data === 'number') {
+                                setVideoWidth(data)
+                            }
+                            break
+                        case 'height':
+                            if (typeof data === 'number') {
+                                setVideoHeight(data)
+                            }
+                            break
+                        case 'estimated-vf-fps':
+                            if (typeof data === 'number') {
+                                setFps(data)
+                            }
+                            break
+                        case 'video-bitrate':
+                            if (typeof data === 'number') {
+                                setVideoBitrate(data)
+                            }
+                            break
+                        case 'audio-bitrate':
+                            if (typeof data === 'number') {
+                                setAudioBitrate(data)
+                            }
+                            break
+                        case 'audio-params/channel-count':
+                            if (typeof data === 'number') {
+                                setAudioChannels(data)
+                            }
+                            break
+                        case 'audio-params/samplerate':
+                            if (typeof data === 'number') {
+                                setAudioSampleRate(data)
+                            }
+                            break
+                        case 'hwdec-current':
+                            if (typeof data === 'string') {
+                                setHwdec(data)
+                            }
+                            break
+                        case 'container-fps':
+                            if (typeof data === 'number') {
+                                setContainerFps(data)
+                            }
+                            break
+                        case 'video-format':
+                            if (typeof data === 'string') {
+                                setVideoFormat(data)
+                            }
+                            break
+                        case 'audio-codec-name':
+                            if (typeof data === 'string') {
+                                setAudioCodecName(data)
+                            }
+                            break
+                        case 'file-size':
+                            if (typeof data === 'number') {
+                                setFileSize(data)
                             }
                             break
                     }
@@ -654,5 +754,21 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         setBitrate,
         rememberFilters,
         setRememberFilters,
+
+        // Video statistics
+        videoCodec,
+        audioCodec,
+        videoWidth,
+        videoHeight,
+        fps,
+        videoBitrate,
+        audioBitrate,
+        audioChannels,
+        audioSampleRate,
+        hwdec,
+        containerFps,
+        videoFormat,
+        audioCodecName,
+        fileSize,
     }
 }

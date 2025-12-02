@@ -46,6 +46,20 @@ export const VideoPlayer = () => {
         toggleFullscreen,
         handleMouseMove,
         toggleMenu,
+        videoCodec,
+        audioCodec,
+        videoWidth,
+        videoHeight,
+        fps,
+        videoBitrate,
+        audioBitrate,
+        audioChannels,
+        audioSampleRate,
+        hwdec,
+        containerFps,
+        videoFormat,
+        audioCodecName,
+        fileSize,
     } = usePlaybackContext()
 
     const [previewTime, setPreviewTime] = useState<number | null>(null)
@@ -66,6 +80,69 @@ export const VideoPlayer = () => {
     const [menuTransition, setMenuTransition] = useState<'none' | 'forward' | 'backward'>('none')
 
     const shouldShowControls = showControls || isPaused || isHoveringControls
+
+    // Format bitrate in Mbps or Kbps
+    const formatBitrate = (bitrate: number) => {
+        if (bitrate === 0) return 'N/A'
+        if (bitrate >= 1000000) {
+            return `${(bitrate / 1000000).toFixed(2)} Mbps`
+        }
+        return `${(bitrate / 1000).toFixed(0)} Kbps`
+    }
+
+    // Format file size
+    const formatFileSize = (bytes: number) => {
+        if (bytes === 0) return 'N/A'
+        const units = ['B', 'KB', 'MB', 'GB', 'TB']
+        const i = Math.floor(Math.log(bytes) / Math.log(1024))
+        return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${units[i]}`
+    }
+
+    // Format sample rate
+    const formatSampleRate = (rate: number) => {
+        if (rate === 0) return 'N/A'
+        return `${(rate / 1000).toFixed(1)} kHz`
+    }
+
+    // Get audio channel configuration
+    const getAudioChannelConfig = (channels: number) => {
+        if (channels === 0) return 'N/A'
+        const configs: { [key: number]: string } = {
+            1: 'Mono',
+            2: 'Stereo',
+            6: '5.1',
+            8: '7.1',
+        }
+        return configs[channels] || `${channels} channels`
+    }
+
+    // Get quality label based on resolution
+    const getQualityLabel = () => {
+        if (videoWidth === 0 || videoHeight === 0) return 'SD'
+        if (videoHeight >= 2160) return '4K'
+        if (videoHeight >= 1080) return 'HD'
+        if (videoHeight >= 720) return 'HD'
+        return 'SD'
+    }
+
+    // Format codec name to be more readable
+    const formatCodecName = (codec: string) => {
+        if (codec === 'N/A' || !codec) return 'N/A'
+        const codecMap: { [key: string]: string } = {
+            h264: 'H.264',
+            hevc: 'H.265',
+            av1: 'AV1',
+            vp9: 'VP9',
+            aac: 'AAC',
+            mp3: 'MP3',
+            opus: 'Opus',
+            vorbis: 'Vorbis',
+            ac3: 'AC-3',
+            eac3: 'E-AC-3',
+            dts: 'DTS',
+        }
+        return codecMap[codec.toLowerCase()] || codec.toUpperCase()
+    }
 
     // Reset menu view when menu closes
     useEffect(() => {
@@ -260,7 +337,7 @@ export const VideoPlayer = () => {
                             title="Settings"
                         >
                             <Cog8ToothIcon className="heroicons" />
-                            <div className="quality-label">HD {/* 4K/HD/SD */}</div>
+                            <div className="quality-label">{getQualityLabel()}</div>
                         </button>
                         <div className={`menu-container ${menuTransition}`}>
                             {/* Main Menu */}
@@ -391,17 +468,74 @@ export const VideoPlayer = () => {
                                     <div className="text">Statistics</div>
                                 </div>
                                 <div className="menu-divider"></div>
+
+                                {/* Video Section */}
+                                <div className="menu-item stats-header">Video</div>
                                 <div className="menu-item stats-item">
                                     <div className="text">Resolution</div>
-                                    <div className="menu-item-value">1920x1080</div>
-                                </div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Bitrate</div>
-                                    <div className="menu-item-value">5.2 Mbps</div>
+                                    <div className="menu-item-value">
+                                        {videoWidth > 0 && videoHeight > 0 ? `${videoWidth}x${videoHeight}` : 'N/A'}
+                                    </div>
                                 </div>
                                 <div className="menu-item stats-item">
                                     <div className="text">Codec</div>
-                                    <div className="menu-item-value">H.264</div>
+                                    <div className="menu-item-value">{formatCodecName(videoCodec)}</div>
+                                </div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Format</div>
+                                    <div className="menu-item-value">{videoFormat.toUpperCase()}</div>
+                                </div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">FPS</div>
+                                    <div className="menu-item-value">
+                                        {fps > 0 ? fps.toFixed(2) : containerFps > 0 ? containerFps.toFixed(2) : 'N/A'}
+                                    </div>
+                                </div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Bitrate</div>
+                                    <div className="menu-item-value">{formatBitrate(videoBitrate)}</div>
+                                </div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Hardware Decoding</div>
+                                    <div className="menu-item-value">
+                                        {hwdec === 'no' ? 'Disabled' : hwdec === 'N/A' ? 'N/A' : hwdec.toUpperCase()}
+                                    </div>
+                                </div>
+
+                                <div className="menu-divider"></div>
+
+                                {/* Audio Section */}
+                                <div className="menu-item stats-header">Audio</div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Codec</div>
+                                    <div className="menu-item-value">
+                                        {formatCodecName(audioCodecName || audioCodec)}
+                                    </div>
+                                </div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Channels</div>
+                                    <div className="menu-item-value">{getAudioChannelConfig(audioChannels)}</div>
+                                </div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Sample Rate</div>
+                                    <div className="menu-item-value">{formatSampleRate(audioSampleRate)}</div>
+                                </div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Bitrate</div>
+                                    <div className="menu-item-value">{formatBitrate(audioBitrate)}</div>
+                                </div>
+
+                                <div className="menu-divider"></div>
+
+                                {/* File Section */}
+                                <div className="menu-item stats-header">File</div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Size</div>
+                                    <div className="menu-item-value">{formatFileSize(fileSize)}</div>
+                                </div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Duration</div>
+                                    <div className="menu-item-value">{formatTime(duration)}</div>
                                 </div>
                             </div>
                         </div>
