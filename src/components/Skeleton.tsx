@@ -1,6 +1,6 @@
 import './Skeleton.css'
 
-export const Skeleton = () => (
+export const Skeleton = ({ type }: { type: string }) => (
     <div className="skeleton-loading">
         <div className="skeleton-effect thumbnail"></div>
         <div className="skeleton-details">

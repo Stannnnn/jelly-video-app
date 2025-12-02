@@ -451,6 +451,14 @@ body.lockscroll {
     max-width: calc(100% - 14px);
 }
 
+.main > .main_header:has(.sorting > .sort) > .primary {
+    max-width: calc(100% - 160px);
+}
+
+.main > .main_header:has(.sorting > .sort):has(.sorting.links > .filter) > .primary {
+    max-width: calc(100% - 236px);
+}
+
 .main > .main_header > .primary > .return_icon {
     cursor: pointer;
     padding: 6px;
@@ -475,6 +483,142 @@ body.lockscroll {
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
+.main > .main_header > .primary > .container > .page_title > .page-icon {
+    margin-left: 6px;
+}
+
+.main > .main_header > .primary > .container > .page_title > .page-icon.playlist {
+    margin-left: 8px;
+    padding: 4px;
+    border-radius: 6px;
+    background-color: var(--bg-color-tertiary);
+}
+
+.main > .main_header > .primary > .container > .page_title > .page-icon.artist-tracks {
+    margin-left: 8px;
+    padding: 4px;
+    border-radius: 6px;
+    background-color: var(--bg-color-tertiary);
+}
+
+.main > .main_header > .secondary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.main > .main_header > .secondary > .sorting {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+}
+
+.main > .main_header > .secondary > .sorting > .filter {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.main > .main_header > .secondary > .sorting.links > .filter > .responsive-icon {
+    display: none;
+}
+
+.main > .main_header > .secondary > .sorting > .filter > select {
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--brand-color);
+    cursor: pointer;
+    padding: 6px 8px;
+    padding-right: 22px;
+}
+
+.main > .main_header > .secondary > .sorting > .filter > .icon {
+    position: absolute;
+    right: 6px;
+    color: var(--brand-color);
+    user-select: none;
+    pointer-events: none;
+}
+
+.main > .main_header > .secondary > .sorting > .filter > select > option {
+    font-weight: 500;
+    color: var(--font-color);
+}
+
+.main > .main_header > .secondary > .sorting > .sort {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    border-left: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.main > .main_header > .secondary > .sorting > .sort > .icon {
+    padding: 7px;
+}
+
+.main > .main_header > .secondary > .sorting > .sort > .icon > svg {
+    fill: var(--brand-color);
+}
+
+.main > .main_header > .secondary > .sorting > .sort > .icon > svg > g > .arrow {
+    transition: opacity 0.2s ease-out;
+}
+
+.main > .main_header > .secondary > .sorting > .sort > .icon > svg > g > .arrow.down {
+    opacity: 0.4;
+}
+
+/* Ascending */
+.main > .main_header > .secondary > .sorting > .sort > .icon.active > svg > g > .arrow.down {
+    opacity: 1;
+}
+
+.main > .main_header > .secondary > .sorting > .sort > .icon.active > svg > g > .arrow.up {
+    opacity: 0.4;
+}
+
+/* Filter styles - not currently used
+.filter {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    flex-shrink: 0;
+}
+
+.filter > select {
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--brand-color);
+    cursor: pointer;
+    padding: 6px 8px;
+    padding-right: 26px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+}
+
+.filter > .icon {
+    position: absolute;
+    right: 8px;
+    color: var(--brand-color);
+    user-select: none;
+    pointer-events: none;
+}
+
+.filter > select > option {
+    font-weight: 500;
+    color: var(--font-color);
+}
+
+*/
 
 .main > .main_header > .secondary > .sidenav_toggle {
     display: none;
@@ -653,6 +797,14 @@ body.lockscroll {
         max-width: calc(100% - 50px);
     }
 
+    .main > .main_header:has(.sorting > .sort) > .primary > .container {
+        max-width: calc(100% - 86px);
+    }
+
+    .main > .main_header:has(.sorting > .sort):has(.sorting.links > .filter) > .primary > .container {
+        max-width: calc(100% - 122px);
+    }
+
     .main > .main_header > .secondary > .sidenav_toggle {
         display: flex;
         flex-direction: column;
@@ -678,6 +830,17 @@ body.lockscroll {
         transform: translateZ(0);
         border-radius: 2px;
         background-color: var(--font-color);
+    }
+}
+
+@media only screen and (max-width: 480px), (pointer: coarse) {
+    .main > .main_header > .secondary > .sorting.links > .filter > select {
+        display: none;
+    }
+
+    .main > .main_header > .secondary > .sorting.links > .filter > .responsive-icon {
+        display: block;
+        padding: 6px;
     }
 }
 

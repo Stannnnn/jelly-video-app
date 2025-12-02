@@ -1,13 +1,20 @@
-import { ArrowLeftIcon } from '@primer/octicons-react'
+import { ArrowLeftIcon, ChevronDownIcon } from '@primer/octicons-react'
 import { JSX, useEffect, useMemo, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useFilterContext } from '../context/FilterContext/FilterContext'
+import { FilterContextProvider } from '../context/FilterContext/FilterContextProvider'
 import { useHistoryContext } from '../context/HistoryContext/HistoryContext'
 import { usePageTitle } from '../context/PageTitleContext/PageTitleContext'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
 import { getPageTitle } from '../utils/titleUtils'
+import { SortingIcon } from './SvgIcons'
 
 export const Main = (props: Parameters<typeof MainContent>[0]) => {
-    return <MainContent {...props} />
+    return (
+        <FilterContextProvider key={(props.content as { name?: string })?.name}>
+            <MainContent {...props} />
+        </FilterContextProvider>
+    )
 }
 
 export const MainContent = ({
@@ -15,12 +22,13 @@ export const MainContent = ({
     filterType,
 }: {
     content: () => JSX.Element
-    filterType?: 'mediaItems' | 'favorites' | 'kind' | 'mediaItemsPlaylist'
+    filterType?: 'movies' | 'favorites'
 }) => {
     const { pageTitle } = usePageTitle()
     const { goBack: previousPage } = useHistoryContext()
     const location = useLocation()
     const { toggleSidenav } = useSidenavContext()
+    const { filter, setFilter } = useFilterContext()
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'instant' })
@@ -42,6 +50,98 @@ export const MainContent = ({
                     </div>
                 </div>
                 <div className="secondary noSelect">
+                    {filterType === 'movies' && (
+                        <div className="sorting">
+                            <div className="filter">
+                                <select
+                                    onChange={e => setFilter(c => ({ ...c, sort: e.target.value }))}
+                                    value={filter.sort}
+                                >
+                                    <option value="Added">Added</option>
+                                    <option value="Released">Released</option>
+                                    <option value="Runtime">Runtime</option>
+                                    <option value="Random">Random</option>
+                                    <option value="Name">Name</option>
+                                    <option value="Inherit">Inherit</option>
+                                </select>
+                                <div className="icon">
+                                    <ChevronDownIcon size={12} />
+                                </div>
+                            </div>
+
+                            {filter.sort !== 'Inherit' && (
+                                <div
+                                    className="sort"
+                                    onClick={() => {
+                                        setFilter(c => ({
+                                            ...c,
+                                            order: c.order === 'Ascending' ? 'Descending' : 'Ascending',
+                                        }))
+                                    }}
+                                    title={filter.order === 'Ascending' ? 'Ascending' : 'Descending'}
+                                >
+                                    <div className={'icon' + (filter.order === 'Ascending' ? ' active' : '')}>
+                                        <SortingIcon width={12} height={12} />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {filterType === 'favorites' && (
+                        <>
+                            <div className="sorting links">
+                                <div className="filter">
+                                    <select
+                                        onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
+                                        value={filter.kind}
+                                    >
+                                        <option value="Movies">Movies</option>
+                                        <option value="Series">Series</option>
+                                        <option value="Episodes">Episodes</option>
+                                    </select>
+                                    <div className="icon">
+                                        <ChevronDownIcon size={12} />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {filterType === 'favorites' && (
+                                <div className="sorting">
+                                    <div className="filter">
+                                        <select
+                                            onChange={e => setFilter(c => ({ ...c, sort: e.target.value }))}
+                                            value={filter.sort}
+                                        >
+                                            <option value="Added">Added</option>
+                                            <option value="Released">Released</option>
+                                            <option value="Runtime">Runtime</option>
+                                            <option value="Random">Random</option>
+                                            <option value="Name">Name</option>
+                                        </select>
+                                        <div className="icon">
+                                            <ChevronDownIcon size={12} />
+                                        </div>
+                                    </div>
+                                    <div
+                                        className="sort"
+                                        onClick={() => {
+                                            setFilter(c => ({
+                                                ...c,
+                                                order: c.order === 'Ascending' ? 'Descending' : 'Ascending',
+                                            }))
+                                        }}
+                                        title={filter.order === 'Ascending' ? 'Ascending' : 'Descending'}
+                                    >
+                                        <div className={'icon' + (filter.order === 'Ascending' ? ' active' : '')}>
+                                            <SortingIcon width={12} height={12} />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
+
                     <div className="sidenav_toggle" onClick={toggleSidenav}>
                         <div className="bar"></div>
                         <div className="bar"></div>
@@ -49,7 +149,17 @@ export const MainContent = ({
                 </div>
             </div>
         )
-    }, [filterType, location, pageTitle, previousPage, toggleSidenav])
+    }, [
+        filter.kind,
+        filter.order,
+        filter.sort,
+        filterType,
+        location,
+        pageTitle,
+        previousPage,
+        setFilter,
+        toggleSidenav,
+    ])
 
     const memoContent = useMemo(() => {
         return (

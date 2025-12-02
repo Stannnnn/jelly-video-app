@@ -1,4 +1,5 @@
 import { Jellyfin } from '@jellyfin/sdk'
+import { UserLibraryApi } from '@jellyfin/sdk/lib/generated-client'
 import { ItemsApi } from '@jellyfin/sdk/lib/generated-client/api/items-api'
 import { PlaystateApi } from '@jellyfin/sdk/lib/generated-client/api/playstate-api'
 import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
@@ -35,6 +36,7 @@ interface AuthResponse {
 export type MediaItem = BaseItemDto & {
     Id: string
     Name: string
+    downloadedImageUrl?: string
 }
 
 export type IJellyfinAuth = Parameters<typeof initJellyfinApi>[0]
@@ -371,6 +373,32 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         }
     }
 
+    const addToFavorites = async (item: MediaItem) => {
+        const userLibraryApi = new UserLibraryApi(api.configuration)
+
+        const r = await userLibraryApi.markFavoriteItem(
+            { itemId: item.Id, userId },
+            { signal: AbortSignal.timeout(20000) }
+        )
+
+        // await syncDownloadsById('JMA_CUSTOM_FAVORITES', [item])
+
+        return r
+    }
+
+    const removeFromFavorites = async (item: MediaItem) => {
+        const userLibraryApi = new UserLibraryApi(api.configuration)
+
+        const r = await userLibraryApi.unmarkFavoriteItem(
+            { itemId: item.Id, userId },
+            { signal: AbortSignal.timeout(20000) }
+        )
+
+        // await unsyncDownloadsById('JMA_CUSTOM_FAVORITES', [item])
+
+        return r
+    }
+
     return {
         loginToJellyfin,
         getMovies,
@@ -390,5 +418,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         getImageUrl,
         getStreamUrl,
         getTrickplayUrl,
+        addToFavorites,
+        removeFromFavorites,
     }
 }

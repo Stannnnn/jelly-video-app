@@ -198,10 +198,19 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                                     <Routes>
                                         <Route path="/" element={<Main content={Home}></Main>} />
                                         <Route path="/settings" element={<Main content={memoSettings} />} />
-                                        <Route path="/movies" element={<Main content={Movies} />} />
-                                        <Route path="/shows" element={<Main content={Shows} />} />
-                                        <Route path="/collections" element={<Main content={Collections} />} />
-                                        <Route path="/favorites" element={<Main content={Favorites} />} />
+                                        <Route
+                                            path="/movies"
+                                            element={<Main content={Movies} filterType={'movies'} />}
+                                        />
+                                        <Route path="/shows" element={<Main content={Shows} filterType={'movies'} />} />
+                                        <Route
+                                            path="/collections"
+                                            element={<Main content={Collections} filterType={'movies'} />}
+                                        />
+                                        <Route
+                                            path="/favorites"
+                                            element={<Main content={Favorites} filterType={'favorites'} />}
+                                        />
                                         <Route path="*" element={<Navigate to="/" />} />
                                     </Routes>
                                 </>
