@@ -64,6 +64,10 @@ export const VideoPlayer = () => {
         }
     }
 
+    const handleProgressMouseEnter = () => {
+        setPreviewTime(null)
+    }
+
     const handleProgressMouseMove = (e: React.MouseEvent<HTMLInputElement>) => {
         if (!progressBarRef.current || !duration || !currentTrack) return
 
@@ -95,7 +99,6 @@ export const VideoPlayer = () => {
     }
 
     const handleProgressMouseLeave = () => {
-        setPreviewTime(null)
         setPreviewImageUrl(null)
         setPreviewImageError(false)
         setTrickplayTile(null)
@@ -136,6 +139,7 @@ export const VideoPlayer = () => {
                             max={duration || 0}
                             value={timePos}
                             onChange={e => handleSeek(parseFloat(e.target.value))}
+                            onMouseEnter={handleProgressMouseEnter}
                             onMouseMove={handleProgressMouseMove}
                             onMouseLeave={handleProgressMouseLeave}
                             step="0.1"
