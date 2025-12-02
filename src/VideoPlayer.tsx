@@ -82,6 +82,9 @@ export const VideoPlayer = () => {
 
     const handleProgressMouseEnter = () => {
         setPreviewTime(null)
+        setPreviewImageUrl(null)
+        setPreviewImageError(false)
+        setTrickplayTile(null)
     }
 
     const handleProgressMouseMove = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -102,26 +105,14 @@ export const VideoPlayer = () => {
             // Get the first available width from trickplay data
             const trickplayHash = Object.keys(currentTrack.Trickplay)[0]
             const availableWidth = trickplayHash ? Number(Object.keys(currentTrack.Trickplay[trickplayHash])[0]) : null
-
             const tileData = availableWidth ? api.getTrickplayUrl(currentTrack, time, availableWidth) : null
+
             if (tileData) {
                 setTrickplayTile(tileData)
                 setPreviewImageUrl(tileData.url)
                 setPreviewImageError(false)
-            } else {
-                setTrickplayTile(null)
-                setPreviewImageUrl(null)
             }
-        } else {
-            setTrickplayTile(null)
-            setPreviewImageUrl(null)
         }
-    }
-
-    const handleProgressMouseLeave = () => {
-        setPreviewImageUrl(null)
-        setPreviewImageError(false)
-        setTrickplayTile(null)
     }
 
     return (
@@ -169,14 +160,13 @@ export const VideoPlayer = () => {
                             onChange={e => handleSeek(parseFloat(e.target.value))}
                             onMouseEnter={handleProgressMouseEnter}
                             onMouseMove={handleProgressMouseMove}
-                            onMouseLeave={handleProgressMouseLeave}
                             step="0.1"
                             className="progress-bar"
                         />
                         <div
                             className={
                                 (previewTime === null ? 'progress-preview' : 'progress-preview active') +
-                                (!previewImageUrl || previewImageError || !trickplayTile ? ' hidden' : '')
+                                (isHoveringControls ? '' : ' hidden')
                             }
                             style={{ left: `${previewPosition}%` }}
                         >
