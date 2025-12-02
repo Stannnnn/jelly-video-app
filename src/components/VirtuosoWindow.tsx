@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
-import type { VirtuosoProps } from 'react-virtuoso'
-import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
+import type { VirtuosoGridProps } from 'react-virtuoso'
+import { VirtuosoGrid, VirtuosoGridHandle } from 'react-virtuoso'
 import { MediaItem } from '../api/jellyfin.ts'
+import './VirtuosoWindow.css'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type IVirtuosoProps = VirtuosoProps<MediaItem | { isPlaceholder: true }, any>
+type IVirtuosoProps = VirtuosoGridProps<MediaItem | { isPlaceholder: true }, any>
 
 // Global Map to store scroll offsets keyed by history state index
 const scrollOffsets = new Map<number, { pathname: string; offset: number }>()
 
 export const VirtuosoWindow = (virtuosoProps: IVirtuosoProps) => {
-    const virtuosoRef = useRef<VirtuosoHandle>(null)
+    const virtuosoRef = useRef<VirtuosoGridHandle>(null)
     const wrapperRef = useRef<HTMLDivElement>(null)
 
     const [initialOffset, setInitialOffset] = useState(0)
@@ -37,9 +38,15 @@ export const VirtuosoWindow = (virtuosoProps: IVirtuosoProps) => {
     const saved = scrollOffsets.get(history.state?.idx)
     const savedOffset = saved?.pathname === window.location.pathname ? saved.offset : 0
 
+    useEffect(() => {
+        if (savedOffset && initialOffset) {
+            window.scrollTo(0, savedOffset + initialOffset)
+        }
+    }, [savedOffset, initialOffset])
+
     return (
         <div ref={wrapperRef}>
-            <Virtuoso {...virtuosoProps} ref={virtuosoRef} initialScrollTop={savedOffset || 0} useWindowScroll />
+            <VirtuosoGrid {...virtuosoProps} ref={virtuosoRef} useWindowScroll listClassName="virtuoso-grid-list" />
         </div>
     )
 }
