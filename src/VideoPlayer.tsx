@@ -146,30 +146,36 @@ export const VideoPlayer = () => {
                             style={{ left: `${previewPosition}%` }}
                         >
                             <div className="preview-thumbnail">
-                                {previewImageUrl && !previewImageError && trickplayTile ? (
-                                    <div
+                                <div
+                                    className={!previewImageUrl || previewImageError || !trickplayTile ? 'hidden' : ''}
+                                    style={{
+                                        width: `${trickplayTile?.tileWidth || 0}px`,
+                                        height: `${trickplayTile?.tileHeight || 0}px`,
+                                        overflow: 'hidden',
+                                    }}
+                                >
+                                    <img
+                                        src={previewImageUrl || ''}
+                                        alt="Preview"
+                                        onError={() => setPreviewImageError(true)}
+                                        loading="eager"
                                         style={{
-                                            width: `${trickplayTile.tileWidth}px`,
-                                            height: `${trickplayTile.tileHeight}px`,
-                                            overflow: 'hidden',
+                                            transform: `translate(-${
+                                                (trickplayTile?.col || 0) * (trickplayTile?.tileWidth || 0)
+                                            }px, 0)`,
+                                            display: 'block',
                                         }}
-                                    >
-                                        <img
-                                            src={previewImageUrl}
-                                            alt="Preview"
-                                            onError={() => setPreviewImageError(true)}
-                                            loading="eager"
-                                            style={{
-                                                transform: `translate(-${
-                                                    trickplayTile.col * trickplayTile.tileWidth
-                                                }px, 0)`,
-                                                display: 'block',
-                                            }}
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className="preview-placeholder">Preview</div>
-                                )}
+                                    />
+                                </div>
+                                <div
+                                    className={
+                                        previewImageUrl && !previewImageError && trickplayTile
+                                            ? 'preview-placeholder hidden'
+                                            : 'preview-placeholder'
+                                    }
+                                >
+                                    Preview
+                                </div>
                             </div>
                             <div className="preview-time">{previewTime !== null ? formatTime(previewTime) : ''}</div>
                         </div>
