@@ -54,6 +54,7 @@ export const VideoPlayer = () => {
         tileWidth: number
         tileHeight: number
         col: number
+        row: number
         tilesPerRow: number
     } | null>(null)
     const progressBarRef = useRef<HTMLInputElement>(null)
@@ -98,7 +99,11 @@ export const VideoPlayer = () => {
 
         // Get trickplay preview image - only if trickplay data is available
         if (currentTrack.Trickplay) {
-            const tileData = api.getTrickplayUrl(currentTrack, time, 320)
+            // Get the first available width from trickplay data
+            const trickplayHash = Object.keys(currentTrack.Trickplay)[0]
+            const availableWidth = trickplayHash ? Number(Object.keys(currentTrack.Trickplay[trickplayHash])[0]) : null
+
+            const tileData = availableWidth ? api.getTrickplayUrl(currentTrack, time, availableWidth) : null
             if (tileData) {
                 setTrickplayTile(tileData)
                 setPreviewImageUrl(tileData.url)
@@ -189,7 +194,7 @@ export const VideoPlayer = () => {
                                         style={{
                                             transform: `translate(-${
                                                 (trickplayTile?.col || 0) * (trickplayTile?.tileWidth || 0)
-                                            }px, 0)`,
+                                            }px, -${(trickplayTile?.row || 0) * (trickplayTile?.tileHeight || 0)}px)`,
                                             display: 'block',
                                         }}
                                     />

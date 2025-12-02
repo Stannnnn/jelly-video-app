@@ -246,28 +246,36 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             !config.Interval ||
             !config.ThumbnailCount ||
             !config.TileWidth ||
+            !config.TileHeight ||
             !config.Width ||
             !config.Height
         )
             return null
 
-        // Calculate which tile index we need based on timestamp and interval
+        // Calculate which thumbnail we need based on timestamp and interval
         const intervalMs = config.Interval
-        const tileIndex = Math.floor((timestamp * 1000) / intervalMs)
+        const thumbnailIndex = Math.floor((timestamp * 1000) / intervalMs)
 
         // Clamp to available thumbnails
-        const clampedIndex = Math.min(tileIndex, config.ThumbnailCount - 1)
+        const clampedIndex = Math.min(Math.max(0, thumbnailIndex), config.ThumbnailCount - 1)
 
-        // Calculate tile position in the sprite sheet
-        const row = Math.floor(clampedIndex / config.TileWidth)
-        const col = clampedIndex % config.TileWidth
+        // TileWidth and TileHeight are the grid dimensions (columns x rows per sprite sheet)
+        // Calculate which sprite sheet image file we need
+        const tilesPerSheet = config.TileWidth * config.TileHeight
+        const sheetIndex = Math.floor(clampedIndex / tilesPerSheet)
 
-        // Build the URL - format: /Videos/{itemId}/Trickplay/{width}/{index}.jpg
+        // Calculate position within that sprite sheet
+        const indexInSheet = clampedIndex % tilesPerSheet
+        const row = Math.floor(indexInSheet / config.TileWidth)
+        const col = indexInSheet % config.TileWidth
+
+        // Build the URL - format: /Videos/{itemId}/Trickplay/{width}/{sheetIndex}.jpg
         return {
-            url: `${serverUrl}/Videos/${item.Id}/Trickplay/${selectedWidth}/${row}.jpg?api_key=${token}`,
+            url: `${serverUrl}/Videos/${item.Id}/Trickplay/${selectedWidth}/${sheetIndex}.jpg?api_key=${token}`,
             tileWidth: config.Width,
             tileHeight: config.Height,
             col,
+            row,
             tilesPerRow: config.TileWidth,
         }
     }
