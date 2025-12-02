@@ -10,8 +10,8 @@ import {
 import { MediaItem } from '../api/jellyfin'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
-
-// NOTES; Do not use `command('set_property')`; use setProperty instead!
+;(window as any).command = command
+;(window as any).setProperty = setProperty
 
 // Define observed properties with their types
 const OBSERVED_PROPERTIES = [
@@ -157,6 +157,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                         hwdec: 'auto-safe',
                         'keep-open': 'yes',
                         'force-window': 'yes',
+                        // Enable verbose logging
+                        'msg-level': 'all=v',
+                        terminal: 'yes',
+                        'msg-color': 'yes',
                     },
                     observedProperties: OBSERVED_PROPERTIES,
                 })

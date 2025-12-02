@@ -102,11 +102,7 @@ export const VideoPlayer = () => {
     }
 
     return (
-        <div
-            className={isPaused ? 'video-container' : 'video-container playing'}
-            onMouseMove={handleMouseMove}
-            onClick={handleContainerClick}
-        >
+        <div className={isPaused ? 'video-container' : 'video-container playing'} onMouseMove={handleMouseMove}>
             <div className={`video-header ${showControls || isPaused ? 'visible' : 'hidden'}`}>
                 <button className="return" title="Return" onClick={clearCurrentTrack}>
                     <ArrowLeftIcon className="heroicons" />
@@ -114,15 +110,14 @@ export const VideoPlayer = () => {
                 <div className="video-title">{currentTrack?.Name || 'Unknown Title'} (1956)</div>
             </div>
 
-            <div className="video-play-icon">
+            <div className="video-play-icon" onClick={handleContainerClick}>
                 <PlayCircleIcon className="heroicons" />
             </div>
 
             <div className={`video-controls ${showControls || isPaused ? 'visible' : 'hidden'}`}>
                 <div className="playback">
                     <button
-                        onClick={e => {
-                            e.stopPropagation()
+                        onClick={() => {
                             togglePlayPause()
                         }}
                         className="play-pause controls-btn"

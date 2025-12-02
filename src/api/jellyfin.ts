@@ -220,7 +220,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
     }
 
     const getStreamUrl = (trackId: string, bitrate: number) => {
-        return `${serverUrl}/Videos/${trackId}/stream?UserId=${userId}&api_key=${token}`
+        return `${serverUrl}/Videos/${trackId}/stream?UserId=${userId}&api_key=${token}&static=true`
     }
 
     const getTrickplayUrl = (item: MediaItem, timestamp: number, preferredWidth?: number) => {
