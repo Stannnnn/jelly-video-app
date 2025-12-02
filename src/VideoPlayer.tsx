@@ -2,6 +2,7 @@ import {
     ArrowLeftIcon,
     ArrowsPointingInIcon,
     ArrowsPointingOutIcon,
+    CheckIcon,
     Cog8ToothIcon,
     PauseIcon,
     PlayCircleIcon,
@@ -14,6 +15,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
 import './VideoPlayer.css'
+
+type MenuView = 'main' | 'subtitles' | 'speed' | 'statistics'
 
 export const VideoPlayer = () => {
     const api = useJellyfinContext()
@@ -59,8 +62,22 @@ export const VideoPlayer = () => {
     } | null>(null)
     const progressBarRef = useRef<HTMLInputElement>(null)
     const [isHoveringControls, setIsHoveringControls] = useState(false)
+    const [currentMenuView, setCurrentMenuView] = useState<MenuView>('main')
+    const [menuTransition, setMenuTransition] = useState<'none' | 'forward' | 'backward'>('none')
 
     const shouldShowControls = showControls || isPaused || isHoveringControls
+
+    // Reset menu view when menu closes
+    useEffect(() => {
+        if (!showMenu) {
+            // Small delay to let close animation finish
+            const timer = setTimeout(() => {
+                setCurrentMenuView('main')
+                setMenuTransition('none')
+            }, 320)
+            return () => clearTimeout(timer)
+        }
+    }, [showMenu])
 
     // Hide controls when window loses focus (disabled in dev so F12 debugging doesn't hide controls)
     useEffect(() => {
@@ -245,52 +262,147 @@ export const VideoPlayer = () => {
                             <Cog8ToothIcon className="heroicons" />
                             <div className="quality-label">HD {/* 4K/HD/SD */}</div>
                         </button>
-                        <div className="menu-container">
-                            {subtitleTracks.length > 0 && (
-                                <div className="menu-item">
-                                    <div className="text">Subtitles</div>
-                                    <ChevronRightIcon className="heroicons" />
-                                    <select
-                                        id="subtitle-select"
-                                        value={currentSubtitleId?.toString() || 'no'}
-                                        onChange={e => handleSubtitleChange(e.target.value)}
-                                        className="subtitle-dropdown"
-                                        title="Subtitles"
+                        <div className={`menu-container ${menuTransition}`}>
+                            {/* Main Menu */}
+                            <div className={`menu-view ${currentMenuView === 'main' ? 'active' : 'inactive-left'}`}>
+                                {subtitleTracks.length > 0 && (
+                                    <div
+                                        className="menu-item"
+                                        onClick={() => {
+                                            setMenuTransition('forward')
+                                            setCurrentMenuView('subtitles')
+                                        }}
                                     >
-                                        <option value="no">Disabled</option>
-                                        {subtitleTracks.map(track => (
-                                            <option key={track.id} value={track.id}>
-                                                {track.title || track.lang || `Track ${track.id}`}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            )}
+                                        <div className="text">Subtitles</div>
+                                        <div className="menu-item-right">
+                                            <span className="menu-item-value">
+                                                {currentSubtitleId === null
+                                                    ? 'Off'
+                                                    : subtitleTracks.find(t => t.id === currentSubtitleId)?.title ||
+                                                      subtitleTracks.find(t => t.id === currentSubtitleId)?.lang ||
+                                                      'On'}
+                                            </span>
+                                            <ChevronRightIcon className="heroicons" />
+                                        </div>
+                                    </div>
+                                )}
 
-                            <div className="menu-item">
-                                <div className="text">Speed</div>
-                                <ChevronRightIcon className="heroicons" />
-                                <select
-                                    id="speed-select"
-                                    value={speed}
-                                    onChange={e => handleSpeedChange(parseFloat(e.target.value))}
-                                    className="speed-dropdown"
-                                    title="Playback Speed"
+                                <div
+                                    className="menu-item"
+                                    onClick={() => {
+                                        setMenuTransition('forward')
+                                        setCurrentMenuView('speed')
+                                    }}
                                 >
-                                    <option value="0.25">0.25x</option>
-                                    <option value="0.5">0.5x</option>
-                                    <option value="0.75">0.75x</option>
-                                    <option value="1">1x</option>
-                                    <option value="1.25">1.25x</option>
-                                    <option value="1.5">1.5x</option>
-                                    <option value="1.75">1.75x</option>
-                                    <option value="2">2x</option>
-                                </select>
+                                    <div className="text">Speed</div>
+                                    <div className="menu-item-right">
+                                        <span className="menu-item-value">{speed}x</span>
+                                        <ChevronRightIcon className="heroicons" />
+                                    </div>
+                                </div>
+
+                                <div
+                                    className="menu-item"
+                                    onClick={() => {
+                                        setMenuTransition('forward')
+                                        setCurrentMenuView('statistics')
+                                    }}
+                                >
+                                    <div className="text">Statistics</div>
+                                    <ChevronRightIcon className="heroicons" />
+                                </div>
                             </div>
 
-                            <div className="menu-item">
-                                <div className="text">Statistics</div>
-                                <ChevronRightIcon className="heroicons" />
+                            {/* Subtitles Submenu */}
+                            <div
+                                className={`menu-view ${currentMenuView === 'subtitles' ? 'active' : 'inactive-right'}`}
+                            >
+                                <div
+                                    className="menu-item back-button"
+                                    onClick={() => {
+                                        setMenuTransition('backward')
+                                        setCurrentMenuView('main')
+                                    }}
+                                >
+                                    <ArrowLeftIcon className="heroicons back-icon" />
+                                    <div className="text">Subtitles</div>
+                                </div>
+                                <div className="menu-divider"></div>
+                                <div
+                                    className={`menu-item ${currentSubtitleId === null ? 'selected' : ''}`}
+                                    onClick={() => handleSubtitleChange('no')}
+                                >
+                                    <div className="text">Disabled</div>
+                                    {currentSubtitleId === null && <CheckIcon className="heroicons check-icon" />}
+                                </div>
+                                {subtitleTracks.map(track => (
+                                    <div
+                                        key={track.id}
+                                        className={`menu-item ${currentSubtitleId === track.id ? 'selected' : ''}`}
+                                        onClick={() => handleSubtitleChange(track.id.toString())}
+                                    >
+                                        <div className="text">{track.title || track.lang || `Track ${track.id}`}</div>
+                                        {currentSubtitleId === track.id && (
+                                            <CheckIcon className="heroicons check-icon" />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Speed Submenu */}
+                            <div className={`menu-view ${currentMenuView === 'speed' ? 'active' : 'inactive-right'}`}>
+                                <div
+                                    className="menu-item back-button"
+                                    onClick={() => {
+                                        setMenuTransition('backward')
+                                        setCurrentMenuView('main')
+                                    }}
+                                >
+                                    <ArrowLeftIcon className="heroicons back-icon" />
+                                    <div className="text">Speed</div>
+                                </div>
+                                <div className="menu-divider"></div>
+                                {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map(speedValue => (
+                                    <div
+                                        key={speedValue}
+                                        className={`menu-item ${speed === speedValue ? 'selected' : ''}`}
+                                        onClick={() => handleSpeedChange(speedValue)}
+                                    >
+                                        <div className="text">{speedValue}x</div>
+                                        {speed === speedValue && <CheckIcon className="heroicons check-icon" />}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Statistics Submenu */}
+                            <div
+                                className={`menu-view ${
+                                    currentMenuView === 'statistics' ? 'active' : 'inactive-right'
+                                }`}
+                            >
+                                <div
+                                    className="menu-item back-button"
+                                    onClick={() => {
+                                        setMenuTransition('backward')
+                                        setCurrentMenuView('main')
+                                    }}
+                                >
+                                    <ArrowLeftIcon className="heroicons back-icon" />
+                                    <div className="text">Statistics</div>
+                                </div>
+                                <div className="menu-divider"></div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Resolution</div>
+                                    <div className="menu-item-value">1920x1080</div>
+                                </div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Bitrate</div>
+                                    <div className="menu-item-value">5.2 Mbps</div>
+                                </div>
+                                <div className="menu-item stats-item">
+                                    <div className="text">Codec</div>
+                                    <div className="menu-item-value">H.264</div>
+                                </div>
                             </div>
                         </div>
                     </div>
