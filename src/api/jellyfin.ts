@@ -92,7 +92,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const api = jellyfin.createApi(serverUrl, token)
 
-    const getAllLibraries = async (
+    const getMovies = async (
         startIndex = 0,
         limit = 40,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
@@ -105,9 +105,100 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             limit,
             sortBy,
             sortOrder,
-            recursive: true, // false
-            includeItemTypes: [BaseItemKind.Movie], // BaseItemKind.CollectionFolder
+            recursive: true,
+            includeItemTypes: [BaseItemKind.Movie],
             fields: ['Trickplay'],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
+    const getShows = async (
+        startIndex = 0,
+        limit = 40,
+        sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
+        sortOrder: SortOrder[] = [SortOrder.Descending]
+    ) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            startIndex,
+            limit,
+            sortBy,
+            sortOrder,
+            recursive: true,
+            includeItemTypes: [BaseItemKind.Series],
+            fields: ['Trickplay'],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
+    const getCollections = async (
+        startIndex = 0,
+        limit = 40,
+        sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
+        sortOrder: SortOrder[] = [SortOrder.Descending]
+    ) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            startIndex,
+            limit,
+            sortBy,
+            sortOrder,
+            recursive: true,
+            includeItemTypes: [BaseItemKind.BoxSet],
+            fields: ['Trickplay'],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
+    const getFavorites = async (
+        startIndex = 0,
+        limit = 40,
+        sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
+        sortOrder: SortOrder[] = [SortOrder.Descending]
+    ) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            startIndex,
+            limit,
+            sortBy,
+            sortOrder,
+            recursive: true,
+            filters: [ItemFilter.IsFavorite],
+            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Episode],
+            fields: ['Trickplay'],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
+    const getRecentlyPlayed = async (limit = 40) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getResumeItems({
+            userId,
+            limit,
+            fields: ['Trickplay'],
+            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Episode],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
+    const getRecentlyAdded = async (limit = 40) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            limit,
+            sortBy: [ItemSortBy.DateCreated],
+            sortOrder: [SortOrder.Descending],
+            recursive: true,
+            fields: ['Trickplay'],
+            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Episode],
         })
 
         return await parseItemDtos(response.data.Items)
@@ -282,7 +373,12 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     return {
         loginToJellyfin,
-        getAllLibraries,
+        getMovies,
+        getShows,
+        getCollections,
+        getFavorites,
+        getRecentlyPlayed,
+        getRecentlyAdded,
         fetchUserInfo,
         fetchClientIp,
         measureLatency,

@@ -2,7 +2,7 @@ import { InfiniteData } from '@tanstack/react-query'
 import { MediaItem } from '../api/jellyfin'
 import { isMediaItem } from '../hooks/usePatchQueries'
 
-export const getAllTracks = (
+export const getAllItems = (
     data: InfiniteData<MediaItem[] | undefined, unknown> | undefined,
     allowDuplicates = false
 ) => {

@@ -19,10 +19,13 @@ import { useSidenavContext } from './context/SidenavContext/SidenavContext'
 import { SidenavContextProvider } from './context/SidenavContext/SidenavContextProvider'
 import { ThemeContextProvider } from './context/ThemeContext/ThemeContextProvider'
 import { useDocumentTitle } from './hooks/useDocumentTitle'
+import { Collections } from './pages/Collections'
+import { Favorites } from './pages/Favorites'
 import { Home } from './pages/Home'
-import { Libraries } from './pages/Libraries'
 import { Login } from './pages/Login'
+import { Movies } from './pages/Movies'
 import { Settings } from './pages/Settings'
+import { Shows } from './pages/Shows'
 import { persister, queryClient } from './queryClient'
 import { VideoPlayer } from './VideoPlayer'
 
@@ -195,7 +198,10 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                                     <Routes>
                                         <Route path="/" element={<Main content={Home}></Main>} />
                                         <Route path="/settings" element={<Main content={memoSettings} />} />
-                                        <Route path="/libraries" element={<Main content={Libraries} />} />
+                                        <Route path="/movies" element={<Main content={Movies} />} />
+                                        <Route path="/shows" element={<Main content={Shows} />} />
+                                        <Route path="/collections" element={<Main content={Collections} />} />
+                                        <Route path="/favorites" element={<Main content={Favorites} />} />
                                         <Route path="*" element={<Navigate to="/" />} />
                                     </Routes>
                                 </>

@@ -20,7 +20,7 @@ export const MediaList = ({
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
-    type: 'movie' | 'album' | 'artist' | 'playlist' | 'genre'
+    type: 'movie' | 'genre' | 'series'
     loadMore?: () => void
     disableActions?: boolean
     removeButton?: (item: MediaItem) => ReactNode
@@ -75,13 +75,9 @@ export const MediaList = ({
         return (
             <div className="empty">
                 {type === 'movie'
-                    ? 'No tracks were found'
-                    : type === 'album'
-                    ? 'No albums were found'
-                    : type === 'artist'
-                    ? 'No artists were found'
-                    : type === 'playlist'
-                    ? 'No playlists were found'
+                    ? 'No movies were found'
+                    : type === 'series'
+                    ? 'No shows were found'
                     : 'No genres were found'}
             </div>
         )

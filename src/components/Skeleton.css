@@ -23,26 +23,6 @@
     border-radius: 6px;
 }
 
-/* Playlist thumbnail */
-.skeleton-loading > .skeleton-effect.thumbnail.playlist {
-    width: 40px;
-    height: 40px;
-}
-
-/* Artist thumbnail */
-.skeleton-loading > .skeleton-effect.thumbnail.artist {
-    width: 36px;
-    height: 36px;
-    border-radius: 20px;
-}
-
-/* Genre thumbnail */
-.skeleton-loading > .skeleton-effect.thumbnail.genre {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-}
-
 .skeleton-loading > .skeleton-details {
     flex: 1;
     display: flex;
@@ -56,59 +36,6 @@
 }
 
 .skeleton-loading > .skeleton-details > .skeleton-effect.artist {
-    height: 14px;
-    border-radius: 4px;
-}
-
-/* Albums */
-.skeleton-loading > .skeleton-details > .skeleton-effect.album.title {
-    width: 50%;
-}
-
-.skeleton-loading > .skeleton-details > .skeleton-effect.album.artist {
-    width: 20%;
-}
-
-/* Artists */
-.skeleton-loading > .skeleton-details > .skeleton-effect.artist.title {
-    width: 35%;
-    margin-bottom: 0;
-}
-
-/* Genres */
-.skeleton-loading > .skeleton-details > .skeleton-effect.genre.title {
-    width: 35%;
-    margin-bottom: 0;
-}
-
-/* Tracks */
-.skeleton-loading > .skeleton-details > .skeleton-effect.track.title {
-    width: 30%;
-}
-
-.skeleton-loading > .skeleton-details > .skeleton-effect.track.artist {
-    width: 45%;
-}
-
-/* Playlists */
-.skeleton-loading > .skeleton-details > .skeleton-effect.playlist.title {
-    width: 50%;
-}
-
-.skeleton-loading > .skeleton-details > .skeleton-effect.playlist.artist {
-    width: 25%;
-}
-
-.skeleton-loading > .skeleton-indicators {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 12px;
-    margin-bottom: 24px;
-}
-
-.skeleton-loading > .skeleton-indicators > .skeleton-effect.duration {
-    width: 40px;
     height: 14px;
     border-radius: 4px;
 }

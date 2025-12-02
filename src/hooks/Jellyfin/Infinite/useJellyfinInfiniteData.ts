@@ -1,7 +1,7 @@
 import { QueryFunction, useInfiniteQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
 import { ApiError, MediaItem } from '../../../api/jellyfin'
-import { getAllTracks } from '../../../utils/getAllTracks'
+import { getAllItems } from '../../../utils/getAllItems'
 
 export type IJellyfinInfiniteProps = Parameters<typeof useJellyfinInfiniteData>[0]
 
@@ -44,12 +44,12 @@ export const useJellyfinInfiniteData = ({
     }, [error])
 
     const allTracks = useMemo(() => {
-        return getAllTracks(data, allowDuplicates)
+        return getAllItems(data, allowDuplicates)
     }, [data, allowDuplicates])
 
     const loadMore = useCallback(async () => {
         if (hasNextPage && !isFetchingNextPage) {
-            return getAllTracks((await fetchNextPage()).data)
+            return getAllItems((await fetchNextPage()).data)
         }
     }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 

@@ -680,3 +680,28 @@ body.lockscroll {
         background-color: var(--font-color);
     }
 }
+
+/* Home Page Styles */
+.home-page {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.home-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.home-section .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--font-color);
+    margin: 0;
+}
+
+.home-section .media-list {
+    padding: 0;
+}
