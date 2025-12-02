@@ -1,4 +1,3 @@
-import { PlayCircleIcon } from '@heroicons/react/20/solid'
 import { HeartFillIcon } from '@primer/octicons-react'
 import { ReactNode } from 'react'
 import { MediaItem } from '../api/jellyfin'
@@ -44,16 +43,10 @@ export const MediaList = ({
                 className={`media-item movie-item ${className || ''}`}
                 ref={el => setRowRefs(index, el)}
                 onClick={() => playTrack(item)}
-                style={{ cursor: 'pointer' }}
             >
-                <Squircle width={153} height={230} cornerRadius={8} className="media-portrait">
-                    <JellyImg item={item} type={'Primary'} width={153} height={230} />
+                <Squircle width={152} height={228} cornerRadius={8} className="media-portrait">
+                    <JellyImg item={item} type={'Primary'} width={152} height={228} />
                     <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
-                    <div className="overlay">
-                        <div className="play">
-                            <PlayCircleIcon className="heroicons" />
-                        </div>
-                    </div>
                 </Squircle>
                 <div className="media-details">
                     <span className="name" title={item.Name}>

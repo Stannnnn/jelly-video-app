@@ -137,12 +137,12 @@ export const VideoPlayer = () => {
                 <div className="video-title">{currentTrack?.Name || 'Unknown Title'} (1956)</div>
             </div>
 
-            <div className="video-play-icon" onClick={handleContainerClick}>
+            <div className="video-play-icon noSelect" onClick={handleContainerClick}>
                 <PlayCircleIcon className="heroicons" />
             </div>
 
             <div
-                className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}
+                className={`video-controls noSelect ${shouldShowControls ? 'visible' : 'hidden'}`}
                 onMouseEnter={() => setIsHoveringControls(true)}
                 onMouseLeave={() => setIsHoveringControls(false)}
             >
@@ -250,6 +250,7 @@ export const VideoPlayer = () => {
                             title="Settings"
                         >
                             <Cog8ToothIcon className="heroicons" />
+                            <div className="quality-label">HD {/* 4K/HD/SD */}</div>
                         </button>
                         <div className="menu-container">
                             {subtitleTracks.length > 0 && (

@@ -483,7 +483,7 @@ body.lockscroll {
 .main > .main_content {
     display: flex;
     flex-direction: column;
-    margin: 16px 20px;
+    margin: 20px;
 }
 
 .main > .main_content > .error {

@@ -64,6 +64,23 @@ export const Sidenav = (props: { username: string }) => {
                     <NavLink to="/" onClick={closeSidenav} className="logo"></NavLink>
                 </div>
                 <nav className="sidenav_content">
+                    <div className="search">
+                        <div className="search_header">
+                            <div className={`input_container ${searchQuery ? 'active' : ''}`}>
+                                <div className="search-icon noSelect">
+                                    <SearchIcon width={13} height={13} />
+                                </div>
+                                <input
+                                    type="search"
+                                    placeholder="Search"
+                                    value={searchQuery}
+                                    onChange={handleSearchChange}
+                                    ref={searchInputRef}
+                                />
+                            </div>
+                        </div>
+                        <div className="search_results">{searchQuery && <></>}</div>
+                    </div>
                     <ul className="links noSelect">
                         <li>
                             <NavLink to="/" onClick={closeSidenav}>
@@ -86,24 +103,6 @@ export const Sidenav = (props: { username: string }) => {
                             </NavLink>
                         </li>
                     </ul>
-
-                    <div className="search">
-                        <div className="search_header">
-                            <div className={`input_container ${searchQuery ? 'active' : ''}`}>
-                                <div className="search-icon noSelect">
-                                    <SearchIcon width={13} height={13} />
-                                </div>
-                                <input
-                                    type="search"
-                                    placeholder="Search"
-                                    value={searchQuery}
-                                    onChange={handleSearchChange}
-                                    ref={searchInputRef}
-                                />
-                            </div>
-                        </div>
-                        <div className="search_results">{searchQuery && <></>}</div>
-                    </div>
                 </nav>
                 <div className="sidenav_footer">
                     <div className="account">

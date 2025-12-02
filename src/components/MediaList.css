@@ -6,24 +6,22 @@
 
 .media-list .media-item {
     position: relative;
-    /* temp */
-    max-width: 153px;
-    margin-bottom: 24px;
+    max-width: 152px;
+    cursor: pointer;
 }
 
 .media-list .media-item > .media-portrait {
     position: relative;
-    flex-shrink: 0;
-    width: 153px;
-    height: 230px;
-    margin-bottom: 6px;
+    width: 152px;
+    height: 228px;
+    margin-bottom: 8px;
     border-radius: 8px;
 }
 
 .media-list .media-item > .media-portrait > .thumbnail {
     display: block;
-    width: 153px;
-    height: 230px;
+    width: 152px;
+    height: 228px;
     object-fit: cover;
     border-radius: 8px;
     background-color: var(--bg-color-secondary);
@@ -82,6 +80,7 @@
     color: var(--brand-color);
 }
 
+/*
 .media-list .media-item > .media-portrait > .overlay {
     position: absolute;
     opacity: 0;
@@ -126,6 +125,7 @@
     width: 40px;
     height: 40px;
 }
+*/
 
 .media-list .media-item > .media-details {
     display: flex;
