@@ -10,7 +10,7 @@ import {
     SpeakerXMarkIcon,
 } from '@heroicons/react/20/solid'
 import { ChevronRightIcon } from '@primer/octicons-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
 import './VideoPlayer.css'
@@ -57,6 +57,21 @@ export const VideoPlayer = () => {
         tilesPerRow: number
     } | null>(null)
     const progressBarRef = useRef<HTMLInputElement>(null)
+    const [isHoveringControls, setIsHoveringControls] = useState(false)
+
+    const shouldShowControls = showControls || isPaused || isHoveringControls
+
+    // Hide controls when window loses focus (disabled in dev so F12 debugging doesn't hide controls)
+    useEffect(() => {
+        if (import.meta.env.DEV) return
+
+        const handleBlur = () => {
+            setIsHoveringControls(false)
+        }
+
+        window.addEventListener('blur', handleBlur)
+        return () => window.removeEventListener('blur', handleBlur)
+    }, [])
 
     const handleContainerClick = () => {
         if (isPaused && videoLoaded) {
@@ -106,7 +121,11 @@ export const VideoPlayer = () => {
 
     return (
         <div className={isPaused ? 'video-container' : 'video-container playing'} onMouseMove={handleMouseMove}>
-            <div className={`video-header ${showControls || isPaused ? 'visible' : 'hidden'}`}>
+            <div
+                className={`video-header ${shouldShowControls ? 'visible' : 'hidden'}`}
+                onMouseEnter={() => setIsHoveringControls(true)}
+                onMouseLeave={() => setIsHoveringControls(false)}
+            >
                 <button className="return" title="Return" onClick={clearCurrentTrack}>
                     <ArrowLeftIcon className="heroicons" />
                 </button>
@@ -117,7 +136,11 @@ export const VideoPlayer = () => {
                 <PlayCircleIcon className="heroicons" />
             </div>
 
-            <div className={`video-controls ${showControls || isPaused ? 'visible' : 'hidden'}`}>
+            <div
+                className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}
+                onMouseEnter={() => setIsHoveringControls(true)}
+                onMouseLeave={() => setIsHoveringControls(false)}
+            >
                 <div className="playback">
                     <button
                         onClick={() => {
