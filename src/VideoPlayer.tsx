@@ -107,12 +107,6 @@ export const VideoPlayer = () => {
             onMouseMove={handleMouseMove}
             onClick={handleContainerClick}
         >
-            {!videoLoaded && (
-                <div className="no-video-overlay">
-                    <div className="no-video-message">Select a video from the media list to start playing</div>
-                </div>
-            )}
-
             <div className={`video-header ${showControls || isPaused ? 'visible' : 'hidden'}`}>
                 <button className="return" title="Return" onClick={clearCurrentTrack}>
                     <ArrowLeftIcon className="heroicons" />
@@ -152,42 +146,37 @@ export const VideoPlayer = () => {
                             step="0.1"
                             className="progress-bar"
                         />
-                        {previewTime !== null && (
-                            <div className="progress-preview" style={{ left: `${previewPosition}%` }}>
-                                <div className="preview-thumbnail">
-                                    {previewImageUrl && !previewImageError && trickplayTile ? (
-                                        <div
-                                            style={{
-                                                width: `${trickplayTile.tileWidth}px`,
-                                                height: `${trickplayTile.tileHeight}px`,
-                                                overflow: 'hidden',
-                                            }}
-                                        >
-                                            <img
-                                                src={previewImageUrl}
-                                                alt="Preview"
-                                                onError={() => setPreviewImageError(true)}
-                                                loading="eager"
-                                                style={{
-                                                    transform: `translate(-${
-                                                        trickplayTile.col * trickplayTile.tileWidth
-                                                    }px, 0)`,
-                                                    display: 'block',
-                                                }}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="preview-placeholder">Preview</div>
-                                    )}
-                                </div>
-                                <div className="preview-time">{formatTime(previewTime)}</div>
-                            </div>
-                        )}
                         <div
-                            className="progress-indicator controls-tooltip"
-                            style={{ left: `${(timePos / (duration || 1)) * 100}%` }}
+                            className={previewTime === null ? 'progress-preview' : 'progress-preview active'}
+                            style={{ left: `${previewPosition}%` }}
                         >
-                            {formatTime(timePos)}
+                            <div className="preview-thumbnail">
+                                {previewImageUrl && !previewImageError && trickplayTile ? (
+                                    <div
+                                        style={{
+                                            width: `${trickplayTile.tileWidth}px`,
+                                            height: `${trickplayTile.tileHeight}px`,
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <img
+                                            src={previewImageUrl}
+                                            alt="Preview"
+                                            onError={() => setPreviewImageError(true)}
+                                            loading="eager"
+                                            style={{
+                                                transform: `translate(-${
+                                                    trickplayTile.col * trickplayTile.tileWidth
+                                                }px, 0)`,
+                                                display: 'block',
+                                            }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="preview-placeholder">Preview</div>
+                                )}
+                            </div>
+                            <div className="preview-time">{previewTime !== null ? formatTime(previewTime) : ''}</div>
                         </div>
                     </div>
                     <span className="time">{formatTime(duration)}</span>

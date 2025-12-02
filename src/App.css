@@ -157,6 +157,7 @@ svg {
 .heroicons {
     width: 20px;
     height: 20px;
+    fill: #ffffff;
 }
 
 /* CSS Variables */
@@ -194,20 +195,13 @@ html.light {
     --btn-brand-color-hover: #9470e9;
     --btn-brand-color-disabled: #caa5f0;
     --success-color: #2faf25; /* Not used */
-    --overlay-bg: rgb(0 0 0 / 45%);
+    --overlay-bg: rgb(0 0 0 / 25%);
     --bg-color-dimmer: rgba(22, 11, 37, 0.4);
     --volume-dot-color: #bbbbbb;
     --volume-dot-color-active: #a1a1a1;
     --scrollbar-color: #a8a8a8;
     --scrollbar-color-hover: #8a8a8a;
     --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.04);
-    --playing-artwork-opacity: 0.16;
-    --playing-bg-color: rgba(0, 0, 0, 0.04);
-    --playing-bg-color-secondary: rgba(0, 0, 0, 0.06);
-    --playing-bg-color-tertiary: rgba(0, 0, 0, 0.12);
-    --playing-bg-color-quaternary: rgba(0, 0, 0, 0.18);
-    --playing-border-color: rgba(0, 0, 0, 0.1);
-    --playing-font-color: rgba(0, 0, 0, 0.5);
 }
 
 html.dark {
@@ -236,20 +230,13 @@ html.dark {
     --btn-brand-color-hover: #9e53f3;
     --btn-brand-color-disabled: #b487e7;
     --success-color: #2faf25; /* Not used */
-    --overlay-bg: rgb(0 0 0 / 65%);
+    --overlay-bg: rgb(0 0 0 / 40%);
     --bg-color-dimmer: rgba(7, 3, 12, 0.6);
     --volume-dot-color: #87868a;
     --volume-dot-color-active: #c4c1c7;
     --scrollbar-color: #78767c;
     --scrollbar-color-hover: #aba9af;
     --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-    --playing-artwork-opacity: 0.08;
-    --playing-bg-color: rgba(255, 255, 255, 0.04);
-    --playing-bg-color-secondary: rgba(255, 255, 255, 0.08);
-    --playing-bg-color-tertiary: rgba(255, 255, 255, 0.16);
-    --playing-bg-color-quaternary: rgba(255, 255, 255, 0.32);
-    --playing-border-color: rgba(255, 255, 255, 0.06);
-    --playing-font-color: rgba(255, 255, 255, 0.4);
 }
 
 html,
@@ -293,12 +280,11 @@ body.lockscroll {
     display: flex;
     width: 100%;
     min-height: 100%;
-    fill: var(--font-color);
-    color: var(--font-color);
-    /*background-color: var(--bg-color);*/
 }
 
 .video-app:has(.login) {
+    fill: var(--font-color);
+    color: var(--font-color);
     background-color: var(--bg-color-secondary);
 }
 
@@ -309,6 +295,9 @@ body.lockscroll {
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
+    fill: var(--font-color);
+    color: var(--font-color);
+    background-color: var(--bg-color);
 }
 
 /* Login/Portal Page */
@@ -444,7 +433,7 @@ body.lockscroll {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: 12px;
     max-height: 53px;
     background-color: var(--bg-color);
     border-bottom: 1px solid var(--border-color);

@@ -1,6 +1,6 @@
 import './Skeleton.css'
 
-export const Skeleton = ({ type = 'album' }: { type?: 'song' | 'album' | 'artist' | 'playlist' | 'genre' }) => (
+export const Skeleton = ({ type = 'album' }: { type?: 'movie' | 'album' | 'artist' | 'playlist' | 'genre' }) => (
     <div className="skeleton-loading">
         <div
             className={`skeleton-effect thumbnail ${
@@ -19,7 +19,7 @@ export const Skeleton = ({ type = 'album' }: { type?: 'song' | 'album' | 'artist
                     <div className="skeleton-effect artist title"></div>
                 </>
             )}
-            {type === 'song' && (
+            {type === 'movie' && (
                 <>
                     <div className="skeleton-effect track title"></div>
                     <div className="skeleton-effect track artist"></div>

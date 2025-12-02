@@ -6,6 +6,7 @@ import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-d
 import './App.css'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Main } from './components/Main'
+import './components/MediaList.css'
 import { Sidenav } from './components/Sidenav'
 import { AudioStorageContextProvider } from './context/AudioStorageContext/AudioStorageContextProvider'
 import { HistoryContextProvider } from './context/HistoryContext/HistoryContextProvider'
@@ -179,11 +180,10 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
             <Route
                 path="*"
                 element={
-                    <div className="mainLayout">
+                    <>
                         {playback.currentTrack && <VideoPlayer />}
-
-                        <div className={`interface` + (false ? ' touchBlocked' : '')}>
-                            {!playback.currentTrack && (
+                        {!playback.currentTrack && (
+                            <div className={`interface` + (false ? ' touchBlocked' : '')}>
                                 <>
                                     <div
                                         className={showSidenav || false ? 'dimmer active noSelect' : 'dimmer noSelect'}
@@ -199,9 +199,9 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                                         <Route path="*" element={<Navigate to="/" />} />
                                     </Routes>
                                 </>
-                            )}
-                        </div>
-                    </div>
+                            </div>
+                        )}
+                    </>
                 }
             />
         </Routes>

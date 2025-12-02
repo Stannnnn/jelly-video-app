@@ -1,3 +1,4 @@
+import { PlayCircleIcon } from '@heroicons/react/20/solid'
 import { HeartFillIcon } from '@primer/octicons-react'
 import { ReactNode } from 'react'
 import { MediaItem } from '../api/jellyfin'
@@ -7,7 +8,6 @@ import { JellyImg } from './JellyImg'
 import { Loader } from './Loader'
 import { Skeleton } from './Skeleton'
 import { Squircle } from './Squircle'
-import { PlaystateAnimationMedalist } from './SvgIcons'
 import { VirtuosoWindow } from './VirtuosoWindow'
 
 export const MediaList = ({
@@ -21,7 +21,7 @@ export const MediaList = ({
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
-    type: 'song' | 'album' | 'artist' | 'playlist' | 'genre'
+    type: 'movie' | 'album' | 'artist' | 'playlist' | 'genre'
     loadMore?: () => void
     disableActions?: boolean
     removeButton?: (item: MediaItem) => ReactNode
@@ -33,48 +33,43 @@ export const MediaList = ({
     const renderItem = (index: number, item: MediaItem | { isPlaceholder: true } | undefined) => {
         if (!item || 'isPlaceholder' in item) {
             return (
-                <div className={`media-item song-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
-                    <Skeleton type="song" />
+                <div className={`media-item movie-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
+                    <Skeleton type="movie" />
                 </div>
             )
         }
 
         return (
             <div
-                className={`media-item song-item ${className || ''}`}
+                className={`media-item movie-item ${className || ''}`}
                 ref={el => setRowRefs(index, el)}
                 onClick={() => playTrack(item)}
                 style={{ cursor: 'pointer' }}
             >
-                <Squircle width={46} height={46} cornerRadius={6} className="media-state">
-                    <JellyImg item={item} type={'Primary'} width={46} height={46} />
-
+                <Squircle width={153} height={230} cornerRadius={8} className="media-portrait">
+                    <JellyImg item={item} type={'Primary'} width={153} height={230} />
+                    <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                     <div className="overlay">
-                        <div className="container">
-                            <div className="play">
-                                <div className="play-icon"></div>
-                            </div>
-                            <div className="pause">
-                                <div className="pause-icon"></div>
-                            </div>
-                        </div>
-                        <div className="play-state-animation">
-                            <PlaystateAnimationMedalist width={28} height={20} className="sound-bars" />
+                        <div className="play">
+                            <PlayCircleIcon className="heroicons" />
                         </div>
                     </div>
                 </Squircle>
                 <div className="media-details">
-                    <span className="song-name">{item.Name}</span>
-                    <div className="container">
-                        <div className="artist">
-                            {item.Artists && item.Artists.length > 0 ? item.Artists.join(', ') : 'Unknown Artist'}
-                        </div>
-                        <div className="divider"></div>
-                        <div className="album">{item.Album || 'Unknown Album'}</div>
+                    <span className="name" title={item.Name}>
+                        {item.Name}
+                    </span>
+                    <div
+                        className="date"
+                        title={
+                            item.PremiereDate && !isNaN(Date.parse(item.PremiereDate))
+                                ? new Date(item.PremiereDate).getFullYear().toString()
+                                : ''
+                        }
+                    >
+                        {item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : ''}
                     </div>
                 </div>
-
-                <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
             </div>
         )
     }
@@ -86,7 +81,7 @@ export const MediaList = ({
     if (items.length === 0 && !isLoading) {
         return (
             <div className="empty">
-                {type === 'song'
+                {type === 'movie'
                     ? 'No tracks were found'
                     : type === 'album'
                     ? 'No albums were found'

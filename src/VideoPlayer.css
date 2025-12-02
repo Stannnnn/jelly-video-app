@@ -16,30 +16,6 @@
     cursor: pointer;
 }
 
-/* temp */
-.no-video-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    z-index: 1000;
-}
-
-.open-file-btn {
-    background: blue;
-    border: none;
-    border-radius: 12px;
-    padding: 20px 40px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-}
-
 .video-container > .video-header {
     position: absolute;
     z-index: 1;
@@ -51,8 +27,8 @@
     display: flex;
     align-items: center;
     transform: translateY(0);
-    transition: opacity 0.3s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.33, 0, 0.2, 1),
-        transform 0.3s cubic-bezier(0.33, 0, 0.2, 1);
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
 }
 
@@ -71,6 +47,7 @@
     margin-right: 12px;
     border-radius: 20px;
     transition: background-color 0.2s ease-in;
+    background-color: transparent;
 }
 
 .video-container > .video-header > .return:hover {
@@ -94,7 +71,7 @@
     justify-content: center;
     user-select: none;
     pointer-events: none;
-    transition: opacity 0.3s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.33, 0, 0.2, 1);
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .video-container.playing > .video-play-icon {
@@ -106,7 +83,8 @@
     width: 54px;
     height: 54px;
     transform: scale(1.2);
-    transition: transform 0.3s cubic-bezier(0.33, 0, 0.2, 1);
+    filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.4));
+    transition: transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .video-container.playing > .video-play-icon > .heroicons {
@@ -125,8 +103,8 @@
     align-items: center;
     gap: 10px;
     transform: translateY(0);
-    transition: opacity 0.3s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.33, 0, 0.2, 1),
-        transform 0.3s cubic-bezier(0.33, 0, 0.2, 1);
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
     background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
 }
 
@@ -146,7 +124,7 @@
     position: absolute;
     z-index: 3;
     left: 50%;
-    bottom: 10px;
+    bottom: 12px;
     width: fit-content;
     padding: 3px 5px;
     border-radius: 4px;
@@ -156,8 +134,8 @@
     opacity: 0;
     visibility: hidden;
     transform: translateX(-50%) translateY(0);
-    transition: opacity 0.3s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.33, 0, 0.2, 1),
-        transform 0.3s cubic-bezier(0.33, 0, 0.2, 1);
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .video-container > .video-controls *:hover > .controls-tooltip {
@@ -213,10 +191,6 @@
     transition: height 0.2s ease;
 }
 
-.video-container > .video-controls > .progress > .progress-container:hover > .progress-bar {
-    height: 8px;
-}
-
 .video-container > .video-controls > .progress > .progress-container > .progress-bar::-webkit-slider-thumb {
     cursor: pointer;
     width: 13px;
@@ -249,41 +223,35 @@
     position: absolute;
     bottom: 20px;
     transform: translateX(-50%);
+    user-select: none;
+    pointer-events: none;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    pointer-events: none;
-    z-index: 10;
+    gap: 10px;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
-.video-container > .video-controls > .progress > .progress-container:hover > .progress-preview {
+.video-container > .video-controls > .progress > .progress-container > .progress-preview.active {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(-5px);
-}
-
-/* Hide default tooltip when preview is visible */
-.video-container > .video-controls > .progress > .progress-container:hover > .progress-indicator {
-    opacity: 0;
-    visibility: hidden;
+    transform: translateX(-50%) translateY(-10px);
 }
 
 .video-container > .video-controls > .progress > .progress-container > .progress-preview > .preview-thumbnail {
-    width: 180px;
-    height: 101px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, rgba(100, 100, 150, 0.8) 0%, rgba(60, 60, 100, 0.8) 100%);
+    width: 320px;
+    height: 180px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(10px);
     overflow: hidden;
+    background-color: #000000;
+    border: 1px solid rgba(80, 80, 80, 0.4);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .video-container > .video-controls > .progress > .progress-container > .progress-preview > .preview-thumbnail > img {
@@ -307,14 +275,12 @@
 }
 
 .video-container > .video-controls > .progress > .progress-container > .progress-preview > .preview-time {
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 4px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: #ffffff;
-    white-space: nowrap;
+    font-size: 0.725rem;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    padding: 3px 5px;
+    border-radius: 4px;
+    background-color: rgba(46, 46, 46, 0.8);
 }
 
 .video-container > .video-controls > .volume {
@@ -381,7 +347,7 @@
 }
 
 .video-container > .video-controls > .actions > .video-menu > .menu-toggle > svg {
-    transition: transform 0.3s cubic-bezier(0.33, 0, 0.2, 1);
+    transition: transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .video-container > .video-controls > .actions > .video-menu > .menu-toggle.active > svg {
@@ -402,8 +368,8 @@
     background-color: rgba(46, 46, 46, 0.8);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.33, 0, 0.2, 1),
-        transform 0.3s cubic-bezier(0.33, 0, 0.2, 1);
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .video-container > .video-controls > .actions > .video-menu > .menu-toggle.active ~ .menu-container {
