@@ -62,29 +62,26 @@ export const MainContent = ({
                                     <option value="Runtime">Runtime</option>
                                     <option value="Random">Random</option>
                                     <option value="Name">Name</option>
-                                    <option value="Inherit">Inherit</option>
                                 </select>
                                 <div className="icon">
                                     <ChevronDownIcon size={12} />
                                 </div>
                             </div>
 
-                            {filter.sort !== 'Inherit' && (
-                                <div
-                                    className="sort"
-                                    onClick={() => {
-                                        setFilter(c => ({
-                                            ...c,
-                                            order: c.order === 'Ascending' ? 'Descending' : 'Ascending',
-                                        }))
-                                    }}
-                                    title={filter.order === 'Ascending' ? 'Ascending' : 'Descending'}
-                                >
-                                    <div className={'icon' + (filter.order === 'Ascending' ? ' active' : '')}>
-                                        <SortingIcon width={12} height={12} />
-                                    </div>
+                            <div
+                                className="sort"
+                                onClick={() => {
+                                    setFilter(c => ({
+                                        ...c,
+                                        order: c.order === 'Ascending' ? 'Descending' : 'Ascending',
+                                    }))
+                                }}
+                                title={filter.order === 'Ascending' ? 'Ascending' : 'Descending'}
+                            >
+                                <div className={'icon' + (filter.order === 'Ascending' ? ' active' : '')}>
+                                    <SortingIcon width={12} height={12} />
                                 </div>
-                            )}
+                            </div>
                         </div>
                     )}
 
