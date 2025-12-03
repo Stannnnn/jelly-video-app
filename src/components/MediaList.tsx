@@ -1,5 +1,6 @@
 import { HeartFillIcon } from '@primer/octicons-react'
 import { ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { useDisplayItems } from '../hooks/useDisplayItems'
@@ -28,6 +29,25 @@ export const MediaList = ({
 }) => {
     const { displayItems, setRowRefs } = useDisplayItems(items, isLoading)
     const { playTrack } = usePlaybackContext()
+    const navigate = useNavigate()
+
+    const handleItemClick = (item: MediaItem) => {
+        // Determine the route based on item type
+        const itemType = item.Type?.toLowerCase()
+
+        if (itemType === 'movie') {
+            navigate(`/movie/${item.Id}`)
+        } else if (itemType === 'series') {
+            navigate(`/series/${item.Id}`)
+        } else if (itemType === 'episode') {
+            navigate(`/episode/${item.Id}`)
+        } else if (itemType === 'boxset') {
+            navigate(`/collection/${item.Id}`)
+        } else {
+            // Fallback to play track for other types
+            playTrack(item)
+        }
+    }
 
     const renderItem = (index: number, item: MediaItem | { isPlaceholder: true } | undefined) => {
         if (!item || 'isPlaceholder' in item) {
@@ -42,7 +62,7 @@ export const MediaList = ({
             <div
                 className={`media-item movie-item ${className || ''}`}
                 ref={el => setRowRefs(index, el)}
-                onClick={() => playTrack(item)}
+                onClick={() => handleItemClick(item)}
             >
                 <Squircle width={152} height={228} cornerRadius={8} className="media-portrait">
                     <JellyImg item={item} type={'Primary'} width={152} height={228} />

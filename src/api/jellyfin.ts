@@ -401,6 +401,67 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return r
     }
 
+    const getItemById = async (itemId: string) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            ids: [itemId],
+            fields: ['Trickplay'],
+        })
+
+        const items = await parseItemDtos(response.data.Items)
+        return items[0] || null
+    }
+
+    const getItemChildren = async (
+        parentId: string,
+        startIndex = 0,
+        limit = 40,
+        sortBy: ItemSortBy[] = [ItemSortBy.SortName],
+        sortOrder: SortOrder[] = [SortOrder.Ascending]
+    ) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            parentId,
+            startIndex,
+            limit,
+            sortBy,
+            sortOrder,
+            fields: ['Trickplay'],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
+    const getSeasons = async (seriesId: string) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            parentId: seriesId,
+            includeItemTypes: [BaseItemKind.Season],
+            sortBy: [ItemSortBy.SortName],
+            sortOrder: [SortOrder.Ascending],
+            fields: ['Trickplay'],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
+    const getEpisodes = async (seasonId: string) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            parentId: seasonId,
+            includeItemTypes: [BaseItemKind.Episode],
+            sortBy: [ItemSortBy.SortName],
+            sortOrder: [SortOrder.Ascending],
+            fields: ['Trickplay'],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
     return {
         loginToJellyfin,
         getMovies,
@@ -422,5 +483,9 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         getTrickplayUrl,
         addToFavorites,
         removeFromFavorites,
+        getItemById,
+        getItemChildren,
+        getSeasons,
+        getEpisodes,
     }
 }

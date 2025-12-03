@@ -19,13 +19,17 @@ import { useSidenavContext } from './context/SidenavContext/SidenavContext'
 import { SidenavContextProvider } from './context/SidenavContext/SidenavContextProvider'
 import { ThemeContextProvider } from './context/ThemeContext/ThemeContextProvider'
 import { useDocumentTitle } from './hooks/useDocumentTitle'
+import { CollectionPage } from './pages/CollectionPage'
 import { Collections } from './pages/Collections'
+import { EpisodePage } from './pages/EpisodePage'
 import { Favorites } from './pages/Favorites'
 import { Home } from './pages/Home'
 import { Login } from './pages/Login'
+import { MoviePage } from './pages/MoviePage'
 import { Movies } from './pages/Movies'
 import { RecentlyAdded } from './pages/RecentlyAdded'
 import { RecentlyPlayed } from './pages/RecentlyPlayed'
+import { SeriesPage } from './pages/SeriesPage'
 import { Settings } from './pages/Settings'
 import { Shows } from './pages/Shows'
 import { persister, queryClient } from './queryClient'
@@ -204,11 +208,15 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                                             path="/movies"
                                             element={<Main content={Movies} filterType={'movies'} />}
                                         />
+                                        <Route path="/movie/:id" element={<Main content={MoviePage} />} />
                                         <Route path="/shows" element={<Main content={Shows} filterType={'movies'} />} />
+                                        <Route path="/series/:id" element={<Main content={SeriesPage} />} />
+                                        <Route path="/episode/:id" element={<Main content={EpisodePage} />} />
                                         <Route
                                             path="/collections"
                                             element={<Main content={Collections} filterType={'movies'} />}
                                         />
+                                        <Route path="/collection/:id" element={<Main content={CollectionPage} />} />
                                         <Route
                                             path="/favorites"
                                             element={<Main content={Favorites} filterType={'favorites'} />}
