@@ -154,12 +154,6 @@ svg {
     display: block;
 }
 
-.heroicons {
-    width: 20px;
-    height: 20px;
-    fill: #ffffff;
-}
-
 /* CSS Variables */
 :root {
     --system-fonts: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
@@ -422,7 +416,7 @@ body.lockscroll {
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: calc(100% - 220px);
+    max-width: calc(100% - 210px);
     transition: filter 0.2s ease;
 }
 
@@ -478,28 +472,10 @@ body.lockscroll {
     align-items: center;
 }
 
-.page_title > .text {
+.main > .main_header > .primary > .container > .page_title > .text {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-}
-
-.main > .main_header > .primary > .container > .page_title > .page-icon {
-    margin-left: 6px;
-}
-
-.main > .main_header > .primary > .container > .page_title > .page-icon.playlist {
-    margin-left: 8px;
-    padding: 4px;
-    border-radius: 6px;
-    background-color: var(--bg-color-tertiary);
-}
-
-.main > .main_header > .primary > .container > .page_title > .page-icon.artist-tracks {
-    margin-left: 8px;
-    padding: 4px;
-    border-radius: 6px;
-    background-color: var(--bg-color-tertiary);
 }
 
 .main > .main_header > .secondary {
@@ -584,42 +560,6 @@ body.lockscroll {
     opacity: 0.4;
 }
 
-/* Filter styles - not currently used
-.filter {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: fit-content;
-    flex-shrink: 0;
-}
-
-.filter > select {
-    font-size: 0.725rem;
-    font-weight: 500;
-    color: var(--brand-color);
-    cursor: pointer;
-    padding: 6px 8px;
-    padding-right: 26px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-color);
-}
-
-.filter > .icon {
-    position: absolute;
-    right: 8px;
-    color: var(--brand-color);
-    user-select: none;
-    pointer-events: none;
-}
-
-.filter > select > option {
-    font-weight: 500;
-    color: var(--font-color);
-}
-
-*/
-
 .main > .main_header > .secondary > .sidenav_toggle {
     display: none;
 }
@@ -634,30 +574,22 @@ body.lockscroll {
     color: var(--font-color-error);
 }
 
-/* Playback area */
-.main > .main_footer > .playback {
-    position: relative;
+/* Home Page Styles */
+.home-page {
+    margin-top: -4px;
 }
 
-/* Progress bar */
-.main > .main_footer > .playback > .progress {
-    position: relative;
-    z-index: 1;
-    touch-action: none;
-    display: flex;
-    height: 12px;
-    margin-top: -5px;
-    transform: scaleY(0.6);
-    transform-origin: bottom;
-    transition: transform 0.12s ease-out;
+.home-page > .section {
+    margin-bottom: 60px;
 }
 
-.main > .main_footer > .playback > .progress:hover,
-.main > .main_footer > .playback > .progress:active {
-    transform: scaleY(1.2);
+.home-page > .section > .title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
 }
 
-/* Progress loading */
+/* Progress loading
 .main > .main_footer > .playback > .progress:has(input.loading)::after {
     content: '';
     position: absolute;
@@ -691,102 +623,18 @@ body.lockscroll {
         background-position: -100%;
     }
 }
-
-.main > .main_footer > .playback > .progress > input {
-    position: relative;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0);
-    --progress-width: 0%;
-    --buffered-width: 0%;
-    --transition-duration: 0s;
-}
-
-/* WebKit progress visuals */
-.main > .main_footer > .playback > .progress > input::-webkit-slider-runnable-track {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(var(--bg-color-quaternary), var(--bg-color-quaternary)) no-repeat 0 /
-            var(--progress-width) 100%,
-        linear-gradient(var(--bg-color-tertiary), var(--bg-color-tertiary)) no-repeat 0 / var(--buffered-width) 100%,
-        var(--bg-color-secondary);
-    transition: background-size var(--transition-duration) linear;
-}
-
-/* Firefox progress visuals */
-.main > .main_footer > .playback > .progress > input::-moz-range-track {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(var(--bg-color-quaternary), var(--bg-color-quaternary)) no-repeat 0 /
-            var(--progress-width) 100%,
-        linear-gradient(var(--bg-color-tertiary), var(--bg-color-tertiary)) no-repeat 0 / var(--buffered-width) 100%,
-        var(--bg-color-secondary);
-    transition: background-size var(--transition-duration) linear;
-}
-
-/* Hiding the input slider thumbs for different browsers */
-.main > .main_footer > .playback > .progress > input::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 0;
-    height: 0;
-}
-
-.main > .main_footer > .playback > .progress > input::-moz-range-thumb {
-    width: 0;
-    height: 0;
-    border: none;
-}
-
-.main > .main_footer > .playback > .progress > input::-ms-thumb {
-    width: 0;
-    height: 0;
-}
+*/
 
 /* Responsive */
-@media only screen and (max-width: 800px) {
-    body {
-        margin-right: unset !important;
-        width: 100%;
-    }
-
-    .interface {
-        border: none;
-    }
-}
-
-@media only screen and (max-width: 700px), (pointer: coarse) {
-    .dimmer {
-        display: block;
-        position: fixed;
-        z-index: 4;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: visible;
-        opacity: 0;
-        visibility: hidden;
-        background-color: var(--bg-color-dimmer);
-        transition: opacity 0.2s ease, visibility 0.2s ease;
-    }
-
-    .dimmer.active {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .dimmer.active ~ .main {
-        filter: blur(16px);
-    }
-}
-
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 980px) {
     body.lockscroll,
     body:has(.sidenav_wrapper.active) {
         overflow: hidden !important;
+    }
+
+    body {
+        margin-right: unset !important;
+        width: 100%;
     }
 
     .main {
@@ -831,40 +679,28 @@ body.lockscroll {
         border-radius: 2px;
         background-color: var(--font-color);
     }
-}
 
-@media only screen and (max-width: 480px), (pointer: coarse) {
-    .main > .main_header > .secondary > .sorting.links > .filter > select {
-        display: none;
-    }
-
-    .main > .main_header > .secondary > .sorting.links > .filter > .responsive-icon {
+    .dimmer {
         display: block;
-        padding: 6px;
+        position: fixed;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        opacity: 0;
+        visibility: hidden;
+        background-color: var(--bg-color-dimmer);
+        transition: opacity 0.2s ease, visibility 0.2s ease;
     }
-}
 
-/* Home Page Styles */
-.home-page {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-}
+    .dimmer.active {
+        opacity: 1;
+        visibility: visible;
+    }
 
-.home-section {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.home-section .section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--font-color);
-    margin: 0;
-}
-
-.home-section .media-list {
-    padding: 0;
+    .dimmer.active ~ .main {
+        filter: blur(16px);
+    }
 }

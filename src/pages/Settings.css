@@ -286,18 +286,3 @@
 .settings-page > .section .desc > .info {
     color: var(--font-color-tertiary);
 }
-
-/* Responsive */
-@media only screen and (max-width: 390px) {
-    .settings-page > .section.appearance > .container > .options.secondary {
-        gap: 10px;
-        border-radius: unset;
-        background-color: unset;
-    }
-
-    .settings-page > .section.appearance > .container > .options.secondary > .option {
-        border-radius: 10px;
-        border-right: unset;
-        background-color: var(--bg-color-secondary);
-    }
-}

@@ -16,16 +16,16 @@ export const Home = () => {
     return (
         <div className="home-page">
             {recentlyPlayed && recentlyPlayed.length > 0 && (
-                <section className="home-section">
-                    <h2 className="section-title">Continue Watching</h2>
+                <div className="section">
+                    <div className="title">Continue Watching</div>
                     <MediaList items={recentlyPlayed} isLoading={false} type="series" />
-                </section>
+                </div>
             )}
             {recentlyAdded && recentlyAdded.length > 0 && (
-                <section className="home-section">
-                    <h2 className="section-title">Recently Added</h2>
+                <div className="section">
+                    <div className="title">Recently Added</div>
                     <MediaList items={recentlyAdded} isLoading={false} type="series" />
-                </section>
+                </div>
             )}
         </div>
     )

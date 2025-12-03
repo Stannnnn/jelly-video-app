@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import type { VirtuosoGridProps } from 'react-virtuoso'
 import { VirtuosoGrid, VirtuosoGridHandle } from 'react-virtuoso'
 import { MediaItem } from '../api/jellyfin.ts'
-import './VirtuosoWindow.css'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type IVirtuosoProps = VirtuosoGridProps<MediaItem | { isPlaceholder: true }, any>

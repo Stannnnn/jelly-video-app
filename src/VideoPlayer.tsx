@@ -1,8 +1,4 @@
 import {
-    ArrowLeftIcon,
-    ArrowsPointingInIcon,
-    ArrowsPointingOutIcon,
-    CheckIcon,
     Cog8ToothIcon,
     PauseIcon,
     PlayCircleIcon,
@@ -10,7 +6,14 @@ import {
     SpeakerWaveIcon,
     SpeakerXMarkIcon,
 } from '@heroicons/react/20/solid'
-import { ChevronRightIcon } from '@primer/octicons-react'
+import {
+    ArrowLeftIcon,
+    CheckIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    MaximizeIcon,
+    MinimizeIcon,
+} from '@primer/octicons-react'
 import { useEffect, useRef, useState } from 'react'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
@@ -116,12 +119,19 @@ export const VideoPlayer = () => {
         return configs[channels] || `${channels} channels`
     }
 
-    // Get quality label based on resolution
+    // Get quality label based on resolution, Note: we should fetch this from Jellyfin in the future
     const getQualityLabel = () => {
-        if (videoWidth === 0 || videoHeight === 0) return 'SD'
-        if (videoHeight >= 2160) return '4K'
-        if (videoHeight >= 1080) return 'HD'
+        if (!videoWidth || !videoHeight) return 'SD'
+
+        const mp = (videoWidth * videoHeight) / 1_000_000
+
+        if ((videoWidth >= 3800 && videoHeight >= 1600) || mp >= 7.5) {
+            return '4K'
+        }
+
+        if (videoHeight >= 1080 || mp >= 2) return 'HD'
         if (videoHeight >= 720) return 'HD'
+
         return 'SD'
     }
 
@@ -210,14 +220,17 @@ export const VideoPlayer = () => {
     }
 
     return (
-        <div className={isPaused ? 'video-container' : 'video-container playing'} onMouseMove={handleMouseMove}>
+        <div
+            className={isPaused ? 'video-container noSelect' : 'video-container noSelect playing'}
+            onMouseMove={handleMouseMove}
+        >
             <div
                 className={`video-header ${shouldShowControls ? 'visible' : 'hidden'}`}
                 onMouseEnter={() => setIsHoveringControls(true)}
                 onMouseLeave={() => setIsHoveringControls(false)}
             >
                 <button className="return" title="Return" onClick={clearCurrentTrack}>
-                    <ArrowLeftIcon className="heroicons" />
+                    <ArrowLeftIcon size={20} className="return-icon" />
                 </button>
                 <div className="video-title">
                     {currentTrack?.Name || 'Unknown Title'}
@@ -225,12 +238,12 @@ export const VideoPlayer = () => {
                 </div>
             </div>
 
-            <div className="video-play-icon noSelect" onClick={handleContainerClick}>
+            <div className="video-play-icon" onClick={handleContainerClick}>
                 <PlayCircleIcon className="heroicons" />
             </div>
 
             <div
-                className={`video-controls noSelect ${shouldShowControls ? 'visible' : 'hidden'}`}
+                className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}
                 onMouseEnter={() => setIsHoveringControls(true)}
                 onMouseLeave={() => setIsHoveringControls(false)}
             >
@@ -352,14 +365,14 @@ export const VideoPlayer = () => {
                                     >
                                         <div className="text">Subtitles</div>
                                         <div className="menu-item-right">
-                                            <span className="menu-item-value">
+                                            <div className="menu-item-value">
                                                 {currentSubtitleId === null
-                                                    ? 'Off'
+                                                    ? 'Disabled'
                                                     : subtitleTracks.find(t => t.id === currentSubtitleId)?.title ||
                                                       subtitleTracks.find(t => t.id === currentSubtitleId)?.lang ||
                                                       'On'}
-                                            </span>
-                                            <ChevronRightIcon className="heroicons" />
+                                            </div>
+                                            <ChevronRightIcon size={16} className="icon" />
                                         </div>
                                     </div>
                                 )}
@@ -373,8 +386,8 @@ export const VideoPlayer = () => {
                                 >
                                     <div className="text">Speed</div>
                                     <div className="menu-item-right">
-                                        <span className="menu-item-value">{speed}x</span>
-                                        <ChevronRightIcon className="heroicons" />
+                                        <div className="menu-item-value">{speed === 1 ? 'Normal' : `${speed}x`}</div>
+                                        <ChevronRightIcon size={16} className="icon" />
                                     </div>
                                 </div>
 
@@ -386,7 +399,9 @@ export const VideoPlayer = () => {
                                     }}
                                 >
                                     <div className="text">Statistics</div>
-                                    <ChevronRightIcon className="heroicons" />
+                                    <div className="menu-item-right">
+                                        <ChevronRightIcon size={16} className="icon" />
+                                    </div>
                                 </div>
                             </div>
 
@@ -401,29 +416,31 @@ export const VideoPlayer = () => {
                                         setCurrentMenuView('main')
                                     }}
                                 >
-                                    <ArrowLeftIcon className="heroicons back-icon" />
+                                    <ChevronLeftIcon size={16} className="return-icon" />
                                     <div className="text">Subtitles</div>
                                 </div>
                                 <div className="menu-divider"></div>
-                                <div
-                                    className={`menu-item ${currentSubtitleId === null ? 'selected' : ''}`}
-                                    onClick={() => handleSubtitleChange('no')}
-                                >
-                                    <div className="text">Disabled</div>
-                                    {currentSubtitleId === null && <CheckIcon className="heroicons check-icon" />}
-                                </div>
-                                {subtitleTracks.map(track => (
+                                <div className="container">
                                     <div
-                                        key={track.id}
-                                        className={`menu-item ${currentSubtitleId === track.id ? 'selected' : ''}`}
-                                        onClick={() => handleSubtitleChange(track.id.toString())}
+                                        className={`menu-item ${currentSubtitleId === null ? 'selected' : ''}`}
+                                        onClick={() => handleSubtitleChange('no')}
                                     >
-                                        <div className="text">{track.title || track.lang || `Track ${track.id}`}</div>
-                                        {currentSubtitleId === track.id && (
-                                            <CheckIcon className="heroicons check-icon" />
-                                        )}
+                                        <CheckIcon className="heroicons check-icon" />
+                                        <div className="text">Disabled</div>
                                     </div>
-                                ))}
+                                    {subtitleTracks.map(track => (
+                                        <div
+                                            key={track.id}
+                                            className={`menu-item ${currentSubtitleId === track.id ? 'selected' : ''}`}
+                                            onClick={() => handleSubtitleChange(track.id.toString())}
+                                        >
+                                            <CheckIcon className="heroicons check-icon" />
+                                            <div className="text">
+                                                {track.title || track.lang || `Track ${track.id}`}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* Speed Submenu */}
@@ -435,20 +452,22 @@ export const VideoPlayer = () => {
                                         setCurrentMenuView('main')
                                     }}
                                 >
-                                    <ArrowLeftIcon className="heroicons back-icon" />
+                                    <ChevronLeftIcon size={16} className="return-icon" />
                                     <div className="text">Speed</div>
                                 </div>
                                 <div className="menu-divider"></div>
-                                {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map(speedValue => (
-                                    <div
-                                        key={speedValue}
-                                        className={`menu-item ${speed === speedValue ? 'selected' : ''}`}
-                                        onClick={() => handleSpeedChange(speedValue)}
-                                    >
-                                        <div className="text">{speedValue}x</div>
-                                        {speed === speedValue && <CheckIcon className="heroicons check-icon" />}
-                                    </div>
-                                ))}
+                                <div className="container">
+                                    {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map(speedValue => (
+                                        <div
+                                            key={speedValue}
+                                            className={`menu-item ${speed === speedValue ? 'selected' : ''}`}
+                                            onClick={() => handleSpeedChange(speedValue)}
+                                        >
+                                            <CheckIcon className="heroicons check-icon" />
+                                            <div className="text">{speedValue}x</div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* Statistics Submenu */}
@@ -464,78 +483,79 @@ export const VideoPlayer = () => {
                                         setCurrentMenuView('main')
                                     }}
                                 >
-                                    <ArrowLeftIcon className="heroicons back-icon" />
+                                    <ChevronLeftIcon size={16} className="return-icon" />
                                     <div className="text">Statistics</div>
                                 </div>
                                 <div className="menu-divider"></div>
 
-                                {/* Video Section */}
-                                <div className="menu-item stats-header">Video</div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Resolution</div>
-                                    <div className="menu-item-value">
-                                        {videoWidth > 0 && videoHeight > 0 ? `${videoWidth}x${videoHeight}` : 'N/A'}
+                                <div className="container">
+                                    {/* Video Section */}
+                                    <div className="menu-item stats-header">Video</div>
+                                    <div className="menu-item stats-item">
+                                        <div className="text">Resolution</div>
+                                        <div className="menu-item-value">
+                                            {videoWidth > 0 && videoHeight > 0 ? `${videoWidth}x${videoHeight}` : 'N/A'}
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Codec</div>
-                                    <div className="menu-item-value">{formatCodecName(videoCodec)}</div>
-                                </div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Format</div>
-                                    <div className="menu-item-value">{videoFormat.toUpperCase()}</div>
-                                </div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">FPS</div>
-                                    <div className="menu-item-value">
-                                        {fps > 0 ? fps.toFixed(2) : containerFps > 0 ? containerFps.toFixed(2) : 'N/A'}
+                                    {/*
+                                    <div className="menu-item stats-item">
+                                        <div className="text">Codec</div>
+                                        <div className="menu-item-value">{formatCodecName(videoCodec)}</div>
                                     </div>
-                                </div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Bitrate</div>
-                                    <div className="menu-item-value">{formatBitrate(videoBitrate)}</div>
-                                </div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Hardware Decoding</div>
-                                    <div className="menu-item-value">
-                                        {hwdec === 'no' ? 'Disabled' : hwdec === 'N/A' ? 'N/A' : hwdec.toUpperCase()}
+                                    */}
+                                    <div className="menu-item stats-item">
+                                        <div className="text">Codec</div>
+                                        <div className="menu-item-value">{videoFormat.toUpperCase()}</div>
                                     </div>
-                                </div>
-
-                                <div className="menu-divider"></div>
-
-                                {/* Audio Section */}
-                                <div className="menu-item stats-header">Audio</div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Codec</div>
-                                    <div className="menu-item-value">
-                                        {formatCodecName(audioCodecName || audioCodec)}
+                                    <div className="menu-item stats-item">
+                                        <div className="text">FPS</div>
+                                        <div className="menu-item-value">
+                                            {fps > 0
+                                                ? fps.toFixed(2)
+                                                : containerFps > 0
+                                                ? containerFps.toFixed(2)
+                                                : 'N/A'}
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Channels</div>
-                                    <div className="menu-item-value">{getAudioChannelConfig(audioChannels)}</div>
-                                </div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Sample Rate</div>
-                                    <div className="menu-item-value">{formatSampleRate(audioSampleRate)}</div>
-                                </div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Bitrate</div>
-                                    <div className="menu-item-value">{formatBitrate(audioBitrate)}</div>
-                                </div>
+                                    <div className="menu-item stats-item">
+                                        <div className="text">Size</div>
+                                        <div className="menu-item-value">{formatFileSize(fileSize)}</div>
+                                    </div>
+                                    <div className="menu-item stats-item">
+                                        <div className="text">Bitrate</div>
+                                        <div className="menu-item-value">{formatBitrate(videoBitrate)}</div>
+                                    </div>
+                                    {/*
+                                    <div className="menu-item stats-item">
+                                        <div className="text">Hardware Decoding</div>
+                                        <div className="menu-item-value">
+                                            {hwdec === 'no' ? 'Disabled' : hwdec === 'N/A' ? 'N/A' : hwdec.toUpperCase()}
+                                        </div>
+                                    </div>
+                                    */}
 
-                                <div className="menu-divider"></div>
+                                    <div className="menu-divider"></div>
 
-                                {/* File Section */}
-                                <div className="menu-item stats-header">File</div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Size</div>
-                                    <div className="menu-item-value">{formatFileSize(fileSize)}</div>
-                                </div>
-                                <div className="menu-item stats-item">
-                                    <div className="text">Duration</div>
-                                    <div className="menu-item-value">{formatTime(duration)}</div>
+                                    {/* Audio Section */}
+                                    <div className="menu-item stats-header">Audio</div>
+                                    <div className="menu-item stats-item">
+                                        <div className="text">Codec</div>
+                                        <div className="menu-item-value">
+                                            {formatCodecName(audioCodecName || audioCodec)}
+                                        </div>
+                                    </div>
+                                    <div className="menu-item stats-item">
+                                        <div className="text">Channels</div>
+                                        <div className="menu-item-value">{getAudioChannelConfig(audioChannels)}</div>
+                                    </div>
+                                    <div className="menu-item stats-item">
+                                        <div className="text">Sample Rate</div>
+                                        <div className="menu-item-value">{formatSampleRate(audioSampleRate)}</div>
+                                    </div>
+                                    <div className="menu-item stats-item">
+                                        <div className="text">Bitrate</div>
+                                        <div className="menu-item-value">{formatBitrate(audioBitrate)}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -546,11 +566,7 @@ export const VideoPlayer = () => {
                             className="controls-btn"
                             title={isFullscreen ? 'Exit Fullscreen (F)' : 'Fullscreen (F)'}
                         >
-                            {isFullscreen ? (
-                                <ArrowsPointingInIcon className="heroicons" />
-                            ) : (
-                                <ArrowsPointingOutIcon className="heroicons" />
-                            )}
+                            {isFullscreen ? <MinimizeIcon size={16} /> : <MaximizeIcon size={16} />}
                         </button>
                     </div>
                 </div>

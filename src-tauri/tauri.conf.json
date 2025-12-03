@@ -14,13 +14,13 @@
             {
                 "label": "main",
                 "title": "Jelly Video App",
-                "width": 1280,
-                "height": 720,
+                "width": 1284,
+                "height": 760,
                 "transparent": true,
                 "decorations": true,
                 "resizable": true,
                 "fullscreen": false,
-                "minWidth": 800,
+                "minWidth": 600,
                 "minHeight": 600
             }
         ],
