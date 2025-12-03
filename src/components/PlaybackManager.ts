@@ -38,8 +38,9 @@ const OBSERVED_PROPERTIES = [
     ['file-size', 'int64'],
 ] as const satisfies MpvObservableProperty[]
 
-interface SubtitleTrack {
+export interface SubtitleTrack {
     id: number
+    'ff-index': number
     type: string
     title?: string
     lang?: string
@@ -96,6 +97,15 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const hideControlsTimeoutRef = useRef<number | null>(null)
 
     const [volume, setVolume] = useState(() => {
+        const savedVolume = localStorage.getItem('volume')
+        return savedVolume ? parseFloat(savedVolume) : initialVolume
+    })
+
+    const [previousVolume, setPreviousVolume] = useState(() => {
+        const savedPreviousVolume = localStorage.getItem('previousVolume')
+        if (savedPreviousVolume) {
+            return parseFloat(savedPreviousVolume)
+        }
         const savedVolume = localStorage.getItem('volume')
         return savedVolume ? parseFloat(savedVolume) : initialVolume
     })
@@ -537,6 +547,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         async (newVolume: number) => {
             if (isInitialized) {
                 try {
+                    // Save previous volume before changing (unless muting)
+                    if (newVolume > 0 && volume > 0) {
+                        setPreviousVolume(volume)
+                        localStorage.setItem('previousVolume', volume.toString())
+                    }
                     await setProperty('volume', newVolume)
                     localStorage.setItem('volume', newVolume.toString())
                     // Let MPV observer update the state to avoid race conditions
@@ -545,16 +560,26 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 }
             }
         },
-        [isInitialized]
+        [isInitialized, volume]
     )
 
     const toggleMute = useCallback(async () => {
         if (!isInitialized) return
-        const newValue = volume === 0 ? 100 : 0
-        await setProperty('volume', newValue)
-        localStorage.setItem('volume', newValue.toString())
+
+        if (volume === 0) {
+            // Unmuting: restore previous volume
+            const newValue = previousVolume > 0 ? previousVolume : 100
+            await setProperty('volume', newValue)
+            localStorage.setItem('volume', newValue.toString())
+        } else {
+            // Muting: save current volume and set to 0
+            setPreviousVolume(volume)
+            localStorage.setItem('previousVolume', volume.toString())
+            await setProperty('volume', 0)
+            localStorage.setItem('volume', '0')
+        }
         // Let MPV observer update the state to avoid race conditions
-    }, [isInitialized, volume])
+    }, [isInitialized, volume, previousVolume])
 
     const handleSpeedChange = useCallback(
         async (newSpeed: number) => {

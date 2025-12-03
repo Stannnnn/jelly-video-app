@@ -5,7 +5,7 @@ import { PlaystateApi } from '@jellyfin/sdk/lib/generated-client/api/playstate-a
 import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
 import { SystemApi } from '@jellyfin/sdk/lib/generated-client/api/system-api'
 import { UserApi } from '@jellyfin/sdk/lib/generated-client/api/user-api'
-import { BaseItemDto, BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models'
+import { BaseItemDto, BaseItemKind, ItemFields } from '@jellyfin/sdk/lib/generated-client/models'
 import { ItemFilter } from '@jellyfin/sdk/lib/generated-client/models/item-filter'
 import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by'
 import { PlayMethod } from '@jellyfin/sdk/lib/generated-client/models/play-method'
@@ -68,6 +68,8 @@ export const loginToJellyfin = async (serverUrl: string, username: string, passw
 
 export const JELLYFIN_MAX_LIMIT = 2000 // Safety fallback upper limit for API calls
 
+const extraFields: ItemFields[] = ['Trickplay', 'MediaStreams']
+
 export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: string; userId: string; token: string }) => {
     const jellyfin = new Jellyfin({
         clientInfo: {
@@ -109,7 +111,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortOrder,
             recursive: true,
             includeItemTypes: [BaseItemKind.Movie],
-            fields: ['Trickplay'],
+            fields: extraFields,
         })
 
         return await parseItemDtos(response.data.Items)
@@ -130,7 +132,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortOrder,
             recursive: true,
             includeItemTypes: [BaseItemKind.Series],
-            fields: ['Trickplay'],
+            fields: extraFields,
         })
 
         return await parseItemDtos(response.data.Items)
@@ -151,7 +153,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortOrder,
             recursive: true,
             includeItemTypes: [BaseItemKind.BoxSet],
-            fields: ['Trickplay'],
+            fields: extraFields,
         })
 
         return await parseItemDtos(response.data.Items)
@@ -174,7 +176,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             recursive: true,
             filters: [ItemFilter.IsFavorite],
             includeItemTypes: [itemKind],
-            fields: ['Trickplay'],
+            fields: extraFields,
         })
 
         return await parseItemDtos(response.data.Items)
@@ -186,7 +188,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             userId,
             startIndex,
             limit,
-            fields: ['Trickplay'],
+            fields: extraFields,
             includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Episode],
         })
 
@@ -202,7 +204,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortBy: [ItemSortBy.DateCreated],
             sortOrder: [SortOrder.Descending],
             recursive: true,
-            fields: ['Trickplay'],
+            fields: extraFields,
             includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series],
         })
 
@@ -407,7 +409,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         const response = await itemsApi.getItems({
             userId,
             ids: [itemId],
-            fields: ['Trickplay'],
+            fields: extraFields,
         })
 
         const items = await parseItemDtos(response.data.Items)
@@ -429,7 +431,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             limit,
             sortBy,
             sortOrder,
-            fields: ['Trickplay'],
+            fields: extraFields,
         })
 
         return await parseItemDtos(response.data.Items)
@@ -443,7 +445,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             includeItemTypes: [BaseItemKind.Season],
             sortBy: [ItemSortBy.SortName],
             sortOrder: [SortOrder.Ascending],
-            fields: ['Trickplay'],
+            fields: extraFields,
         })
 
         return await parseItemDtos(response.data.Items)
@@ -457,7 +459,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             includeItemTypes: [BaseItemKind.Episode],
             sortBy: [ItemSortBy.SortName],
             sortOrder: [SortOrder.Ascending],
-            fields: ['Trickplay'],
+            fields: extraFields,
         })
 
         return await parseItemDtos(response.data.Items)

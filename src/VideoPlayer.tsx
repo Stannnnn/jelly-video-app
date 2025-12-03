@@ -15,11 +15,32 @@ import {
     MinimizeIcon,
 } from '@primer/octicons-react'
 import { useEffect, useRef, useState } from 'react'
+import { MediaItem } from './api/jellyfin'
+import { SubtitleTrack } from './components/PlaybackManager'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
 import './VideoPlayer.css'
 
 type MenuView = 'main' | 'subtitles' | 'speed' | 'statistics'
+
+const getSubtitleDisplayName = (
+    subtitleId: number | null,
+    subtitleTracks: SubtitleTrack[],
+    currentTrack: MediaItem | null | undefined
+) => {
+    if (subtitleId === null) return 'Disabled'
+
+    const track = subtitleTracks.find(t => t.id === subtitleId)
+    if (!track) return 'On'
+
+    // Find the matching MediaStream by ff-index (which corresponds to MediaStream Index)
+    const mediaStream = currentTrack?.MediaStreams?.find(
+        stream => stream.Type === 'Subtitle' && stream.Index === track['ff-index']
+    )
+
+    // Use DisplayTitle from MediaStream if available, otherwise fall back to track properties
+    return mediaStream?.DisplayTitle || track.title || track.lang || 'On'
+}
 
 export const VideoPlayer = () => {
     const api = useJellyfinContext()
@@ -78,11 +99,11 @@ export const VideoPlayer = () => {
         tilesPerRow: number
     } | null>(null)
     const progressBarRef = useRef<HTMLInputElement>(null)
-    const [isHoveringControls, setIsHoveringControls] = useState(false)
+    const [isHoveringProgress, setIsHoveringProgress] = useState(false)
     const [currentMenuView, setCurrentMenuView] = useState<MenuView>('main')
     const [menuTransition, setMenuTransition] = useState<'none' | 'forward' | 'backward'>('none')
 
-    const shouldShowControls = showControls || isPaused || isHoveringControls
+    const shouldShowControls = showControls || isPaused || isHoveringProgress
 
     // Format bitrate in Mbps or Kbps
     const formatBitrate = (bitrate: number) => {
@@ -171,7 +192,7 @@ export const VideoPlayer = () => {
         if (import.meta.env.DEV) return
 
         const handleBlur = () => {
-            setIsHoveringControls(false)
+            setIsHoveringProgress(false)
         }
 
         window.addEventListener('blur', handleBlur)
@@ -226,8 +247,8 @@ export const VideoPlayer = () => {
         >
             <div
                 className={`video-header ${shouldShowControls ? 'visible' : 'hidden'}`}
-                onMouseEnter={() => setIsHoveringControls(true)}
-                onMouseLeave={() => setIsHoveringControls(false)}
+                onMouseEnter={() => setIsHoveringProgress(true)}
+                onMouseLeave={() => setIsHoveringProgress(false)}
             >
                 <button className="return" title="Return" onClick={clearCurrentTrack}>
                     <ArrowLeftIcon size={20} className="return-icon" />
@@ -242,11 +263,7 @@ export const VideoPlayer = () => {
                 <PlayCircleIcon className="heroicons" />
             </div>
 
-            <div
-                className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}
-                onMouseEnter={() => setIsHoveringControls(true)}
-                onMouseLeave={() => setIsHoveringControls(false)}
-            >
+            <div className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}>
                 <div className="playback">
                     <button
                         onClick={() => {
@@ -260,7 +277,11 @@ export const VideoPlayer = () => {
                 </div>
                 <div className="progress">
                     <span className="time">{formatTime(timePos)}</span>
-                    <div className="progress-container">
+                    <div
+                        className="progress-container"
+                        onMouseEnter={() => setIsHoveringProgress(true)}
+                        onMouseLeave={() => setIsHoveringProgress(false)}
+                    >
                         <input
                             ref={progressBarRef}
                             type="range"
@@ -276,7 +297,7 @@ export const VideoPlayer = () => {
                         <div
                             className={
                                 (previewTime === null ? 'progress-preview' : 'progress-preview active') +
-                                (isHoveringControls ? '' : ' hidden')
+                                (isHoveringProgress ? '' : ' hidden')
                             }
                             style={{ left: `${previewPosition}%` }}
                         >
@@ -288,18 +309,22 @@ export const VideoPlayer = () => {
                                         overflow: 'hidden',
                                     }}
                                 >
-                                    <img
-                                        src={previewImageUrl || ''}
-                                        alt="Preview"
-                                        onError={() => setPreviewImageError(true)}
-                                        loading="eager"
-                                        style={{
-                                            transform: `translate(-${
-                                                (trickplayTile?.col || 0) * (trickplayTile?.tileWidth || 0)
-                                            }px, -${(trickplayTile?.row || 0) * (trickplayTile?.tileHeight || 0)}px)`,
-                                            display: 'block',
-                                        }}
-                                    />
+                                    {previewImageUrl && (
+                                        <img
+                                            src={previewImageUrl}
+                                            alt="Preview"
+                                            onError={() => setPreviewImageError(true)}
+                                            loading="eager"
+                                            style={{
+                                                transform: `translate(-${
+                                                    (trickplayTile?.col || 0) * (trickplayTile?.tileWidth || 0)
+                                                }px, -${
+                                                    (trickplayTile?.row || 0) * (trickplayTile?.tileHeight || 0)
+                                                }px)`,
+                                                display: 'block',
+                                            }}
+                                        />
+                                    )}
                                 </div>
                                 <div
                                     className={
@@ -366,11 +391,11 @@ export const VideoPlayer = () => {
                                         <div className="text">Subtitles</div>
                                         <div className="menu-item-right">
                                             <div className="menu-item-value">
-                                                {currentSubtitleId === null
-                                                    ? 'Disabled'
-                                                    : subtitleTracks.find(t => t.id === currentSubtitleId)?.title ||
-                                                      subtitleTracks.find(t => t.id === currentSubtitleId)?.lang ||
-                                                      'On'}
+                                                {getSubtitleDisplayName(
+                                                    currentSubtitleId,
+                                                    subtitleTracks,
+                                                    currentTrack
+                                                )}
                                             </div>
                                             <ChevronRightIcon size={16} className="icon" />
                                         </div>
@@ -423,7 +448,10 @@ export const VideoPlayer = () => {
                                 <div className="container">
                                     <div
                                         className={`menu-item ${currentSubtitleId === null ? 'selected' : ''}`}
-                                        onClick={() => handleSubtitleChange('no')}
+                                        onClick={() => {
+                                            handleSubtitleChange('no')
+                                            toggleMenu()
+                                        }}
                                     >
                                         <CheckIcon className="heroicons check-icon" />
                                         <div className="text">Disabled</div>
@@ -432,11 +460,14 @@ export const VideoPlayer = () => {
                                         <div
                                             key={track.id}
                                             className={`menu-item ${currentSubtitleId === track.id ? 'selected' : ''}`}
-                                            onClick={() => handleSubtitleChange(track.id.toString())}
+                                            onClick={() => {
+                                                handleSubtitleChange(track.id.toString())
+                                                toggleMenu()
+                                            }}
                                         >
                                             <CheckIcon className="heroicons check-icon" />
                                             <div className="text">
-                                                {track.title || track.lang || `Track ${track.id}`}
+                                                {getSubtitleDisplayName(track.id, subtitleTracks, currentTrack)}
                                             </div>
                                         </div>
                                     ))}
@@ -461,7 +492,10 @@ export const VideoPlayer = () => {
                                         <div
                                             key={speedValue}
                                             className={`menu-item ${speed === speedValue ? 'selected' : ''}`}
-                                            onClick={() => handleSpeedChange(speedValue)}
+                                            onClick={() => {
+                                                handleSpeedChange(speedValue)
+                                                toggleMenu()
+                                            }}
                                         >
                                             <CheckIcon className="heroicons check-icon" />
                                             <div className="text">{speedValue}x</div>
