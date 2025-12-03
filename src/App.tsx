@@ -24,6 +24,8 @@ import { Favorites } from './pages/Favorites'
 import { Home } from './pages/Home'
 import { Login } from './pages/Login'
 import { Movies } from './pages/Movies'
+import { RecentlyAdded } from './pages/RecentlyAdded'
+import { RecentlyPlayed } from './pages/RecentlyPlayed'
 import { Settings } from './pages/Settings'
 import { Shows } from './pages/Shows'
 import { persister, queryClient } from './queryClient'
@@ -211,6 +213,8 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                                             path="/favorites"
                                             element={<Main content={Favorites} filterType={'favorites'} />}
                                         />
+                                        <Route path="/recently-played" element={<Main content={RecentlyPlayed} />} />
+                                        <Route path="/recently-added" element={<Main content={RecentlyAdded} />} />
                                         <Route path="*" element={<Navigate to="/" />} />
                                     </Routes>
                                 </>

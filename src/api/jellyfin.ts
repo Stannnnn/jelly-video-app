@@ -179,10 +179,11 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getRecentlyPlayed = async (limit = 40) => {
+    const getRecentlyPlayed = async (startIndex = 0, limit = 40) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getResumeItems({
             userId,
+            startIndex,
             limit,
             fields: ['Trickplay'],
             includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Episode],
@@ -191,10 +192,11 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getRecentlyAdded = async (limit = 40) => {
+    const getRecentlyAdded = async (startIndex = 0, limit = 40) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
             userId,
+            startIndex,
             limit,
             sortBy: [ItemSortBy.DateCreated],
             sortOrder: [SortOrder.Descending],
