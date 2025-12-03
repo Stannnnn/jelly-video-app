@@ -47,7 +47,7 @@ const useInitialState = () => {
             ? OrderState.Descending
             : OrderState.Ascending
 
-    const kindFallback = KindState.Tracks
+    const kindFallback = KindState.Movies
 
     const [filter, _setFilter] = useState<FilterState>({
         sort: (filterFromQuery || pathFallback) as SortState,
@@ -128,12 +128,15 @@ const useInitialState = () => {
 
     const jellyItemKind = useMemo(() => {
         switch (filter.kind) {
-            case KindState.Artists:
-                return BaseItemKind.MusicArtist
-            case KindState.Albums:
-                return BaseItemKind.MusicAlbum
+            case KindState.Series:
+                return BaseItemKind.Series
+            case KindState.Episodes:
+                return BaseItemKind.Episode
+            case KindState.Collections:
+                return BaseItemKind.BoxSet
+            case KindState.Movies:
             default:
-                return BaseItemKind.Audio
+                return BaseItemKind.Movie
         }
     }, [filter.kind])
 

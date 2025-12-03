@@ -21,9 +21,10 @@ export enum OrderState {
 }
 
 export enum KindState {
-    Tracks = 'Tracks',
-    Albums = 'Albums',
-    Artists = 'Artists',
+    Movies = 'Movies',
+    Series = 'Series',
+    Episodes = 'Episodes',
+    Collections = 'Collections',
     None = '',
 }
 
@@ -94,7 +95,7 @@ export const buildUrlWithSavedFilters = (path: string) => {
         pathFallback === SortState.Added || pathFallback === SortState.None
             ? OrderState.Descending
             : OrderState.Ascending
-    const kindFallback = KindState.Tracks
+    const kindFallback = KindState.Movies
 
     if (pathFallback !== savedFilter.sort && savedFilter.sort) {
         params.set('sort', savedFilter.sort)

@@ -27,7 +27,7 @@ export const Home = () => {
                             See more
                         </Link>
                     </div>
-                    <MediaList items={recentlyPlayed} isLoading={false} type="series" />
+                    <MediaList items={recentlyPlayed} isLoading={false} type="mixed" />
                 </div>
             )}
             {recentlyAdded && recentlyAdded.length > 0 && (
@@ -41,7 +41,7 @@ export const Home = () => {
                             See more
                         </Link>
                     </div>
-                    <MediaList items={recentlyAdded} isLoading={false} type="series" />
+                    <MediaList items={recentlyAdded} isLoading={false} type="mixed" />
                 </div>
             )}
         </div>

@@ -1,9 +1,8 @@
 import { HeartFillIcon, HeartIcon } from '@primer/octicons-react'
 import { useState } from 'react'
 import { MediaItem } from '../api/jellyfin'
-import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
-import { usePatchQueries } from '../hooks/usePatchQueries'
+import { useFavorites } from '../hooks/useFavorites'
 import { formatDate } from '../utils/formatDate'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
 import { JellyImg } from './JellyImg'
@@ -11,9 +10,8 @@ import './MediaInfo.css'
 import { Squircle } from './Squircle'
 
 export const MediaInfo = ({ item }: { item: MediaItem }) => {
-    const api = useJellyfinContext()
     const { playTrack } = usePlaybackContext()
-    const { patchMediaItem } = usePatchQueries()
+    const { addToFavorites, removeFromFavorites } = useFavorites()
     const [isFavorited, setIsFavorited] = useState(item.UserData?.IsFavorite || false)
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false)
 
@@ -26,24 +24,16 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
         // Optimistically update UI
         setIsFavorited(newFavoriteState)
-        patchMediaItem(item.Id, item => ({
-            ...item,
-            UserData: { ...item.UserData, IsFavorite: newFavoriteState },
-        }))
 
         try {
             if (newFavoriteState) {
-                await api.addToFavorites(item)
+                await addToFavorites(item)
             } else {
-                await api.removeFromFavorites(item)
+                await removeFromFavorites(item)
             }
         } catch (error) {
             // Revert on error
             setIsFavorited(!newFavoriteState)
-            patchMediaItem(item.Id, item => ({
-                ...item,
-                UserData: { ...item.UserData, IsFavorite: !newFavoriteState },
-            }))
             console.error('Failed to toggle favorite:', error)
         } finally {
             setIsTogglingFavorite(false)

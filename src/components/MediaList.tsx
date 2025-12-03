@@ -21,7 +21,7 @@ export const MediaList = ({
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
-    type: 'movie' | 'genre' | 'series'
+    type: 'movie' | 'series' | 'episode' | 'collection' | 'mixed'
     loadMore?: () => void
     disableActions?: boolean
     removeButton?: (item: MediaItem) => ReactNode
@@ -92,15 +92,15 @@ export const MediaList = ({
     }
 
     if (items.length === 0 && !isLoading) {
-        return (
-            <div className="empty">
-                {type === 'movie'
-                    ? 'No movies were found'
-                    : type === 'series'
-                    ? 'No shows were found'
-                    : 'No genres were found'}
-            </div>
-        )
+        const emptyMessage = {
+            movie: 'No movies were found',
+            series: 'No shows were found',
+            episode: 'No episodes were found',
+            collection: 'No collections were found',
+            mixed: 'No items were found',
+        }[type]
+
+        return <div className="empty">{emptyMessage}</div>
     }
 
     return (

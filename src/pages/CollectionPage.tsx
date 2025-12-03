@@ -52,7 +52,7 @@ export const CollectionPage = () => {
             <MediaInfo item={collection} />
             <div className="collection-children">
                 <h2>Items in Collection</h2>
-                <MediaList items={children || []} isLoading={isLoadingChildren} type="movie" loadMore={loadMore} />
+                <MediaList items={children || []} isLoading={isLoadingChildren} type="mixed" loadMore={loadMore} />
                 {childrenError && <div className="error">Failed to load collection items</div>}
             </div>
         </div>

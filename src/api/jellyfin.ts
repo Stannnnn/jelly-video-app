@@ -161,7 +161,8 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         startIndex = 0,
         limit = 40,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
-        sortOrder: SortOrder[] = [SortOrder.Descending]
+        sortOrder: SortOrder[] = [SortOrder.Descending],
+        itemKind: BaseItemKind = BaseItemKind.Movie
     ) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
@@ -172,7 +173,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortOrder,
             recursive: true,
             filters: [ItemFilter.IsFavorite],
-            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Episode],
+            includeItemTypes: [itemKind],
             fields: ['Trickplay'],
         })
 

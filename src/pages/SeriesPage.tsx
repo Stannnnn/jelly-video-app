@@ -81,7 +81,7 @@ export const SeriesPage = () => {
                 ) : seasonsError ? (
                     <div className="error">Failed to load seasons</div>
                 ) : (
-                    <MediaList items={episodes || []} isLoading={isLoadingEpisodes} type="movie" />
+                    <MediaList items={episodes || []} isLoading={isLoadingEpisodes} type="episode" />
                 )}
             </div>
         </div>
