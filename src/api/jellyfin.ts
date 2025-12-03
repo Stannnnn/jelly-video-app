@@ -202,7 +202,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortOrder: [SortOrder.Descending],
             recursive: true,
             fields: ['Trickplay'],
-            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Episode],
+            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series],
         })
 
         return await parseItemDtos(response.data.Items)
