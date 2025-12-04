@@ -5,7 +5,7 @@ import '../App.css'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
 import './Sidenav.css'
-import { SearchIcon } from './SvgIcons'
+import { DownloadingIcon, SearchIcon } from './SvgIcons'
 
 export const Sidenav = (props: { username: string }) => {
     const navigate = useNavigate()
@@ -98,13 +98,13 @@ export const Sidenav = (props: { username: string }) => {
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/collections" onClick={closeSidenav}>
-                                Collections
+                            <NavLink to="/favorites" onClick={closeSidenav}>
+                                Favorites
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/favorites" onClick={closeSidenav}>
-                                Favorites
+                            <NavLink to="/collections" onClick={closeSidenav}>
+                                Collections
                             </NavLink>
                         </li>
                     </ul>
@@ -118,6 +118,9 @@ export const Sidenav = (props: { username: string }) => {
                             </div>
                         </div>
                         <div className="actions">
+                            <NavLink to="/synced" className="icon synced" onClick={closeSidenav} title="Synced">
+                                <DownloadingIcon width={16} height={16} />
+                            </NavLink>
                             <NavLink to="/settings" className="icon settings" onClick={closeSidenav} title="Settings">
                                 <GearIcon size={16} />
                             </NavLink>

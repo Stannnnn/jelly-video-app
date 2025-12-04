@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { MediaItem } from '../api/jellyfin'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
-import { ExpandIcon } from './SvgIcons'
 
 export const JellyImg = ({
     item,
@@ -40,11 +39,7 @@ export const JellyImg = ({
                 />
             )}
 
-            {(hasError || !src) && (
-                <div className="fallback-thumbnail">
-                    <ExpandIcon width="50%" height="50%" />
-                </div>
-            )}
+            {(hasError || !src) && <div className="fallback-thumbnail"></div>}
         </>
     )
 }

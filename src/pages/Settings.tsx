@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from '@primer/octicons-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -123,7 +124,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
             </div>
 
-            <div className="section player-ui">
+            <div className="section player ui">
                 <div className="title">Player</div>
                 <div className="inner row">
                     <div className="container">
@@ -149,21 +150,22 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <div className="subtitle">Seek back increment</div>
                             <div className="subdesc">Seconds to skip back (left arrow key)</div>
                         </div>
-                        <div className="option">
-                            <div className="number current">1s</div>
-                            <div className="slider">
-                                <input
-                                    type="range"
-                                    id="preload"
-                                    name="preload"
-                                    min="1"
-                                    max="60"
-                                    step="1"
-                                    //value={playback.preloadDuration}
-                                    //onChange={e => playback.setPreloadDuration(Number(e.target.value))}
-                                />
+                        <div className="sorting">
+                            <div className="filter">
+                                <select
+                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
+                                //value={filter.kind}
+                                >
+                                    <option value="Movies">5 seconds</option>
+                                    <option value="Series">10 seconds</option>
+                                    <option value="Episodes">20 seconds</option>
+                                    <option value="Collections">25 seconds</option>
+                                    <option value="Collections">30 seconds</option>
+                                </select>
+                                <div className="icon">
+                                    <ChevronDownIcon size={12} />
+                                </div>
                             </div>
-                            <div className="number">30s</div>
                         </div>
                     </div>
                 </div>
@@ -173,21 +175,189 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <div className="subtitle">Seek forward increment</div>
                             <div className="subdesc">Seconds to skip forward (right arrow key)</div>
                         </div>
-                        <div className="option">
-                            <div className="number current">1s</div>
-                            <div className="slider">
-                                <input
-                                    type="range"
-                                    id="preload"
-                                    name="preload"
-                                    min="1"
-                                    max="60"
-                                    step="1"
-                                    //value={playback.preloadDuration}
-                                    //onChange={e => playback.setPreloadDuration(Number(e.target.value))}
-                                />
+                        <div className="sorting">
+                            <div className="filter">
+                                <select
+                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
+                                //value={filter.kind}
+                                >
+                                    <option value="Movies">5 seconds</option>
+                                    <option value="Series">10 seconds</option>
+                                    <option value="Episodes">20 seconds</option>
+                                    <option value="Collections">25 seconds</option>
+                                    <option value="Collections">30 seconds</option>
+                                </select>
+                                <div className="icon">
+                                    <ChevronDownIcon size={12} />
+                                </div>
                             </div>
-                            <div className="number">30s</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="section audio ui">
+                <div className="title">Audio</div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Language</div>
+                            <div className="subdesc">Preferred audio language</div>
+                        </div>
+                        <div className="sorting">
+                            <div className="filter">
+                                <select
+                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
+                                //value={filter.kind}
+                                >
+                                    <option value="eng">English</option>
+                                    <option value="nob">Norwegian</option>
+                                    <option value="dut">Dutch</option>
+                                </select>
+                                <div className="icon">
+                                    <ChevronDownIcon size={12} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Default source audio</div>
+                            <div className="subdesc">Play default audio track regardless of language</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    //checked={playback.isPreloadActive}
+                                    //onChange={e => playback.setIsPreloadActive(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="section subs ui">
+                <div className="title">Subtitles</div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Language</div>
+                            <div className="subdesc">Preferred subtitle language</div>
+                        </div>
+                        <div className="sorting">
+                            <div className="filter">
+                                <select
+                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
+                                //value={filter.kind}
+                                >
+                                    <option value="eng">English</option>
+                                    <option value="nob">Norwegian</option>
+                                    <option value="dut">Dutch</option>
+                                </select>
+                                <div className="icon">
+                                    <ChevronDownIcon size={12} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Font size</div>
+                            <div className="subdesc">Subtitle text size</div>
+                        </div>
+                        <div className="sorting">
+                            <div className="filter">
+                                <select
+                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
+                                //value={filter.kind}
+                                >
+                                    <option value="smaller">Smaller</option>
+                                    <option value="small">Small</option>
+                                    <option value="normal">Normal</option>
+                                    <option value="large">Large</option>
+                                    <option value="larger">Larger</option>
+                                </select>
+                                <div className="icon">
+                                    <ChevronDownIcon size={12} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Font weight</div>
+                            <div className="subdesc">Subtitle text thickness</div>
+                        </div>
+                        <div className="sorting">
+                            <div className="filter">
+                                <select
+                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
+                                //value={filter.kind}
+                                >
+                                    <option value="normal">Normal</option>
+                                    <option value="bold">Bold</option>
+                                </select>
+                                <div className="icon">
+                                    <ChevronDownIcon size={12} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Font position</div>
+                            <div className="subdesc">Subtitles vertical position</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="section misc ui">
+                <div className="title">Misc</div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Next episode</div>
+                            <div className="subdesc">Play next episode automatically</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    //checked={playback.isPreloadActive}
+                                    //onChange={e => playback.setIsPreloadActive(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Filters</div>
+                            <div className="subdesc">Remember selected filters for a consistent experience</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    //checked={playback.isPreloadActive}
+                                    //onChange={e => playback.setIsPreloadActive(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
                         </div>
                     </div>
                 </div>

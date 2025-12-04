@@ -1,22 +1,18 @@
-import {
-    Cog8ToothIcon,
-    PauseIcon,
-    PlayCircleIcon,
-    PlayIcon,
-    SpeakerWaveIcon,
-    SpeakerXMarkIcon,
-} from '@heroicons/react/20/solid'
-import {
-    ArrowLeftIcon,
-    CheckIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
-    MaximizeIcon,
-    MinimizeIcon,
-} from '@primer/octicons-react'
+import { ArrowLeftIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from '@primer/octicons-react'
 import { useEffect, useRef, useState } from 'react'
 import { MediaItem } from './api/jellyfin'
 import { SubtitleTrack } from './components/PlaybackManager'
+import {
+    GearIcon,
+    MaximizeIcon,
+    MinimizeIcon,
+    PauseIcon,
+    PlayIcon,
+    SpeakerHighIcon,
+    SpeakerLowIcon,
+    SpeakerMuteIcon,
+    VideoPlayIcon,
+} from './components/SvgIcons'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
 import './VideoPlayer.css'
@@ -260,7 +256,7 @@ export const VideoPlayer = () => {
             </div>
 
             <div className="video-play-icon" onClick={handleContainerClick}>
-                <PlayCircleIcon className="heroicons" />
+                <VideoPlayIcon width={42} height={42} />
             </div>
 
             <div className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}>
@@ -272,7 +268,7 @@ export const VideoPlayer = () => {
                         className="play-pause controls-btn"
                         title={isPaused ? 'Play (Space)' : 'Pause (Space)'}
                     >
-                        {isPaused ? <PlayIcon className="heroicons" /> : <PauseIcon className="heroicons" />}
+                        {isPaused ? <PlayIcon width={18} height={18} /> : <PauseIcon width={18} height={18} />}
                     </button>
                 </div>
                 <div className="progress">
@@ -341,45 +337,51 @@ export const VideoPlayer = () => {
                     </div>
                     <span className="time">{formatTime(duration)}</span>
                 </div>
-                <div className="volume">
-                    <button
-                        className="volume-toggle controls-btn"
-                        onClick={toggleMute}
-                        title={volume === 0 ? 'Unmute (M)' : 'Mute (M)'}
-                    >
-                        {volume === 0 ? (
-                            <SpeakerXMarkIcon className="heroicons" />
-                        ) : (
-                            <SpeakerWaveIcon className="heroicons" />
-                        )}
-                    </button>
-                    <div className="volume-container">
-                        <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={volume}
-                            onChange={e => handleVolumeChange(parseInt(e.target.value))}
-                            className="volume-bar"
-                        />
-                        <div className="volume-indicator controls-tooltip" style={{ left: `${volume}%` }}>
-                            {volume}%
+                <div className="actions">
+                    <div className="volume">
+                        <button
+                            className="volume-toggle controls-btn"
+                            onClick={toggleMute}
+                            title={volume === 0 ? 'Unmute (M)' : 'Mute (M)'}
+                        >
+                            {volume === 0 ? (
+                                <SpeakerMuteIcon width={18} height={18} />
+                            ) : volume < 50 ? (
+                                <SpeakerLowIcon width={18} height={18} />
+                            ) : (
+                                <SpeakerHighIcon width={18} height={18} />
+                            )}
+                            <div className="volume-indicator" title="Volume percentage">
+                                {volume}
+                            </div>
+                        </button>
+                        <div className="volume-container">
+                            <input
+                                type="range"
+                                min="0"
+                                max="100"
+                                value={volume}
+                                onChange={e => handleVolumeChange(parseInt(e.target.value))}
+                                className="volume-bar"
+                            />
                         </div>
                     </div>
-                </div>
-                <div className="actions">
                     <div className="video-menu">
                         <button
                             className={showMenu ? 'menu-toggle controls-btn active' : 'menu-toggle controls-btn'}
                             onClick={toggleMenu}
                             title="Settings"
                         >
-                            <Cog8ToothIcon className="heroicons" />
+                            <GearIcon width={18} height={18} />
                             <div className="quality-label">{getQualityLabel()}</div>
                         </button>
                         <div className={`menu-container ${menuTransition}`}>
                             {/* Main Menu */}
-                            <div className={`menu-view ${currentMenuView === 'main' ? 'active' : 'inactive-left'}`}>
+                            <div
+                                className={`menu-view primary ${
+                                    currentMenuView === 'main' ? 'active' : 'inactive-left'
+                                }`}
+                            >
                                 {subtitleTracks.length > 0 && (
                                     <div
                                         className="menu-item"
@@ -432,7 +434,9 @@ export const VideoPlayer = () => {
 
                             {/* Subtitles Submenu */}
                             <div
-                                className={`menu-view ${currentMenuView === 'subtitles' ? 'active' : 'inactive-right'}`}
+                                className={`menu-view subs ${
+                                    currentMenuView === 'subtitles' ? 'active' : 'inactive-right'
+                                }`}
                             >
                                 <div
                                     className="menu-item back-button"
@@ -453,7 +457,7 @@ export const VideoPlayer = () => {
                                             toggleMenu()
                                         }}
                                     >
-                                        <CheckIcon className="heroicons check-icon" />
+                                        <CheckIcon className="check-icon" />
                                         <div className="text">Disabled</div>
                                     </div>
                                     {subtitleTracks.map(track => (
@@ -465,7 +469,7 @@ export const VideoPlayer = () => {
                                                 toggleMenu()
                                             }}
                                         >
-                                            <CheckIcon className="heroicons check-icon" />
+                                            <CheckIcon className="check-icon" />
                                             <div className="text">
                                                 {getSubtitleDisplayName(track.id, subtitleTracks, currentTrack)}
                                             </div>
@@ -475,7 +479,11 @@ export const VideoPlayer = () => {
                             </div>
 
                             {/* Speed Submenu */}
-                            <div className={`menu-view ${currentMenuView === 'speed' ? 'active' : 'inactive-right'}`}>
+                            <div
+                                className={`menu-view speed ${
+                                    currentMenuView === 'speed' ? 'active' : 'inactive-right'
+                                }`}
+                            >
                                 <div
                                     className="menu-item back-button"
                                     onClick={() => {
@@ -497,8 +505,8 @@ export const VideoPlayer = () => {
                                                 toggleMenu()
                                             }}
                                         >
-                                            <CheckIcon className="heroicons check-icon" />
-                                            <div className="text">{speedValue}x</div>
+                                            <CheckIcon className="check-icon" />
+                                            <div className="text">{speedValue === 1 ? 'Normal' : `${speedValue}x`}</div>
                                         </div>
                                     ))}
                                 </div>
@@ -506,7 +514,7 @@ export const VideoPlayer = () => {
 
                             {/* Statistics Submenu */}
                             <div
-                                className={`menu-view ${
+                                className={`menu-view stats ${
                                     currentMenuView === 'statistics' ? 'active' : 'inactive-right'
                                 }`}
                             >
@@ -600,7 +608,11 @@ export const VideoPlayer = () => {
                             className="controls-btn"
                             title={isFullscreen ? 'Exit Fullscreen (F)' : 'Fullscreen (F)'}
                         >
-                            {isFullscreen ? <MinimizeIcon size={16} /> : <MaximizeIcon size={16} />}
+                            {isFullscreen ? (
+                                <MinimizeIcon width={18} height={18} />
+                            ) : (
+                                <MaximizeIcon width={18} height={18} />
+                            )}
                         </button>
                     </div>
                 </div>

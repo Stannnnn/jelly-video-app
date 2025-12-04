@@ -83,82 +83,6 @@ export class MoreIcon extends Component<IconProps> {
     }
 }
 
-export class PlaystateAnimationMedalist extends Component<IconProps> {
-    static defaultProps = {
-        width: '100%',
-        height: '100%',
-    }
-
-    render() {
-        const { width, height, className } = this.props
-        return (
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 28 20"
-                width={width}
-                height={height}
-                className={className}
-            >
-                <rect x="2" y="12" width="2" height="8" rx="1" className="bar bar1"></rect>
-                <rect x="6" y="10" width="2" height="10" rx="1" className="bar bar2"></rect>
-                <rect x="10" y="14" width="2" height="6" rx="1" className="bar bar3"></rect>
-                <rect x="14" y="11" width="2" height="9" rx="1" className="bar bar4"></rect>
-                <rect x="18" y="13" width="2" height="7" rx="1" className="bar bar5"></rect>
-                <rect x="22" y="12" width="2" height="8" rx="1" className="bar bar6"></rect>
-            </svg>
-        )
-    }
-}
-
-export class PlaystateAnimationTracklist extends Component<IconProps> {
-    static defaultProps = {
-        width: '100%',
-        height: '100%',
-    }
-
-    render() {
-        const { width, height, className } = this.props
-        return (
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 18 18"
-                width={width}
-                height={height}
-                className={className}
-            >
-                <rect x="1" y="10" width="3" height="8" rx="1.5" className="bar bar1"></rect>
-                <rect x="5" y="9" width="3" height="9" rx="1.5" className="bar bar2"></rect>
-                <rect x="9" y="11" width="3" height="7" rx="1.5" className="bar bar3"></rect>
-                <rect x="13" y="10" width="3" height="8" rx="1.5" className="bar bar4"></rect>
-            </svg>
-        )
-    }
-}
-
-export class PlaystateAnimationSearch extends Component<IconProps> {
-    static defaultProps = {
-        width: '100%',
-        height: '100%',
-    }
-
-    render() {
-        const { width, height, className } = this.props
-        return (
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 14 14"
-                width={width}
-                height={height}
-                className={className}
-            >
-                <rect x="1" y="8" width="3" height="6" rx="1.5" className="bar bar1"></rect>
-                <rect x="5.5" y="7" width="3" height="7" rx="1.5" className="bar bar2"></rect>
-                <rect x="10" y="9" width="3" height="5" rx="1.5" className="bar bar3"></rect>
-            </svg>
-        )
-    }
-}
-
 export class DownloadingIcon extends Component<IconProps> {
     static defaultProps = {
         width: '100%',
@@ -267,7 +191,7 @@ export class SortingIcon extends Component<IconProps> {
     }
 }
 
-export class ExpandIcon extends Component<IconProps> {
+export class VideoPlayIcon extends Component<IconProps> {
     static defaultProps = {
         width: '100%',
         height: '100%',
@@ -278,12 +202,207 @@ export class ExpandIcon extends Component<IconProps> {
         return (
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="87.48 32.45 93.07 93.16"
+                viewBox="0 0 10.8413 11.0607"
                 width={width}
                 height={height}
                 className={className}
             >
-                <path d="M91.969 71.954c2.587 0 4.443-1.953 4.443-4.54v-4.102l-.977-17.041 12.842 13.525 15.04 15.137c.83.879 1.903 1.27 3.075 1.27 2.784 0 4.834-1.807 4.834-4.542 0-1.318-.44-2.49-1.318-3.369L114.82 53.253l-13.525-12.842 17.09.977h4.052c2.588 0 4.59-1.807 4.59-4.443 0-2.637-1.953-4.492-4.59-4.492h-27.1c-4.98 0-7.86 2.88-7.86 7.86v27.1c0 2.54 1.904 4.541 4.492 4.541Zm53.564 53.663h27.1c4.98 0 7.91-2.881 7.91-7.862v-27.1c0-2.538-1.905-4.54-4.54-4.54-2.54 0-4.445 1.953-4.445 4.54v4.102l1.026 17.041-12.89-13.525-14.991-15.137c-.83-.879-1.953-1.27-3.125-1.27-2.734 0-4.834 1.807-4.834 4.542 0 1.318.488 2.49 1.367 3.369l15.04 15.039 13.573 12.842-17.09-.977h-4.101c-2.588 0-4.59 1.807-4.59 4.443 0 2.637 2.002 4.493 4.59 4.493Z" />
+                <g>
+                    <rect height="11.0607" opacity="0" width="10.8413" x="0" y="0" />
+                    <path d="M0.952046 9.91805C0.952046 10.6733 1.4037 11.0529 1.95371 11.0529C2.18629 11.0529 2.43698 10.9829 2.67737 10.8487L9.99899 6.59382C10.5842 6.25043 10.8413 5.97241 10.8413 5.52645C10.8413 5.08048 10.5842 4.80247 9.99899 4.45907L2.67737 0.204171C2.43698 0.069953 2.18629 0 1.95371 0C1.4037 0 0.952046 0.379577 0.952046 1.13484Z" />
+                </g>
+            </svg>
+        )
+    }
+}
+
+export class PlayIcon extends Component<IconProps> {
+    static defaultProps = {
+        width: '100%',
+        height: '100%',
+    }
+
+    render() {
+        const { width, height, className } = this.props
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 18 18"
+                width={width}
+                height={height}
+                className={className}
+            >
+                <path d="M15.1,7.478L5.608,2.222c-.553-.306-1.206-.297-1.749,.023-.538,.317-.859,.877-.859,1.499V14.256c0,.622,.321,1.182,.859,1.499,.279,.164,.586,.247,.895,.247,.293,0,.586-.075,.854-.223l9.491-5.256c.556-.307,.901-.891,.901-1.522s-.345-1.215-.9-1.522Z" />
+            </svg>
+        )
+    }
+}
+
+export class PauseIcon extends Component<IconProps> {
+    static defaultProps = {
+        width: '100%',
+        height: '100%',
+    }
+
+    render() {
+        const { width, height, className } = this.props
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 18 18"
+                width={width}
+                height={height}
+                className={className}
+            >
+                <rect x="2" y="2" width="5" height="14" rx="1.75" ry="1.75" />
+                <rect x="11" y="2" width="5" height="14" rx="1.75" ry="1.75" />
+            </svg>
+        )
+    }
+}
+
+export class SpeakerMuteIcon extends Component<IconProps> {
+    static defaultProps = {
+        width: '100%',
+        height: '100%',
+    }
+
+    render() {
+        const { width, height, className } = this.props
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 18 18"
+                width={width}
+                height={height}
+                className={className}
+            >
+                <path d="M12.732233,5.81801948 L14.5,7.586 L16.267767,5.81801948 C16.6582912,5.42749519 17.2914562,5.42749519 17.6819805,5.81801948 C18.0725048,6.20854378 18.0725048,6.84170876 17.6819805,7.23223305 L15.914,9 L17.6819805,10.767767 C18.0725048,11.1582912 18.0725048,11.7914562 17.6819805,12.1819805 C17.2914562,12.5725048 16.6582912,12.5725048 16.267767,12.1819805 L14.5,10.414 L12.732233,12.1819805 C12.3417088,12.5725048 11.7085438,12.5725048 11.3180195,12.1819805 C10.9274952,11.7914562 10.9274952,11.1582912 11.3180195,10.767767 L13.085,9 L11.3180195,7.23223305 C10.9274952,6.84170876 10.9274952,6.20854378 11.3180195,5.81801948 C11.7085438,5.42749519 12.3417088,5.42749519 12.732233,5.81801948 Z M3.78571429,6.00820648 L0.714285714,6.00820648 C0.285714286,6.00820648 0,6.30901277 0,6.76022222 L0,11.2723167 C0,11.7235261 0.285714286,12.0243324 0.714285714,12.0243324 L3.78571429,12.0243324 L7.85714286,15.8819922 C8.35714286,16.1827985 9,15.8819922 9,15.2803796 L9,2.75215925 C9,2.15054666 8.35714286,1.77453879 7.85714286,2.15054666 L3.78571429,6.00820648 Z" />
+            </svg>
+        )
+    }
+}
+
+export class SpeakerLowIcon extends Component<IconProps> {
+    static defaultProps = {
+        width: '100%',
+        height: '100%',
+    }
+
+    render() {
+        const { width, height, className } = this.props
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 18 18"
+                width={width}
+                height={height}
+                className={className}
+            >
+                <path d="M11.2819745 5.28197449C10.9060085 5.65794047 10.9060085 6.22188944 11.2819745 6.59785542 12.0171538 7.33303477 12.2772954 8.05605449 12.2772954 9 12.2772954 9.93588462 11.851678 10.9172014 11.2819745 11.4869049 10.9060085 11.8628709 10.9060085 12.4268199 11.2819745 12.8027859 11.4271642 12.9479755 11.9176724 13.0649528 12.2998149 12.9592565 12.4124479 12.9281035 12.5156669 12.8776063 12.5978555 12.8027859 13.773371 11.732654 14.1311161 10.1597914 14.1312524 9 14.1312524 8.8299555 14.1286311 8.66015647 14.119665 8.4897429 14.0674781 7.49784946 13.8010171 6.48513613 12.5978554 5.28197449 12.2218894 4.9060085 11.6579405 4.9060085 11.2819745 5.28197449ZM3.78571429 6.00820648.714285714 6.00820648C.285714286 6.00820648 0 6.30901277 0 6.76022222L0 11.2723167C0 11.7235261.285714286 12.0243324.714285714 12.0243324L3.78571429 12.0243324 7.85714286 15.8819922C8.35714286 16.1827985 9 15.8819922 9 15.2803796L9 2.75215925C9 2.15054666 8.35714286 1.77453879 7.85714286 2.15054666L3.78571429 6.00820648Z" />
+            </svg>
+        )
+    }
+}
+
+export class SpeakerHighIcon extends Component<IconProps> {
+    static defaultProps = {
+        width: '100%',
+        height: '100%',
+    }
+
+    render() {
+        const { width, height, className } = this.props
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 18 18"
+                width={width}
+                height={height}
+                className={className}
+            >
+                <path d="M15.5999996,3.3 C15.1999996,2.9 14.5999996,2.9 14.1999996,3.3 C13.7999996,3.7 13.7999996,4.3 14.1999996,4.7 C15.3999996,5.9 15.9999996,7.4 15.9999996,9 C15.9999996,10.6 15.3999996,12.1 14.1999996,13.3 C13.7999996,13.7 13.7999996,14.3 14.1999996,14.7 C14.3999996,14.9 14.6999996,15 14.8999996,15 C15.1999996,15 15.3999996,14.9 15.5999996,14.7 C17.0999996,13.2 17.9999996,11.2 17.9999996,9 C17.9999996,6.8 17.0999996,4.8 15.5999996,3.3 L15.5999996,3.3 Z" />
+                <path d="M11.2819745,5.28197449 C10.9060085,5.65794047 10.9060085,6.22188944 11.2819745,6.59785542 C12.0171538,7.33303477 12.2772954,8.05605449 12.2772954,9 C12.2772954,9.93588462 11.851678,10.9172014 11.2819745,11.4869049 C10.9060085,11.8628709 10.9060085,12.4268199 11.2819745,12.8027859 C11.4271642,12.9479755 11.9176724,13.0649528 12.2998149,12.9592565 C12.4124479,12.9281035 12.5156669,12.8776063 12.5978555,12.8027859 C13.773371,11.732654 14.1311161,10.1597914 14.1312524,9 C14.1312524,8.8299555 14.1286311,8.66015647 14.119665,8.4897429 C14.0674781,7.49784946 13.8010171,6.48513613 12.5978554,5.28197449 C12.2218894,4.9060085 11.6579405,4.9060085 11.2819745,5.28197449 Z M3.78571429,6.00820648 L0.714285714,6.00820648 C0.285714286,6.00820648 0,6.30901277 0,6.76022222 L0,11.2723167 C0,11.7235261 0.285714286,12.0243324 0.714285714,12.0243324 L3.78571429,12.0243324 L7.85714286,15.8819922 C8.35714286,16.1827985 9,15.8819922 9,15.2803796 L9,2.75215925 C9,2.15054666 8.35714286,1.77453879 7.85714286,2.15054666 L3.78571429,6.00820648 Z" />
+            </svg>
+        )
+    }
+}
+
+export class GearIcon extends Component<IconProps> {
+    static defaultProps = {
+        width: '100%',
+        height: '100%',
+    }
+
+    render() {
+        const { width, height, className } = this.props
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 18 18"
+                width={width}
+                height={height}
+                className={className}
+            >
+                <path d="M16.135 7.784a2 2 0 0 1-1.23-2.969c.322-.536.225-.998-.094-1.316l-.31-.31c-.318-.318-.78-.415-1.316-.094a2 2 0 0 1-2.969-1.23C10.065 1.258 9.669 1 9.219 1h-.438c-.45 0-.845.258-.997.865a2 2 0 0 1-2.969 1.23c-.536-.322-.999-.225-1.317.093l-.31.31c-.318.318-.415.781-.093 1.317a2 2 0 0 1-1.23 2.969C1.26 7.935 1 8.33 1 8.781v.438c0 .45.258.845.865.997a2 2 0 0 1 1.23 2.969c-.322.536-.225.998.094 1.316l.31.31c.319.319.782.415 1.316.094a2 2 0 0 1 2.969 1.23c.151.607.547.865.997.865h.438c.45 0 .845-.258.997-.865a2 2 0 0 1 2.969-1.23c.535.321.997.225 1.316-.094l.31-.31c.318-.318.415-.781.094-1.316a2 2 0 0 1 1.23-2.969c.607-.151.865-.547.865-.997v-.438c0-.451-.26-.846-.865-.997M9 12a3 3 0 1 1 0-6 3 3 0 0 1 0 6"></path>
+            </svg>
+        )
+    }
+}
+
+export class MaximizeIcon extends Component<IconProps> {
+    static defaultProps = {
+        width: '100%',
+        height: '100%',
+    }
+
+    render() {
+        const { width, height, className } = this.props
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 18 18"
+                width={width}
+                height={height}
+                className={className}
+            >
+                <path
+                    d="M15.25 2h.017q.03 0 .06.004za.75.75 0 0 1 .599.298l-.069-.078a.75.75 0 0 1 .22.53v4.5a.75.75 0 1 1-1.5 0V4.56l-3.22 3.22a.75.75 0 0 1-1.06-1.06l3.218-3.22H10.75a.75.75 0 0 1-.743-.648L10 2.75a.75.75 0 0 1 .75-.75z"
+                    className="arrow-1"
+                />
+                <path
+                    d="M2.75 10a.75.75 0 0 1 .75.75v2.688l3.22-3.218a.75.75 0 0 1 1.06 1.06L4.56 14.5h2.69a.75.75 0 0 1 .743.648L8 15.25a.75.75 0 0 1-.75.75H2.722l-.046-.004.074.004a.75.75 0 0 1-.599-.298l.069.078a.75.75 0 0 1-.22-.53v-4.5a.75.75 0 0 1 .75-.75"
+                    className="arrow-2"
+                />
+            </svg>
+        )
+    }
+}
+
+export class MinimizeIcon extends Component<IconProps> {
+    static defaultProps = {
+        width: '100%',
+        height: '100%',
+    }
+
+    render() {
+        const { width, height, className } = this.props
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 18 18"
+                width={width}
+                height={height}
+                className={className}
+            >
+                <path
+                    d="M10.75 2a.75.75 0 0 1 .75.75v2.688l3.22-3.218a.75.75 0 0 1 1.06 1.06L12.56 6.5h2.69a.75.75 0 0 1 .743.648L16 7.25a.75.75 0 0 1-.75.75h-4.528l-.046-.004.074.004a.75.75 0 0 1-.599-.298l.069.078a.75.75 0 0 1-.22-.53v-4.5a.75.75 0 0 1 .75-.75"
+                    className="arrow-1"
+                />
+                <path
+                    d="M7.25 10h.017q.03 0 .06.004za.75.75 0 0 1 .599.298l-.069-.078a.75.75 0 0 1 .22.53v4.5a.75.75 0 1 1-1.5 0v-2.69l-3.22 3.22a.75.75 0 0 1-1.06-1.06l3.218-3.22H2.75a.75.75 0 0 1-.743-.648L2 10.75a.75.75 0 0 1 .75-.75z"
+                    className="arrow-2"
+                />
             </svg>
         )
     }

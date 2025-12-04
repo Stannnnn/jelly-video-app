@@ -33,23 +33,8 @@
     color: #ffffff;
 }
 
-.video-container:not(.playing) {
-    cursor: pointer;
-}
-
-.video-container .heroicons {
-    fill: #ffffff;
-}
-
-.video-container > .video-header .heroicons,
-.video-container > .video-controls .heroicons {
-    width: 20px;
-    height: 20px;
-}
-
 .video-container > .video-header {
     position: absolute;
-    cursor: initial;
     z-index: 1;
     top: 0;
     left: 0;
@@ -96,6 +81,7 @@
     left: 0;
     width: 100dvw;
     height: 100dvh;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -107,15 +93,15 @@
     visibility: hidden;
 }
 
-.video-container > .video-play-icon > .heroicons {
-    width: 54px;
-    height: 54px;
+.video-container > .video-play-icon > svg {
+    width: 42px;
+    height: 42px;
     transform: scale(1.2);
     filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.4));
     transition: transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
-.video-container.playing > .video-play-icon > .heroicons {
+.video-container.playing > .video-play-icon > svg {
     transform: scale(1);
 }
 
@@ -129,7 +115,7 @@
     padding-top: 20px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     transform: translateY(0);
     transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
         transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
@@ -152,7 +138,7 @@
     z-index: 3;
     left: 50%;
     bottom: 12px;
-    width: fit-content;
+    white-space: nowrap;
     padding: 3px 5px;
     border-radius: 4px;
     pointer-events: none;
@@ -173,7 +159,7 @@
 .video-container > .video-controls .controls-btn {
     position: relative;
     cursor: pointer;
-    padding: 6px;
+    padding: 7px;
     border-radius: 20px;
     background-color: transparent;
     transition: background-color 0.2s ease-in;
@@ -181,10 +167,6 @@
 
 .video-container > .video-controls .controls-btn:hover {
     background-color: rgba(255, 255, 255, 0.2);
-}
-
-.video-container > .video-controls .fullscreen > .controls-btn {
-    padding: 8px;
 }
 
 .video-container > .video-controls > .playback {
@@ -225,13 +207,8 @@
     width: 13px;
     height: 13px;
     border-radius: 50%;
-    background-color: white;
+    background-color: #ffffff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease-in;
-}
-
-.video-container > .video-controls > .progress > .progress-container > .progress-bar::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
 }
 
 .video-container > .video-controls > .progress > .progress-container > .progress-bar::-moz-range-thumb {
@@ -239,13 +216,8 @@
     width: 13px;
     height: 13px;
     border-radius: 50%;
-    background-color: white;
+    background-color: #ffffff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease-in;
-}
-
-.video-container > .video-controls > .progress > .progress-container > .progress-bar::-moz-range-thumb:hover {
-    transform: scale(1.2);
 }
 
 .video-container > .video-controls > .progress > .progress-container > .progress-preview {
@@ -310,63 +282,89 @@
     background-color: rgba(46, 46, 46, 0.8);
 }
 
-.video-container > .video-controls > .volume {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.video-container > .video-controls > .volume > .volume-container {
-    position: relative;
-    width: 100px;
-    display: flex;
-    align-items: center;
-}
-
-.video-container > .video-controls > .volume > .volume-container > .volume-bar {
-    position: relative;
-    cursor: pointer;
-    width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.video-container > .video-controls > .volume > .volume-container > .volume-bar::-webkit-slider-thumb {
-    cursor: pointer;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background-color: white;
-    transition: transform 0.2s ease-in;
-}
-
-.video-container > .video-controls > .volume > .volume-container > .volume-bar::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-}
-
-.video-container > .video-controls > .volume > .volume-container > .volume-bar::-moz-range-thumb {
-    cursor: pointer;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background-color: white;
-    transition: transform 0.2s ease-in;
-}
-
-.video-container > .video-controls > .volume > .volume-container > .volume-bar::-moz-range-thumb:hover {
-    transform: scale(1.2);
-}
-
-.video-container > .video-controls > .volume > .volume-container > .volume-indicator {
-    font-variant-numeric: tabular-nums;
-}
-
 .video-container > .video-controls > .actions {
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-left: 6px;
+    margin-left: 2px;
+}
+
+.video-container > .video-controls > .actions > .volume {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-container {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 22px;
+    left: 16px;
+    transform: rotate(-90deg);
+    transform-origin: left;
+    width: 92px;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: rgba(46, 46, 46, 0.9);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-container:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: rotate(-90deg) translateX(10px);
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-toggle:hover ~ .volume-container {
+    opacity: 1;
+    visibility: visible;
+    transform: rotate(-90deg) translateX(10px);
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-container > .volume-bar {
+    position: relative;
+    cursor: pointer;
+    width: 100%;
+    height: 5px;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-container > .volume-bar::-webkit-slider-thumb {
+    cursor: pointer;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: #ffffff;
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-container > .volume-bar::-moz-range-thumb {
+    cursor: pointer;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: #ffffff;
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-toggle > .volume-indicator {
+    font-size: 0.5rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    position: absolute;
+    z-index: 1;
+    top: 1px;
+    right: -1px;
+    padding: 1px 3px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .video-container > .video-controls > .actions > .video-menu {
@@ -378,7 +376,7 @@
 }
 
 .video-container > .video-controls > .actions > .video-menu > .menu-toggle.active > svg {
-    transform: rotate(180deg);
+    transform: rotate(90deg);
 }
 
 .video-container > .video-controls > .actions > .video-menu > .menu-toggle > .quality-label {
@@ -399,8 +397,8 @@
     z-index: 2;
     bottom: 34px;
     right: 0;
-    min-width: 180px;
-    max-width: 260px;
+    min-width: 200px;
+    white-space: nowrap;
     border-radius: 12px;
     background-color: rgba(46, 46, 46, 0.9);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -417,13 +415,17 @@
     transform: translateY(-10px);
 }
 
+.video-container > .video-controls > .actions > .video-menu > .menu-container:has(.menu-view.active:not(:first-child)) {
+    min-width: unset;
+}
+
 /* Menu view container for animation */
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view {
     display: flex;
     flex-direction: column;
     gap: 4px;
     padding: 6px;
-    min-width: 220px;
+    min-width: 114px;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -474,8 +476,14 @@
     background-color: rgba(255, 255, 255, 0.12);
 }
 
+/*
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item.selected {
     background-color: rgba(255, 255, 255, 0.12);
+}
+*/
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view.primary .menu-item {
+    gap: 20px;
 }
 
 .video-container
@@ -487,17 +495,17 @@
     .menu-item.back-button
     > .return-icon {
     margin-left: -4px;
+    margin-right: 2px;
 }
 
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item.stats-header {
     color: rgba(255, 255, 255, 0.7);
-    cursor: initial;
     padding: 6px 12px;
     pointer-events: none;
 }
 
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item.stats-item {
-    cursor: initial;
+    gap: 36px;
     padding: 6px 12px;
     pointer-events: none;
 }
@@ -505,6 +513,7 @@
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item > .check-icon {
     width: 16px;
     height: 16px;
+    margin-left: -2px;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.12s ease-in, visibility 0.12s ease-in;
@@ -524,7 +533,6 @@
 
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item > .text {
     flex: 1;
-    flex-shrink: 0;
 }
 
 .video-container
@@ -538,7 +546,6 @@
     display: flex;
     align-items: flex-start;
     gap: 4px;
-    flex-shrink: 0;
 }
 
 .video-container
@@ -572,19 +579,6 @@
     > .menu-item-right
     > .icon {
     margin-right: -4px;
-}
-
-.video-container
-    > .video-controls
-    > .actions
-    > .video-menu
-    > .menu-container
-    > .menu-view
-    .menu-item
-    > .heroicons.back-icon {
-    width: 18px;
-    height: 18px;
-    margin-right: 4px;
 }
 
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-divider {

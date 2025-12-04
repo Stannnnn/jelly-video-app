@@ -18,11 +18,8 @@ export const Home = () => {
         <div className="home-page">
             {recentlyPlayed && recentlyPlayed.length > 0 && (
                 <div className="section">
-                    <div className="section-header">
-                        <div className="container">
-                            <div className="section_title">Continue Watching</div>
-                            <div className="section_desc">Pick up where you left off</div>
-                        </div>
+                    <div className="container">
+                        <div className="title">Continue Watching</div>
                         <Link to="/recently-played" className="see-more noSelect">
                             See more
                         </Link>
@@ -32,11 +29,8 @@ export const Home = () => {
             )}
             {recentlyAdded && recentlyAdded.length > 0 && (
                 <div className="section">
-                    <div className="section-header">
-                        <div className="container">
-                            <div className="section_title">Recently Added</div>
-                            <div className="section_desc">Newly added to your library</div>
-                        </div>
+                    <div className="container">
+                        <div className="title">Recently Added</div>
                         <Link to="/recently-added" className="see-more noSelect">
                             See more
                         </Link>

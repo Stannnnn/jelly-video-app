@@ -583,10 +583,34 @@ body.lockscroll {
     margin-bottom: 60px;
 }
 
-.home-page > .section > .title {
+.home-page > .section > .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.home-page > .section > .container > .title {
     font-size: 1rem;
     font-weight: 700;
-    margin-bottom: 16px;
+}
+
+.home-page > .section > .container > .see-more {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--brand-color);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 6px 11px;
+    border-radius: 6px;
+    background-color: var(--bg-color-secondary);
+    transition: background-color 0.2s ease-out;
+}
+
+.home-page > .section > .container > .see-more:hover {
+    background-color: var(--bg-color-tertiary);
 }
 
 /* Progress loading

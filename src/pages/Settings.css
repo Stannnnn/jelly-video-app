@@ -176,36 +176,76 @@
 */
 
 /* Player */
-.settings-page > .section.player-ui > .inner:not(:last-child) {
+.settings-page > .section.ui > .inner:not(:last-child) {
     margin-bottom: 10px;
 }
 
-.settings-page > .section.player-ui .desc > .subtitle {
+.settings-page > .section.ui .desc > .subtitle {
     margin-bottom: 0;
 }
 
-.settings-page > .section.player-ui .desc > .subdesc {
+.settings-page > .section.ui .desc > .subdesc {
     color: var(--font-color-tertiary);
 }
 
-.settings-page > .section.player-ui > .inner {
+.settings-page > .section.ui > .inner {
     width: 100%;
 }
 
-.settings-page > .section.player-ui > .inner > .container {
+.settings-page > .section.ui > .inner > .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
 }
 
-.settings-page > .section.player-ui > .inner > .container > .option {
+.settings-page > .section.ui > .inner > .container > .sorting {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+}
+
+.settings-page > .section.ui > .inner > .container > .sorting > .filter {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.settings-page > .section.ui > .inner > .container > .sorting > .filter > select {
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--brand-color);
+    cursor: pointer;
+    padding: 6px 8px;
+    padding-right: 22px;
+}
+
+.settings-page > .section.ui > .inner > .container > .sorting > .filter > .icon {
+    position: absolute;
+    right: 6px;
+    color: var(--brand-color);
+    user-select: none;
+    pointer-events: none;
+}
+
+.settings-page > .section.ui > .inner > .container > .sorting > .filter > select > option {
+    font-weight: 500;
+    color: var(--font-color);
+}
+
+/*
+.settings-page > .section.ui > .inner > .container > .option {
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.settings-page > .section.player-ui > .inner > .container > .option > .number {
+.settings-page > .section.ui > .inner > .container > .option > .number {
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 1px;
@@ -213,11 +253,11 @@
     transition: color 0.2s ease-out;
 }
 
-.settings-page > .section.player-ui > .inner > .container > .option > .slider {
+.settings-page > .section.ui > .inner > .container > .option > .slider {
     display: flex;
 }
 
-.settings-page > .section.player-ui > .inner > .container > .option > .slider > input {
+.settings-page > .section.ui > .inner > .container > .option > .slider > input {
     cursor: pointer;
     width: 100%;
     height: 7px;
@@ -226,7 +266,7 @@
     border: 1px solid var(--border-color);
 }
 
-.settings-page > .section.player-ui > .inner > .container > .option > .slider > input::-webkit-slider-thumb {
+.settings-page > .section.ui > .inner > .container > .option > .slider > input::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 13px;
     height: 13px;
@@ -236,11 +276,11 @@
     transition: background-color 0.2s ease-out;
 }
 
-.settings-page > .section.player-ui > .inner > .container > .option > .slider > input::-webkit-slider-thumb:active {
+.settings-page > .section.ui > .inner > .container > .option > .slider > input::-webkit-slider-thumb:active {
     background-color: var(--volume-dot-color-active);
 }
 
-.settings-page > .section.player-ui > .inner > .container > .option > .slider > input::-moz-range-thumb {
+.settings-page > .section.ui > .inner > .container > .option > .slider > input::-moz-range-thumb {
     appearance: none;
     border: none;
     width: 13px;
@@ -251,9 +291,10 @@
     transition: background-color 0.2s ease-out;
 }
 
-.settings-page > .section.player-ui > .inner > .container > .option > .slider > input::-moz-range-thumb:active {
+.settings-page > .section.ui > .inner > .container > .option > .slider > input::-moz-range-thumb:active {
     background-color: var(--volume-dot-color-active);
 }
+*/
 
 /* About and Session */
 .settings-page > .section .desc {
@@ -276,6 +317,8 @@
 }
 
 .settings-page > .section > .actions {
+    display: flex;
+    align-items: center;
     margin-top: 14px;
 }
 
