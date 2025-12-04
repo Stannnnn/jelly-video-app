@@ -95,11 +95,13 @@ export const VideoPlayer = () => {
         tilesPerRow: number
     } | null>(null)
     const progressBarRef = useRef<HTMLInputElement>(null)
+    const menuRef = useRef<HTMLDivElement>(null)
     const [isHoveringProgress, setIsHoveringProgress] = useState(false)
+    const [isHoveringControls, setIsHoveringControls] = useState(false)
     const [currentMenuView, setCurrentMenuView] = useState<MenuView>('main')
     const [menuTransition, setMenuTransition] = useState<'none' | 'forward' | 'backward'>('none')
 
-    const shouldShowControls = showControls || isPaused || isHoveringProgress
+    const shouldShowControls = showControls || showMenu || isPaused || isHoveringProgress || isHoveringControls
 
     // Format bitrate in Mbps or Kbps
     const formatBitrate = (bitrate: number) => {
@@ -183,12 +185,27 @@ export const VideoPlayer = () => {
         }
     }, [showMenu])
 
+    // Handle outside click to close menu
+    useEffect(() => {
+        if (!showMenu) return
+
+        const handleClickOutside = (e: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+                toggleMenu()
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [showMenu, toggleMenu])
+
     // Hide controls when window loses focus (disabled in dev so F12 debugging doesn't hide controls)
     useEffect(() => {
         if (import.meta.env.DEV) return
 
         const handleBlur = () => {
             setIsHoveringProgress(false)
+            setIsHoveringControls(false)
         }
 
         window.addEventListener('blur', handleBlur)
@@ -243,8 +260,8 @@ export const VideoPlayer = () => {
         >
             <div
                 className={`video-header ${shouldShowControls ? 'visible' : 'hidden'}`}
-                onMouseEnter={() => setIsHoveringProgress(true)}
-                onMouseLeave={() => setIsHoveringProgress(false)}
+                onMouseEnter={() => setIsHoveringControls(true)}
+                onMouseLeave={() => setIsHoveringControls(false)}
             >
                 <button className="return" title="Return" onClick={clearCurrentTrack}>
                     <ArrowLeftIcon size={20} className="return-icon" />
@@ -259,7 +276,11 @@ export const VideoPlayer = () => {
                 <VideoPlayIcon width={42} height={42} />
             </div>
 
-            <div className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}>
+            <div
+                className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}
+                onMouseEnter={() => setIsHoveringControls(true)}
+                onMouseLeave={() => setIsHoveringControls(false)}
+            >
                 <div className="playback">
                     <button
                         onClick={() => {
@@ -366,7 +387,7 @@ export const VideoPlayer = () => {
                             />
                         </div>
                     </div>
-                    <div className="video-menu">
+                    <div className="video-menu" ref={menuRef}>
                         <button
                             className={showMenu ? 'menu-toggle controls-btn active' : 'menu-toggle controls-btn'}
                             onClick={toggleMenu}
@@ -454,7 +475,8 @@ export const VideoPlayer = () => {
                                         className={`menu-item ${currentSubtitleId === null ? 'selected' : ''}`}
                                         onClick={() => {
                                             handleSubtitleChange('no')
-                                            toggleMenu()
+                                            setMenuTransition('backward')
+                                            setCurrentMenuView('main')
                                         }}
                                     >
                                         <CheckIcon className="check-icon" />
@@ -466,7 +488,8 @@ export const VideoPlayer = () => {
                                             className={`menu-item ${currentSubtitleId === track.id ? 'selected' : ''}`}
                                             onClick={() => {
                                                 handleSubtitleChange(track.id.toString())
-                                                toggleMenu()
+                                                setMenuTransition('backward')
+                                                setCurrentMenuView('main')
                                             }}
                                         >
                                             <CheckIcon className="check-icon" />
@@ -502,7 +525,8 @@ export const VideoPlayer = () => {
                                             className={`menu-item ${speed === speedValue ? 'selected' : ''}`}
                                             onClick={() => {
                                                 handleSpeedChange(speedValue)
-                                                toggleMenu()
+                                                setMenuTransition('backward')
+                                                setCurrentMenuView('main')
                                             }}
                                         >
                                             <CheckIcon className="check-icon" />

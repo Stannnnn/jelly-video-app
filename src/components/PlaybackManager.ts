@@ -696,6 +696,16 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     const clearCurrentTrack = useCallback(async () => {
         if (currentTrack) {
+            // Exit fullscreen only if it was enabled by the app
+            if (isFullscreen && document.fullscreenElement) {
+                try {
+                    await document.exitFullscreen()
+                    setIsFullscreen(false)
+                } catch (error) {
+                    console.error('Failed to exit fullscreen:', error)
+                }
+            }
+
             // Report playback stopped to Jellyfin
             reportTrackStopped(currentTrack, timePos)
 
@@ -718,7 +728,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 navigator.mediaSession.metadata = null
             }
         }
-    }, [currentTrack, timePos, reportTrackStopped, isInitialized])
+    }, [currentTrack, timePos, reportTrackStopped, isInitialized, isFullscreen])
 
     return {
         // Track info
@@ -760,7 +770,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
         // UI state
         showControls,
-        isFullscreen,
+        isFullscreen: isFullscreen || document.fullscreenElement,
         showMenu,
         handleMouseMove,
         toggleFullscreen,
