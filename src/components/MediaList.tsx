@@ -14,6 +14,7 @@ export const MediaList = ({
     items = [],
     isLoading,
     type,
+    virtuosoType,
     loadMore,
     disableActions = false,
     removeButton,
@@ -22,6 +23,7 @@ export const MediaList = ({
     items: MediaItem[] | undefined
     isLoading: boolean
     type: 'movie' | 'series' | 'episode' | 'collection' | 'mixed'
+    virtuosoType?: 'vertical' | 'horizontal' | 'grid'
     loadMore?: () => void
     disableActions?: boolean
     removeButton?: (item: MediaItem) => ReactNode
@@ -105,7 +107,13 @@ export const MediaList = ({
 
     return (
         <ul className="media-list noSelect">
-            <VirtuosoWindow data={displayItems} itemContent={renderItem} endReached={loadMore} overscan={800} />
+            <VirtuosoWindow
+                type={virtuosoType || 'grid'}
+                data={displayItems}
+                itemContent={renderItem}
+                endReached={loadMore}
+                overscan={800}
+            />
         </ul>
     )
 }

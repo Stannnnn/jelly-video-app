@@ -24,7 +24,7 @@ export const Home = () => {
                             See more
                         </Link>
                     </div>
-                    <MediaList items={recentlyPlayed} isLoading={false} type="mixed" />
+                    <MediaList items={recentlyPlayed} isLoading={false} type="mixed" virtuosoType="horizontal" />
                 </div>
             )}
             {recentlyAdded && recentlyAdded.length > 0 && (
