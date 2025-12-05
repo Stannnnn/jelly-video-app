@@ -147,6 +147,24 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
+                            <div className="subtitle">Next episode</div>
+                            <div className="subdesc">Play next episode automatically</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    //checked={playback.isPreloadActive}
+                                    //onChange={e => playback.setIsPreloadActive(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
                             <div className="subtitle">Seek back increment</div>
                             <div className="subdesc">Seconds to skip back (left arrow key)</div>
                         </div>
@@ -156,11 +174,11 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                 //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
                                 //value={filter.kind}
                                 >
-                                    <option value="Movies">5 seconds</option>
-                                    <option value="Series">10 seconds</option>
-                                    <option value="Episodes">20 seconds</option>
-                                    <option value="Collections">25 seconds</option>
-                                    <option value="Collections">30 seconds</option>
+                                    <option value="5">5 seconds</option>
+                                    <option value="10">10 seconds</option>
+                                    <option value="15">15 seconds</option>
+                                    <option value="30">30 seconds</option>
+                                    <option value="60">60 seconds</option>
                                 </select>
                                 <div className="icon">
                                     <ChevronDownIcon size={12} />
@@ -181,11 +199,11 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                 //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
                                 //value={filter.kind}
                                 >
-                                    <option value="Movies">5 seconds</option>
-                                    <option value="Series">10 seconds</option>
-                                    <option value="Episodes">20 seconds</option>
-                                    <option value="Collections">25 seconds</option>
-                                    <option value="Collections">30 seconds</option>
+                                    <option value="5">5 seconds</option>
+                                    <option value="10">10 seconds</option>
+                                    <option value="15">15 seconds</option>
+                                    <option value="30">30 seconds</option>
+                                    <option value="60">60 seconds</option>
                                 </select>
                                 <div className="icon">
                                     <ChevronDownIcon size={12} />
@@ -224,7 +242,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
-                            <div className="subtitle">Default source audio</div>
+                            <div className="subtitle">Default audio source</div>
                             <div className="subdesc">Play default audio track regardless of language</div>
                         </div>
                         <div className="option">
@@ -325,24 +343,6 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
 
             <div className="section misc ui">
                 <div className="title">Misc</div>
-                <div className="inner row">
-                    <div className="container">
-                        <div className="desc">
-                            <div className="subtitle">Next episode</div>
-                            <div className="subdesc">Play next episode automatically</div>
-                        </div>
-                        <div className="option">
-                            <label className="switch">
-                                <input
-                                    type="checkbox"
-                                    //checked={playback.isPreloadActive}
-                                    //onChange={e => playback.setIsPreloadActive(e.target.checked)}
-                                ></input>
-                                <span className="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">

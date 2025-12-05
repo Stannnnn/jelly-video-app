@@ -402,6 +402,7 @@ export const VideoPlayer = () => {
                                 >
                                     Preview
                                 </div>
+                                <div className="shadow-border"></div>
                             </div>
                             <div className="preview-time">{previewTime !== null ? formatTime(previewTime) : ''}</div>
                         </div>

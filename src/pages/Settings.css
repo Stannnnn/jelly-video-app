@@ -1,6 +1,5 @@
 .settings-page {
     max-width: 600px;
-    margin-bottom: 20px;
 }
 
 .settings-page > .section {
@@ -175,7 +174,6 @@
 }
 */
 
-/* Player */
 .settings-page > .section.ui > .inner:not(:last-child) {
     margin-bottom: 10px;
 }
@@ -222,7 +220,7 @@
     color: var(--brand-color);
     cursor: pointer;
     padding: 6px 8px;
-    padding-right: 22px;
+    padding-right: 24px;
 }
 
 .settings-page > .section.ui > .inner > .container > .sorting > .filter > .icon {

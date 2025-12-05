@@ -427,7 +427,7 @@ body.lockscroll {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px;
+    padding: 12px 16px;
     max-height: 53px;
     background-color: var(--bg-color);
     border-bottom: 1px solid var(--border-color);
@@ -511,7 +511,7 @@ body.lockscroll {
     color: var(--brand-color);
     cursor: pointer;
     padding: 6px 8px;
-    padding-right: 22px;
+    padding-right: 24px;
 }
 
 .main > .main_header > .secondary > .sorting > .filter > .icon {
@@ -567,7 +567,8 @@ body.lockscroll {
 .main > .main_content {
     display: flex;
     flex-direction: column;
-    margin: 20px;
+    margin: 24px;
+    margin-bottom: 60px;
 }
 
 .main > .main_content > .error {
@@ -576,11 +577,15 @@ body.lockscroll {
 
 /* Home Page Styles */
 .home-page {
-    margin-top: -4px;
+    margin-top: -8px;
 }
 
 .home-page > .section {
-    margin-bottom: 60px;
+    margin-bottom: 40px;
+}
+
+.home-page > .section:last-of-type {
+    margin-bottom: 0;
 }
 
 .home-page > .section > .container {
@@ -588,7 +593,7 @@ body.lockscroll {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 }
 
 .home-page > .section > .container > .title {
