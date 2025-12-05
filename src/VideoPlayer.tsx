@@ -17,7 +17,7 @@ import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
 import './VideoPlayer.css'
 
-type MenuView = 'main' | 'subtitles' | 'speed' | 'statistics'
+type MenuView = 'home' | 'subtitles' | 'speed' | 'statistics'
 
 const getSubtitleDisplayName = (
     subtitleId: number | null,
@@ -98,8 +98,8 @@ export const VideoPlayer = () => {
     const menuRef = useRef<HTMLDivElement>(null)
     const [isHoveringProgress, setIsHoveringProgress] = useState(false)
     const [isHoveringControls, setIsHoveringControls] = useState(false)
-    const [currentMenuView, setCurrentMenuView] = useState<MenuView>('main')
-    const [menuTransition, setMenuTransition] = useState<'none' | 'forward' | 'backward'>('none')
+    const [currentMenuView, setCurrentMenuView] = useState<MenuView>('home')
+    const menuContainerRef = useRef<HTMLDivElement | null>(null)
 
     const shouldShowControls = showControls || showMenu || isPaused || isHoveringProgress || isHoveringControls
 
@@ -173,18 +173,6 @@ export const VideoPlayer = () => {
         return codecMap[codec.toLowerCase()] || codec.toUpperCase()
     }
 
-    // Reset menu view when menu closes
-    useEffect(() => {
-        if (!showMenu) {
-            // Small delay to let close animation finish
-            const timer = setTimeout(() => {
-                setCurrentMenuView('main')
-                setMenuTransition('none')
-            }, 320)
-            return () => clearTimeout(timer)
-        }
-    }, [showMenu])
-
     // Handle outside click to close menu
     useEffect(() => {
         if (!showMenu) return
@@ -198,6 +186,63 @@ export const VideoPlayer = () => {
         document.addEventListener('mousedown', handleClickOutside)
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [showMenu, toggleMenu])
+
+    // Reset menu view when menu closes
+    useEffect(() => {
+        if (!showMenu) {
+            // Small delay to let close animation finish
+            const timer = setTimeout(() => {
+                setCurrentMenuView('home')
+            }, 320)
+            return () => clearTimeout(timer)
+        }
+    }, [showMenu])
+
+    // Helper for menu animations
+    const viewsRef = useRef<Record<MenuView, HTMLDivElement | null>>({
+        home: null,
+        subtitles: null,
+        speed: null,
+        statistics: null,
+    })
+
+    // Helper function for menu animations
+    function measureElement(el: HTMLDivElement) {
+        // Save original inline styles
+        const oldDisplay = el.style.display
+        const oldVisibility = el.style.visibility
+        const oldPosition = el.style.position
+
+        // Force measurable state
+        el.style.display = 'flex'
+        el.style.visibility = 'hidden'
+        el.style.position = 'absolute'
+
+        const rect = el.getBoundingClientRect()
+
+        // Restore original inline styles
+        el.style.display = oldDisplay
+        el.style.visibility = oldVisibility
+        el.style.position = oldPosition
+
+        return rect
+    }
+
+    // Menu animations
+    useEffect(() => {
+        if (!showMenu) return
+
+        const container = menuContainerRef.current
+        const activeView = viewsRef.current[currentMenuView]
+        if (!container || !activeView) return
+
+        // Wait for the DOM to update
+        requestAnimationFrame(() => {
+            const rect = measureElement(activeView)
+            container.style.width = rect.width + 'px'
+            container.style.height = rect.height + 'px'
+        })
+    }, [showMenu, currentMenuView, currentSubtitleId, speed])
 
     // Hide controls when window loses focus (disabled in dev so F12 debugging doesn't hide controls)
     useEffect(() => {
@@ -272,8 +317,13 @@ export const VideoPlayer = () => {
                 </div>
             </div>
 
-            <div className="video-play-icon" onClick={handleContainerClick}>
-                <VideoPlayIcon width={42} height={42} />
+            <div className="video-overlay">
+                <div className="container">
+                    <div className="video-play-icon" onClick={handleContainerClick}>
+                        <VideoPlayIcon width={42} height={42} />
+                    </div>
+                    <div className="loading"></div>
+                </div>
             </div>
 
             <div
@@ -372,19 +422,30 @@ export const VideoPlayer = () => {
                             ) : (
                                 <SpeakerHighIcon width={18} height={18} />
                             )}
-                            <div className="volume-indicator" title="Volume percentage">
-                                {volume}
-                            </div>
+
+                            {volume === 0 ? (
+                                ''
+                            ) : volume < 10 ? (
+                                <div className="volume-indicator" title="Volume percentage">
+                                    0{volume}
+                                </div>
+                            ) : (
+                                <div className="volume-indicator" title="Volume percentage">
+                                    {volume}
+                                </div>
+                            )}
                         </button>
                         <div className="volume-container">
-                            <input
-                                type="range"
-                                min="0"
-                                max="100"
-                                value={volume}
-                                onChange={e => handleVolumeChange(parseInt(e.target.value))}
-                                className="volume-bar"
-                            />
+                            <div className="volume-wrapper">
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    value={volume}
+                                    onChange={e => handleVolumeChange(parseInt(e.target.value))}
+                                    className="volume-bar"
+                                />
+                            </div>
                         </div>
                     </div>
                     <div className="video-menu" ref={menuRef}>
@@ -396,18 +457,18 @@ export const VideoPlayer = () => {
                             <GearIcon width={18} height={18} />
                             <div className="quality-label">{getQualityLabel()}</div>
                         </button>
-                        <div className={`menu-container ${menuTransition}`}>
-                            {/* Main Menu */}
+                        <div className="menu-container" ref={menuContainerRef}>
+                            {/* Home Menu */}
                             <div
-                                className={`menu-view primary ${
-                                    currentMenuView === 'main' ? 'active' : 'inactive-left'
-                                }`}
+                                ref={el => {
+                                    viewsRef.current.home = el
+                                }}
+                                className={`menu-view home ${currentMenuView === 'home' ? 'active' : 'hidden'}`}
                             >
                                 {subtitleTracks.length > 0 && (
                                     <div
                                         className="menu-item"
                                         onClick={() => {
-                                            setMenuTransition('forward')
                                             setCurrentMenuView('subtitles')
                                         }}
                                     >
@@ -428,7 +489,6 @@ export const VideoPlayer = () => {
                                 <div
                                     className="menu-item"
                                     onClick={() => {
-                                        setMenuTransition('forward')
                                         setCurrentMenuView('speed')
                                     }}
                                 >
@@ -442,7 +502,6 @@ export const VideoPlayer = () => {
                                 <div
                                     className="menu-item"
                                     onClick={() => {
-                                        setMenuTransition('forward')
                                         setCurrentMenuView('statistics')
                                     }}
                                 >
@@ -455,15 +514,15 @@ export const VideoPlayer = () => {
 
                             {/* Subtitles Submenu */}
                             <div
-                                className={`menu-view subs ${
-                                    currentMenuView === 'subtitles' ? 'active' : 'inactive-right'
-                                }`}
+                                ref={el => {
+                                    viewsRef.current.subtitles = el
+                                }}
+                                className={`menu-view subs ${currentMenuView === 'subtitles' ? 'active' : 'hidden'}`}
                             >
                                 <div
                                     className="menu-item back-button"
                                     onClick={() => {
-                                        setMenuTransition('backward')
-                                        setCurrentMenuView('main')
+                                        setCurrentMenuView('home')
                                     }}
                                 >
                                     <ChevronLeftIcon size={16} className="return-icon" />
@@ -475,8 +534,7 @@ export const VideoPlayer = () => {
                                         className={`menu-item ${currentSubtitleId === null ? 'selected' : ''}`}
                                         onClick={() => {
                                             handleSubtitleChange('no')
-                                            setMenuTransition('backward')
-                                            setCurrentMenuView('main')
+                                            setTimeout(() => setCurrentMenuView('home'), 60)
                                         }}
                                     >
                                         <CheckIcon className="check-icon" />
@@ -488,8 +546,7 @@ export const VideoPlayer = () => {
                                             className={`menu-item ${currentSubtitleId === track.id ? 'selected' : ''}`}
                                             onClick={() => {
                                                 handleSubtitleChange(track.id.toString())
-                                                setMenuTransition('backward')
-                                                setCurrentMenuView('main')
+                                                setTimeout(() => setCurrentMenuView('home'), 60)
                                             }}
                                         >
                                             <CheckIcon className="check-icon" />
@@ -503,15 +560,15 @@ export const VideoPlayer = () => {
 
                             {/* Speed Submenu */}
                             <div
-                                className={`menu-view speed ${
-                                    currentMenuView === 'speed' ? 'active' : 'inactive-right'
-                                }`}
+                                ref={el => {
+                                    viewsRef.current.speed = el
+                                }}
+                                className={`menu-view speed ${currentMenuView === 'speed' ? 'active' : 'hidden'}`}
                             >
                                 <div
                                     className="menu-item back-button"
                                     onClick={() => {
-                                        setMenuTransition('backward')
-                                        setCurrentMenuView('main')
+                                        setCurrentMenuView('home')
                                     }}
                                 >
                                     <ChevronLeftIcon size={16} className="return-icon" />
@@ -525,8 +582,7 @@ export const VideoPlayer = () => {
                                             className={`menu-item ${speed === speedValue ? 'selected' : ''}`}
                                             onClick={() => {
                                                 handleSpeedChange(speedValue)
-                                                setMenuTransition('backward')
-                                                setCurrentMenuView('main')
+                                                setTimeout(() => setCurrentMenuView('home'), 60)
                                             }}
                                         >
                                             <CheckIcon className="check-icon" />
@@ -538,15 +594,15 @@ export const VideoPlayer = () => {
 
                             {/* Statistics Submenu */}
                             <div
-                                className={`menu-view stats ${
-                                    currentMenuView === 'statistics' ? 'active' : 'inactive-right'
-                                }`}
+                                ref={el => {
+                                    viewsRef.current.statistics = el
+                                }}
+                                className={`menu-view stats ${currentMenuView === 'statistics' ? 'active' : 'hidden'}`}
                             >
                                 <div
                                     className="menu-item back-button"
                                     onClick={() => {
-                                        setMenuTransition('backward')
-                                        setCurrentMenuView('main')
+                                        setCurrentMenuView('home')
                                     }}
                                 >
                                     <ChevronLeftIcon size={16} className="return-icon" />
