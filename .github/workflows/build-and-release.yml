@@ -81,7 +81,7 @@ jobs:
                   $wrapperUrl = "https://github.com/nini22P/libmpv-wrapper/releases/latest/download/libmpv-wrapper-windows-x86_64.zip"
                   Invoke-WebRequest -Uri $wrapperUrl -OutFile libmpv-wrapper.zip
                   Expand-Archive -Path libmpv-wrapper.zip -DestinationPath wrapper-temp -Force
-                  Copy-Item "wrapper-temp/libmpv-wrapper.dll" -Destination "src-tauri/lib/libmpv-wrapper.dll"
+                  Copy-Item "wrapper-temp/lib/libmpv-wrapper.dll" -Destination "src-tauri/lib/libmpv-wrapper.dll"
                   Remove-Item -Recurse -Force wrapper-temp, libmpv-wrapper.zip
 
                   # Download libmpv from zhongfly's builds
