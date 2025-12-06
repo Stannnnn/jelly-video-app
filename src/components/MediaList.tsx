@@ -2,7 +2,6 @@ import { HeartFillIcon } from '@primer/octicons-react'
 import { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
-import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { useDisplayItems } from '../hooks/useDisplayItems'
 import { JellyImg } from './JellyImg'
 import { Loader } from './Loader'
@@ -30,7 +29,6 @@ export const MediaList = ({
     className?: string
 }) => {
     const { displayItems, setRowRefs } = useDisplayItems(items, isLoading)
-    const { playTrack } = usePlaybackContext()
     const navigate = useNavigate()
 
     const handleItemClick = (item: MediaItem) => {
@@ -46,8 +44,8 @@ export const MediaList = ({
         } else if (itemType === 'boxset') {
             navigate(`/collection/${item.Id}`)
         } else {
-            // Fallback to play track for other types
-            playTrack(item)
+            // Fallback to play route for other types
+            navigate(`/play/${item.Id}`)
         }
     }
 

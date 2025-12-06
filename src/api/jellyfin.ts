@@ -465,6 +465,26 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
+    const searchItems = async (searchQuery: string, limit = 40, includeItemTypes?: BaseItemKind[], startIndex = 0) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            searchTerm: searchQuery,
+            recursive: true,
+            limit,
+            startIndex,
+            includeItemTypes: includeItemTypes || [
+                BaseItemKind.Movie,
+                BaseItemKind.Series,
+                BaseItemKind.Episode,
+                BaseItemKind.BoxSet,
+            ],
+            fields: extraFields,
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
     return {
         loginToJellyfin,
         getMovies,
@@ -490,5 +510,6 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         getItemChildren,
         getSeasons,
         getEpisodes,
+        searchItems,
     }
 }

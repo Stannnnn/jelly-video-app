@@ -1,6 +1,7 @@
 import { ArrowLeftIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from '@primer/octicons-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, WheelEvent } from 'react'
 import { MediaItem } from './api/jellyfin'
+import { Loader } from './components/Loader'
 import { SubtitleTrack } from './components/PlaybackManager'
 import {
     GearIcon,
@@ -13,6 +14,7 @@ import {
     SpeakerMuteIcon,
     VideoPlayIcon,
 } from './components/SvgIcons'
+import { useHistoryContext } from './context/HistoryContext/HistoryContext'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
 import './VideoPlayer.css'
@@ -46,6 +48,8 @@ export const VideoPlayer = () => {
         duration,
         isInitialized,
         videoLoaded,
+        isBuffering,
+        cacheDuration,
         volume,
         speed,
         subtitleTracks,
@@ -82,6 +86,7 @@ export const VideoPlayer = () => {
         fileSize,
     } = usePlaybackContext()
 
+    const { goBack: previousPage } = useHistoryContext()
     const [previewTime, setPreviewTime] = useState<number | null>(null)
     const [previewPosition, setPreviewPosition] = useState(0)
     const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
@@ -102,6 +107,26 @@ export const VideoPlayer = () => {
     const menuContainerRef = useRef<HTMLDivElement | null>(null)
 
     const shouldShowControls = showControls || showMenu || isPaused || isHoveringProgress || isHoveringControls
+
+    // Update CSS custom properties for progress and volume bars
+    useEffect(() => {
+        if (progressBarRef.current && duration) {
+            const progressPercent = (timePos / duration) * 100
+            progressBarRef.current.style.setProperty('--progress-percent', `${progressPercent}%`)
+
+            // Calculate buffer position (current position + cache duration)
+            const bufferEnd = timePos + cacheDuration
+            const bufferPercent = Math.min((bufferEnd / duration) * 100, 100)
+            progressBarRef.current.style.setProperty('--buffer-percent', `${bufferPercent}%`)
+        }
+    }, [timePos, duration, cacheDuration])
+
+    useEffect(() => {
+        const volumeBar = document.querySelector('.volume-bar') as HTMLInputElement
+        if (volumeBar) {
+            volumeBar.style.setProperty('--volume-percent', `${volume}%`)
+        }
+    }, [volume])
 
     // Format bitrate in Mbps or Kbps
     const formatBitrate = (bitrate: number) => {
@@ -270,6 +295,13 @@ export const VideoPlayer = () => {
         setTrickplayTile(null)
     }
 
+    const handleVolumeScroll = (e: WheelEvent<HTMLInputElement>) => {
+        e.stopPropagation()
+        const step = e.deltaY > 0 ? -2 : 2
+        const newVolume = Math.max(0, Math.min(100, volume + step))
+        handleVolumeChange(newVolume)
+    }
+
     const handleProgressMouseMove = (e: React.MouseEvent<HTMLInputElement>) => {
         if (!progressBarRef.current || !duration || !currentTrack) return
 
@@ -308,7 +340,7 @@ export const VideoPlayer = () => {
                 onMouseEnter={() => setIsHoveringControls(true)}
                 onMouseLeave={() => setIsHoveringControls(false)}
             >
-                <button className="return" title="Return" onClick={clearCurrentTrack}>
+                <button className="return" title="Return" onClick={previousPage}>
                     <ArrowLeftIcon size={20} className="return-icon" />
                 </button>
                 <div className="video-title">
@@ -325,6 +357,8 @@ export const VideoPlayer = () => {
                     <div className="loading"></div>
                 </div>
             </div>
+
+            {((!videoLoaded && currentTrack) || isBuffering) && <Loader />}
 
             <div
                 className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}

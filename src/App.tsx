@@ -7,12 +7,12 @@ import './App.css'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Main } from './components/Main'
 import './components/MediaList.css'
+import { SearchResults } from './components/SearchResults'
 import { Sidenav } from './components/Sidenav'
 import { AudioStorageContextProvider } from './context/AudioStorageContext/AudioStorageContextProvider'
 import { HistoryContextProvider } from './context/HistoryContext/HistoryContextProvider'
 import { JellyfinContextProvider } from './context/JellyfinContext/JellyfinContextProvider'
 import { PageTitleProvider } from './context/PageTitleContext/PageTitleProvider'
-import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
 import { PlaybackContextProvider } from './context/PlaybackContext/PlaybackContextProvider'
 import { ScrollContextProvider } from './context/ScrollContext/ScrollContextProvider'
 import { useSidenavContext } from './context/SidenavContext/SidenavContext'
@@ -29,11 +29,15 @@ import { MoviePage } from './pages/MoviePage'
 import { Movies } from './pages/Movies'
 import { RecentlyAdded } from './pages/RecentlyAdded'
 import { RecentlyPlayed } from './pages/RecentlyPlayed'
+import { SearchCollections } from './pages/SearchCollections'
+import { SearchEpisodes } from './pages/SearchEpisodes'
+import { SearchMovies } from './pages/SearchMovies'
+import { SearchSeries } from './pages/SearchSeries'
 import { SeriesPage } from './pages/SeriesPage'
 import { Settings } from './pages/Settings'
 import { Shows } from './pages/Shows'
+import { VideoPlayerPage } from './pages/VideoPlayerPage'
 import { persister, queryClient } from './queryClient'
-import { VideoPlayer } from './VideoPlayer'
 
 export const App = () => {
     return (
@@ -177,7 +181,6 @@ interface AuthData {
 const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () => void }) => {
     useDocumentTitle()
 
-    const playback = usePlaybackContext()
     const { showSidenav, toggleSidenav } = useSidenavContext()
 
     const memoSettings = useCallback(() => {
@@ -186,49 +189,39 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
 
     return (
         <Routes>
+            <Route path="/play/:id" element={<VideoPlayerPage />} />
             <Route
                 path="*"
                 element={
-                    <>
-                        {playback.currentTrack && <VideoPlayer />}
-                        {!playback.currentTrack && (
-                            <div className={`interface` + (false ? ' touchBlocked' : '')}>
-                                <>
-                                    <div
-                                        className={showSidenav || false ? 'dimmer active noSelect' : 'dimmer noSelect'}
-                                        onClick={showSidenav ? toggleSidenav : undefined}
-                                    />
+                    <div className={'interface'}>
+                        <div
+                            className={showSidenav || false ? 'dimmer active noSelect' : 'dimmer noSelect'}
+                            onClick={showSidenav ? toggleSidenav : undefined}
+                        />
 
-                                    <Sidenav username={auth.username} />
+                        <Sidenav username={auth.username} />
 
-                                    <Routes>
-                                        <Route path="/" element={<Main content={Home}></Main>} />
-                                        <Route path="/settings" element={<Main content={memoSettings} />} />
-                                        <Route
-                                            path="/movies"
-                                            element={<Main content={Movies} filterType={'movies'} />}
-                                        />
-                                        <Route path="/movie/:id" element={<Main content={MoviePage} />} />
-                                        <Route path="/shows" element={<Main content={Shows} filterType={'movies'} />} />
-                                        <Route path="/series/:id" element={<Main content={SeriesPage} />} />
-                                        <Route path="/episode/:id" element={<Main content={EpisodePage} />} />
-                                        <Route
-                                            path="/collections"
-                                            element={<Main content={Collections} filterType={'movies'} />}
-                                        />
-                                        <Route path="/collection/:id" element={<Main content={CollectionPage} />} />
-                                        <Route
-                                            path="/favorites"
-                                            element={<Main content={Favorites} filterType={'favorites'} />}
-                                        />
-                                        <Route path="/recently-played" element={<Main content={RecentlyPlayed} />} />
-                                        <Route path="/recently-added" element={<Main content={RecentlyAdded} />} />
-                                        <Route path="*" element={<Navigate to="/" />} />
-                                    </Routes>
-                                </>
-                            </div>
-                        )}
-                    </>
+                        <Routes>
+                            <Route path="/" element={<Main content={Home}></Main>} />
+                            <Route path="/settings" element={<Main content={memoSettings} />} />
+                            <Route path="/movies" element={<Main content={Movies} filterType={'movies'} />} />
+                            <Route path="/movie/:id" element={<Main content={MoviePage} />} />
+                            <Route path="/shows" element={<Main content={Shows} filterType={'movies'} />} />
+                            <Route path="/series/:id" element={<Main content={SeriesPage} />} />
+                            <Route path="/episode/:id" element={<Main content={EpisodePage} />} />
+                            <Route path="/collections" element={<Main content={Collections} filterType={'movies'} />} />
+                            <Route path="/collection/:id" element={<Main content={CollectionPage} />} />
+                            <Route path="/favorites" element={<Main content={Favorites} filterType={'favorites'} />} />
+                            <Route path="/recently-played" element={<Main content={RecentlyPlayed} />} />
+                            <Route path="/recently-added" element={<Main content={RecentlyAdded} />} />
+                            <Route path="/search/:query" element={<Main content={SearchResults} />} />
+                            <Route path="/search/:query/movies" element={<Main content={SearchMovies} />} />
+                            <Route path="/search/:query/series" element={<Main content={SearchSeries} />} />
+                            <Route path="/search/:query/episodes" element={<Main content={SearchEpisodes} />} />
+                            <Route path="/search/:query/collections" element={<Main content={SearchCollections} />} />
+                            <Route path="*" element={<Navigate to="/" />} />
+                        </Routes>
+                    </div>
                 }
             />
         </Routes>

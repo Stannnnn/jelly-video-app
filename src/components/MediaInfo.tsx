@@ -1,7 +1,7 @@
 import { HeartFillIcon, HeartIcon } from '@primer/octicons-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
-import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { useFavorites } from '../hooks/useFavorites'
 import { formatDate } from '../utils/formatDate'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
@@ -10,7 +10,7 @@ import './MediaInfo.css'
 import { Squircle } from './Squircle'
 
 export const MediaInfo = ({ item }: { item: MediaItem }) => {
-    const { playTrack } = usePlaybackContext()
+    const navigate = useNavigate()
     const { addToFavorites, removeFromFavorites } = useFavorites()
     const [isFavorited, setIsFavorited] = useState(item.UserData?.IsFavorite || false)
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false)
@@ -69,7 +69,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                     {item.Overview && <p className="media-info-overview">{item.Overview}</p>}
 
                     <div className="media-info-actions">
-                        <button className="btn btn-primary" onClick={() => playTrack(item)}>
+                        <button className="btn btn-primary" onClick={() => navigate(`/play/${item.Id}`)}>
                             Play
                         </button>
                         <button

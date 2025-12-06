@@ -36,6 +36,8 @@ const OBSERVED_PROPERTIES = [
     ['video-format', 'string'],
     ['audio-codec-name', 'string'],
     ['file-size', 'int64'],
+    ['paused-for-cache', 'flag'],
+    ['demuxer-cache-duration', 'double'],
 ] as const satisfies MpvObservableProperty[]
 
 export interface SubtitleTrack {
@@ -73,6 +75,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [currentSubtitleId, setCurrentSubtitleId] = useState<number | null>(null)
     const [speed, setSpeed] = useState(1.0)
     const [videoLoaded, setVideoLoaded] = useState(false)
+    const [isBuffering, setIsBuffering] = useState(false)
+    const [cacheDuration, setCacheDuration] = useState(0)
 
     // Video statistics
     const [videoCodec, setVideoCodec] = useState<string>('N/A')
@@ -127,6 +131,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     // Track previous track and last reported stopped track to avoid duplicate reports
     const previousTrackRef = useRef<MediaItem | undefined>(undefined)
     const lastStoppedTrackIdRef = useRef<string | undefined>(undefined)
+    const isPlayingTrackRef = useRef<string | undefined>(undefined)
 
     const [currentTrack, setCurrentTrack] = useState<MediaItem | undefined>(undefined)
 
@@ -317,6 +322,16 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                                 setFileSize(data)
                             }
                             break
+                        case 'paused-for-cache':
+                            if (typeof data === 'boolean') {
+                                setIsBuffering(data)
+                            }
+                            break
+                        case 'demuxer-cache-duration':
+                            if (typeof data === 'number') {
+                                setCacheDuration(data)
+                            }
+                            break
                     }
                 })
 
@@ -461,10 +476,16 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     // Play track when currentTrack changes
     useEffect(() => {
-        if (currentTrack?.Id && isInitialized) {
-            playTrack()
+        if (!currentTrack?.Id || !isInitialized) return
+
+        // Prevent double execution for the same track
+        if (isPlayingTrackRef.current === currentTrack.Id) {
+            return
         }
-    }, [currentTrack?.Id, isInitialized]) // eslint-disable-line react-hooks/exhaustive-deps
+
+        isPlayingTrackRef.current = currentTrack.Id
+        playTrack()
+    }, [currentTrack?.Id]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const formatTime = (seconds: number) => {
         if (isNaN(seconds) || seconds === 0) return '0:00'
@@ -722,6 +743,41 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             // Clear the current track
             setCurrentTrack(undefined)
             previousTrackRef.current = undefined
+            isPlayingTrackRef.current = undefined
+            lastStoppedTrackIdRef.current = undefined
+
+            // Abort any ongoing API requests
+            abortControllerRef.current?.abort('clearCurrentTrack')
+            abortControllerRef.current = null
+
+            // Reset playback state
+            setTimePos(0)
+            setDuration(0)
+            setIsPaused(false)
+
+            // Clear subtitle state
+            setSubtitleTracks([])
+            setCurrentSubtitleId(null)
+
+            // Clear video statistics
+            setVideoCodec('N/A')
+            setAudioCodec('N/A')
+            setVideoWidth(0)
+            setVideoHeight(0)
+            setFps(0)
+            setVideoBitrate(0)
+            setAudioBitrate(0)
+            setAudioChannels(0)
+            setAudioSampleRate(0)
+            setHwdec('N/A')
+            setContainerFps(0)
+            setVideoFormat('N/A')
+            setAudioCodecName('N/A')
+            setFileSize(0)
+
+            // Clear buffering state
+            setIsBuffering(false)
+            setCacheDuration(0)
 
             // Clear Media Session metadata
             if ('mediaSession' in navigator) {
@@ -738,6 +794,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         isPaused,
         isInitialized,
         videoLoaded,
+        isBuffering,
+        cacheDuration,
         timePos,
         duration,
 

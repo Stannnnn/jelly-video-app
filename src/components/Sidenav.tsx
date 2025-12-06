@@ -1,11 +1,15 @@
 import { GearIcon } from '@primer/octicons-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { MediaItem } from '../api/jellyfin'
 import '../App.css'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
+import { useJellyfinSearch } from '../hooks/Jellyfin/useJellyfinSearch'
+import { InlineLoader } from './InlineLoader'
+import { JellyImg } from './JellyImg'
 import './Sidenav.css'
-import { DownloadingIcon, SearchIcon } from './SvgIcons'
+import { DownloadingIcon, SearchClearIcon, SearchIcon } from './SvgIcons'
 
 export const Sidenav = (props: { username: string }) => {
     const navigate = useNavigate()
@@ -14,6 +18,7 @@ export const Sidenav = (props: { username: string }) => {
 
     const { disabled, setDisabled } = useScrollContext()
     const [searchQuery, setSearchQuery] = useState(new URLSearchParams(location.search).get('search') || '')
+    const { searchResults, searchLoading, searchError, searchAttempted } = useJellyfinSearch(searchQuery)
 
     const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value)
@@ -21,6 +26,19 @@ export const Sidenav = (props: { username: string }) => {
 
     const handleClearSearch = () => {
         setSearchQuery('')
+    }
+
+    const handleItemClick = (item: MediaItem) => {
+        if (item.Type === 'Movie') {
+            navigate(`/movie/${item.Id}`)
+        } else if (item.Type === 'Series') {
+            navigate(`/series/${item.Id}`)
+        } else if (item.Type === 'Episode') {
+            navigate(`/episode/${item.Id}`)
+        } else if (item.Type === 'BoxSet') {
+            navigate(`/collection/${item.Id}`)
+        }
+        closeSidenav()
     }
 
     // Debounced URL update for search query
@@ -77,9 +95,79 @@ export const Sidenav = (props: { username: string }) => {
                                     onChange={handleSearchChange}
                                     ref={searchInputRef}
                                 />
+                                {!searchLoading && (
+                                    <div className="search-clear" onClick={handleClearSearch}>
+                                        <SearchClearIcon width={13} height={13} />
+                                    </div>
+                                )}
+                                {searchLoading && (
+                                    <div className="search-loading noSelect">
+                                        <InlineLoader />
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        <div className="search_results">{searchQuery && <></>}</div>
+                        <div className="search_results">
+                            {searchQuery && (
+                                <>
+                                    {searchError && <div className="indicator error">{searchError}</div>}
+                                    {!searchLoading &&
+                                        searchAttempted &&
+                                        !searchError &&
+                                        searchResults.length === 0 && (
+                                            <div className="empty">
+                                                Search for <span className="keyword">'{searchQuery}'</span> yields no
+                                                results
+                                            </div>
+                                        )}
+                                    {!searchLoading && !searchError && searchResults.length > 0 && (
+                                        <div className="results noSelect">
+                                            {searchResults.map(item => {
+                                                const itemClass = ''
+
+                                                return (
+                                                    <div
+                                                        key={`${item.Type}-${item.Id}`}
+                                                        onClick={() => handleItemClick(item)}
+                                                        className={`result ${itemClass}`}
+                                                    >
+                                                        <div className="result_image">
+                                                            <JellyImg
+                                                                item={item}
+                                                                type="Primary"
+                                                                width={60}
+                                                                height={60}
+                                                            />
+                                                        </div>
+                                                        <div className="result_info">
+                                                            <div className="result_name">{item.Name}</div>
+                                                            <div className="result_type">
+                                                                {item.Type === 'Movie' && 'Movie'}
+                                                                {item.Type === 'Series' && 'Series'}
+                                                                {item.Type === 'Episode' &&
+                                                                    `Episode • ${item.SeriesName || ''}`}
+                                                                {item.Type === 'BoxSet' && 'Collection'}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })}
+                                            <div className="additional">
+                                                <div
+                                                    className="see-all"
+                                                    onClick={() => {
+                                                        navigate(`/search/${encodeURIComponent(searchQuery)}`)
+                                                        closeSidenav()
+                                                    }}
+                                                >
+                                                    See all results for '{searchQuery}'
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </div>
                     </div>
                     <ul className="links noSelect">
                         <li>
