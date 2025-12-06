@@ -4,6 +4,8 @@ A lightweight & elegant video interface for Jellyfin. Built with Tauri and libmp
 
 > **⚠️ Note:** This application is currently in active development and serves as a demo. Features and functionality are subject to change as we continue to improve the experience.
 
+**Looking for a music player?** Check out [Jelly Music App](https://github.com/Stannnnn/jelly-app/) - the music-focused version for your Jellyfin library!
+
 ### Features
 
 -   **Native Performance:** Built with Tauri for a lightweight, native desktop experience with minimal resource usage.
