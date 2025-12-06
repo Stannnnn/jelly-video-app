@@ -1,8 +1,8 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-// @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST
+const version = process.env.npm_package_version || 'unknown'
 
 // https://vite.dev/config/
 export default defineConfig(async () => ({
@@ -28,5 +28,9 @@ export default defineConfig(async () => ({
             // 3. tell Vite to ignore watching `src-tauri`
             ignored: ['**/src-tauri/**'],
         },
+    },
+    define: {
+        __NPM_LIFECYCLE_EVENT__: JSON.stringify(process.env.npm_lifecycle_event),
+        __VERSION__: JSON.stringify(version),
     },
 }))

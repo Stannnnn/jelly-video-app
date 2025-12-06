@@ -1,0 +1,639 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.video-container textarea,
+.video-container button,
+.video-container label,
+.video-container input,
+.video-container input:focus,
+.video-container input:active,
+.video-container input[type='text'],
+.video-container input[type='password'],
+.video-container input[type='button'],
+.video-container input[type='submit'],
+.video-container input[type='number'],
+.video-container input[type='email'],
+.video-container input[type='file'],
+.video-container input[type='search'],
+.video-container input[type='search']::-webkit-search-decoration,
+.video-container input[type='search']::-webkit-search-cancel-button,
+.video-container input[type='search']::-webkit-search-results-button,
+.video-container input[type='search']::-webkit-search-results-decoration {
+    color: #ffffff;
+}
+
+.video-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    width: 100dvw;
+    height: 100dvh;
+    overflow: hidden;
+    fill: #ffffff;
+    color: #ffffff;
+}
+
+.video-container > .video-header {
+    position: relative;
+    z-index: 1;
+    padding: 14px;
+    padding-bottom: 20px;
+    display: flex;
+    align-items: center;
+    transform: translateY(0);
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
+}
+
+.video-container > .video-header.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-24px);
+}
+
+.video-container > .video-header > .return {
+    position: relative;
+    cursor: pointer;
+    padding: 6px;
+    margin-right: 12px;
+    border-radius: 20px;
+    transition: background-color 0.2s ease-in;
+    background-color: transparent;
+}
+
+.video-container > .video-header > .return:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.video-container > .video-header > .video-title {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.video-container > .video-overlay {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.video-container.playing > .video-overlay {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.video-container > .video-overlay > .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.video-container > .video-overlay > .container > .video-play-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.video-container > .video-overlay > .container > .video-play-icon > svg {
+    width: 42px;
+    height: 42px;
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.4));
+    transition: transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.video-container.playing > .video-overlay > .container > .video-play-icon > svg {
+    transform: scale(1);
+}
+
+.video-container > .video-controls {
+    position: relative;
+    z-index: 1;
+    padding: 14px;
+    padding-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateY(0);
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
+}
+
+.video-container > .video-controls.hidden {
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(24px);
+}
+
+.video-container > .video-controls.visible {
+}
+
+.video-container > .video-controls .controls-tooltip {
+    font-size: 0.725rem;
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    bottom: 12px;
+    white-space: nowrap;
+    padding: 3px 5px;
+    border-radius: 4px;
+    pointer-events: none;
+    background-color: rgba(46, 46, 46, 0.8);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(0);
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.video-container > .video-controls *:hover > .controls-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+.video-container > .video-controls .controls-btn {
+    position: relative;
+    z-index: 3;
+    cursor: pointer;
+    padding: 7px;
+    border-radius: 20px;
+    background-color: transparent;
+    transition: background-color 0.2s ease-in;
+}
+
+.video-container > .video-controls .controls-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.video-container > .video-controls > .playback {
+    display: flex;
+}
+
+.video-container > .video-controls > .progress {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.video-container > .video-controls > .progress > .time {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.video-container > .video-controls > .progress > .progress-container {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.video-container > .video-controls > .progress > .progress-container > .progress-bar {
+    position: relative;
+    cursor: pointer;
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(
+        to right,
+        var(--brand-color) 0%,
+        var(--brand-color) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.2) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.2) 100%
+    );
+}
+
+.video-container > .video-controls > .progress > .progress-container > .progress-bar::-webkit-slider-thumb {
+    cursor: pointer;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.video-container > .video-controls > .progress > .progress-container > .progress-bar::-moz-range-thumb {
+    cursor: pointer;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.video-container > .video-controls > .progress > .progress-container > .progress-preview {
+    position: absolute;
+    bottom: 20px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.video-container > .video-controls > .progress > .progress-container > .progress-preview.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+.video-container > .video-controls > .progress > .progress-container > .progress-preview.active.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(0);
+}
+
+.video-container > .video-controls > .progress > .progress-container > .progress-preview > .preview-thumbnail {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.video-container
+    > .video-controls
+    > .progress
+    > .progress-container
+    > .progress-preview
+    > .preview-thumbnail
+    > .shadow-border {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    box-shadow: rgba(255, 255, 255, 0.12) 0px 0px 0px 1px inset;
+}
+
+.video-container > .video-controls > .progress > .progress-container > .progress-preview > .preview-time {
+    font-size: 0.725rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    padding: 4px 7px;
+    border-radius: 20px;
+    background-color: rgba(46, 46, 46, 0.9);
+}
+
+/* Is this even in use anywhere? */
+.video-container
+    > .video-controls
+    > .progress
+    > .progress-container
+    > .progress-preview
+    > .preview-thumbnail
+    > .preview-placeholder {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(46, 46, 46, 0.9);
+    display: none; /* temp */
+}
+
+.video-container > .video-controls > .actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 2px;
+}
+
+.video-container > .video-controls > .actions > .volume {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-container {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    z-index: 2;
+    bottom: -26px;
+    left: 15px;
+    transform: rotate(-90deg);
+    transform-origin: left;
+    width: 142px;
+    height: 32px;
+    border-radius: 20px;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-container:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: rotate(-90deg) translateX(10px);
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-toggle:hover ~ .volume-container {
+    opacity: 1;
+    visibility: visible;
+    transform: rotate(-90deg) translateX(10px);
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-container > .volume-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-left: 44px;
+    border-radius: 20px;
+    backdrop-filter: blur(2px);
+    background-color: rgba(46, 46, 46, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-container > .volume-wrapper > .volume-bar {
+    position: relative;
+    cursor: pointer;
+    width: 100%;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(
+        to right,
+        var(--brand-color) 0%,
+        var(--brand-color) var(--volume-percent, 0%),
+        rgba(255, 255, 255, 0.2) var(--volume-percent, 0%),
+        rgba(255, 255, 255, 0.2) 100%
+    );
+}
+
+.video-container
+    > .video-controls
+    > .actions
+    > .volume
+    > .volume-container
+    > .volume-wrapper
+    > .volume-bar::-webkit-slider-thumb {
+    cursor: pointer;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: #ffffff;
+}
+
+.video-container
+    > .video-controls
+    > .actions
+    > .volume
+    > .volume-container
+    > .volume-wrapper
+    > .volume-bar::-moz-range-thumb {
+    cursor: pointer;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: #ffffff;
+}
+
+.video-container > .video-controls > .actions > .volume > .volume-toggle > .volume-indicator {
+    font-size: 0.5rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    position: absolute;
+    top: 1px;
+    right: -1px;
+    padding: 1px 3px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.video-container > .video-controls > .actions > .video-menu {
+    position: relative;
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-toggle > svg {
+    transition: transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-toggle.active > svg {
+    transform: rotate(90deg);
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-toggle > .quality-label {
+    font-size: 0.5rem;
+    font-weight: 600;
+    position: absolute;
+    top: 1px;
+    right: -1px;
+    padding: 1px 3px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container {
+    position: absolute;
+    z-index: 1;
+    bottom: 34px;
+    right: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 12px;
+    background-color: rgba(46, 46, 46, 0.9);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1), width 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        height 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-toggle.active ~ .menu-container {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-10px);
+}
+
+/* Menu view container for animation */
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px;
+    min-width: 114px;
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view.hidden {
+    display: none;
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item {
+    font-size: 0.8125rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.15s ease-in;
+    position: relative;
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/*
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item.selected {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+*/
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view.home .menu-item {
+    gap: 20px;
+    min-width: 188px;
+}
+
+.video-container
+    > .video-controls
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    .menu-item.back-button
+    > .return-icon {
+    margin-left: -4px;
+    margin-right: 2px;
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item.stats-header {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 6px 12px;
+    pointer-events: none;
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item.stats-item {
+    gap: 36px;
+    padding: 6px 12px;
+    pointer-events: none;
+}
+
+.video-container
+    > .video-controls
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    .menu-item.stats-item:last-of-type {
+    padding-bottom: 8px;
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item > .check-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: -2px;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.video-container
+    > .video-controls
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    .menu-item.selected
+    .check-icon {
+    opacity: 1;
+    visibility: visible;
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item > .text {
+    flex: 1;
+}
+
+.video-container
+    > .video-controls
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    .menu-item
+    > .menu-item-right {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.video-container
+    > .video-controls
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    .menu-item
+    > .menu-item-right
+    > .menu-item-value,
+.video-container
+    > .video-controls
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    .menu-item
+    > .menu-item-value {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.video-container
+    > .video-controls
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    .menu-item
+    > .menu-item-right
+    > .icon {
+    margin-right: -4px;
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-divider {
+    flex-shrink: 0;
+    height: 1px;
+    margin: 4px 10px;
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view > .container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 60dvh;
+    overflow: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}

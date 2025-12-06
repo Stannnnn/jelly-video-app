@@ -1,0 +1,51 @@
+.skeleton-loading {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.skeleton-effect {
+    background-image: linear-gradient(
+        90deg,
+        var(--bg-color-tertiary) 0%,
+        var(--bg-color-quaternary) 20%,
+        var(--bg-color-tertiary) 40%
+    );
+    background-size: 200%;
+    background-color: var(--bg-color-tertiary);
+    animation: skeleton-shine 1.6s infinite ease-out;
+}
+
+.skeleton-loading > .skeleton-effect.thumbnail {
+    width: 46px;
+    height: 46px;
+    margin-right: 12px;
+    border-radius: 6px;
+}
+
+.skeleton-loading > .skeleton-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.skeleton-loading > .skeleton-details > .skeleton-effect.title {
+    height: 16px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+.skeleton-loading > .skeleton-details > .skeleton-effect.artist {
+    height: 14px;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-shine {
+    0% {
+        background-position: 100%;
+    }
+    40%,
+    100% {
+        background-position: -100%;
+    }
+}

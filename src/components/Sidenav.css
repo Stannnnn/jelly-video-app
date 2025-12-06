@@ -1,0 +1,417 @@
+.sidenav {
+    position: relative;
+    flex-basis: 210px;
+    transition: flex-basis 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+}
+
+.sidenav > .sidenav_wrapper {
+    position: fixed;
+    z-index: 3;
+    width: 210px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-color-secondary);
+    border-right: 1px solid var(--border-color);
+    overflow: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    transform: translate(0);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+}
+
+/* Isolate volume scroll */
+.sidenav > .sidenav_wrapper.lockscroll {
+    overflow: hidden !important;
+}
+
+/* Prevent sidenav content from jumping on windows/chrome when scrolling volume */
+html.winOS .sidenav > .sidenav_wrapper.lockscroll {
+    scrollbar-gutter: stable;
+}
+
+/* Sidenav specific scroll */
+html.winOS .sidenav > .sidenav_wrapper {
+    overflow-y: scroll;
+}
+
+html.winOS .sidenav > .sidenav_wrapper::-webkit-scrollbar {
+    width: 10px;
+    border-radius: 20px;
+    background-color: var(--bg-color-secondary);
+}
+
+html.winOS .sidenav > .sidenav_wrapper::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    border: 2px solid var(--bg-color-secondary);
+    background-color: var(--bg-color-secondary);
+}
+
+html.winOS .sidenav > .sidenav_wrapper:hover::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-color);
+}
+
+html.winOS .sidenav > .sidenav_wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-color-hover);
+}
+
+html.winOS .sidenav > .sidenav_wrapper > .sidenav_header {
+    width: calc(100% + 10px);
+}
+
+html.winOS .sidenav > .sidenav_wrapper > .sidenav_content {
+    width: calc(100% + 10px);
+}
+
+html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
+    width: calc(100% + 10px);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px 12px;
+    margin-bottom: 14px;
+    background-color: var(--bg-color-secondary);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_header > .logo {
+    display: block;
+    width: 64px;
+    height: 64px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url(/logo.webp);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > ul {
+    position: relative;
+    z-index: 2;
+    list-style: none;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > ul > li {
+    margin-bottom: 6px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > ul > li > a {
+    display: flex;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin: 0 16px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > ul > li > a:hover {
+    background-color: var(--bg-color-tertiary);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > ul > li > a.active {
+    background-color: var(--bg-color-tertiary);
+    color: var(--font-color-active);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search {
+    margin-bottom: 8px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_header {
+    position: sticky;
+    z-index: 1;
+    top: 0;
+    padding: 12px 16px;
+    padding-bottom: 2px;
+    margin-bottom: 12px;
+    background-color: var(--bg-color-secondary);
+    box-shadow: 0 2px 8px 4px var(--bg-color-secondary);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_header > .input_container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    outline: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_header > .input_container > .search-icon {
+    position: absolute;
+    left: 8px;
+    pointer-events: none;
+    fill: var(--font-color-tertiary);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_header > .input_container > input {
+    font-size: 0.75rem;
+    font-weight: 500;
+    width: 100%;
+    padding: 7px 0 7px 28px;
+    background-color: rgba(0, 0, 0, 0);
+    text-overflow: ellipsis;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_header > .input_container > .search-clear {
+    position: absolute;
+    right: 0;
+    opacity: 0;
+    visibility: hidden;
+    cursor: pointer;
+    padding: 7px;
+    fill: var(--font-color-secondary);
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out, fill 0.2s ease-out;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_header > .input_container > .search-clear:hover {
+    fill: var(--font-color);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_header > .input_container.active > .search-clear {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_header > .input_container > .search-loading {
+    padding: 8px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results {
+    margin: 0 14px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results {
+    font-size: 0.725rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result {
+    cursor: pointer;
+    margin: 0 -4px;
+    margin-bottom: 2px;
+    padding: 5px 7px;
+    border-radius: 6px;
+    color: var(--font-color);
+    fill: var(--font-color);
+    transition: background-color 0.2s ease-out, color 0.2s ease-out, fill 0.2s ease-out;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result:hover {
+    background-color: var(--bg-color-tertiary);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.active,
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.playing,
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.paused {
+    color: var(--font-color-active);
+    fill: var(--font-color-active);
+    background-color: var(--bg-color-tertiary);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.playing,
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.paused {
+    background-color: unset;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.playing:hover,
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.paused:hover {
+    background-color: var(--bg-color-tertiary);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .type {
+    display: flex;
+    align-items: flex-start;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .type > .icon {
+    width: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .type > .text {
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
+    > .type
+    > .text
+    > .artist {
+    font-weight: 500;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .additional {
+    margin-top: 5px;
+    margin-left: 3px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .indicator {
+    font-size: 0.725rem;
+    font-weight: 500;
+    margin-left: 3px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .indicator.error {
+    color: var(--font-color-error);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .empty {
+    font-size: 0.725rem;
+    line-height: 1.4;
+    margin-left: 3px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .empty > .keyword {
+    font-weight: 500;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .playlists {
+    margin-top: 18px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .playlists > .indicator {
+    font-size: 0.725rem;
+    font-weight: 500;
+    margin: 20px 14px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .playlists > .indicator.error {
+    color: var(--font-color-error);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .playlists > .container > .playlist {
+    font-size: 0.725rem;
+    font-weight: 500;
+    display: block;
+    cursor: pointer;
+    margin: 0 10px;
+    margin-bottom: 2px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .playlists > .container > .playlist:hover {
+    background-color: var(--bg-color-tertiary);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .playlists > .container > .playlist.active {
+    background-color: var(--bg-color-tertiary);
+    color: var(--font-color-active);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    padding: 12px;
+    padding-top: 8px;
+    margin-top: auto;
+    background-color: var(--bg-color-secondary);
+    box-shadow: 0 -6px 16px 10px var(--bg-color-secondary);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 12px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .status {
+    font-size: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .status > .indicator {
+    color: var(--font-color-tertiary);
+    margin-bottom: 2px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .status > .username {
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions {
+    display: flex;
+    align-items: center;
+    margin-right: -6px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon {
+    position: relative;
+    padding: 6px;
+    border-radius: 20px;
+    transition: background-color 0.2s ease-out;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon:hover {
+    background-color: var(--bg-color-tertiary);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon > svg {
+    position: relative;
+    fill: var(--font-color);
+    transition: fill 0.2s ease-out;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon.active > svg {
+    fill: var(--font-color-active);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon.synced.active-sync > svg path:last-child {
+    clip-path: inset(100% 0 0 0);
+    animation: syncColorSweep 1.6s linear infinite;
+}
+
+@keyframes syncColorSweep {
+    0% {
+        clip-path: inset(0 0 100% 0);
+    }
+    50% {
+        clip-path: inset(0% 0 0 0);
+    }
+    100% {
+        clip-path: inset(100% 0 0 0);
+    }
+}
+
+/* Responsive */
+@media only screen and (max-width: 980px) {
+    .sidenav {
+        flex-basis: 0;
+    }
+
+    .sidenav > .sidenav_wrapper {
+        z-index: 3;
+        transform: translate(-210px);
+    }
+
+    .sidenav > .sidenav_wrapper.active {
+        transform: translateX(0);
+    }
+}

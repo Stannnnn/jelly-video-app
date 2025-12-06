@@ -1,0 +1,64 @@
+.movie-page,
+.episode-page,
+.collection-page,
+.series-page {
+    padding: 2rem;
+}
+
+.collection-children,
+.series-seasons {
+    margin-top: 3rem;
+}
+
+.collection-children h2,
+.series-seasons h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.season-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.season-dropdown {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #444);
+    background: var(--input-bg, #1a1a1a);
+    color: var(--text-primary, #ddd);
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 200px;
+}
+
+.season-dropdown:hover {
+    background: var(--hover-bg, rgba(255, 255, 255, 0.05));
+}
+
+.season-dropdown:focus {
+    outline: 2px solid var(--accent-color, #0078d4);
+    outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+    .movie-page,
+    .episode-page,
+    .collection-page,
+    .series-page {
+        padding: 1rem;
+    }
+
+    .season-selector {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .season-dropdown {
+        width: 100%;
+    }
+}

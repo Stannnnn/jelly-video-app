@@ -1,0 +1,329 @@
+.settings-page {
+    max-width: 600px;
+}
+
+.settings-page > .section {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-color-secondary);
+}
+
+.settings-page > .section > .title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.settings-page > .section .btn {
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--font-color-inverted);
+    cursor: pointer;
+    padding: 7px 13px;
+    border-radius: 6px;
+    background-color: var(--btn-brand-color);
+    transition: background-color 0.2s ease-out;
+}
+
+.settings-page > .section .btn:hover:not(:disabled) {
+    background-color: var(--btn-brand-color-hover);
+}
+
+.settings-page > .section .btn:disabled {
+    background-color: var(--btn-brand-color-disabled);
+    cursor: not-allowed;
+}
+
+/* Appearance */
+.settings-page > .section.appearance {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    row-gap: 4px;
+}
+
+.settings-page > .section.appearance > .container > .options {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 4px;
+}
+
+.settings-page > .section.appearance > .container > .options > .option {
+    cursor: pointer;
+}
+
+.settings-page > .section.appearance > .container > .options > .option > .visual {
+    position: relative;
+    width: 98px;
+    height: 62px;
+    border-radius: 10px;
+    outline: 3px solid rgba(0, 0, 0, 0);
+    background-size: cover;
+    background-color: var(--bg-color-secondary);
+    transition: outline-color 0.2s ease-out;
+}
+
+.settings-page > .section.appearance > .container > .options > .option.active > .visual {
+    outline-color: var(--brand-color);
+}
+
+.settings-page > .section.appearance > .container > .options > .option.light > .visual {
+    background-image: url(/light-variant-tiny.webp);
+}
+
+.settings-page > .section.appearance > .container > .options > .option.dark > .visual {
+    background-image: url(/dark-variant-tiny.webp);
+}
+
+.settings-page > .section.appearance > .container > .options > .option.system > .visual {
+    background-image: url(/dark-light-variant-tiny-split.webp);
+    background-image: url(/light-dark-variant-tiny-split.webp);
+}
+
+.settings-page > .section.appearance > .container > .options > .option > .desc {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--font-color-tertiary);
+    margin-top: 10px;
+    transition: color 0.2s ease-out;
+}
+
+.settings-page > .section.appearance > .container > .options > .option.active > .desc {
+    color: var(--font-color);
+}
+
+/* Switch */
+.switch {
+    position: relative;
+    display: block;
+    width: 28px;
+    height: 17px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.switch > input {
+    display: none;
+}
+
+.switch > .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    border: 1px solid var(--border-color-secondary);
+    background-color: var(--bg-color-tertiary);
+    transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
+}
+
+.switch > input:checked + .slider {
+    background-color: var(--brand-color);
+    border-color: var(--brand-color);
+}
+
+.switch > .slider:before {
+    position: absolute;
+    content: '';
+    height: 11px;
+    width: 11px;
+    left: 2px;
+    bottom: 2px;
+    border-radius: 50%;
+    background-color: var(--font-color-tertiary);
+    transition: transform 0.2s ease-out, background-color 0.2s ease-out;
+}
+
+.switch > input:checked + .slider:before {
+    transform: translateX(11px);
+    background-color: var(--font-color-inverted);
+}
+
+/* Offline Sync and Crossfade
+.settings-page > .section > .primary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.settings-page > .section > .primary > .container > .title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.settings-page > .section > .primary > .container > .desc {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--font-color-secondary);
+}
+
+.settings-page > .section > .primary > .container > .desc > .number {
+    font-variant-numeric: tabular-nums;
+}
+*/
+
+.settings-page > .section.ui > .inner:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.settings-page > .section.ui .desc > .subtitle {
+    margin-bottom: 0;
+}
+
+.settings-page > .section.ui .desc > .subdesc {
+    color: var(--font-color-tertiary);
+}
+
+.settings-page > .section.ui > .inner {
+    width: 100%;
+}
+
+.settings-page > .section.ui > .inner > .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.settings-page > .section.ui > .inner > .container > .sorting {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+}
+
+.settings-page > .section.ui > .inner > .container > .sorting > .filter {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.settings-page > .section.ui > .inner > .container > .sorting > .filter > select {
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--brand-color);
+    cursor: pointer;
+    padding: 6px 8px;
+    padding-right: 24px;
+}
+
+.settings-page > .section.ui > .inner > .container > .sorting > .filter > .icon {
+    position: absolute;
+    right: 6px;
+    color: var(--brand-color);
+    user-select: none;
+    pointer-events: none;
+}
+
+.settings-page > .section.ui > .inner > .container > .sorting > .filter > select > option {
+    font-weight: 500;
+    color: var(--font-color);
+}
+
+/*
+.settings-page > .section.ui > .inner > .container > .option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.settings-page > .section.ui > .inner > .container > .option > .number {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--font-color-tertiary);
+    transition: color 0.2s ease-out;
+}
+
+.settings-page > .section.ui > .inner > .container > .option > .slider {
+    display: flex;
+}
+
+.settings-page > .section.ui > .inner > .container > .option > .slider > input {
+    cursor: pointer;
+    width: 100%;
+    height: 7px;
+    border-radius: 20px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+}
+
+.settings-page > .section.ui > .inner > .container > .option > .slider > input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 100%;
+    background-color: var(--volume-dot-color);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease-out;
+}
+
+.settings-page > .section.ui > .inner > .container > .option > .slider > input::-webkit-slider-thumb:active {
+    background-color: var(--volume-dot-color-active);
+}
+
+.settings-page > .section.ui > .inner > .container > .option > .slider > input::-moz-range-thumb {
+    appearance: none;
+    border: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 100%;
+    background-color: var(--volume-dot-color);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease-out;
+}
+
+.settings-page > .section.ui > .inner > .container > .option > .slider > input::-moz-range-thumb:active {
+    background-color: var(--volume-dot-color-active);
+}
+*/
+
+/* About and Session */
+.settings-page > .section .desc {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--font-color-secondary);
+}
+
+.settings-page > .section .desc > .subtitle {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.settings-page > .section .desc > .subfooter {
+    margin-top: 14px;
+}
+
+.settings-page > .section .desc > p > .mantra {
+    font-style: italic;
+}
+
+.settings-page > .section > .actions {
+    display: flex;
+    align-items: center;
+    margin-top: 14px;
+}
+
+.settings-page > .section > .actions .btn.reload {
+    margin-left: 10px;
+}
+
+.settings-page > .section .desc > .info {
+    color: var(--font-color-tertiary);
+}

@@ -1,0 +1,5 @@
+.virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+    gap: 28px 24px;
+}
