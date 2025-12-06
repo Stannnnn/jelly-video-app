@@ -34,10 +34,10 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: lts/*
                   cache: 'yarn'
 
-            - name: Install Rust stable
+            - name: Setup Rust
               uses: dtolnay/rust-toolchain@stable
               with:
                   targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
@@ -96,8 +96,8 @@ jobs:
               with:
                   args: ${{ matrix.args }}
 
-            - name: Upload Release Assets
+            - name: Upload Packaged Files
               uses: jaywcjlove/github-action-upload-assets@main
               with:
                   tag: ${{ github.event.release.tag_name }}
-                  asset-path: '["src-tauri/target/release/bundle/**/*"]'
+                  asset-path: '["src-tauri/target/release/bundle/msi/*.msi", "src-tauri/target/release/bundle/nsis/*.exe", "src-tauri/target/release/*.exe"]'
