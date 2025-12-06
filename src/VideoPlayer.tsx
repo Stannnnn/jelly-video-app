@@ -351,14 +351,14 @@ export const VideoPlayer = () => {
 
             <div className="video-overlay">
                 <div className="container">
-                    <div className="video-play-icon" onClick={handleContainerClick}>
-                        <VideoPlayIcon width={42} height={42} />
-                    </div>
-                    <div className="loading"></div>
+                    {videoLoaded && !isBuffering && (
+                        <div className="video-play-icon" onClick={handleContainerClick}>
+                            <VideoPlayIcon width={42} height={42} />
+                        </div>
+                    )}
+                    {((!videoLoaded && currentTrack) || isBuffering) && <Loader />}
                 </div>
             </div>
-
-            {((!videoLoaded && currentTrack) || isBuffering) && <Loader />}
 
             <div
                 className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}

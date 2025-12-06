@@ -88,6 +88,11 @@
     visibility: hidden;
 }
 
+.video-container.playing > .video-overlay:has(.loading_container > .loading) {
+    opacity: 1;
+    visibility: visible;
+}
+
 .video-container > .video-overlay > .container {
     position: relative;
     width: 100%;
@@ -108,11 +113,19 @@
     height: 42px;
     transform: scale(1.2);
     filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.4));
-    transition: transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+    transition: transform 0.24s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .video-container.playing > .video-overlay > .container > .video-play-icon > svg {
     transform: scale(1);
+}
+
+.video-container > .video-overlay > .container > .loading_container {
+    height: 100%;
+}
+
+.video-container > .video-overlay > .container > .loading_container > .loading {
+    filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.4));
 }
 
 .video-container > .video-controls {
@@ -130,37 +143,12 @@
 }
 
 .video-container > .video-controls.hidden {
-    pointer-events: none;
     opacity: 0;
     visibility: hidden;
     transform: translateY(24px);
 }
 
 .video-container > .video-controls.visible {
-}
-
-.video-container > .video-controls .controls-tooltip {
-    font-size: 0.725rem;
-    position: absolute;
-    z-index: 3;
-    left: 50%;
-    bottom: 12px;
-    white-space: nowrap;
-    padding: 3px 5px;
-    border-radius: 4px;
-    pointer-events: none;
-    background-color: rgba(46, 46, 46, 0.8);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(-50%) translateY(0);
-    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
-        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
-}
-
-.video-container > .video-controls *:hover > .controls-tooltip {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(-10px);
 }
 
 .video-container > .video-controls .controls-btn {
@@ -212,7 +200,7 @@
         to right,
         var(--brand-color) 0%,
         var(--brand-color) var(--progress-percent, 0%),
-        rgba(255, 255, 255, 0.2) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.4) var(--progress-percent, 0%),
         rgba(255, 255, 255, 0.2) 100%
     );
 }
