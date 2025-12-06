@@ -478,6 +478,7 @@ export const VideoPlayer = () => {
                                     max="100"
                                     value={volume}
                                     onChange={e => handleVolumeChange(parseInt(e.target.value))}
+                                    onWheel={handleVolumeScroll}
                                     className="volume-bar"
                                 />
                             </div>
