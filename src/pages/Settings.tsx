@@ -366,9 +366,11 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
             <div className="section shortcuts">
                 <div className="title">Shortcuts</div>
                 <div className="desc">
-                    <p>Left/right arrow keys to skip back/forward</p>
+                    <p>Left/right arrow keys to skip back/forward 5 seconds</p>
+                    <p>J/L keys to skip back/forward 10 seconds</p>
                     <p>Arrow up/down to adjust volume</p>
-                    <p>Space bar pause/unpauses</p>
+                    <p>Space bar or K to pause/unpause</p>
+                    <p>M to mute/unmute</p>
                     <p>F key to fullscreen</p>
                     <p>ESC key to exit fullscreen</p>
                 </div>

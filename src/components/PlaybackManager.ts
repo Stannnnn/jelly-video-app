@@ -672,49 +672,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         setShowMenu(v => !v)
     }, [])
 
-    // Keyboard controls
-    useEffect(() => {
-        const handleKeyPress = (e: KeyboardEvent) => {
-            if (!isInitialized) return
-
-            switch (e.key) {
-                case ' ':
-                    e.preventDefault()
-                    togglePlayPause()
-                    break
-                case 'f':
-                case 'F':
-                    toggleFullscreen()
-                    break
-                case 'ArrowLeft':
-                    skip(-5)
-                    break
-                case 'ArrowRight':
-                    skip(5)
-                    break
-                case 'ArrowUp':
-                    e.preventDefault()
-                    if (volume < 100) {
-                        handleVolumeChange(Math.min(100, volume + 5))
-                    }
-                    break
-                case 'ArrowDown':
-                    e.preventDefault()
-                    if (volume > 0) {
-                        handleVolumeChange(Math.max(0, volume - 5))
-                    }
-                    break
-                case 'm':
-                case 'M':
-                    toggleMute()
-                    break
-            }
-        }
-
-        window.addEventListener('keydown', handleKeyPress)
-        return () => window.removeEventListener('keydown', handleKeyPress)
-    }, [isInitialized, volume, togglePlayPause, toggleFullscreen, skip, handleVolumeChange, toggleMute])
-
     const clearCurrentTrack = useCallback(async () => {
         if (currentTrack) {
             // Exit fullscreen only if it was enabled by the app
