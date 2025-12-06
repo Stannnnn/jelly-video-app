@@ -48,6 +48,52 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libmpv-dev
 
+            - name: Download libmpv-wrapper for Linux
+              if: matrix.platform == 'ubuntu-22.04'
+              run: |
+                  mkdir -p src-tauri/lib
+                  wget https://github.com/nini22P/libmpv-wrapper/releases/latest/download/libmpv-wrapper-linux-x86_64.zip -O libmpv-wrapper.zip
+                  unzip libmpv-wrapper.zip -d wrapper-temp
+                  cp wrapper-temp/libmpv-wrapper.so src-tauri/lib/libmpv-wrapper.so
+                  rm -rf wrapper-temp libmpv-wrapper.zip
+
+            - name: Download libmpv-wrapper for macOS
+              if: matrix.platform == 'macos-latest'
+              run: |
+                  mkdir -p src-tauri/lib
+                  if [[ "${{ matrix.args }}" == *"aarch64"* ]]; then
+                    wget https://github.com/nini22P/libmpv-wrapper/releases/latest/download/libmpv-wrapper-macos-aarch64.zip -O libmpv-wrapper.zip
+                  else
+                    wget https://github.com/nini22P/libmpv-wrapper/releases/latest/download/libmpv-wrapper-macos-x86_64.zip -O libmpv-wrapper.zip
+                  fi
+                  unzip libmpv-wrapper.zip -d wrapper-temp
+                  cp wrapper-temp/libmpv-wrapper.dylib src-tauri/lib/libmpv-wrapper.dylib
+                  rm -rf wrapper-temp libmpv-wrapper.zip
+
+            - name: Download libmpv libraries for Windows
+              if: matrix.platform == 'windows-latest'
+              run: |
+                  $ProgressPreference = 'SilentlyContinue'
+                  New-Item -ItemType Directory -Force -Path src-tauri/lib
+
+                  # Download libmpv-wrapper
+                  Write-Host "Downloading libmpv-wrapper..."
+                  $wrapperUrl = "https://github.com/nini22P/libmpv-wrapper/releases/latest/download/libmpv-wrapper-windows-x86_64.zip"
+                  Invoke-WebRequest -Uri $wrapperUrl -OutFile libmpv-wrapper.zip
+                  Expand-Archive -Path libmpv-wrapper.zip -DestinationPath wrapper-temp -Force
+                  Copy-Item "wrapper-temp/libmpv-wrapper.dll" -Destination "src-tauri/lib/libmpv-wrapper.dll"
+                  Remove-Item -Recurse -Force wrapper-temp, libmpv-wrapper.zip
+
+                  # Download libmpv from zhongfly's builds
+                  Write-Host "Downloading libmpv..."
+                  $mpvUrl = (Invoke-RestMethod "https://api.github.com/repos/zhongfly/mpv-winbuild/releases/latest").assets | Where-Object { $_.name -match "mpv-dev-lgpl-x86_64-.*\.7z$" -and $_.name -notmatch "v3" } | Select-Object -First 1 -ExpandProperty browser_download_url
+                  Invoke-WebRequest -Uri $mpvUrl -OutFile libmpv.7z
+                  7z x libmpv.7z -o"libmpv-temp"
+                  Copy-Item "libmpv-temp/libmpv-2.dll" -Destination "src-tauri/lib/libmpv-2.dll"
+                  Remove-Item -Recurse -Force libmpv-temp, libmpv.7z
+
+                  Write-Host "Successfully downloaded libmpv libraries"
+
             - name: Install frontend dependencies
               run: yarn install
 
