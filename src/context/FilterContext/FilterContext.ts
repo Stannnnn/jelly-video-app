@@ -30,7 +30,7 @@ export enum KindState {
 
 export const initialSortMap: Record<string, SortState> = {
     '/movies': SortState.Added,
-    '/shows': SortState.Added,
+    '/series': SortState.Added,
     '/collections': SortState.Added,
     '/favorites': SortState.Added,
 }

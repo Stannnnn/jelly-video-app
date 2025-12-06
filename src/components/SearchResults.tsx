@@ -4,7 +4,6 @@ import { Loader } from '../components/Loader'
 import { MediaList } from '../components/MediaList'
 import { usePageTitle } from '../context/PageTitleContext/PageTitleContext'
 import { useJellyfinSearchDetailed } from '../hooks/Jellyfin/useJellyfinSearchDetailed'
-import './SearchResults.css'
 
 export const SearchResults = () => {
     const { query } = useParams<{ query: string }>()
@@ -25,68 +24,66 @@ export const SearchResults = () => {
 
     return (
         <div className="search-results-page">
-            <div className="search-content">
-                {results.movies.length > 0 && (
-                    <div className="section movies">
+            {results.movies.length > 0 && (
+                <div className="section movies">
+                    <div className="container">
                         <div className="title">Movies</div>
-                        <MediaList items={results.movies} isLoading={loading} type="movie" />
-                        {results.movies.length >= 10 && (
-                            <div className="view-all">
-                                <Link to={`/search/${encodeURIComponent(query)}/movies`} className="textlink">
-                                    View all movies
-                                </Link>
-                            </div>
+                        {results.movies.length >= 12 && (
+                            <Link to={`/search/${encodeURIComponent(query)}/movies`} className="see-more noSelect">
+                                See more
+                            </Link>
                         )}
                     </div>
-                )}
+                    <MediaList items={results.movies} isLoading={loading} type="movie" />
+                </div>
+            )}
 
-                {results.series.length > 0 && (
-                    <div className="section series">
+            {results.series.length > 0 && (
+                <div className="section series">
+                    <div className="container">
                         <div className="title">Series</div>
-                        <MediaList items={results.series} isLoading={loading} type="series" />
-                        {results.series.length >= 10 && (
-                            <div className="view-all">
-                                <Link to={`/search/${encodeURIComponent(query)}/series`} className="textlink">
-                                    View all series
-                                </Link>
-                            </div>
+                        {results.series.length >= 12 && (
+                            <Link to={`/search/${encodeURIComponent(query)}/series`} className="see-more noSelect">
+                                See more
+                            </Link>
                         )}
                     </div>
-                )}
+                    <MediaList items={results.series} isLoading={loading} type="series" />
+                </div>
+            )}
 
-                {results.episodes.length > 0 && (
-                    <div className="section episodes">
+            {results.episodes.length > 0 && (
+                <div className="section episodes">
+                    <div className="container">
                         <div className="title">Episodes</div>
-                        <MediaList items={results.episodes} isLoading={loading} type="episode" />
-                        {results.episodes.length >= 10 && (
-                            <div className="view-all">
-                                <Link to={`/search/${encodeURIComponent(query)}/episodes`} className="textlink">
-                                    View all episodes
-                                </Link>
-                            </div>
+                        {results.episodes.length >= 12 && (
+                            <Link to={`/search/${encodeURIComponent(query)}/episodes`} className="see-more noSelect">
+                                See more
+                            </Link>
                         )}
                     </div>
-                )}
+                    <MediaList items={results.episodes} isLoading={loading} type="episode" />
+                </div>
+            )}
 
-                {results.collections.length > 0 && (
-                    <div className="section collections">
+            {results.collections.length > 0 && (
+                <div className="section collections">
+                    <div className="container">
                         <div className="title">Collections</div>
-                        <MediaList items={results.collections} isLoading={loading} type="collection" />
-                        {results.collections.length >= 10 && (
-                            <div className="view-all">
-                                <Link to={`/search/${encodeURIComponent(query)}/collections`} className="textlink">
-                                    View all collections
-                                </Link>
-                            </div>
+                        {results.collections.length >= 12 && (
+                            <Link to={`/search/${encodeURIComponent(query)}/collections`} className="see-more noSelect">
+                                See more
+                            </Link>
                         )}
                     </div>
-                )}
+                    <MediaList items={results.collections} isLoading={loading} type="collection" />
+                </div>
+            )}
 
-                {results.movies.length === 0 &&
-                    results.series.length === 0 &&
-                    results.episodes.length === 0 &&
-                    results.collections.length === 0 && <div>No results found for '{query}'.</div>}
-            </div>
+            {results.movies.length === 0 &&
+                results.series.length === 0 &&
+                results.episodes.length === 0 &&
+                results.collections.length === 0 && <div>No results found for '{query}'.</div>}
         </div>
     )
 }

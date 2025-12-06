@@ -1,6 +1,6 @@
 import { GearIcon } from '@primer/octicons-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import '../App.css'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
@@ -9,6 +9,7 @@ import { useJellyfinSearch } from '../hooks/Jellyfin/useJellyfinSearch'
 import { InlineLoader } from './InlineLoader'
 import { JellyImg } from './JellyImg'
 import './Sidenav.css'
+import { Squircle } from './Squircle'
 import { DownloadingIcon, SearchClearIcon, SearchIcon } from './SvgIcons'
 
 export const Sidenav = (props: { username: string }) => {
@@ -82,6 +83,33 @@ export const Sidenav = (props: { username: string }) => {
                     <NavLink to="/" onClick={closeSidenav} className="logo"></NavLink>
                 </div>
                 <nav className="sidenav_content">
+                    <ul className="links noSelect">
+                        <li>
+                            <NavLink to="/" onClick={closeSidenav}>
+                                Home
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/movies" onClick={closeSidenav}>
+                                Movies
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/series" onClick={closeSidenav}>
+                                Series
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/favorites" onClick={closeSidenav}>
+                                Favorites
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/collections" onClick={closeSidenav}>
+                                Collections
+                            </NavLink>
+                        </li>
+                    </ul>
                     <div className="search">
                         <div className="search_header">
                             <div className={`input_container ${searchQuery ? 'active' : ''}`}>
@@ -131,37 +159,59 @@ export const Sidenav = (props: { username: string }) => {
                                                         onClick={() => handleItemClick(item)}
                                                         className={`result ${itemClass}`}
                                                     >
-                                                        <div className="result_image">
+                                                        <Squircle
+                                                            width={36}
+                                                            height={54}
+                                                            cornerRadius={5}
+                                                            className="thumbnail-container"
+                                                        >
                                                             <JellyImg
                                                                 item={item}
                                                                 type="Primary"
-                                                                width={60}
-                                                                height={60}
+                                                                width={36}
+                                                                height={54}
                                                             />
-                                                        </div>
-                                                        <div className="result_info">
-                                                            <div className="result_name">{item.Name}</div>
-                                                            <div className="result_type">
-                                                                {item.Type === 'Movie' && 'Movie'}
-                                                                {item.Type === 'Series' && 'Series'}
-                                                                {item.Type === 'Episode' &&
-                                                                    `Episode • ${item.SeriesName || ''}`}
-                                                                {item.Type === 'BoxSet' && 'Collection'}
+                                                        </Squircle>
+                                                        <div className="details">
+                                                            <div className="title" title={item.Name}>
+                                                                {item.Name}
+                                                            </div>
+                                                            <div className="container">
+                                                                <div className="type">
+                                                                    {item.Type === 'Movie' && 'Movie'}
+                                                                    {item.Type === 'Series' && 'Series'}
+                                                                    {item.Type === 'Episode' &&
+                                                                        `Episode - ${item.SeriesName || ''}`}
+                                                                    {item.Type === 'BoxSet' && 'Collection'}
+                                                                </div>
+                                                                <div className="divider"></div>
+                                                                <div
+                                                                    className="date"
+                                                                    title={
+                                                                        item.PremiereDate &&
+                                                                        !isNaN(Date.parse(item.PremiereDate))
+                                                                            ? new Date(item.PremiereDate)
+                                                                                  .getFullYear()
+                                                                                  .toString()
+                                                                            : ''
+                                                                    }
+                                                                >
+                                                                    {item.PremiereDate
+                                                                        ? new Date(item.PremiereDate).getFullYear()
+                                                                        : ''}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 )
                                             })}
                                             <div className="additional">
-                                                <div
-                                                    className="see-all"
-                                                    onClick={() => {
-                                                        navigate(`/search/${encodeURIComponent(searchQuery)}`)
-                                                        closeSidenav()
-                                                    }}
+                                                <Link
+                                                    to={`/search/${encodeURIComponent(searchQuery)}`}
+                                                    className="textlink"
                                                 >
                                                     See all results for '{searchQuery}'
-                                                </div>
+                                                </Link>
                                             </div>
                                         </div>
                                     )}
@@ -169,33 +219,6 @@ export const Sidenav = (props: { username: string }) => {
                             )}
                         </div>
                     </div>
-                    <ul className="links noSelect">
-                        <li>
-                            <NavLink to="/" onClick={closeSidenav}>
-                                Home
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/movies" onClick={closeSidenav}>
-                                Movies
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/shows" onClick={closeSidenav}>
-                                Shows
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/favorites" onClick={closeSidenav}>
-                                Favorites
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/collections" onClick={closeSidenav}>
-                                Collections
-                            </NavLink>
-                        </li>
-                    </ul>
                 </nav>
                 <div className="sidenav_footer">
                     <div className="account">
