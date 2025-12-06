@@ -193,58 +193,33 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results {
-    font-size: 0.725rem;
     display: flex;
     flex-direction: column;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     cursor: pointer;
+    padding: 6px;
     margin: 0 -4px;
-    margin-bottom: 2px;
-    padding: 5px 7px;
-    border-radius: 6px;
-    color: var(--font-color);
-    fill: var(--font-color);
-    transition: background-color 0.2s ease-out, color 0.2s ease-out, fill 0.2s ease-out;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-out, color 0.2s ease-out;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result:hover {
     background-color: var(--bg-color-tertiary);
 }
 
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.active,
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.playing,
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.paused {
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.active {
     color: var(--font-color-active);
-    fill: var(--font-color-active);
     background-color: var(--bg-color-tertiary);
 }
 
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.playing,
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.paused {
-    background-color: unset;
-}
-
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.playing:hover,
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result.paused:hover {
-    background-color: var(--bg-color-tertiary);
-}
-
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .type {
-    display: flex;
-    align-items: flex-start;
-}
-
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .type > .icon {
-    width: 20px;
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .thumbnail-container {
     flex-shrink: 0;
-    margin-top: 1px;
-}
-
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .type > .text {
-    line-height: 1.4;
-    word-break: break-word;
 }
 
 .sidenav
@@ -254,13 +229,95 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     > .search_results
     > .results
     > .result
-    > .type
-    > .text
-    > .artist {
+    > .thumbnail-container
+    > .thumbnail {
+    display: block;
+    width: 36px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .details {
+    position: relative;
+    overflow: hidden;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .details > .title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
+    > .details
+    > .container {
+    line-height: 1;
+}
+
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
+    > .details
+    > .container
+    > .type {
+    font-size: 0.725rem;
+    font-weight: 600;
+    color: var(--font-color-tertiary);
+    display: inline;
+}
+
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
+    > .details
+    > .container
+    > .date {
+    font-size: 0.725rem;
     font-weight: 500;
+    color: var(--font-color-tertiary);
+    display: inline;
+}
+
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
+    > .details
+    > .container
+    > .divider {
+    display: inline-block;
+    vertical-align: middle;
+    width: 2px;
+    height: 2px;
+    margin: 0 4px;
+    border-radius: 50%;
+    background-color: var(--font-color-tertiary);
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .additional {
+    font-size: 0.725rem;
     margin-top: 5px;
     margin-left: 3px;
 }
