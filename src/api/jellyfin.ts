@@ -117,7 +117,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getShows = async (
+    const getSeries = async (
         startIndex = 0,
         limit = 40,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
@@ -488,7 +488,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
     return {
         loginToJellyfin,
         getMovies,
-        getShows,
+        getSeries,
         getCollections,
         getFavorites,
         getRecentlyPlayed,

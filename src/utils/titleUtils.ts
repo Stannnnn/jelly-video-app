@@ -8,23 +8,23 @@ export const getPageTitle = (pageTitle: string, location: Location): string => {
         const query = decodeURIComponent(location.pathname.split('/search/')[1])
         return `Search results for '${query}'`
     }
-    if (location.pathname.startsWith('/instantmix/')) return 'Instant Mix'
+    //if (location.pathname.startsWith('/instantmix/')) return 'Instant Mix'
 
     switch (location.pathname) {
         case '/':
             return 'Home'
+        case '/movies':
+            return 'Movies'
+        case '/series':
+            return 'Series'
         case '/favorites':
             return 'Favorites'
+        case '/collections':
+            return 'Collections'
         case '/settings':
             return 'Settings'
         case '/synced':
             return 'Synced'
-        case '/nowplaying':
-            return 'Now Playing'
-        case '/recently':
-            return 'Recently Played'
-        case '/frequently':
-            return 'Frequently Played'
         default:
             return 'Home'
     }

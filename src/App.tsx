@@ -35,7 +35,7 @@ import { SearchMovies } from './pages/SearchMovies'
 import { SearchSeries } from './pages/SearchSeries'
 import { SeriesPage } from './pages/SeriesPage'
 import { Settings } from './pages/Settings'
-import { Shows } from './pages/Shows'
+import { Series } from './pages/Series'
 import { VideoPlayerPage } from './pages/VideoPlayerPage'
 import { persister, queryClient } from './queryClient'
 
@@ -206,7 +206,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             <Route path="/settings" element={<Main content={memoSettings} />} />
                             <Route path="/movies" element={<Main content={Movies} filterType={'movies'} />} />
                             <Route path="/movie/:id" element={<Main content={MoviePage} />} />
-                            <Route path="/shows" element={<Main content={Shows} filterType={'movies'} />} />
+                            <Route path="/series" element={<Main content={Series} filterType={'movies'} />} />
                             <Route path="/series/:id" element={<Main content={SeriesPage} />} />
                             <Route path="/episode/:id" element={<Main content={EpisodePage} />} />
                             <Route path="/collections" element={<Main content={Collections} filterType={'movies'} />} />

@@ -94,7 +94,7 @@ export const MediaList = ({
     if (items.length === 0 && !isLoading) {
         const emptyMessage = {
             movie: 'No movies were found',
-            series: 'No shows were found',
+            series: 'No series were found',
             episode: 'No episodes were found',
             collection: 'No collections were found',
             mixed: 'No items were found',
