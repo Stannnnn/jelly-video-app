@@ -485,7 +485,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
         isPlayingTrackRef.current = currentTrack.Id
         playTrack()
-    }, [currentTrack?.Id]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [currentTrack?.Id, isInitialized]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const formatTime = (seconds: number) => {
         if (isNaN(seconds) || seconds === 0) return '0:00'
