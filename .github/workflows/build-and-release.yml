@@ -15,9 +15,7 @@ jobs:
             matrix:
                 include:
                     - platform: 'macos-latest'
-                      args: '--target aarch64-apple-darwin'
-                    - platform: 'macos-latest'
-                      args: '--target x86_64-apple-darwin'
+                      args: '--target universal-apple-darwin'
                     - platform: 'ubuntu-latest'
                       args: ''
                     - platform: 'windows-latest'
@@ -42,6 +40,12 @@ jobs:
               with:
                   targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
+            - name: Cache Rust dependencies
+              uses: Swatinem/rust-cache@v2
+              with:
+                  workspaces: src-tauri
+                  cache-on-failure: true
+
             - name: Install dependencies (Ubuntu only)
               if: matrix.platform == 'ubuntu-latest'
               run: |
@@ -61,14 +65,18 @@ jobs:
               if: matrix.platform == 'macos-latest'
               run: |
                   mkdir -p src-tauri/lib
-                  if [[ "${{ matrix.args }}" == *"aarch64"* ]]; then
-                    wget https://github.com/nini22P/libmpv-wrapper/releases/latest/download/libmpv-wrapper-macos-aarch64.zip -O libmpv-wrapper.zip
-                  else
-                    wget https://github.com/nini22P/libmpv-wrapper/releases/latest/download/libmpv-wrapper-macos-x86_64.zip -O libmpv-wrapper.zip
-                  fi
-                  unzip libmpv-wrapper.zip -d wrapper-temp
-                  cp wrapper-temp/bin/libmpv-wrapper.dylib src-tauri/lib/libmpv-wrapper.dylib
-                  rm -rf wrapper-temp libmpv-wrapper.zip
+
+                  # Download both architectures for universal build
+                  wget https://github.com/nini22P/libmpv-wrapper/releases/latest/download/libmpv-wrapper-macos-aarch64.zip -O libmpv-wrapper-aarch64.zip
+                  wget https://github.com/nini22P/libmpv-wrapper/releases/latest/download/libmpv-wrapper-macos-x86_64.zip -O libmpv-wrapper-x86_64.zip
+
+                  unzip libmpv-wrapper-aarch64.zip -d wrapper-aarch64
+                  unzip libmpv-wrapper-x86_64.zip -d wrapper-x86_64
+
+                  # Create universal binary using lipo
+                  lipo -create wrapper-aarch64/bin/libmpv-wrapper.dylib wrapper-x86_64/bin/libmpv-wrapper.dylib -output src-tauri/lib/libmpv-wrapper.dylib
+
+                  rm -rf wrapper-aarch64 wrapper-x86_64 libmpv-wrapper-aarch64.zip libmpv-wrapper-x86_64.zip
 
             - name: Download libmpv libraries for Windows
               if: matrix.platform == 'windows-latest'
