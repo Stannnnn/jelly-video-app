@@ -44,7 +44,8 @@ import { persister, queryClient } from './queryClient'
 export const App = () => {
     return (
         <ErrorBoundary>
-            {window.__NPM_LIFECYCLE_EVENT__ === 'dev:nocache' ? (
+            {window.__NPM_LIFECYCLE_EVENT__ === 'dev:nocache' ||
+            window.__NPM_LIFECYCLE_EVENT__ === 'tauri:dev:nocache' ? (
                 <QueryClientProvider client={queryClient}>
                     <RoutedApp />
                 </QueryClientProvider>

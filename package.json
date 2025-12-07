@@ -12,7 +12,8 @@
         "preview": "vite preview",
         "tauri": "tauri",
         "tauri:build": "tauri build",
-        "tauri:dev": "tauri dev"
+        "tauri:dev": "tauri dev",
+        "tauri:dev:nocache": "tauri dev"
     },
     "dependencies": {
         "@fontsource-variable/inter": "^5.2.8",

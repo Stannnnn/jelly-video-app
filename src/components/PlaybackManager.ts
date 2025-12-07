@@ -10,6 +10,7 @@ import {
 import { MediaItem } from '../api/jellyfin'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
+import { usePatchQueries } from '../hooks/usePatchQueries'
 ;(window as any).command = command
 ;(window as any).setProperty = setProperty
 
@@ -56,6 +57,8 @@ export type PlaybackManagerProps = {
 
 export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackManagerProps) => {
     const api = useJellyfinContext()
+    const { patchMediaItem } = usePatchQueries()
+
     // Session based play count for settings page
     const [sessionPlayCount, setSessionPlayCount] = useState(() => {
         const saved = localStorage.getItem('sessionPlayCount')
@@ -137,15 +140,28 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     // Helper function to report playback stopped, avoiding duplicate reports
     const reportTrackStopped = useCallback(
-        (track: MediaItem | undefined, currentTime: number, signal?: AbortSignal) => {
+        async (track: MediaItem | undefined, currentTime: number, signal?: AbortSignal) => {
             if (!track || track.Id === lastStoppedTrackIdRef.current) {
                 return
             }
 
             lastStoppedTrackIdRef.current = track.Id
-            api.reportPlaybackStopped(track.Id, currentTime, signal)
+            await api.reportPlaybackStopped(track.Id, currentTime, signal)
+
+            // Update cached item with new progress percentage
+            const positionTicks = currentTime * 10000000
+            const playedPercentage = track.RunTimeTicks ? (positionTicks / track.RunTimeTicks) * 100 : 0
+
+            patchMediaItem(track.Id, item => ({
+                ...item,
+                UserData: {
+                    ...item.UserData,
+                    PlaybackPositionTicks: positionTicks,
+                    PlayedPercentage: playedPercentage,
+                },
+            }))
         },
-        [api]
+        [api, patchMediaItem]
     )
 
     // Update Media Session metadata

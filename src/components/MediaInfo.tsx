@@ -57,6 +57,8 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : null
     const officialRating = item.OfficialRating || ''
     const communityRating = item.CommunityRating ? item.CommunityRating.toFixed(1) : null
+    const playedPercentage = item.UserData?.PlayedPercentage || 0
+    const hasProgress = playedPercentage > 0 && playedPercentage < 100
 
     return (
         <div className="media-info">
@@ -109,7 +111,12 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                             </div>
                         )}
                     </div>
-                    <div className="progress-indicator"></div>
+                    {hasProgress && (
+                        <div
+                            className="progress-indicator"
+                            style={{ '--progress-percent': `${playedPercentage}%` } as React.CSSProperties}
+                        />
+                    )}
                 </div>
             </div>
             <div className="media-content">
