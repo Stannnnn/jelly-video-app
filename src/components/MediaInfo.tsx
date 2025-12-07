@@ -1,13 +1,13 @@
+import { GenresApi } from '@jellyfin/sdk/lib/generated-client'
 import { HeartFillIcon, HeartIcon } from '@primer/octicons-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { useFavorites } from '../hooks/useFavorites'
-import { formatDate } from '../utils/formatDate'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
 import { JellyImg } from './JellyImg'
 import './MediaInfo.css'
-import { Squircle } from './Squircle'
+import { MoreIcon, PlayIcon } from './SvgIcons'
 
 export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const navigate = useNavigate()
@@ -48,45 +48,55 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
     return (
         <div className="media-info">
-            <div className="media-info-header">
-                <div className="media-info-poster">
-                    <Squircle width={200} height={300} cornerRadius={12} className="media-portrait">
-                        <JellyImg item={item} type={'Primary'} width={200} height={300} />
-                    </Squircle>
+            <div className="media-header">
+                <div className="backdrop-container">
+                    <div className="backdrop">
+                        <JellyImg item={item} type={'Backdrop'} width={1200} height={1000} />
+                        <img
+                            className="thumbnail"
+                            src="https://jelly.mkdir.no/Items/a21976c5940579148f2b2182e36d869f/Images/Backdrop/0?tag=e6c2ec21dc9aefa7c2e8e1e26c769c8d&amp;maxWidth=1920&amp;quality=80"
+                        ></img>
+                    </div>
                 </div>
-                <div className="media-info-details">
-                    <h1 className="media-info-title">{item.Name}</h1>
-
-                    <div className="media-info-metadata">
-                        {year && <span className="metadata-item">{year}</span>}
-                        {officialRating && <span className="metadata-item rating">{officialRating}</span>}
-                        {duration && <span className="metadata-item">{formatDurationReadable(duration)}</span>}
-                        {communityRating && <span className="metadata-item">⭐ {communityRating}</span>}
-                    </div>
-
-                    {genres && <div className="media-info-genres">{genres}</div>}
-
-                    {item.Overview && <p className="media-info-overview">{item.Overview}</p>}
-
-                    <div className="media-info-actions">
-                        <button className="btn btn-primary" onClick={() => navigate(`/play/${item.Id}`)}>
-                            Play
-                        </button>
-                        <button
-                            className={`btn btn-icon ${isFavorited ? 'favorited' : ''}`}
-                            onClick={toggleFavorite}
-                            disabled={isTogglingFavorite}
-                            title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-                        >
-                            {isFavorited ? <HeartFillIcon size={20} /> : <HeartIcon size={20} />}
-                        </button>
-                    </div>
-
-                    {item.PremiereDate && (
-                        <div className="media-info-extra">
-                            <span className="extra-label">Release Date:</span> {formatDate(item.PremiereDate)}
+                <div className="media-content">
+                    <div className="logo">{item.Name}</div>
+                    <div className="split">
+                        <div className="details">
+                            <div className="statistics">
+                                {item.Overview && <div className="description">{item.Overview}</div>}
+                                {year && <span className="metadata-item">{year}</span>}
+                                {item.RunTimeTicks && (
+                                    <div className="duration">{formatDurationReadable(item.RunTimeTicks)}</div>
+                                )}
+                                {communityRating && <span className="metadata-item"> {communityRating}</span>}
+                                {officialRating && <span className="metadata-item rating">{officialRating}</span>}
+                            </div>
+                            <div className="media-info-details">
+                                {GenresApi && <div className="media-info-genres">{item.Genres}</div>}
+                            </div>
                         </div>
-                    )}
+                        <div className="actions">
+                            <div className="primary">
+                                <button className="play-media" onClick={() => navigate(`/play/${item.Id}`)}>
+                                    <PlayIcon className="play-icon" width={16} height={16} />
+                                    <div className="text">Play</div>
+                                </button>
+                                <button
+                                    className={`favorite-state ${isFavorited ? 'favorited' : ''}`}
+                                    onClick={toggleFavorite}
+                                    disabled={isTogglingFavorite}
+                                    title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                                >
+                                    {isFavorited ? <HeartFillIcon size={16} /> : <HeartIcon size={16} />}
+                                </button>
+                            </div>
+                            <div className="secondary">
+                                <div className="more" title="More">
+                                    <MoreIcon width={14} height={14} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

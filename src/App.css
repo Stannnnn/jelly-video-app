@@ -575,20 +575,24 @@ body.lockscroll {
     color: var(--font-color-error);
 }
 
-/* Home Page Styles */
-.home-page {
+/* Genric page styles */
+.home-page,
+.search-results-page {
     margin-top: -8px;
 }
 
-.home-page > .section {
+.home-page > .section,
+.search-results-page > .section {
     margin-bottom: 40px;
 }
 
-.home-page > .section:last-of-type {
+.home-page > .section:last-of-type,
+.search-results-page > .section:last-of-type {
     margin-bottom: 0;
 }
 
-.home-page > .section > .container {
+.home-page > .section > .container,
+.search-results-page > .section > .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -596,12 +600,14 @@ body.lockscroll {
     margin-bottom: 12px;
 }
 
-.home-page > .section > .container > .title {
+.home-page > .section > .container > .title,
+.search-results-page > .section > .container > .title {
     font-size: 1rem;
     font-weight: 700;
 }
 
-.home-page > .section > .container > .see-more {
+.home-page > .section > .container > .see-more,
+.search-results-page > .section > .container > .see-more {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--brand-color);
@@ -614,7 +620,8 @@ body.lockscroll {
     transition: background-color 0.2s ease-out;
 }
 
-.home-page > .section > .container > .see-more:hover {
+.home-page > .section > .container > .see-more:hover,
+.search-results-page > .section > .container > .see-more:hover {
     background-color: var(--bg-color-tertiary);
 }
 
