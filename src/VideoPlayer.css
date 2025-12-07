@@ -315,7 +315,7 @@
     white-space: nowrap;
     padding: 4px 7px;
     border-radius: 20px;
-    background-color: rgba(46, 46, 46, 0.9);
+    background-color: rgba(46, 46, 46, 0.92);
 }
 
 /* Is this even in use anywhere? */
@@ -329,7 +329,7 @@
     font-size: 0.8125rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.9);
-    background-color: rgba(46, 46, 46, 0.9);
+    background-color: rgba(46, 46, 46, 0.92);
     display: none; /* temp */
 }
 
@@ -385,7 +385,7 @@
     margin-left: 44px;
     border-radius: 20px;
     backdrop-filter: blur(2px);
-    background-color: rgba(46, 46, 46, 0.9);
+    background-color: rgba(46, 46, 46, 0.92);
     border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -478,7 +478,7 @@
     overflow: hidden;
     white-space: nowrap;
     border-radius: 12px;
-    background-color: rgba(46, 46, 46, 0.9);
+    background-color: rgba(46, 46, 46, 0.92);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     opacity: 0;
     visibility: hidden;

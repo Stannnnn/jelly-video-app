@@ -295,9 +295,9 @@ export const VideoPlayer = () => {
         setTrickplayTile(null)
     }
 
-    const handleVolumeScroll = (e: WheelEvent<HTMLInputElement>) => {
+    const handleVolumeScroll = (e: WheelEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        const step = e.deltaY > 0 ? -2 : 2
+        const step = e.deltaY > 0 ? -4 : 4
         const newVolume = Math.max(0, Math.min(100, volume + step))
         handleVolumeChange(newVolume)
     }
@@ -471,14 +471,13 @@ export const VideoPlayer = () => {
                             )}
                         </button>
                         <div className="volume-container">
-                            <div className="volume-wrapper">
+                            <div className="volume-wrapper" onWheel={handleVolumeScroll}>
                                 <input
                                     type="range"
                                     min="0"
                                     max="100"
                                     value={volume}
                                     onChange={e => handleVolumeChange(parseInt(e.target.value))}
-                                    onWheel={handleVolumeScroll}
                                     className="volume-bar"
                                 />
                             </div>
