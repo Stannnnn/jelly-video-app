@@ -51,11 +51,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
             <div className="media-header">
                 <div className="backdrop-container">
                     <div className="backdrop">
-                        <JellyImg item={item} type={'Backdrop'} width={1200} height={1000} />
-                        <img
-                            className="thumbnail"
-                            src="https://jelly.mkdir.no/Items/a21976c5940579148f2b2182e36d869f/Images/Backdrop/0?tag=e6c2ec21dc9aefa7c2e8e1e26c769c8d&amp;maxWidth=1920&amp;quality=80"
-                        ></img>
+                        <JellyImg item={item} type={'Backdrop'} width={1920} height={1080} />
                     </div>
                 </div>
                 <div className="media-content">

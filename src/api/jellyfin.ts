@@ -314,6 +314,10 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             return `${serverUrl}/Items/${item.AlbumId}/Images/${type}?quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
         }
 
+        if (type === 'Backdrop' && item.BackdropImageTags && item.BackdropImageTags.length > 0) {
+            return `${serverUrl}/Items/${item.Id}/Images/Backdrop/0?tag=${item.BackdropImageTags[0]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+        }
+
         return undefined
     }
 
@@ -405,15 +409,16 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
     }
 
     const getItemById = async (itemId: string) => {
-        const itemsApi = new ItemsApi(api.configuration)
-        const response = await itemsApi.getItems({
-            userId,
-            ids: [itemId],
-            fields: extraFields,
-        })
+        const userLibraryApi = new UserLibraryApi(api.configuration)
+        const response = await userLibraryApi.getItem(
+            {
+                userId,
+                itemId,
+            },
+            { signal: AbortSignal.timeout(20000) }
+        )
 
-        const items = await parseItemDtos(response.data.Items)
-        return items[0] || null
+        return parseItemDto(response.data)
     }
 
     const getItemChildren = async (
