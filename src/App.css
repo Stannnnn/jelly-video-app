@@ -625,42 +625,6 @@ body.lockscroll {
     background-color: var(--bg-color-tertiary);
 }
 
-/* Progress loading
-.main > .main_footer > .playback > .progress:has(input.loading)::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    user-select: none;
-    pointer-events: none;
-    opacity: 0;
-    transition: transform 0.1s linear;
-    background-image: linear-gradient(
-        90deg,
-        var(--bg-color-secondary) 0%,
-        var(--bg-color-quaternary) 20%,
-        var(--bg-color-secondary) 40%
-    );
-    background-size: 200%;
-    animation: loading-shimmer 1.6s infinite linear;
-    animation-delay: 0.4s;
-}
-
-@keyframes loading-shimmer {
-    0% {
-        opacity: 0.4;
-        background-position: 100%;
-    }
-    60%,
-    100% {
-        opacity: 0.4;
-        background-position: -100%;
-    }
-}
-*/
-
 /* Responsive */
 @media only screen and (max-width: 980px) {
     body.lockscroll,

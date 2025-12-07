@@ -205,6 +205,40 @@
     );
 }
 
+.video-container > .video-controls > .progress > .progress-container:has(.progress-bar.loading)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    pointer-events: none;
+    opacity: 0;
+    transition: transform 0.1s linear;
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.8) 20%,
+        rgba(255, 255, 255, 0.2) 40%
+    );
+    background-size: 200%;
+    animation: loading-shimmer 2s infinite linear;
+    animation-delay: 0.4s;
+}
+
+@keyframes loading-shimmer {
+    0% {
+        opacity: 0.4;
+        background-position: 100%;
+    }
+    60%,
+    100% {
+        opacity: 0.4;
+        background-position: -100%;
+    }
+}
+
 .video-container > .video-controls > .progress > .progress-container > .progress-bar::-webkit-slider-thumb {
     cursor: pointer;
     width: 13px;
