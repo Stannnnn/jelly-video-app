@@ -3,14 +3,16 @@
 
 .media-info > .media-header {
     position: relative;
-    margin: -23px;
-    color: #ffffff;
+    color: var(--font-color-inverted);
+    margin: -24px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .media-info > .media-header > .backdrop-container {
     position: relative;
     width: 100%;
-    height: 60dvh;
+    height: 70dvh;
     overflow: hidden;
 }
 
@@ -22,77 +24,161 @@
 .media-info > .media-header > .backdrop-container > .backdrop > .thumbnail {
     width: 100%;
     height: 100%;
+    object-fit: cover;
 }
 
-.media-info > .media-header > .media-content {
-    position: relative;
-    z-index: 1;
-    margin-top: -136px;
-    padding: 24px;
-    padding-top: 48px;
+.media-info > .media-header > .banner-content {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 25px;
+    padding-top: 120px;
+    padding-bottom: 16px;
     backdrop-filter: blur(8px);
-    mask-image: linear-gradient(to top, black 48%, transparent 100%);
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 36%, transparent 100%),
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 36%, transparent 100%);
+    mask-image: linear-gradient(to top, #000000 40%, transparent 100%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
 }
 
-.media-info > .media-header > .media-content > .logo {
+.media-info > .media-header > .banner-content:has(> .progress-indicator) {
+    padding-bottom: 20px;
+}
+
+.media-info > .media-header > .banner-content > .logo {
     font-size: 1.25rem;
     font-weight: 700;
+    margin-bottom: 16px;
 }
 
-.media-info > .media-header > .media-content > .split {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+.media-info > .media-header > .banner-content > .logo > .thumbnail {
+    max-width: 360px;
+    max-height: 120px;
+    vertical-align: bottom;
 }
 
-.media-info > .media-header > .media-content > .split > .details > .statistics {
+.media-info > .media-header > .banner-content > .details {
+}
+
+.media-info > .media-header > .banner-content > .details > .statistics {
+    font-size: 0.85rem;
+    opacity: 0.64;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
+    margin-bottom: 8px;
 }
 
-.media-info > .media-header > .media-content > .split > .actions {
+.media-info > .media-header > .banner-content > .details > .statistics > .rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.media-info > .media-header > .banner-content > .details > .statistics > .rating > svg {
+    color: #ffd700;
+}
+
+.media-info > .media-header > .banner-content > .details > .description {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.media-info > .media-header > .banner-content > .progress-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 6px;
+    width: 100%;
+    opacity: 0.9;
+    background-color: var(--brand-color);
+    background: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(
+        to right,
+        var(--brand-color) 50%,
+        var(--brand-color) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.12) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.12) 100%
+    );
+}
+
+.media-content > .actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    margin-top: 12px;
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .primary {
+.media-content > .actions > .primary {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .primary > .play-media {
+.media-content > .actions > .primary > .play-media {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.media-content > .actions > .primary > .play-media > .container {
+    display: flex;
+    flex-shrink: 0;
     cursor: pointer;
-    padding: 6px 14px;
-    border-radius: 6px;
-    background-color: var(--bg-color-secondary);
+    padding: 6px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
     transition: background-color 0.2s ease-out;
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .primary > .play-media:hover {
+.media-content > .actions > .primary > .play-media:has(> .version-select) > .container {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.media-content > .actions > .primary > .play-media > .container:hover {
     background-color: var(--bg-color-tertiary);
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .primary > .play-media > .play-icon {
+.media-content > .actions > .primary > .play-media > .container > .play-icon {
     display: block;
+    margin-left: -2px;
     margin-right: 6px;
     fill: var(--brand-color);
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .primary > .play-media > .text {
+.media-content > .actions > .primary > .play-media > .container > .text {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--brand-color);
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .primary > .favorite-state {
+.media-content > .actions > .primary > .play-media > .version-select {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 6px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.2s ease-out;
+}
+
+.media-content > .actions > .primary > .play-media > .version-select:hover {
+    background-color: var(--bg-color-tertiary);
+}
+
+.media-content > .actions > .primary > .play-media > .version-select > svg {
+    color: var(--brand-color);
+}
+
+.media-content > .actions > .primary > .favorite-state {
     cursor: pointer;
     padding: 6px;
     border-radius: 20px;
@@ -100,21 +186,21 @@
     transition: background-color 0.2s ease-out;
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .primary > .favorite-state:hover {
+.media-content > .actions > .primary > .favorite-state:hover {
     background-color: var(--bg-color-tertiary);
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .primary > .favorite-state > svg {
+.media-content > .actions > .primary > .favorite-state > svg {
     color: var(--brand-color);
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .secondary {
+.media-content > .actions > .secondary {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .secondary > .more {
+.media-content > .actions > .secondary > .more {
     cursor: pointer;
     padding: 7px;
     border-radius: 20px;
@@ -122,14 +208,14 @@
     transition: background-color 0.2s ease-out;
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .secondary > .more:hover {
+.media-content > .actions > .secondary > .more:hover {
     background-color: var(--bg-color-tertiary);
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .secondary > .more.active {
+.media-content > .actions > .secondary > .more.active {
     background-color: var(--bg-color-tertiary);
 }
 
-.media-info > .media-header > .media-content > .split > .actions > .secondary > .more > svg {
+.media-content > .actions > .secondary > .more > svg {
     fill: var(--brand-color);
 }

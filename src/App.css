@@ -175,11 +175,11 @@ html.light {
     --font-color-inverted: #ffffff;
     --font-color-active: #000000;
     --font-color-error: #e95151;
-    --font-color-error-light: #e64e4e;
+    --font-color-error-light: #e64e4e; /* Not Used */
     --border-color: #ececec;
     --border-color-secondary: #d6d6d6;
     --link-color: #a386e7;
-    --link-color-active: #b5a1e7;
+    --link-color-active: #b5a1e7; /* Not Used */
     --error-font: #f15a5a;
     --error-border: #ffd6d6;
     --error-background: #fff0f0;
@@ -189,10 +189,10 @@ html.light {
     --btn-brand-color-hover: #9470e9;
     --btn-brand-color-disabled: #caa5f0;
     --success-color: #2faf25; /* Not used */
-    --overlay-bg: rgb(0 0 0 / 25%);
+    --overlay-bg: rgb(0 0 0 / 25%); /* Not used */
     --bg-color-dimmer: rgba(22, 11, 37, 0.4);
-    --volume-dot-color: #bbbbbb;
-    --volume-dot-color-active: #a1a1a1;
+    --volume-dot-color: #bbbbbb; /* Not used */
+    --volume-dot-color-active: #a1a1a1; /* Not used */
     --scrollbar-color: #a8a8a8;
     --scrollbar-color-hover: #8a8a8a;
     --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.04);
@@ -210,11 +210,11 @@ html.dark {
     --font-color-inverted: #ffffff;
     --font-color-active: #ffffff;
     --font-color-error: #cc3a3a;
-    --font-color-error-light: #e45353;
+    --font-color-error-light: #e45353; /* Not Used */
     --border-color: #1f1f1f;
     --border-color-secondary: #303030;
     --link-color: #9e7de9;
-    --link-color-active: #af9cdf;
+    --link-color-active: #af9cdf; /* Not Used */
     --error-font: #f76565;
     --error-border: #80241b;
     --error-background: #220f0c;
@@ -224,10 +224,10 @@ html.dark {
     --btn-brand-color-hover: #9e53f3;
     --btn-brand-color-disabled: #b487e7;
     --success-color: #2faf25; /* Not used */
-    --overlay-bg: rgb(0 0 0 / 40%);
+    --overlay-bg: rgb(0 0 0 / 40%); /* Not used */
     --bg-color-dimmer: rgba(7, 3, 12, 0.6);
-    --volume-dot-color: #87868a;
-    --volume-dot-color-active: #c4c1c7;
+    --volume-dot-color: #87868a; /* Not used */
+    --volume-dot-color-active: #c4c1c7; /* Not used */
     --scrollbar-color: #78767c;
     --scrollbar-color-hover: #aba9af;
     --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
