@@ -36,6 +36,7 @@ interface AuthResponse {
 export type MediaItem = BaseItemDto & {
     Id: string
     Name: string
+    offlineState?: 'downloading' | 'downloaded' | 'deleting'
     downloadedImageUrl?: string
 }
 

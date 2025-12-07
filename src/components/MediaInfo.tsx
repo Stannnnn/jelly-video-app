@@ -3,15 +3,17 @@ import { HeartFillIcon, HeartIcon } from '@primer/octicons-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
+import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useFavorites } from '../hooks/useFavorites'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
 import { JellyImg } from './JellyImg'
 import './MediaInfo.css'
-import { MoreIcon, PlayIcon } from './SvgIcons'
+import { DownloadedIcon, DownloadingIcon, MoreIcon, PlayIcon } from './SvgIcons'
 
 export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const navigate = useNavigate()
     const { addToFavorites, removeFromFavorites } = useFavorites()
+    const { addToDownloads, removeFromDownloads } = useDownloadContext()
     const [isFavorited, setIsFavorited] = useState(item.UserData?.IsFavorite || false)
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false)
 
@@ -37,6 +39,16 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
             console.error('Failed to toggle favorite:', error)
         } finally {
             setIsTogglingFavorite(false)
+        }
+    }
+
+    const toggleDownload = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+
+        if (!item.offlineState) {
+            addToDownloads([item], undefined)
+        } else {
+            removeFromDownloads([item], undefined)
         }
     }
 
@@ -86,6 +98,23 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                     title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
                                 >
                                     {isFavorited ? <HeartFillIcon size={16} /> : <HeartIcon size={16} />}
+                                </button>
+                                <button
+                                    className={`download-state ${
+                                        item.offlineState === 'downloaded' ? 'downloaded' : ''
+                                    }`}
+                                    onClick={toggleDownload}
+                                    title={
+                                        item.offlineState === 'downloaded'
+                                            ? 'Remove from downloads'
+                                            : 'Add to downloads'
+                                    }
+                                >
+                                    {item.offlineState === 'downloaded' ? (
+                                        <DownloadedIcon width={16} height={16} />
+                                    ) : (
+                                        <DownloadingIcon width={16} height={16} />
+                                    )}
                                 </button>
                             </div>
                             <div className="secondary">

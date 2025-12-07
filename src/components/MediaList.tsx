@@ -16,6 +16,7 @@ export const MediaList = ({
     virtuosoType,
     loadMore,
     disableActions = false,
+    disableEvents = false,
     removeButton,
     className,
 }: {
@@ -25,6 +26,7 @@ export const MediaList = ({
     virtuosoType?: 'vertical' | 'horizontal' | 'grid'
     loadMore?: () => void
     disableActions?: boolean
+    disableEvents?: boolean
     removeButton?: (item: MediaItem) => ReactNode
     className?: string
 }) => {
@@ -62,7 +64,11 @@ export const MediaList = ({
             <div
                 className={`media-item movie-item ${className || ''}`}
                 ref={el => setRowRefs(index, el)}
-                onClick={() => handleItemClick(item)}
+                {...(disableEvents
+                    ? {}
+                    : {
+                          onClick: () => handleItemClick(item),
+                      })}
             >
                 <Squircle width={152} height={228} cornerRadius={8} className="media-portrait">
                     <JellyImg item={item} type={'Primary'} width={152} height={228} />

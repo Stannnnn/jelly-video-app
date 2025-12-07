@@ -3,5 +3,15 @@
     "identifier": "default",
     "description": "Capability for the main window",
     "windows": ["main"],
-    "permissions": ["core:default", "libmpv:default", "dialog:default", "dialog:allow-open"]
+    "permissions": [
+        "core:default",
+        "libmpv:default",
+        "dialog:default",
+        "dialog:allow-open",
+        "fs:default",
+        "fs:allow-app-read",
+        "fs:allow-app-write",
+        "fs:allow-app-read-recursive",
+        "fs:allow-app-write-recursive"
+    ]
 }

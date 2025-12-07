@@ -1,0 +1,33 @@
+.downloads-page > .queue-list > .media-list {
+    margin: 0;
+}
+
+.downloads-page > .queue-list > .media-list .media-item {
+    cursor: unset;
+    background-color: unset;
+}
+
+.downloads-page > .queue-list > .media-list .media-item > :not(.media-indicators) {
+    opacity: 0.6;
+    user-select: none;
+    pointer-events: none;
+}
+
+.downloads-page > .queue-list > .media-list .media-item:hover > .media-state > .overlay {
+    display: none;
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-state > .thumbnail {
+    filter: grayscale(0.8) brightness(0.8);
+}
+
+.downloads-page > .queue-list > .media-list .media-item .remove-queue-button {
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 20px;
+    transition: background-color 0.2s ease-out;
+}
+
+.downloads-page > .queue-list > .media-list .media-item .remove-queue-button:hover {
+    background-color: var(--bg-color-tertiary);
+}

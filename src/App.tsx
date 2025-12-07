@@ -4,12 +4,14 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import './App.css'
+import { Downloads } from './components/Downloads'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Main } from './components/Main'
 import './components/MediaList.css'
 import { SearchResults } from './components/SearchResults'
 import { Sidenav } from './components/Sidenav'
 import { AudioStorageContextProvider } from './context/AudioStorageContext/AudioStorageContextProvider'
+import { DownloadContextProvider } from './context/DownloadContext/DownloadContextProvider'
 import { HistoryContextProvider } from './context/HistoryContext/HistoryContextProvider'
 import { JellyfinContextProvider } from './context/JellyfinContext/JellyfinContextProvider'
 import { PageTitleProvider } from './context/PageTitleContext/PageTitleProvider'
@@ -33,9 +35,9 @@ import { SearchCollections } from './pages/SearchCollections'
 import { SearchEpisodes } from './pages/SearchEpisodes'
 import { SearchMovies } from './pages/SearchMovies'
 import { SearchSeries } from './pages/SearchSeries'
+import { Series } from './pages/Series'
 import { SeriesPage } from './pages/SeriesPage'
 import { Settings } from './pages/Settings'
-import { Series } from './pages/Series'
 import { VideoPlayerPage } from './pages/VideoPlayerPage'
 import { persister, queryClient } from './queryClient'
 
@@ -144,7 +146,9 @@ const RoutedApp = () => {
                                 <AudioStorageContextProvider>
                                     <SidenavContextProvider>
                                         <PlaybackContextProvider initialVolume={0.5} clearOnLogout={isLoggingOut}>
-                                            <MainLayout auth={auth} handleLogout={handleLogout} />
+                                            <DownloadContextProvider>
+                                                <MainLayout auth={auth} handleLogout={handleLogout} />
+                                            </DownloadContextProvider>
                                         </PlaybackContextProvider>
                                     </SidenavContextProvider>
                                 </AudioStorageContextProvider>
@@ -204,6 +208,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                         <Routes>
                             <Route path="/" element={<Main content={Home}></Main>} />
                             <Route path="/settings" element={<Main content={memoSettings} />} />
+                            <Route path="/synced" element={<Main content={Downloads} filterType={'favorites'} />} />
                             <Route path="/movies" element={<Main content={Movies} filterType={'movies'} />} />
                             <Route path="/movie/:id" element={<Main content={MoviePage} />} />
                             <Route path="/series" element={<Main content={Series} filterType={'movies'} />} />
