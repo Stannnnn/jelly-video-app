@@ -53,7 +53,7 @@ fn load_metadata(app: &AppHandle) -> tauri::Result<StorageMetadata> {
 
 fn save_metadata(app: &AppHandle, metadata: &StorageMetadata) -> tauri::Result<()> {
     let metadata_path = get_metadata_path(app)?;
-    let content = serde_json::to_string_pretty(metadata)
+    let content = serde_json::to_string(metadata)
         .map_err(|e| tauri::Error::Io(std::io::Error::new(std::io::ErrorKind::InvalidData, e)))?;
     fs::write(&metadata_path, content)?;
     Ok(())
