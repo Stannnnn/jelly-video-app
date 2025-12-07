@@ -10,7 +10,7 @@ export const JellyImg = ({
     imageProps,
 }: {
     item: MediaItem
-    type: 'Primary' | 'Backdrop'
+    type: 'Primary' | 'Backdrop' | 'Logo'
     width: number
     height: number
     imageProps?: React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>
@@ -39,7 +39,7 @@ export const JellyImg = ({
                 />
             )}
 
-            {(hasError || !src) && <div className="fallback-thumbnail"></div>}
+            {(hasError || !src) && <div className="fallback-thumbnail" data-orig-src={src || 'undefined'}></div>}
         </>
     )
 }

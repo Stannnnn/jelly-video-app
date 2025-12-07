@@ -55,7 +55,9 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                     </div>
                 </div>
                 <div className="media-content">
-                    <div className="logo">{item.Name}</div>
+                    <div className="logo">
+                        <JellyImg item={item} type={'Logo'} width={1920} height={1080} />
+                    </div>
                     <div className="split">
                         <div className="details">
                             <div className="statistics">

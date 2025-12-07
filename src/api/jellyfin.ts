@@ -305,7 +305,11 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         )
     }
 
-    const getImageUrl = (item: MediaItem, type: 'Primary' | 'Backdrop', size: { width: number; height: number }) => {
+    const getImageUrl = (
+        item: MediaItem,
+        type: 'Primary' | 'Backdrop' | 'Logo',
+        size: { width: number; height: number }
+    ) => {
         if (item.ImageTags?.[type]) {
             return `${serverUrl}/Items/${item.Id}/Images/${type}?tag=${item.ImageTags[type]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
         }
