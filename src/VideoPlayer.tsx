@@ -358,7 +358,7 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
 
             <div className="video-overlay">
                 <div className="container">
-                    {videoLoaded && currentTrack && !isBuffering && (
+                    {!isLoading && videoLoaded && currentTrack && !isBuffering && (
                         <div className="video-play-icon" onClick={handleContainerClick}>
                             <VideoPlayIcon width={42} height={42} />
                         </div>
