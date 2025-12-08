@@ -438,15 +438,6 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
                                         />
                                     )}
                                 </div>
-                                <div
-                                    className={
-                                        previewImageUrl && !previewImageError && trickplayTile
-                                            ? 'preview-placeholder hidden'
-                                            : 'preview-placeholder'
-                                    }
-                                >
-                                    Preview
-                                </div>
                                 <div className="shadow-border"></div>
                             </div>
                             <div className="preview-time">{previewTime !== null ? formatTime(previewTime) : ''}</div>
