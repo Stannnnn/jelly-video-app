@@ -290,7 +290,7 @@ export const VideoPlayer = () => {
     }, [])
 
     const handleContainerClick = () => {
-        if (isPaused && videoLoaded) {
+        if (isPaused && videoLoaded && currentTrack) {
             togglePlayPause()
         }
     }
@@ -358,12 +358,12 @@ export const VideoPlayer = () => {
 
             <div className="video-overlay">
                 <div className="container">
-                    {videoLoaded && !isBuffering && (
+                    {videoLoaded && currentTrack && !isBuffering && (
                         <div className="video-play-icon" onClick={handleContainerClick}>
                             <VideoPlayIcon width={42} height={42} />
                         </div>
                     )}
-                    {((!videoLoaded && currentTrack) || isBuffering) && <Loader />}
+                    {(!videoLoaded || !currentTrack || isBuffering) && <Loader />}
                 </div>
             </div>
 

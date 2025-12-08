@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { Loader } from '../components/Loader'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { VideoPlayer } from '../VideoPlayer'
@@ -95,10 +94,6 @@ export const VideoPlayerPage = () => {
         window.addEventListener('keydown', handleKeyPress)
         return () => window.removeEventListener('keydown', handleKeyPress)
     }, [playback])
-
-    if (isLoading) {
-        return <Loader />
-    }
 
     if (error || !item) {
         return (
