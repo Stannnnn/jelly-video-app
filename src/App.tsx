@@ -91,47 +91,8 @@ const RoutedApp = () => {
         const isWindows = /Win/.test(navigator.userAgent)
         const isChromium = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)
         const isEdge = /Edg/.test(navigator.userAgent) && /Microsoft Corporation/.test(navigator.vendor)
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream // eslint-disable-line @typescript-eslint/no-explicit-any
-        const isAndroidPWA =
-            /Android/.test(navigator.userAgent) &&
-            (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) // eslint-disable-line @typescript-eslint/no-explicit-any
-
         if (isWindows && (isChromium || isEdge)) {
             document.getElementsByTagName('html')[0].classList.add('winOS')
-        }
-
-        if (isIOS) {
-            document.getElementsByTagName('html')[0].classList.add('iOS')
-        }
-
-        // env safe area inset not supported or unreliable in android pwa?
-        if (isAndroidPWA) {
-            document.getElementsByTagName('html')[0].classList.add('safeAreaFallback')
-        }
-
-        // Needed for iOS, else you need to refresh page after changing orientation mode
-        const updateOrientation = () => {
-            const isIOSSafariNonPWA =
-                isIOS &&
-                !window.matchMedia('(display-mode: standalone)').matches &&
-                !(navigator as any).standalone && // eslint-disable-line @typescript-eslint/no-explicit-any
-                !window.matchMedia('(orientation: landscape)').matches
-            const htmlElement = document.getElementsByTagName('html')[0]
-
-            if (isIOS) {
-                if (isIOSSafariNonPWA) {
-                    htmlElement.classList.add('safeAreaFallback')
-                } else {
-                    htmlElement.classList.remove('safeAreaFallback')
-                }
-            }
-        }
-
-        updateOrientation()
-        window.matchMedia('(orientation: landscape)').addEventListener('change', updateOrientation)
-
-        return () => {
-            window.matchMedia('(orientation: landscape)').removeEventListener('change', updateOrientation)
         }
     }, [])
 

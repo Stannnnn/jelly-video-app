@@ -9,7 +9,7 @@ export const useDisplayItems = (tracks: MediaItem[], isLoading: boolean) => {
 
     useEffect(() => {
         if (isLoading) {
-            setDisplayItems([...tracks, ...Array(4).fill({ isPlaceholder: true })])
+            setDisplayItems([...tracks, ...Array(6).fill({ isPlaceholder: true })])
         } else {
             setDisplayItems(tracks)
         }

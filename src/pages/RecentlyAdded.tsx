@@ -6,7 +6,7 @@ export const RecentlyAdded = () => {
 
     return (
         <div className="recently-added-page">
-            <MediaList items={items} isLoading={isLoading} type="mixed" loadMore={loadMore} />
+            <MediaList items={items} isLoading={isLoading} type="movie" loadMore={loadMore} />
             {error && <div className="error">{error}</div>}
         </div>
     )

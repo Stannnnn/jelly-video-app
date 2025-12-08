@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
-import './DetailPages.css'
+import './MediaPages.css'
 
 export const MoviePage = () => {
     const { id } = useParams<{ id: string }>()
@@ -28,8 +28,11 @@ export const MoviePage = () => {
     }
 
     return (
-        <div className="movie-page">
+        <div className="media-page movie">
             <MediaInfo item={movie} />
+            <div className="media-content">
+                <div className="section movie"></div>
+            </div>
         </div>
     )
 }

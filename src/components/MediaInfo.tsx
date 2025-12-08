@@ -1,5 +1,12 @@
 import { GenresApi } from '@jellyfin/sdk/lib/generated-client'
-import { ChevronDownIcon, HeartFillIcon, HeartIcon, StarFillIcon } from '@primer/octicons-react'
+import {
+    CheckCircleFillIcon,
+    CheckCircleIcon,
+    ChevronDownIcon,
+    HeartFillIcon,
+    HeartIcon,
+    StarFillIcon,
+} from '@primer/octicons-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
@@ -59,6 +66,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const communityRating = item.CommunityRating ? item.CommunityRating.toFixed(1) : null
     const playedPercentage = item.UserData?.PlayedPercentage || 0
     const hasProgress = playedPercentage > 0 && playedPercentage < 100
+    const isPlayed = item.UserData?.Played || ''
 
     return (
         <div className="media-info">
@@ -80,7 +88,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 </div>
                             )}
                             {year && (
-                                <span className="date" title="Release year">
+                                <span className="date" title="Released">
                                     {year}
                                 </span>
                             )}
@@ -114,25 +122,29 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                     {hasProgress && (
                         <div
                             className="progress-indicator"
+                            title="Played duration"
                             style={{ '--progress-percent': `${playedPercentage}%` } as React.CSSProperties}
                         />
                     )}
                 </div>
             </div>
-            <div className="media-content">
-                <div className="actions noSelect">
+            <div className="media-actions noSelect">
+                <div className="actions">
                     <div className="primary">
                         <div className="play-media">
                             <div className="container" onClick={() => navigate(`/play/${item.Id}`)}>
                                 <PlayIcon className="play-icon" width={16} height={16} />
-                                <div className="text">Play</div>
+                                <div className="text">{isPlayed ? 'Play' : 'Resume'}</div>
                             </div>
-                            <div className="version-select">
+                            <div className="version-select" title="Select version">
                                 <ChevronDownIcon size={16} />
                             </div>
                         </div>
+                        <div className="watch-state icon" title={isPlayed ? 'Mark as watched' : 'Mark as unwatched'}>
+                            {isPlayed ? <CheckCircleIcon size={16} /> : <CheckCircleFillIcon size={16} />}
+                        </div>
                         <button
-                            className={`favorite-state ${isFavorited ? 'favorited' : ''}`}
+                            className={`favorite-state icon ${isFavorited ? 'favorited' : ''}`}
                             onClick={toggleFavorite}
                             disabled={isTogglingFavorite}
                             title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
@@ -147,9 +159,9 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                             title={item.offlineState === 'downloaded' ? 'Remove from downloads' : 'Add to downloads'}
                         >
                             {item.offlineState === 'downloaded' ? (
-                                <DownloadedIcon width={18} height={18} />
+                                <DownloadedIcon width={20} height={20} />
                             ) : (
-                                <DownloadingIcon width={18} height={18} />
+                                <DownloadingIcon width={20} height={20} />
                             )}
                         </div>
                         <div className="more" title="More">

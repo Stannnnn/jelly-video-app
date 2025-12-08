@@ -69,7 +69,8 @@ export const VirtuosoWindow = ({ type, ...virtuosoProps }: VirtuosoWindowProps) 
                     {...(virtuosoProps as IVirtuosoListProps)}
                     ref={virtuosoRef as React.RefObject<VirtuosoHandle>}
                     horizontalDirection
-                    style={{ height: '320px' }}
+                    style={{ height: '220px' }}
+                    className="continue-watching-row"
                 />
             </div>
         )

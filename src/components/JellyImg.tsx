@@ -10,7 +10,7 @@ export const JellyImg = ({
     imageProps,
 }: {
     item: MediaItem
-    type: 'Primary' | 'Backdrop' | 'Logo'
+    type: 'Primary' | 'Backdrop' | 'Logo' | 'Thumb'
     width: number
     height: number
     imageProps?: React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>

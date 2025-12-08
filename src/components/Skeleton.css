@@ -1,7 +1,7 @@
 .skeleton-loading {
     display: flex;
     align-items: center;
-    flex: 1;
+    flex-direction: column;
 }
 
 .skeleton-effect {
@@ -17,10 +17,10 @@
 }
 
 .skeleton-loading > .skeleton-effect.thumbnail {
-    width: 46px;
-    height: 46px;
-    margin-right: 12px;
-    border-radius: 6px;
+    width: 152px;
+    height: 228px;
+    margin-bottom: 8px;
+    border-radius: 8px;
 }
 
 .skeleton-loading > .skeleton-details {
@@ -31,11 +31,11 @@
 
 .skeleton-loading > .skeleton-details > .skeleton-effect.title {
     height: 16px;
-    margin-bottom: 8px;
+    margin-bottom: 2px;
     border-radius: 4px;
 }
 
-.skeleton-loading > .skeleton-details > .skeleton-effect.artist {
+.skeleton-loading > .skeleton-details > .skeleton-effect.date {
     height: 14px;
     border-radius: 4px;
 }

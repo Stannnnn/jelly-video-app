@@ -3,7 +3,7 @@ import { useJellyfinInfiniteData } from './useJellyfinInfiniteData'
 
 export const useJellyfinRecentlyPlayedData = () => {
     const api = useJellyfinContext()
-    const itemsPerPage = 40
+    const itemsPerPage = 12
 
     return useJellyfinInfiniteData({
         queryKey: ['recentlyPlayed'],

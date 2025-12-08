@@ -251,6 +251,7 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     -webkit-line-clamp: 2;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-bottom: 2px;
 }
 
 .sidenav
@@ -262,7 +263,8 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     > .result
     > .details
     > .container {
-    line-height: 1;
+    display: flex;
+    align-items: center;
 }
 
 .sidenav
@@ -278,7 +280,6 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     font-size: 0.725rem;
     font-weight: 600;
     color: var(--font-color-tertiary);
-    display: inline;
 }
 
 .sidenav
@@ -294,7 +295,6 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     font-size: 0.725rem;
     font-weight: 500;
     color: var(--font-color-tertiary);
-    display: inline;
 }
 
 .sidenav
@@ -307,8 +307,7 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     > .details
     > .container
     > .divider {
-    display: inline-block;
-    vertical-align: middle;
+    display: block;
     width: 2px;
     height: 2px;
     margin: 0 4px;

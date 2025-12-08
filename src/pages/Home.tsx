@@ -17,26 +17,43 @@ export const Home = () => {
     return (
         <div className="home-page">
             {recentlyPlayed && recentlyPlayed.length > 0 && (
-                <div className="section">
+                <div className="section continue-watching">
                     <div className="container">
                         <div className="title">Continue Watching</div>
-                        <Link to="/recently-played" className="see-more noSelect">
-                            See more
-                        </Link>
+                        {recentlyPlayed && recentlyPlayed.length >= 12 && (
+                            <Link to="/recently-played" className="see-more noSelect">
+                                See more
+                            </Link>
+                        )}
                     </div>
                     <MediaList items={recentlyPlayed} isLoading={false} type="mixed" virtuosoType="horizontal" />
                 </div>
             )}
             {recentlyAdded && recentlyAdded.length > 0 && (
-                <div className="section">
-                    <div className="container">
-                        <div className="title">Recently Added</div>
-                        <Link to="/recently-added" className="see-more noSelect">
-                            See more
-                        </Link>
+                <>
+                    <div className="section">
+                        <div className="container">
+                            <div className="title">Latest Movies</div>
+                            {recentlyAdded && recentlyAdded.length >= 12 && (
+                                <Link to="/recently-added" className="see-more noSelect">
+                                    See more
+                                </Link>
+                            )}
+                        </div>
+                        <MediaList items={recentlyAdded} isLoading={false} type="movie" />
                     </div>
-                    <MediaList items={recentlyAdded} isLoading={false} type="mixed" />
-                </div>
+                    <div className="section">
+                        <div className="container">
+                            <div className="title">Latest Series</div>
+                            {recentlyAdded && recentlyAdded.length >= 12 && (
+                                <Link to="/recently-added" className="see-more noSelect">
+                                    See more
+                                </Link>
+                            )}
+                        </div>
+                        <MediaList items={recentlyAdded} isLoading={false} type="series" />
+                    </div>
+                </>
             )}
         </div>
     )

@@ -5,13 +5,13 @@ import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
-import './DetailPages.css'
+import './MediaPages.css'
 
 export const CollectionPage = () => {
     const { id } = useParams<{ id: string }>()
     const api = useJellyfinContext()
     const [startIndex, setStartIndex] = useState(0)
-    const limit = 40
+    const limit = 42
 
     const {
         data: collection,
@@ -48,12 +48,13 @@ export const CollectionPage = () => {
     }
 
     return (
-        <div className="collection-page">
+        <div className="media-page collection">
             <MediaInfo item={collection} />
-            <div className="collection-children">
-                <h2>Items in Collection</h2>
-                <MediaList items={children || []} isLoading={isLoadingChildren} type="mixed" loadMore={loadMore} />
-                {childrenError && <div className="error">Failed to load collection items</div>}
+            <div className="media-content">
+                <div className="section movie">
+                    <MediaList items={children || []} isLoading={isLoadingChildren} type="movie" loadMore={loadMore} />
+                    {childrenError && <div className="error">Failed to load collection items</div>}
+                </div>
             </div>
         </div>
     )

@@ -1,12 +1,14 @@
+import { ChevronDownIcon } from '@primer/octicons-react'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
+import { InlineLoader } from '../components/InlineLoader'
 import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
-import './DetailPages.css'
+import './MediaPages.css'
 
 export const SeriesPage = () => {
     const { id } = useParams<{ id: string }>()
@@ -57,32 +59,37 @@ export const SeriesPage = () => {
     }
 
     return (
-        <div className="series-page">
+        <div className="media-page series">
             <MediaInfo item={series} />
-            <div className="series-seasons">
-                <div className="season-selector">
-                    <h2>Episodes</h2>
-                    {seasons && seasons.length > 0 && (
-                        <select
-                            value={selectedSeasonId || ''}
-                            onChange={handleSeasonChange}
-                            className="season-dropdown"
-                        >
-                            {seasons.map((season: MediaItem) => (
-                                <option key={season.Id} value={season.Id}>
-                                    {season.Name}
-                                </option>
-                            ))}
-                        </select>
+            <div className="media-content">
+                <div className="section seasons">
+                    <div className="container">
+                        {seasons && seasons.length > 0 && (
+                            <div className="sorting">
+                                <div className="filter">
+                                    <select value={selectedSeasonId || ''} onChange={handleSeasonChange}>
+                                        {seasons.map((season: MediaItem) => (
+                                            <option key={season.Id} value={season.Id}>
+                                                {season.Name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <div className="icon">
+                                        <ChevronDownIcon size={12} />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {isLoadingSeasons ? (
+                            <InlineLoader />
+                        ) : seasonsError ? (
+                            <div className="error">Failed to load season</div>
+                        ) : null}
+                    </div>
+                    {!isLoadingSeasons && !seasonsError && (
+                        <MediaList items={episodes || []} isLoading={isLoadingEpisodes} type="episode" />
                     )}
                 </div>
-                {isLoadingSeasons ? (
-                    <Loader />
-                ) : seasonsError ? (
-                    <div className="error">Failed to load seasons</div>
-                ) : (
-                    <MediaList items={episodes || []} isLoading={isLoadingEpisodes} type="episode" />
-                )}
             </div>
         </div>
     )

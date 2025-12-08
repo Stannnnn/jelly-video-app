@@ -99,7 +99,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const getMovies = async (
         startIndex = 0,
-        limit = 40,
+        limit = 42,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
         sortOrder: SortOrder[] = [SortOrder.Descending]
     ) => {
@@ -120,7 +120,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const getSeries = async (
         startIndex = 0,
-        limit = 40,
+        limit = 42,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
         sortOrder: SortOrder[] = [SortOrder.Descending]
     ) => {
@@ -141,7 +141,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const getCollections = async (
         startIndex = 0,
-        limit = 40,
+        limit = 42,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
         sortOrder: SortOrder[] = [SortOrder.Descending]
     ) => {
@@ -162,7 +162,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const getFavorites = async (
         startIndex = 0,
-        limit = 40,
+        limit = 42,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
         sortOrder: SortOrder[] = [SortOrder.Descending],
         itemKind: BaseItemKind = BaseItemKind.Movie
@@ -183,7 +183,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getRecentlyPlayed = async (startIndex = 0, limit = 40) => {
+    const getRecentlyPlayed = async (startIndex = 0, limit = 42) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getResumeItems({
             userId,
@@ -196,7 +196,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getRecentlyAdded = async (startIndex = 0, limit = 40) => {
+    const getRecentlyAdded = async (startIndex = 0, limit = 12) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
             userId,
@@ -308,7 +308,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const getImageUrl = (
         item: MediaItem,
-        type: 'Primary' | 'Backdrop' | 'Logo',
+        type: 'Primary' | 'Backdrop' | 'Logo' | 'Thumb',
         size: { width: number; height: number }
     ) => {
         if (item.ImageTags?.[type]) {
@@ -321,6 +321,15 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
         if (type === 'Backdrop' && item.BackdropImageTags && item.BackdropImageTags.length > 0) {
             return `${serverUrl}/Items/${item.Id}/Images/Backdrop/0?tag=${item.BackdropImageTags[0]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+        }
+
+        if (type === 'Thumb') {
+            const thumbId = item.ImageTags?.Thumb ? item.Id : item.ParentThumbItemId || item.SeriesId
+            const tag = item.ImageTags?.Thumb || item.ParentThumbImageTag
+
+            if (thumbId && tag) {
+                return `${serverUrl}/Items/${thumbId}/Images/Thumb?tag=${tag}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+            }
         }
 
         return undefined
@@ -429,7 +438,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
     const getItemChildren = async (
         parentId: string,
         startIndex = 0,
-        limit = 40,
+        limit = 42,
         sortBy: ItemSortBy[] = [ItemSortBy.SortName],
         sortOrder: SortOrder[] = [SortOrder.Ascending]
     ) => {
@@ -475,7 +484,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const searchItems = async (searchQuery: string, limit = 40, includeItemTypes?: BaseItemKind[], startIndex = 0) => {
+    const searchItems = async (searchQuery: string, limit = 42, includeItemTypes?: BaseItemKind[], startIndex = 0) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
             userId,

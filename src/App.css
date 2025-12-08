@@ -571,7 +571,8 @@ body.lockscroll {
     margin-bottom: 60px;
 }
 
-.main > .main_content > .error {
+.main > .main_content .error {
+    font-size: 0.85rem;
     color: var(--font-color-error);
 }
 
@@ -581,7 +582,14 @@ body.lockscroll {
     margin-top: -8px;
 }
 
-.home-page > .section,
+.home-page > .section {
+    margin-bottom: 60px;
+}
+
+.home-page > .section.continue-watching {
+    margin-bottom: 40px;
+}
+
 .search-results-page > .section {
     margin-bottom: 40px;
 }

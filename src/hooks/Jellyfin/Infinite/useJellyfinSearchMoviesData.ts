@@ -4,7 +4,7 @@ import { useJellyfinInfiniteData } from './useJellyfinInfiniteData'
 
 export const useJellyfinSearchMoviesData = (searchQuery: string) => {
     const api = useJellyfinContext()
-    const itemsPerPage = 40
+    const itemsPerPage = 42
 
     return useJellyfinInfiniteData({
         queryKey: ['search-movies', searchQuery],

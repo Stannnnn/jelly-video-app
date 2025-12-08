@@ -7,6 +7,7 @@ import { JellyImg } from './JellyImg'
 import { Loader } from './Loader'
 import { Skeleton } from './Skeleton'
 import { Squircle } from './Squircle'
+import { VideoPlayIcon } from './SvgIcons'
 import { VirtuosoWindow } from './VirtuosoWindow'
 
 export const MediaList = ({
@@ -54,43 +55,190 @@ export const MediaList = ({
     const renderItem = (index: number, item: MediaItem | { isPlaceholder: true } | undefined) => {
         if (!item || 'isPlaceholder' in item) {
             return (
-                <div className={`media-item movie-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
+                <div className={`media-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
                     <Skeleton type="movie" />
                 </div>
             )
         }
 
-        return (
-            <div
-                className={`media-item movie-item ${className || ''}`}
-                ref={el => setRowRefs(index, el)}
-                {...(disableEvents
-                    ? {}
-                    : {
-                          onClick: () => handleItemClick(item),
-                      })}
-            >
-                <Squircle width={152} height={228} cornerRadius={8} className="media-portrait">
-                    <JellyImg item={item} type={'Primary'} width={152} height={228} />
-                    <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
-                </Squircle>
-                <div className="media-details">
-                    <span className="name" title={item.Name}>
-                        {item.Name}
-                    </span>
-                    <div
-                        className="date"
-                        title={
-                            item.PremiereDate && !isNaN(Date.parse(item.PremiereDate))
-                                ? new Date(item.PremiereDate).getFullYear().toString()
-                                : ''
-                        }
-                    >
-                        {item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : ''}
+        if (type === 'movie') {
+            return (
+                <div
+                    className={`media-item portrait movie-item ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                    {...(disableEvents
+                        ? {}
+                        : {
+                              onClick: () => handleItemClick(item),
+                          })}
+                >
+                    <Squircle width={152} height={228} cornerRadius={8} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={152} height={228} />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                    </Squircle>
+                    <div className="media-details">
+                        <span className="title" title={item.Name}>
+                            {item.Name}
+                        </span>
+                        <div
+                            className="date"
+                            title={
+                                item.PremiereDate && !isNaN(Date.parse(item.PremiereDate))
+                                    ? new Date(item.PremiereDate).getFullYear().toString()
+                                    : ''
+                            }
+                        >
+                            {item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : ''}
+                        </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        } else if (type === 'series') {
+            return (
+                <div
+                    className={`media-item portrait series-item ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                    {...(disableEvents
+                        ? {}
+                        : {
+                              onClick: () => handleItemClick(item),
+                          })}
+                >
+                    <Squircle width={152} height={228} cornerRadius={8} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={152} height={228} />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                    </Squircle>
+                    <div className="media-details">
+                        <span className="title" title={item.Name}>
+                            {item.Name}
+                        </span>
+                        {item.PremiereDate && (
+                            <div className="container">
+                                <div
+                                    className="date premiere"
+                                    title={new Date(item.PremiereDate).getFullYear().toString()}
+                                >
+                                    {new Date(item.PremiereDate).getFullYear()}
+                                </div>
+
+                                {item.EndDate &&
+                                    new Date(item.EndDate).getFullYear() !==
+                                        new Date(item.PremiereDate).getFullYear() && (
+                                        <>
+                                            <div className="divider">-</div>
+                                            <div
+                                                className="date end"
+                                                title={new Date(item.EndDate).getFullYear().toString()}
+                                            >
+                                                {new Date(item.EndDate).getFullYear()}
+                                            </div>
+                                        </>
+                                    )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )
+        } else if (type === 'episode') {
+            return (
+                <div
+                    className={`media-item landscape episode-item ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                    {...(disableEvents
+                        ? {}
+                        : {
+                              onClick: () => handleItemClick(item),
+                          })}
+                >
+                    <Squircle width={240} height={135} cornerRadius={8} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={240} height={135} />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                    </Squircle>
+                    <div className="media-details">
+                        <span className="title" title={item.Name}>
+                            {item.Name}
+                        </span>
+                        {item.PremiereDate && (
+                            <div className="container">
+                                <div
+                                    className="date premiere"
+                                    title={new Date(item.PremiereDate).getFullYear().toString()}
+                                >
+                                    {new Date(item.PremiereDate).getFullYear()}
+                                </div>
+
+                                {item.EndDate &&
+                                    new Date(item.EndDate).getFullYear() !==
+                                        new Date(item.PremiereDate).getFullYear() && (
+                                        <>
+                                            <div className="divider">-</div>
+                                            <div
+                                                className="date end"
+                                                title={new Date(item.EndDate).getFullYear().toString()}
+                                            >
+                                                {new Date(item.EndDate).getFullYear()}
+                                            </div>
+                                        </>
+                                    )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )
+        } else if (type === 'mixed') {
+            return (
+                <div
+                    className={`media-item continue-watching mixed-item ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                    {...(disableEvents
+                        ? {}
+                        : {
+                              onClick: () => handleItemClick(item),
+                          })}
+                >
+                    <Squircle width={280} height={158} cornerRadius={8} className="media-thumbnail">
+                        <JellyImg item={item} type={'Thumb'} width={280} height={158} />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                        <div className="overlay">
+                            <div
+                                className="play" //onClick={() => navigate(`/play/${item.Id}`)}
+                            >
+                                <VideoPlayIcon width={32} height={32} />
+                            </div>
+                        </div>
+                    </Squircle>
+                    <div className="media-details">
+                        <span className="title" title={item.Name}>
+                            {item.Name}
+                        </span>
+                        {item.PremiereDate && (
+                            <div className="container">
+                                <div
+                                    className="date premiere"
+                                    title={new Date(item.PremiereDate).getFullYear().toString()}
+                                >
+                                    {new Date(item.PremiereDate).getFullYear()}
+                                </div>
+
+                                {item.EndDate &&
+                                    new Date(item.EndDate).getFullYear() !==
+                                        new Date(item.PremiereDate).getFullYear() && (
+                                        <>
+                                            <div className="divider">-</div>
+                                            <div
+                                                className="date end"
+                                                title={new Date(item.EndDate).getFullYear().toString()}
+                                            >
+                                                {new Date(item.EndDate).getFullYear()}
+                                            </div>
+                                        </>
+                                    )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )
+        }
     }
 
     if (isLoading && items.length === 0) {
