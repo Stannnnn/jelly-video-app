@@ -80,6 +80,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [videoLoaded, setVideoLoaded] = useState(false)
     const [isBuffering, setIsBuffering] = useState(false)
     const [cacheDuration, setCacheDuration] = useState(0)
+    const [mpvError, setMpvError] = useState<string | null>(null)
 
     // Video statistics
     const [videoCodec, setVideoCodec] = useState<string>('N/A')
@@ -352,8 +353,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 })
 
                 setIsInitialized(true)
+                setMpvError(null)
             } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : 'Failed to initialize MPV'
                 console.error('Failed to initialize mpv:', error)
+                setMpvError(errorMessage)
             }
         }
 
@@ -771,6 +775,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         cacheDuration,
         timePos,
         duration,
+        mpvError,
 
         // Playback controls
         togglePlayPause,

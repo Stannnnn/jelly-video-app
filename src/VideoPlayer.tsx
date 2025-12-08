@@ -84,6 +84,7 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
         videoFormat,
         audioCodecName,
         fileSize,
+        mpvError,
     } = usePlaybackContext()
 
     const { goBack: previousPage } = useHistoryContext()
@@ -358,13 +359,15 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
 
             <div className="video-overlay">
                 <div className="container">
-                    {!isLoading && videoLoaded && currentTrack && !isBuffering && (
+                    {!isLoading && currentTrack && !isBuffering && (
                         <div className="video-play-icon" onClick={handleContainerClick}>
                             <VideoPlayIcon width={42} height={42} />
                         </div>
                     )}
-                    {(isLoading || !videoLoaded || !currentTrack || isBuffering) && <Loader />}
-                    {error && <div className="error-overlay">{error}</div>}
+                    {(isLoading || !currentTrack || isBuffering) && <Loader />}
+                    {(error || mpvError || !videoLoaded) && (
+                        <div className="error-overlay">{error || mpvError || 'Video not loaded'}</div>
+                    )}
                 </div>
             </div>
 
