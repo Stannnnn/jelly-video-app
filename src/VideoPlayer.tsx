@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from '@primer/octicons-react'
-import { useEffect, useRef, useState, WheelEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, WheelEvent } from 'react'
 import { MediaItem } from './api/jellyfin'
 import { Loader } from './components/Loader'
 import { SubtitleTrack } from './components/PlaybackManager'
@@ -198,39 +198,6 @@ export const VideoPlayer = () => {
         return codecMap[codec.toLowerCase()] || codec.toUpperCase()
     }
 
-    // Handle outside click to close menu
-    useEffect(() => {
-        if (!showMenu) return
-
-        const handleClickOutside = (e: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-                toggleMenu()
-            }
-        }
-
-        document.addEventListener('mousedown', handleClickOutside)
-        return () => document.removeEventListener('mousedown', handleClickOutside)
-    }, [showMenu, toggleMenu])
-
-    // Reset menu view when menu closes
-    useEffect(() => {
-        if (!showMenu) {
-            // Small delay to let close animation finish
-            const timer = setTimeout(() => {
-                setCurrentMenuView('home')
-            }, 320)
-            return () => clearTimeout(timer)
-        }
-    }, [showMenu])
-
-    // Helper for menu animations
-    const viewsRef = useRef<Record<MenuView, HTMLDivElement | null>>({
-        home: null,
-        subtitles: null,
-        speed: null,
-        statistics: null,
-    })
-
     // Helper function for menu animations
     function measureElement(el: HTMLDivElement) {
         // Save original inline styles
@@ -253,8 +220,7 @@ export const VideoPlayer = () => {
         return rect
     }
 
-    // Menu animations
-    useEffect(() => {
+    const animateMenu = useCallback(() => {
         if (!showMenu) return
 
         const container = menuContainerRef.current
@@ -267,7 +233,48 @@ export const VideoPlayer = () => {
             container.style.width = rect.width + 'px'
             container.style.height = rect.height + 'px'
         })
-    }, [showMenu, currentMenuView, currentSubtitleId, speed])
+    }, [currentMenuView, showMenu])
+
+    // Handle outside click to close menu
+    useEffect(() => {
+        if (!showMenu) return
+
+        const handleClickOutside = (e: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+                setCurrentMenuView('home')
+                animateMenu()
+                toggleMenu()
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showMenu, toggleMenu])
+
+    // Reset menu view when menu closes
+    useEffect(() => {
+        if (!showMenu) {
+            // Small delay to let close animation finish
+            const timer = setTimeout(() => {
+                setCurrentMenuView('home')
+            }, 320)
+            return () => clearTimeout(timer)
+        }
+    }, [showMenu])
+
+    // Helper for menu animations
+    const viewsRef = useRef<Record<MenuView, HTMLDivElement | null>>({
+        home: null,
+        subtitles: null,
+        speed: null,
+        statistics: null,
+    })
+
+    // Menu animations
+    useEffect(() => {
+        animateMenu()
+    }, [animateMenu])
 
     // Hide controls when window loses focus (disabled in dev so F12 debugging doesn't hide controls)
     useEffect(() => {
