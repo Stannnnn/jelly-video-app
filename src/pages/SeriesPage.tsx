@@ -1,5 +1,4 @@
 import { ChevronDownIcon } from '@primer/octicons-react'
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
@@ -7,39 +6,20 @@ import { InlineLoader } from '../components/InlineLoader'
 import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
-import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
+import { useJellyfinEpisodes } from '../hooks/Jellyfin/useJellyfinEpisodes'
+import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
+import { useJellyfinSeasons } from '../hooks/Jellyfin/useJellyfinSeasons'
 import './MediaPages.css'
 
 export const SeriesPage = () => {
     const { id } = useParams<{ id: string }>()
-    const api = useJellyfinContext()
     const [selectedSeasonId, setSelectedSeasonId] = useState<string | null>(null)
 
-    const {
-        data: series,
-        isLoading: isLoadingSeries,
-        error: seriesError,
-    } = useQuery({
-        queryKey: ['series', id],
-        queryFn: () => api.getItemById(id!),
-        enabled: !!id,
-    })
+    const { mediaItem: series, isLoading: isLoadingSeries, error: seriesError } = useJellyfinMediaItem(id)
 
-    const {
-        data: seasons,
-        isLoading: isLoadingSeasons,
-        error: seasonsError,
-    } = useQuery({
-        queryKey: ['series-seasons', id],
-        queryFn: () => api.getSeasons(id!),
-        enabled: !!id,
-    })
+    const { seasons, isLoading: isLoadingSeasons, error: seasonsError } = useJellyfinSeasons(id)
 
-    const { data: episodes, isLoading: isLoadingEpisodes } = useQuery({
-        queryKey: ['season-episodes', selectedSeasonId],
-        queryFn: () => api.getEpisodes(selectedSeasonId!),
-        enabled: !!selectedSeasonId,
-    })
+    const { episodes, isLoading: isLoadingEpisodes } = useJellyfinEpisodes(selectedSeasonId)
 
     // Auto-select first season if available
     if (seasons && seasons.length > 0 && !selectedSeasonId) {
@@ -51,7 +31,7 @@ export const SeriesPage = () => {
     }
 
     if (seriesError || !series) {
-        return <div className="error">Failed to load series</div>
+        return <div className="error">{seriesError || 'Series not found'}</div>
     }
 
     const handleSeasonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -83,7 +63,7 @@ export const SeriesPage = () => {
                         {isLoadingSeasons ? (
                             <InlineLoader />
                         ) : seasonsError ? (
-                            <div className="error">Failed to load season</div>
+                            <div className="error">{seasonsError || 'Failed to load season'}</div>
                         ) : null}
                     </div>
                     {!isLoadingSeasons && !seasonsError && (

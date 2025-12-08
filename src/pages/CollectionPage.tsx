@@ -1,44 +1,31 @@
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
-import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
+import { useJellyfinItemChildren } from '../hooks/Jellyfin/useJellyfinItemChildren'
+import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import './MediaPages.css'
 
 export const CollectionPage = () => {
     const { id } = useParams<{ id: string }>()
-    const api = useJellyfinContext()
     const [startIndex, setStartIndex] = useState(0)
     const limit = 42
 
-    const {
-        data: collection,
-        isLoading: isLoadingCollection,
-        error: collectionError,
-    } = useQuery({
-        queryKey: ['collection', id],
-        queryFn: () => api.getItemById(id!),
-        enabled: !!id,
-    })
+    const { mediaItem: collection, isLoading: isLoadingCollection, error: collectionError } = useJellyfinMediaItem(id)
 
     const {
-        data: children,
+        children,
         isLoading: isLoadingChildren,
         error: childrenError,
-    } = useQuery({
-        queryKey: ['collection-children', id, startIndex],
-        queryFn: () => api.getItemChildren(id!, startIndex, limit),
-        enabled: !!id,
-    })
+    } = useJellyfinItemChildren(id, startIndex, limit)
 
     if (isLoadingCollection) {
         return <Loader />
     }
 
     if (collectionError || !collection) {
-        return <div className="error">Failed to load collection</div>
+        return <div className="error">{collectionError || 'Collection not found'}</div>
     }
 
     const loadMore = () => {
@@ -53,7 +40,7 @@ export const CollectionPage = () => {
             <div className="media-content">
                 <div className="section movie">
                     <MediaList items={children || []} isLoading={isLoadingChildren} type="movie" loadMore={loadMore} />
-                    {childrenError && <div className="error">Failed to load collection items</div>}
+                    {childrenError && <div className="error">{childrenError || 'Collection items not found'}</div>}
                 </div>
             </div>
         </div>

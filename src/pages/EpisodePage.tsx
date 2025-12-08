@@ -1,30 +1,20 @@
-import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
-import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
+import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import './MediaPages.css'
 
 export const EpisodePage = () => {
     const { id } = useParams<{ id: string }>()
-    const api = useJellyfinContext()
 
-    const {
-        data: episode,
-        isLoading,
-        error,
-    } = useQuery({
-        queryKey: ['episode', id],
-        queryFn: () => api.getItemById(id!),
-        enabled: !!id,
-    })
+    const { mediaItem: episode, isLoading, error } = useJellyfinMediaItem(id)
 
     if (isLoading) {
         return <Loader />
     }
 
     if (error || !episode) {
-        return <div className="error">Failed to load episode</div>
+        return <div className="error">{error || 'Episode not found'}</div>
     }
 
     return (

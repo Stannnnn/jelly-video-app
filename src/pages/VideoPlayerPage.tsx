@@ -1,25 +1,15 @@
-import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
+import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import { VideoPlayer } from '../VideoPlayer'
 
 export const VideoPlayerPage = () => {
     const { id } = useParams<{ id: string }>()
-    const api = useJellyfinContext()
     const playback = usePlaybackContext()
     const playbackRef = useRef(playback)
 
-    const {
-        data: item,
-        isLoading,
-        error,
-    } = useQuery({
-        queryKey: ['item', id],
-        queryFn: () => api.getItemById(id!),
-        enabled: !!id,
-    })
+    const { mediaItem: item, isLoading, error } = useJellyfinMediaItem(id)
 
     useEffect(() => {
         playbackRef.current = playback
@@ -95,22 +85,5 @@ export const VideoPlayerPage = () => {
         return () => window.removeEventListener('keydown', handleKeyPress)
     }, [playback])
 
-    if (error || !item) {
-        return (
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh',
-                    color: 'white',
-                    fontSize: '1.5rem',
-                }}
-            >
-                Error loading video
-            </div>
-        )
-    }
-
-    return <VideoPlayer />
+    return <VideoPlayer isLoading={isLoading} error={error} />
 }

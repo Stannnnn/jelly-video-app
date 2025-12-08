@@ -40,7 +40,7 @@ const getSubtitleDisplayName = (
     return mediaStream?.DisplayTitle || track.title || track.lang || 'On'
 }
 
-export const VideoPlayer = () => {
+export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: string | null }) => {
     const api = useJellyfinContext()
     const {
         isPaused,
@@ -363,7 +363,8 @@ export const VideoPlayer = () => {
                             <VideoPlayIcon width={42} height={42} />
                         </div>
                     )}
-                    {(!videoLoaded || !currentTrack || isBuffering) && <Loader />}
+                    {(isLoading || !videoLoaded || !currentTrack || isBuffering) && <Loader />}
+                    {error && <div className="error-overlay">{error}</div>}
                 </div>
             </div>
 
