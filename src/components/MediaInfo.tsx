@@ -11,6 +11,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
+import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { useFavorites } from '../hooks/useFavorites'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
 import { getVideoQuality } from '../utils/getVideoQuality'
@@ -22,6 +23,9 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const navigate = useNavigate()
     const { addToFavorites, removeFromFavorites } = useFavorites()
     const { addToDownloads, removeFromDownloads } = useDownloadContext()
+    const {
+        configuration: { minResumePercentage, maxResumePercentage },
+    } = useJellyfinServerConfiguration()
     const [isFavorited, setIsFavorited] = useState(item.UserData?.IsFavorite || false)
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false)
 
@@ -67,8 +71,10 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const communityRating = item.CommunityRating ? item.CommunityRating.toFixed(1) : null
     const playedPercentage = item.UserData?.PlayedPercentage || 0
     const hasProgress = playedPercentage > 0 && playedPercentage < 100
-    const isPlayed = item.UserData?.Played || ''
+    const isPlayed = item.UserData?.Played || false
     const videoQuality = getVideoQuality(item)
+
+    const shouldShowResume = playedPercentage >= minResumePercentage && playedPercentage <= maxResumePercentage
 
     return (
         <div className="media-info">
@@ -144,7 +150,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                         <div className="play-media">
                             <div className="container" onClick={() => navigate(`/play/${item.Id}`)}>
                                 <PlayIcon className="play-icon" width={16} height={16} />
-                                <div className="text">{isPlayed ? 'Play' : 'Resume'}</div>
+                                <div className="text">{shouldShowResume ? 'Resume' : 'Play'}</div>
                             </div>
                             <div className="version-select" title="Select version">
                                 <ChevronDownIcon size={16} />

@@ -1,5 +1,6 @@
 import { Jellyfin } from '@jellyfin/sdk'
 import { UserLibraryApi } from '@jellyfin/sdk/lib/generated-client'
+import { ConfigurationApi } from '@jellyfin/sdk/lib/generated-client/api/configuration-api'
 import { ItemsApi } from '@jellyfin/sdk/lib/generated-client/api/items-api'
 import { PlaystateApi } from '@jellyfin/sdk/lib/generated-client/api/playstate-api'
 import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
@@ -235,6 +236,12 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
     const fetchServerInfo = async () => {
         const systemApi = new SystemApi(api.configuration)
         const response = await systemApi.getSystemInfo()
+        return response.data
+    }
+
+    const fetchServerConfiguration = async () => {
+        const configurationApi = new ConfigurationApi(api.configuration)
+        const response = await configurationApi.getConfiguration()
         return response.data
     }
 
@@ -516,6 +523,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         fetchClientIp,
         measureLatency,
         fetchServerInfo,
+        fetchServerConfiguration,
         fetchPlayCount,
         reportPlaybackStart,
         reportPlaybackProgress,
