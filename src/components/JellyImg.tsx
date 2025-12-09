@@ -8,12 +8,14 @@ export const JellyImg = ({
     width,
     height,
     imageProps,
+    fallback,
 }: {
     item: MediaItem
     type: 'Primary' | 'Backdrop' | 'Logo' | 'Thumb'
     width: number
     height: number
     imageProps?: React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>
+    fallback?: React.ReactNode
 }) => {
     const api = useJellyfinContext()
     const [hasError, setError] = useState(false)
@@ -39,7 +41,8 @@ export const JellyImg = ({
                 />
             )}
 
-            {(hasError || !src) && <div className="fallback-thumbnail" data-orig-src={src || 'undefined'}></div>}
+            {(hasError || !src) &&
+                (fallback || <div className="fallback-thumbnail" data-orig-src={src || 'undefined'}></div>)}
         </>
     )
 }

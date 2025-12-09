@@ -80,7 +80,13 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                 </div>
                 <div className="banner-content">
                     <div className="logo noSelect">
-                        <JellyImg item={item} type={'Logo'} width={360} height={120} />
+                        <JellyImg
+                            item={item}
+                            type={'Logo'}
+                            width={360}
+                            height={120}
+                            fallback={<div className="fallback-logo">{item.OriginalTitle}</div>}
+                        />
                     </div>
                     <div className="details">
                         <div className="statistics noSelect">
