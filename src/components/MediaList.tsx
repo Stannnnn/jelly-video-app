@@ -81,7 +81,7 @@ export const MediaList = ({
                             {item.Name}
                         </span>
                         <div
-                            className="date"
+                            className="subtitle date"
                             title={
                                 item.PremiereDate && !isNaN(Date.parse(item.PremiereDate))
                                     ? new Date(item.PremiereDate).getFullYear().toString()
@@ -115,7 +115,7 @@ export const MediaList = ({
                         {item.PremiereDate && (
                             <div className="container">
                                 <div
-                                    className="date premiere"
+                                    className="subtitle date premiere"
                                     title={new Date(item.PremiereDate).getFullYear().toString()}
                                 >
                                     {new Date(item.PremiereDate).getFullYear()}
@@ -127,7 +127,7 @@ export const MediaList = ({
                                         <>
                                             <div className="divider">-</div>
                                             <div
-                                                className="date end"
+                                                className="subtitle date end"
                                                 title={new Date(item.EndDate).getFullYear().toString()}
                                             >
                                                 {new Date(item.EndDate).getFullYear()}
@@ -153,57 +153,11 @@ export const MediaList = ({
                     <Squircle width={240} height={135} cornerRadius={8} className="media-thumbnail">
                         <JellyImg item={item} type={'Primary'} width={240} height={135} />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
-                    </Squircle>
-                    <div className="media-details">
-                        <span className="title" title={item.Name}>
-                            {item.Name}
-                        </span>
-                        {item.PremiereDate && (
-                            <div className="container">
-                                <div
-                                    className="date premiere"
-                                    title={new Date(item.PremiereDate).getFullYear().toString()}
-                                >
-                                    {new Date(item.PremiereDate).getFullYear()}
-                                </div>
-
-                                {item.EndDate &&
-                                    new Date(item.EndDate).getFullYear() !==
-                                        new Date(item.PremiereDate).getFullYear() && (
-                                        <>
-                                            <div className="divider">-</div>
-                                            <div
-                                                className="date end"
-                                                title={new Date(item.EndDate).getFullYear().toString()}
-                                            >
-                                                {new Date(item.EndDate).getFullYear()}
-                                            </div>
-                                        </>
-                                    )}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )
-        } else if (type === 'mixed') {
-            return (
-                <div
-                    className={`media-item continue-watching mixed-item ${className || ''}`}
-                    ref={el => setRowRefs(index, el)}
-                    {...(disableEvents
-                        ? {}
-                        : {
-                              onClick: () => handleItemClick(item),
-                          })}
-                >
-                    <Squircle width={280} height={158} cornerRadius={8} className="media-thumbnail">
-                        <JellyImg item={item} type={'Thumb'} width={280} height={158} />
-                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         <div className="overlay">
                             <div
                                 className="play" //onClick={() => navigate(`/play/${item.Id}`)}
                             >
-                                <VideoPlayIcon width={32} height={32} />
+                                <VideoPlayIcon width={24} height={24} />
                             </div>
                         </div>
                     </Squircle>
@@ -213,26 +167,79 @@ export const MediaList = ({
                         </span>
                         {item.PremiereDate && (
                             <div className="container">
-                                <div
-                                    className="date premiere"
-                                    title={new Date(item.PremiereDate).getFullYear().toString()}
-                                >
-                                    {new Date(item.PremiereDate).getFullYear()}
+                                <div className="subtitle episode-number" title={`Episode ${item.IndexNumber}`}>
+                                    Episode {item.IndexNumber}
                                 </div>
-
-                                {item.EndDate &&
-                                    new Date(item.EndDate).getFullYear() !==
-                                        new Date(item.PremiereDate).getFullYear() && (
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )
+        } else if (type === 'mixed') {
+            return (
+                <div
+                    className={`media-item continue-watching landscape mixed-item ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                    {...(disableEvents
+                        ? {}
+                        : {
+                              onClick: () => handleItemClick(item),
+                          })}
+                >
+                    <Squircle width={280} height={158} cornerRadius={8} className="media-thumbnail">
+                        <JellyImg
+                            item={item}
+                            type={item.Type === 'Episode' ? 'Primary' : 'Thumb'}
+                            width={280}
+                            height={158}
+                        />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                        <div className="overlay">
+                            <div
+                                className="play" //onClick={() => navigate(`/play/${item.Id}`)}
+                            >
+                                <VideoPlayIcon width={32} height={32} />
+                            </div>
+                        </div>
+                        <div className="progress-indicator" />
+                    </Squircle>
+                    <div className="media-details">
+                        {item.Type === 'Episode' ? (
+                            <>
+                                <span className="title" title={item.SeriesName?.toString()}>
+                                    {item.SeriesName}
+                                </span>
+                                <div className="container">
+                                    <div
+                                        className="subtitle season-episode"
+                                        title={`Season ${String(item.ParentIndexNumber)} - Episode ${String(
+                                            item.IndexNumber
+                                        )}`}
+                                    >
+                                        S{String(item.ParentIndexNumber).padStart(2, '0')} E
+                                        {String(item.IndexNumber).padStart(2, '0')}
+                                    </div>
+                                    {item.Name && (
                                         <>
-                                            <div className="divider">-</div>
-                                            <div
-                                                className="date end"
-                                                title={new Date(item.EndDate).getFullYear().toString()}
-                                            >
-                                                {new Date(item.EndDate).getFullYear()}
+                                            <div className="dot"></div>
+                                            <div className="subtitle episode-name" title={item.Name}>
+                                                {item.Name}
                                             </div>
                                         </>
                                     )}
+                                </div>
+                            </>
+                        ) : (
+                            <span className="title" title={item.Name}>
+                                {item.Name}
+                            </span>
+                        )}
+                        {item.Type === 'Movie' && item.PremiereDate && (
+                            <div
+                                className="subtitle date premiere"
+                                title={new Date(item.PremiereDate).getFullYear().toString()}
+                            >
+                                {new Date(item.PremiereDate).getFullYear()}
                             </div>
                         )}
                     </div>

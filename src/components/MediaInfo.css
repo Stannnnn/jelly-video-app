@@ -45,8 +45,12 @@
 }
 
 .media-info > .media-header > .banner-content > .logo {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.media-info > .media-header > .banner-content > .logo:has(> .thumbnail) {
     margin-bottom: 16px;
 }
 

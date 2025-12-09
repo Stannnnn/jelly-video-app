@@ -33,7 +33,7 @@
     max-width: 152px;
 }
 
-.media-list .media-item.episode-item {
+.media-list .media-item.landscape {
     max-width: 240px;
 }
 
@@ -53,7 +53,7 @@
     height: 228px;
 }
 
-.media-list .media-item.episode-item > .media-thumbnail {
+.media-list .media-item.landscape > .media-thumbnail {
     width: 240px;
     height: 135px;
 }
@@ -109,7 +109,7 @@
     text-overflow: ellipsis;
 }
 
-.media-list .media-item > .media-details > .date {
+.media-list .media-item > .media-details > .subtitle {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--font-color-tertiary);
@@ -123,12 +123,33 @@
     color: var(--font-color-tertiary);
 }
 
-.media-list .media-item > .media-details > .container > .date {
+.media-list .media-item > .media-details > .container > .subtitle {
     font-weight: 600;
 }
 
 .media-list .media-item > .media-details > .container > .divider {
     font-weight: 800;
+}
+
+.media-list .media-item > .media-details > .container > .dot {
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+    width: 2px;
+    height: 2px;
+    margin: 0 4px;
+    border-radius: 4px;
+    background-color: var(--font-color-tertiary);
+}
+
+.media-list .media-item > .media-details > .container > .subtitle.season-episode {
+    flex-shrink: 0;
+}
+
+.media-list .media-item > .media-details > .container > .subtitle.episode-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /*
@@ -169,28 +190,28 @@
 }
 */
 
-.media-list .media-item.continue-watching > .media-thumbnail > .overlay {
+.media-list .media-item.landscape > .media-thumbnail > .overlay {
     position: absolute;
-    opacity: 0;
-    visibility: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 6px;
     background-color: var(--overlay-bg);
+    opacity: 0;
+    visibility: hidden;
     transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
-.media-list .media-item.continue-watching > .media-thumbnail:hover > .overlay {
+.media-list .media-item.landscape > .media-thumbnail:hover > .overlay {
     opacity: 1;
     visibility: visible;
 }
 
-.media-list .media-item.continue-watching > .media-thumbnail > .overlay > .play {
+.media-list .media-item.landscape > .media-thumbnail > .overlay > .play {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -202,6 +223,27 @@
         transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
-.media-list .media-item.continue-watching > .media-thumbnail:hover > .overlay > .play {
+.media-list .media-item.landscape > .media-thumbnail:hover > .overlay > .play {
     transform: scale(1.2);
+}
+
+.media-list .media-item.continue-watching > .media-thumbnail > .progress-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    margin: 8px;
+    height: 5px;
+    width: calc(100% - 16px);
+    opacity: 0.9;
+    border-radius: 8px;
+    backdrop-filter: blur(2px);
+    background-color: rgba(255, 255, 255, 0.14);
+    background: linear-gradient(
+        to right,
+        var(--brand-color) 0%,
+        var(--brand-color) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.14) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.14) 100%
+    );
 }
