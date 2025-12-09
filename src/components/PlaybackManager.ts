@@ -409,6 +409,21 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 const videoUrl = offlineFilePath || streamUrl
 
                 await command('loadfile', [videoUrl])
+
+                // Check if we need to seek to a saved position
+                const positionTicks = track.UserData?.PlaybackPositionTicks
+                const shouldSeek =
+                    positionTicks &&
+                    positionTicks > 0 &&
+                    positionTicks > 10000000 && // More than 1 second
+                    track.RunTimeTicks &&
+                    positionTicks < track.RunTimeTicks - 10000000 // Less than 1 second from end
+
+                if (shouldSeek) {
+                    const positionSeconds = positionTicks / 10000000
+                    await setProperty('start', `+${positionSeconds}`)
+                }
+
                 await setProperty('pause', false)
 
                 setVideoLoaded(true)
