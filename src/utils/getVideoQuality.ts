@@ -39,8 +39,8 @@ export const getQualityLabel = (height: number | undefined, width?: number | und
  * @param item MediaItem from Jellyfin
  * @returns Quality label (4K, 1080p, 720p, 480p, SD) or null if no video stream found
  */
-export const getVideoQuality = (item: MediaItem): string | null => {
-    if (!item.MediaStreams || item.MediaStreams.length === 0) {
+export const getVideoQuality = (item: MediaItem | undefined): string | null => {
+    if (!item?.MediaStreams || item.MediaStreams.length === 0) {
         return null
     }
 

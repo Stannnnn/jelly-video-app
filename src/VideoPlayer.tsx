@@ -17,7 +17,7 @@ import {
 import { useHistoryContext } from './context/HistoryContext/HistoryContext'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
-import { getQualityLabel } from './utils/getVideoQuality'
+import { getVideoQuality } from './utils/getVideoQuality'
 import './VideoPlayer.css'
 
 type MenuView = 'home' | 'subtitles' | 'speed' | 'statistics'
@@ -477,7 +477,7 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
                             title="Settings"
                         >
                             <GearIcon width={18} height={18} />
-                            <div className="quality-label">{getQualityLabel(videoHeight, videoWidth)}</div>
+                            <div className="quality-label">{getVideoQuality(currentTrack)}</div>
                         </button>
                         <div className="menu-container" ref={menuContainerRef}>
                             {/* Home Menu */}
