@@ -13,6 +13,7 @@ import { MediaItem } from '../api/jellyfin'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useFavorites } from '../hooks/useFavorites'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
+import { getVideoQuality } from '../utils/getVideoQuality'
 import { JellyImg } from './JellyImg'
 import './MediaInfo.css'
 import { DownloadedIcon, DownloadingIcon, MoreIcon, PlayIcon } from './SvgIcons'
@@ -67,6 +68,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const playedPercentage = item.UserData?.PlayedPercentage || 0
     const hasProgress = playedPercentage > 0 && playedPercentage < 100
     const isPlayed = item.UserData?.Played || ''
+    const videoQuality = getVideoQuality(item)
 
     return (
         <div className="media-info">
@@ -104,9 +106,11 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 </span>
                             )}
                             */}
-                            <div className="quality" title="Quality">
-                                1080p
-                            </div>
+                            {videoQuality && (
+                                <div className="quality" title="Quality">
+                                    {videoQuality}
+                                </div>
+                            )}
                             {GenresApi && (
                                 <div className="genres" title={item.Genres?.join(', ')}>
                                     {item.Genres?.join(', ')}

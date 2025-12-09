@@ -17,6 +17,7 @@ import {
 import { useHistoryContext } from './context/HistoryContext/HistoryContext'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
+import { getQualityLabel } from './utils/getVideoQuality'
 import './VideoPlayer.css'
 
 type MenuView = 'home' | 'subtitles' | 'speed' | 'statistics'
@@ -162,22 +163,6 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
             8: '7.1',
         }
         return configs[channels] || `${channels} channels`
-    }
-
-    // Get quality label based on resolution, Note: we should fetch this from Jellyfin in the future
-    const getQualityLabel = () => {
-        if (!videoWidth || !videoHeight) return 'SD'
-
-        const mp = (videoWidth * videoHeight) / 1_000_000
-
-        if ((videoWidth >= 3800 && videoHeight >= 1600) || mp >= 7.5) {
-            return '4K'
-        }
-
-        if (videoHeight >= 1080 || mp >= 2) return 'HD'
-        if (videoHeight >= 720) return 'HD'
-
-        return 'SD'
     }
 
     // Format codec name to be more readable
@@ -492,7 +477,7 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
                             title="Settings"
                         >
                             <GearIcon width={18} height={18} />
-                            <div className="quality-label">{getQualityLabel()}</div>
+                            <div className="quality-label">{getQualityLabel(videoHeight, videoWidth)}</div>
                         </button>
                         <div className="menu-container" ref={menuContainerRef}>
                             {/* Home Menu */}
