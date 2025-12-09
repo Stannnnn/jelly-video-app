@@ -44,12 +44,32 @@ export const getVideoQuality = (item: MediaItem): string | null => {
         return null
     }
 
-    // Find the first video stream
-    const videoStream = item.MediaStreams.find(stream => stream.Type === 'Video')
+    // Find all video streams
+    const videoStreams = item.MediaStreams.filter(stream => stream.Type === 'Video')
 
-    if (!videoStream) {
+    if (videoStreams.length === 0) {
         return null
     }
 
-    return getQualityLabel(videoStream.Height ?? undefined, videoStream.Width ?? undefined)
+    let highestHeight = 0
+    let highestWidth = 0
+    let highestDisplayTitle: string | null = null
+
+    // Loop through all video streams and find the highest resolution
+    for (const videoStream of videoStreams) {
+        const height = videoStream.Height ?? 0
+        const width = videoStream.Width ?? 0
+
+        if (height > highestHeight || (height === highestHeight && width > highestWidth)) {
+            highestHeight = height
+            highestWidth = width
+            highestDisplayTitle = videoStream.DisplayTitle || null
+        }
+    }
+
+    if (highestHeight === 0) {
+        return null
+    }
+
+    return highestDisplayTitle?.match(new RegExp('[0-9]+[pk]'))?.[0] || getQualityLabel(highestHeight, highestWidth)
 }
