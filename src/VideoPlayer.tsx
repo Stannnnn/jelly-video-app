@@ -477,7 +477,7 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
                             title="Settings"
                         >
                             <GearIcon width={18} height={18} />
-                            <div className="quality-label">{getVideoQuality(currentTrack)}</div>
+                            <div className="quality-label">{getVideoQuality(currentTrack, true)}</div>
                         </button>
                         <div className="menu-container" ref={menuContainerRef}>
                             {/* Home Menu */}
