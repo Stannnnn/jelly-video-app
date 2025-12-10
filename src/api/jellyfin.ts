@@ -197,7 +197,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getRecentlyAdded = async (startIndex = 0, limit = 12) => {
+    const getRecentlyAdded = async (startIndex = 0, limit = 12, itemKind: BaseItemKind) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
             userId,
@@ -207,7 +207,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortOrder: [SortOrder.Descending],
             recursive: true,
             fields: extraFields,
-            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series],
+            includeItemTypes: [itemKind],
         })
 
         return await parseItemDtos(response.data.Items)

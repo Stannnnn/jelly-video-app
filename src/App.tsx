@@ -29,7 +29,8 @@ import { Home } from './pages/Home'
 import { Login } from './pages/Login'
 import { MoviePage } from './pages/MoviePage'
 import { Movies } from './pages/Movies'
-import { RecentlyAdded } from './pages/RecentlyAdded'
+import { RecentlyAddedMovies } from './pages/RecentlyAddedMovies'
+import { RecentlyAddedSeries } from './pages/RecentlyAddedSeries'
 import { RecentlyPlayed } from './pages/RecentlyPlayed'
 import { SearchCollections } from './pages/SearchCollections'
 import { SearchEpisodes } from './pages/SearchEpisodes'
@@ -180,7 +181,8 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             <Route path="/collection/:id" element={<Main content={CollectionPage} />} />
                             <Route path="/favorites" element={<Main content={Favorites} filterType={'favorites'} />} />
                             <Route path="/recently-played" element={<Main content={RecentlyPlayed} />} />
-                            <Route path="/recently-added" element={<Main content={RecentlyAdded} />} />
+                            <Route path="/recently-added-movies" element={<Main content={RecentlyAddedMovies} />} />
+                            <Route path="/recently-added-series" element={<Main content={RecentlyAddedSeries} />} />
                             <Route path="/search/:query" element={<Main content={SearchResults} />} />
                             <Route path="/search/:query/movies" element={<Main content={SearchMovies} />} />
                             <Route path="/search/:query/series" element={<Main content={SearchSeries} />} />

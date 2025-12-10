@@ -4,7 +4,7 @@ import { MediaList } from '../components/MediaList'
 import { useJellyfinHomeData } from '../hooks/Jellyfin/useJellyfinHomeData'
 
 export const Home = () => {
-    const { recentlyPlayed, recentlyAdded, isLoading, error } = useJellyfinHomeData()
+    const { recentlyPlayed, recentlyAddedMovies, recentlyAddedSeries, isLoading, error } = useJellyfinHomeData()
 
     if (isLoading) {
         return <Loader />
@@ -29,31 +29,33 @@ export const Home = () => {
                     <MediaList items={recentlyPlayed} isLoading={false} type="mixed" virtuosoType="horizontal" />
                 </div>
             )}
-            {recentlyAdded && recentlyAdded.length > 0 && (
-                <>
-                    <div className="section">
-                        <div className="container">
-                            <div className="title">Latest Movies</div>
-                            {recentlyAdded && recentlyAdded.length >= 12 && (
-                                <Link to="/recently-added" className="see-more noSelect">
-                                    See more
-                                </Link>
-                            )}
-                        </div>
-                        <MediaList items={recentlyAdded} isLoading={false} type="movie" />
+
+            {recentlyAddedMovies && recentlyAddedMovies.length > 0 && (
+                <div className="section">
+                    <div className="container">
+                        <div className="title">Latest Movies</div>
+                        {recentlyAddedMovies && recentlyAddedMovies.length >= 12 && (
+                            <Link to="/recently-added-movies" className="see-more noSelect">
+                                See more
+                            </Link>
+                        )}
                     </div>
-                    <div className="section">
-                        <div className="container">
-                            <div className="title">Latest Series</div>
-                            {recentlyAdded && recentlyAdded.length >= 12 && (
-                                <Link to="/recently-added" className="see-more noSelect">
-                                    See more
-                                </Link>
-                            )}
-                        </div>
-                        <MediaList items={recentlyAdded} isLoading={false} type="series" />
+                    <MediaList items={recentlyAddedMovies} isLoading={false} type="movie" />
+                </div>
+            )}
+
+            {recentlyAddedSeries && recentlyAddedSeries.length > 0 && (
+                <div className="section">
+                    <div className="container">
+                        <div className="title">Latest Series</div>
+                        {recentlyAddedSeries && recentlyAddedSeries.length >= 12 && (
+                            <Link to="/recently-added-series" className="see-more noSelect">
+                                See more
+                            </Link>
+                        )}
                     </div>
-                </>
+                    <MediaList items={recentlyAddedSeries} isLoading={false} type="series" />
+                </div>
             )}
         </div>
     )
