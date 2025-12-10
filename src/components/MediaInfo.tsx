@@ -91,7 +91,11 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                             type={'Logo'}
                             width={360}
                             height={120}
-                            fallback={<div className="fallback-logo">{item.OriginalTitle}</div>}
+                            fallback={
+                                <div className="fallback-logo" title={item.Name}>
+                                    {item.Name}
+                                </div>
+                            }
                         />
                     </div>
                     <div className="details">
@@ -159,14 +163,13 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                         <div className="watch-state icon" title={isPlayed ? 'Mark as watched' : 'Mark as unwatched'}>
                             {isPlayed ? <CheckCircleIcon size={16} /> : <CheckCircleFillIcon size={16} />}
                         </div>
-                        <button
+                        <div
                             className={`favorite-state icon ${isFavorited ? 'favorited' : ''}`}
                             onClick={toggleFavorite}
-                            disabled={isTogglingFavorite}
                             title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
                         >
                             {isFavorited ? <HeartFillIcon size={16} /> : <HeartIcon size={16} />}
-                        </button>
+                        </div>
                     </div>
                     <div className="secondary">
                         <div
