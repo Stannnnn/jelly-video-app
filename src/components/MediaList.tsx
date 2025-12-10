@@ -201,7 +201,19 @@ export const MediaList = ({
                                 <VideoPlayIcon width={32} height={32} />
                             </div>
                         </div>
-                        <div className="progress-indicator" />
+                        {item.UserData?.PlayedPercentage &&
+                            item.UserData.PlayedPercentage > 0 &&
+                            item.UserData.PlayedPercentage < 100 && (
+                                <div
+                                    className="progress-indicator"
+                                    title="Played duration"
+                                    style={
+                                        {
+                                            '--progress-percent': `${item.UserData.PlayedPercentage}%`,
+                                        } as React.CSSProperties
+                                    }
+                                />
+                            )}
                     </Squircle>
                     <div className="media-details">
                         {item.Type === 'Episode' ? (
