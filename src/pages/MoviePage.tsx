@@ -21,7 +21,21 @@ export const MoviePage = () => {
         <div className="media-page movie">
             <MediaInfo item={movie} />
             <div className="media-content">
-                <div className="section movie"></div>
+                <div className="section cast-crew">
+                    <div className="container">
+                        <div className="title">Cast & Crew</div>
+                    </div>
+                </div>
+                <div className="section specials">
+                    <div className="container">
+                        <div className="title">Specials</div>
+                    </div>
+                </div>
+                <div className="section recommended">
+                    <div className="container">
+                        <div className="title">Recommended</div>
+                    </div>
+                </div>
             </div>
         </div>
     )

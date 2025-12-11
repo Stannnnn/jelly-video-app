@@ -7,37 +7,53 @@
 .skeleton-effect {
     background-image: linear-gradient(
         90deg,
-        var(--bg-color-tertiary) 0%,
-        var(--bg-color-quaternary) 20%,
-        var(--bg-color-tertiary) 40%
+        var(--bg-color-secondary) 0%,
+        var(--bg-color-tertiary) 20%,
+        var(--bg-color-secondary) 40%
     );
     background-size: 200%;
-    background-color: var(--bg-color-tertiary);
+    background-color: var(--bg-color-secondary);
     animation: skeleton-shine 1.6s infinite ease-out;
 }
 
 .skeleton-loading > .skeleton-effect.thumbnail {
-    width: 152px;
-    height: 228px;
     margin-bottom: 8px;
     border-radius: 8px;
 }
 
+.skeleton-loading.portrait > .skeleton-effect.thumbnail {
+    width: 152px;
+    height: 228px;
+}
+
+.skeleton-loading.landscape > .skeleton-effect.thumbnail {
+    width: 240px;
+    height: 135px;
+}
+
+.skeleton-loading.continue-watching > .skeleton-effect.thumbnail {
+    width: 280px;
+    height: 158px;
+}
+
 .skeleton-loading > .skeleton-details {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    width: calc(100% - 4px);
+    margin: 0 2px;
 }
 
 .skeleton-loading > .skeleton-details > .skeleton-effect.title {
+    width: 100%;
     height: 16px;
-    margin-bottom: 2px;
-    border-radius: 4px;
+    margin-bottom: 4px;
+    border-radius: 6px;
 }
 
-.skeleton-loading > .skeleton-details > .skeleton-effect.date {
+.skeleton-loading > .skeleton-details > .skeleton-effect.subtitle {
+    width: 40%;
     height: 14px;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 @keyframes skeleton-shine {

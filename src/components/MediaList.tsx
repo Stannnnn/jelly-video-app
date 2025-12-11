@@ -56,12 +56,12 @@ export const MediaList = ({
         if (!item || 'isPlaceholder' in item) {
             return (
                 <div className={`media-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
-                    <Skeleton type="movie" />
+                    <Skeleton type={type === 'series' || type === 'collection' ? 'movie' : type} />
                 </div>
             )
         }
 
-        if (type === 'movie') {
+        if (type === 'movie' || type === 'collection') {
             return (
                 <div
                     className={`media-item portrait movie-item ${className || ''}`}
@@ -189,7 +189,7 @@ export const MediaList = ({
                     <Squircle width={280} height={158} cornerRadius={8} className="media-thumbnail">
                         <JellyImg
                             item={item}
-                            type={item.Type === 'Episode' ? 'Primary' : 'Thumb'}
+                            type={item.Type === 'Episode' ? 'Primary' : 'Backdrop'}
                             width={280}
                             height={158}
                         />

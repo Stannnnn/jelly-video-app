@@ -10,7 +10,19 @@
     gap: 30px 24px;
 }
 
+.media-list:has(.media-item > .skeleton-loading.portrait) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+    gap: 30px 24px;
+}
+
 .media-list:has(.media-item.landscape) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px 24px;
+}
+
+.media-list:has(.media-item > .skeleton-loading.landscape) .virtuoso-grid-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 30px 24px;
@@ -235,15 +247,14 @@
     margin: 8px;
     height: 5px;
     width: calc(100% - 16px);
-    opacity: 0.9;
     border-radius: 8px;
     backdrop-filter: blur(2px);
-    background-color: rgba(255, 255, 255, 0.14);
+    background-color: rgba(255, 255, 255, 0.16);
     background: linear-gradient(
         to right,
         var(--brand-color) 0%,
         var(--brand-color) var(--progress-percent, 0%),
-        rgba(255, 255, 255, 0.14) var(--progress-percent, 0%),
-        rgba(255, 255, 255, 0.14) 100%
+        rgba(255, 255, 255, 0.16) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.16) 100%
     );
 }

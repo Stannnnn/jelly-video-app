@@ -577,9 +577,15 @@ body.lockscroll {
     margin-bottom: 60px;
 }
 
+.main > .main_content .empty {
+    font-size: 0.85rem;
+    margin-top: -4px;
+}
+
 .main > .main_content .error {
     font-size: 0.85rem;
     color: var(--font-color-error);
+    margin-top: -4px;
 }
 
 /* Genric page styles */
@@ -597,7 +603,7 @@ body.lockscroll {
 }
 
 .search-results-page > .section {
-    margin-bottom: 40px;
+    margin-bottom: 60px;
 }
 
 .home-page > .section:last-of-type,

@@ -21,7 +21,11 @@ export const EpisodePage = () => {
         <div className="media-page episode">
             <MediaInfo item={episode} />
             <div className="media-content">
-                <div className="section episode"></div>
+                <div className="section more-episodes">
+                    <div className="container">
+                        <div className="title">More from Season x</div>
+                    </div>
+                </div>
             </div>
         </div>
     )

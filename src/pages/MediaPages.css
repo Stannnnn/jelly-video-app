@@ -3,11 +3,37 @@
     border-top: 1px solid var(--border-color);
 }
 
+.media-page > .media-content > .section {
+    margin-bottom: 60px;
+}
+
+.media-page > .media-content > .section:last-of-type {
+    margin-bottom: 0;
+}
+
 .media-page > .media-content > .section > .container {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 20px;
+}
+
+.media-page > .media-content > .section > .container > .title {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.media-page > .media-content > .section > .container > .see-more {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--brand-color);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 6px 11px;
+    border-radius: 6px;
+    background-color: var(--bg-color-secondary);
+    transition: background-color 0.2s ease-out;
 }
 
 .media-page > .media-content > .section > .container > .sorting {
@@ -47,4 +73,9 @@
 .media-page > .media-content > .section > .container > .sorting > .filter > select > option {
     font-weight: 500;
     color: var(--font-color);
+}
+
+/* for section items with MediaList */
+.media-page > .media-content > .section > .loading_container {
+    height: unset;
 }

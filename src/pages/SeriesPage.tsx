@@ -2,7 +2,6 @@ import { ChevronDownIcon } from '@primer/octicons-react'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
-import { InlineLoader } from '../components/InlineLoader'
 import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
@@ -60,15 +59,32 @@ export const SeriesPage = () => {
                                 </div>
                             </div>
                         )}
+                        {/* Inline loader test next to select
                         {isLoadingSeasons ? (
                             <InlineLoader />
                         ) : seasonsError ? (
                             <div className="error">{seasonsError || 'Failed to load season'}</div>
                         ) : null}
+                        */}
                     </div>
                     {!isLoadingSeasons && !seasonsError && (
                         <MediaList items={episodes || []} isLoading={isLoadingEpisodes} type="episode" />
                     )}
+                </div>
+                <div className="section cast-crew">
+                    <div className="container">
+                        <div className="title">Cast & Crew</div>
+                    </div>
+                </div>
+                <div className="section specials">
+                    <div className="container">
+                        <div className="title">Specials</div>
+                    </div>
+                </div>
+                <div className="section recommended">
+                    <div className="container">
+                        <div className="title">Recommended</div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -39,7 +39,28 @@ export const CollectionPage = () => {
             <MediaInfo item={collection} />
             <div className="media-content">
                 <div className="section movie">
-                    <MediaList items={children || []} isLoading={isLoadingChildren} type="movie" loadMore={loadMore} />
+                    <div className="container">
+                        <div className="title">Movies</div>
+                    </div>
+                    <MediaList
+                        items={children || []}
+                        isLoading={isLoadingChildren}
+                        type="collection"
+                        loadMore={loadMore}
+                    />
+                    {childrenError && <div className="error">{childrenError || 'Collection items not found'}</div>}
+                </div>
+
+                <div className="section series">
+                    <div className="container">
+                        <div className="title">Series</div>
+                    </div>
+                    <MediaList
+                        items={children || []}
+                        isLoading={isLoadingChildren}
+                        type="collection"
+                        loadMore={loadMore}
+                    />
                     {childrenError && <div className="error">{childrenError || 'Collection items not found'}</div>}
                 </div>
             </div>
