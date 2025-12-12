@@ -66,9 +66,9 @@ export const SearchResults = () => {
                 </div>
             )}
 
-            {results.movies.length === 0 &&
-                results.series.length === 0 &&
-                results.collections.length === 0 && <div>No results found for '{query}'.</div>}
+            {results.movies.length === 0 && results.series.length === 0 && results.collections.length === 0 && (
+                <div>No results found for '{query}'.</div>
+            )}
         </div>
     )
 }
