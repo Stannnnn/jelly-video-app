@@ -23,7 +23,7 @@ export const MediaList = ({
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
-    type: 'movie' | 'series' | 'episode' | 'collection' | 'mixed'
+    type: 'movie' | 'series' | 'episode' | 'collection' | 'mixed' | 'person'
     virtuosoType?: 'vertical' | 'horizontal' | 'grid'
     loadMore?: () => void
     disableActions?: boolean
@@ -46,6 +46,8 @@ export const MediaList = ({
             navigate(`/episode/${item.Id}`)
         } else if (itemType === 'boxset') {
             navigate(`/collection/${item.Id}`)
+        } else if (itemType === 'person' || type === 'person') {
+            navigate(`/person/${item.Id}`)
         } else {
             // Fallback to play route for other types
             navigate(`/play/${item.Id}`)
@@ -56,7 +58,7 @@ export const MediaList = ({
         if (!item || 'isPlaceholder' in item) {
             return (
                 <div className={`media-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
-                    <Skeleton type={type === 'series' || type === 'collection' ? 'movie' : type} />
+                    <Skeleton type={type === 'series' || type === 'collection' || type === 'person' ? 'movie' : type} />
                 </div>
             )
         }
@@ -257,6 +259,32 @@ export const MediaList = ({
                     </div>
                 </div>
             )
+        } else if (type === 'person') {
+            return (
+                <div
+                    className={`media-item portrait person-item ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                    {...(disableEvents
+                        ? {}
+                        : {
+                              onClick: () => handleItemClick(item),
+                          })}
+                >
+                    <Squircle width={152} height={228} cornerRadius={8} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={152} height={228} />
+                    </Squircle>
+                    <div className="media-details">
+                        <span className="title" title={item.Name}>
+                            {item.Name}
+                        </span>
+                        {(item as any).Role && (
+                            <div className="subtitle role" title={(item as any).Role}>
+                                {(item as any).Role}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )
         }
     }
 
@@ -271,6 +299,7 @@ export const MediaList = ({
             episode: 'No episodes were found',
             collection: 'No collections were found',
             mixed: 'No items were found',
+            person: 'No people were found',
         }[type]
 
         return <div className="empty">{emptyMessage}</div>

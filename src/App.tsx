@@ -28,6 +28,8 @@ import { Home } from './pages/Home'
 import { Login } from './pages/Login'
 import { MoviePage } from './pages/MoviePage'
 import { Movies } from './pages/Movies'
+import { PersonMovies } from './pages/PersonMovies'
+import { PersonPage } from './pages/PersonPage'
 import { RecentlyAddedMovies } from './pages/RecentlyAddedMovies'
 import { RecentlyAddedSeries } from './pages/RecentlyAddedSeries'
 import { RecentlyPlayed } from './pages/RecentlyPlayed'
@@ -187,6 +189,11 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             />
                             <Route path="/series/:id" element={<Main pageTitle="Series" content={SeriesPage} />} />
                             <Route path="/episode/:id" element={<Main pageTitle="Episode" content={EpisodePage} />} />
+                            <Route path="/person/:id" element={<Main pageTitle="Person" content={PersonPage} />} />
+                            <Route
+                                path="/person/:id/movies"
+                                element={<Main pageTitle="Person Movies" content={PersonMovies} />}
+                            />
                             <Route
                                 path="/collections"
                                 element={<Main pageTitle="Collections" content={Collections} filterType={'movies'} />}

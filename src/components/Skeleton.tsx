@@ -1,7 +1,7 @@
 import './Skeleton.css'
 
-export const Skeleton = ({ type }: { type: 'movie' | 'series' | 'episode' | 'mixed' | 'collection' }) => {
-    const isPortrait = type === 'movie' || type === 'series' || type === 'collection'
+export const Skeleton = ({ type }: { type: 'movie' | 'series' | 'episode' | 'mixed' | 'collection' | 'person' }) => {
+    const isPortrait = type === 'movie' || type === 'series' || type === 'collection' || type === 'person'
 
     return (
         <div className={`skeleton-loading ${isPortrait ? 'portrait' : 'landscape'}`}>

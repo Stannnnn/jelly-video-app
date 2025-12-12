@@ -2,6 +2,7 @@ import { Jellyfin } from '@jellyfin/sdk'
 import { UserLibraryApi } from '@jellyfin/sdk/lib/generated-client'
 import { ConfigurationApi } from '@jellyfin/sdk/lib/generated-client/api/configuration-api'
 import { ItemsApi } from '@jellyfin/sdk/lib/generated-client/api/items-api'
+import { LibraryApi } from '@jellyfin/sdk/lib/generated-client/api/library-api'
 import { PlaystateApi } from '@jellyfin/sdk/lib/generated-client/api/playstate-api'
 import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
 import { SystemApi } from '@jellyfin/sdk/lib/generated-client/api/system-api'
@@ -491,6 +492,22 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
+    const getSpecials = async (parentId: string) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        // TODO; wrong filters..
+        const response = await itemsApi.getItems({
+            userId,
+            parentId: parentId,
+            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Video, BaseItemKind.Episode],
+            filters: [ItemFilter.IsNotFolder],
+            sortBy: [ItemSortBy.SortName],
+            sortOrder: [SortOrder.Ascending],
+            fields: extraFields,
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
     const searchItems = async (searchQuery: string, limit = 42, includeItemTypes?: BaseItemKind[], startIndex = 0) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
@@ -505,6 +522,56 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
                 BaseItemKind.Episode,
                 BaseItemKind.BoxSet,
             ],
+            fields: extraFields,
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
+    const getCastCrew = async (itemId: string) => {
+        const item = await getItemById(itemId)
+
+        // Convert People to MediaItem format for rendering
+        const peopleAsItems = (item.People || []).map(person => ({
+            Id: person.Id || '',
+            Name: person.Name || '',
+            Type: 'Person' as const,
+            Role: person.Role,
+            PrimaryImageTag: person.PrimaryImageTag,
+        }))
+
+        return {
+            item: await parseItemDto(item),
+            people: peopleAsItems as MediaItem[],
+        }
+    }
+
+    const getPersonMovies = async (personId: string, startIndex = 0, limit = 42) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            personIds: [personId],
+            recursive: true,
+            startIndex,
+            limit,
+            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series],
+            sortBy: [ItemSortBy.SortName],
+            sortOrder: [SortOrder.Ascending],
+            fields: extraFields,
+        })
+
+        return {
+            items: await parseItemDtos(response.data.Items),
+            totalCount: response.data.TotalRecordCount || 0,
+        }
+    }
+
+    const getSimilarItems = async (itemId: string, limit = 12) => {
+        const libraryApi = new LibraryApi(api.configuration)
+        const response = await libraryApi.getSimilarItems({
+            itemId,
+            userId,
+            limit,
             fields: extraFields,
         })
 
@@ -537,6 +604,10 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         getItemChildren,
         getSeasons,
         getEpisodes,
+        getSpecials,
         searchItems,
+        getCastCrew,
+        getPersonMovies,
+        getSimilarItems,
     }
 }
