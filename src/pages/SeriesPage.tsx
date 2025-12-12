@@ -1,10 +1,11 @@
 import { ChevronDownIcon } from '@primer/octicons-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
+import { usePageTitle } from '../context/PageTitleContext/PageTitleContext'
 import { useJellyfinEpisodes } from '../hooks/Jellyfin/useJellyfinEpisodes'
 import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import { useJellyfinSeasons } from '../hooks/Jellyfin/useJellyfinSeasons'
@@ -12,9 +13,16 @@ import './MediaPages.css'
 
 export const SeriesPage = () => {
     const { id } = useParams<{ id: string }>()
+    const { setPageTitle } = usePageTitle()
     const [selectedSeasonId, setSelectedSeasonId] = useState<string | null>(null)
 
     const { mediaItem: series, isLoading: isLoadingSeries, error: seriesError } = useJellyfinMediaItem(id)
+
+    useEffect(() => {
+        if (series?.Name) {
+            setPageTitle(series.Name)
+        }
+    }, [series?.Name, setPageTitle])
 
     const { seasons, isLoading: isLoadingSeasons, error: seasonsError } = useJellyfinSeasons(id)
 

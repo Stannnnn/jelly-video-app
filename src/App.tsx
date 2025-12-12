@@ -20,7 +20,6 @@ import { ScrollContextProvider } from './context/ScrollContext/ScrollContextProv
 import { useSidenavContext } from './context/SidenavContext/SidenavContext'
 import { SidenavContextProvider } from './context/SidenavContext/SidenavContextProvider'
 import { ThemeContextProvider } from './context/ThemeContext/ThemeContextProvider'
-import { useDocumentTitle } from './hooks/useDocumentTitle'
 import { CollectionPage } from './pages/CollectionPage'
 import { Collections } from './pages/Collections'
 import { EpisodePage } from './pages/EpisodePage'
@@ -128,11 +127,9 @@ const RoutedApp = () => {
     return (
         <Router basename={import.meta.env.BASE_URL}>
             <HistoryContextProvider>
-                <PageTitleProvider>
-                    <ScrollContextProvider>
-                        <ThemeContextProvider>{actualApp}</ThemeContextProvider>
-                    </ScrollContextProvider>
-                </PageTitleProvider>
+                <ScrollContextProvider>
+                    <ThemeContextProvider>{actualApp}</ThemeContextProvider>
+                </ScrollContextProvider>
             </HistoryContextProvider>
         </Router>
     )
@@ -146,8 +143,6 @@ interface AuthData {
 }
 
 const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () => void }) => {
-    useDocumentTitle()
-
     const { showSidenav, toggleSidenav } = useSidenavContext()
 
     const memoSettings = useCallback(() => {
@@ -156,7 +151,14 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
 
     return (
         <Routes>
-            <Route path="/play/:id" element={<VideoPlayerPage />} />
+            <Route
+                path="/play/:id"
+                element={
+                    <PageTitleProvider pageTitle="Playing">
+                        <VideoPlayerPage />
+                    </PageTitleProvider>
+                }
+            />
             <Route
                 path="*"
                 element={
@@ -169,25 +171,67 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                         <Sidenav username={auth.username} />
 
                         <Routes>
-                            <Route path="/" element={<Main content={Home}></Main>} />
-                            <Route path="/settings" element={<Main content={memoSettings} />} />
-                            <Route path="/synced" element={<Main content={Downloads} filterType={'favorites'} />} />
-                            <Route path="/movies" element={<Main content={Movies} filterType={'movies'} />} />
-                            <Route path="/movie/:id" element={<Main content={MoviePage} />} />
-                            <Route path="/series" element={<Main content={Series} filterType={'movies'} />} />
-                            <Route path="/series/:id" element={<Main content={SeriesPage} />} />
-                            <Route path="/episode/:id" element={<Main content={EpisodePage} />} />
-                            <Route path="/collections" element={<Main content={Collections} filterType={'movies'} />} />
-                            <Route path="/collection/:id" element={<Main content={CollectionPage} />} />
-                            <Route path="/favorites" element={<Main content={Favorites} filterType={'favorites'} />} />
-                            <Route path="/recently-played" element={<Main content={RecentlyPlayed} />} />
-                            <Route path="/recently-added-movies" element={<Main content={RecentlyAddedMovies} />} />
-                            <Route path="/recently-added-series" element={<Main content={RecentlyAddedSeries} />} />
-                            <Route path="/search/:query" element={<Main content={SearchResults} />} />
-                            <Route path="/search/:query/movies" element={<Main content={SearchMovies} />} />
-                            <Route path="/search/:query/series" element={<Main content={SearchSeries} />} />
-                            <Route path="/search/:query/episodes" element={<Main content={SearchEpisodes} />} />
-                            <Route path="/search/:query/collections" element={<Main content={SearchCollections} />} />
+                            <Route path="/" element={<Main pageTitle="Home" content={Home}></Main>} />
+                            <Route path="/settings" element={<Main pageTitle="Settings" content={memoSettings} />} />
+                            <Route
+                                path="/synced"
+                                element={<Main pageTitle="Downloads" content={Downloads} filterType={'favorites'} />}
+                            />
+                            <Route
+                                path="/movies"
+                                element={<Main pageTitle="Movies" content={Movies} filterType={'movies'} />}
+                            />
+                            <Route path="/movie/:id" element={<Main pageTitle="Movie" content={MoviePage} />} />
+                            <Route
+                                path="/series"
+                                element={<Main pageTitle="Series" content={Series} filterType={'movies'} />}
+                            />
+                            <Route path="/series/:id" element={<Main pageTitle="Series" content={SeriesPage} />} />
+                            <Route path="/episode/:id" element={<Main pageTitle="Episode" content={EpisodePage} />} />
+                            <Route
+                                path="/collections"
+                                element={<Main pageTitle="Collections" content={Collections} filterType={'movies'} />}
+                            />
+                            <Route
+                                path="/collection/:id"
+                                element={<Main pageTitle="Collection" content={CollectionPage} />}
+                            />
+                            <Route
+                                path="/favorites"
+                                element={<Main pageTitle="Favorites" content={Favorites} filterType={'favorites'} />}
+                            />
+                            <Route
+                                path="/recently-played"
+                                element={<Main pageTitle="Recently Played" content={RecentlyPlayed} />}
+                            />
+                            <Route
+                                path="/recently-added-movies"
+                                element={<Main pageTitle="Recently Added Movies" content={RecentlyAddedMovies} />}
+                            />
+                            <Route
+                                path="/recently-added-series"
+                                element={<Main pageTitle="Recently Added Series" content={RecentlyAddedSeries} />}
+                            />
+                            <Route
+                                path="/search/:query"
+                                element={<Main pageTitle="Search" content={SearchResults} />}
+                            />
+                            <Route
+                                path="/search/:query/movies"
+                                element={<Main pageTitle="Search Movies" content={SearchMovies} />}
+                            />
+                            <Route
+                                path="/search/:query/series"
+                                element={<Main pageTitle="Search Series" content={SearchSeries} />}
+                            />
+                            <Route
+                                path="/search/:query/episodes"
+                                element={<Main pageTitle="Search Episodes" content={SearchEpisodes} />}
+                            />
+                            <Route
+                                path="/search/:query/collections"
+                                element={<Main pageTitle="Search Collections" content={SearchCollections} />}
+                            />
                             <Route path="*" element={<Navigate to="/" />} />
                         </Routes>
                     </div>
