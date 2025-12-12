@@ -32,7 +32,6 @@ import { RecentlyAddedMovies } from './pages/RecentlyAddedMovies'
 import { RecentlyAddedSeries } from './pages/RecentlyAddedSeries'
 import { RecentlyPlayed } from './pages/RecentlyPlayed'
 import { SearchCollections } from './pages/SearchCollections'
-import { SearchEpisodes } from './pages/SearchEpisodes'
 import { SearchMovies } from './pages/SearchMovies'
 import { SearchSeries } from './pages/SearchSeries'
 import { Series } from './pages/Series'
@@ -223,10 +222,6 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             <Route
                                 path="/search/:query/series"
                                 element={<Main pageTitle="Search Series" content={SearchSeries} />}
-                            />
-                            <Route
-                                path="/search/:query/episodes"
-                                element={<Main pageTitle="Search Episodes" content={SearchEpisodes} />}
                             />
                             <Route
                                 path="/search/:query/collections"

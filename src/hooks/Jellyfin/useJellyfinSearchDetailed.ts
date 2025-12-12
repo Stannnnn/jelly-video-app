@@ -8,7 +8,6 @@ import { useJellyfinContext } from '../../context/JellyfinContext/JellyfinContex
 interface SearchResults {
     movies: MediaItem[]
     series: MediaItem[]
-    episodes: MediaItem[]
     collections: MediaItem[]
 }
 
@@ -33,24 +32,21 @@ export const useJellyfinSearchDetailed = (searchQuery: string | undefined) => {
                 return {
                     movies: [],
                     series: [],
-                    episodes: [],
                     collections: [],
                 }
             }
 
             if (navigator.onLine) {
                 // Fetch each type separately with specific limits
-                const [movies, series, episodes, collections] = await Promise.all([
+                const [movies, series, collections] = await Promise.all([
                     api.searchItems(debouncedSearchQuery, 12, [BaseItemKind.Movie]),
                     api.searchItems(debouncedSearchQuery, 12, [BaseItemKind.Series]),
-                    api.searchItems(debouncedSearchQuery, 12, [BaseItemKind.Episode]),
                     api.searchItems(debouncedSearchQuery, 12, [BaseItemKind.BoxSet]),
                 ])
 
                 return {
                     movies,
                     series,
-                    episodes,
                     collections,
                 }
             } else {
@@ -58,7 +54,6 @@ export const useJellyfinSearchDetailed = (searchQuery: string | undefined) => {
                 return {
                     movies: offlineSongs,
                     series: [],
-                    episodes: [],
                     collections: [],
                 }
             }
@@ -69,7 +64,6 @@ export const useJellyfinSearchDetailed = (searchQuery: string | undefined) => {
         results: data || {
             movies: [],
             series: [],
-            episodes: [],
             collections: [],
         },
         loading: isFetching,
