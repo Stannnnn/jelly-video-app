@@ -50,7 +50,7 @@ export const MoviePage = () => {
                         <div className="container">
                             <div className="title">Specials</div>
                         </div>
-                        <MediaList items={specials} isLoading={isLoadingSpecials} type="movie" />
+                        <MediaList items={specials} isLoading={isLoadingSpecials} type="mixed" />
                     </div>
                 )}
                 {similarItems && similarItems.length > 0 && (

@@ -492,20 +492,14 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getSpecials = async (parentId: string) => {
-        const itemsApi = new ItemsApi(api.configuration)
-        // TODO; wrong filters..
-        const response = await itemsApi.getItems({
+    const getSpecials = async (itemId: string) => {
+        const userLibraryApi = new UserLibraryApi(api.configuration)
+        const response = await userLibraryApi.getSpecialFeatures({
             userId,
-            parentId: parentId,
-            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Video, BaseItemKind.Episode],
-            filters: [ItemFilter.IsNotFolder],
-            sortBy: [ItemSortBy.SortName],
-            sortOrder: [SortOrder.Ascending],
-            fields: extraFields,
+            itemId,
         })
 
-        return await parseItemDtos(response.data.Items)
+        return await parseItemDtos(response.data)
     }
 
     const searchItems = async (searchQuery: string, limit = 42, includeItemTypes?: BaseItemKind[], startIndex = 0) => {

@@ -191,7 +191,7 @@ export const MediaList = ({
                     <Squircle width={280} height={158} cornerRadius={8} className="media-thumbnail">
                         <JellyImg
                             item={item}
-                            type={item.Type === 'Episode' ? 'Primary' : 'Backdrop'}
+                            type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
                             width={280}
                             height={158}
                         />
