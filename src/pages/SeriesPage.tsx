@@ -29,6 +29,11 @@ export const SeriesPage = () => {
         }
     }, [series?.Name, setPageTitle])
 
+    // Reset selected season when series changes
+    useEffect(() => {
+        setSelectedSeasonId(null)
+    }, [id])
+
     const { seasons, isLoading: isLoadingSeasons, error: seasonsError } = useJellyfinSeasons(id)
 
     const { episodes, isLoading: isLoadingEpisodes } = useJellyfinEpisodes(selectedSeasonId)
