@@ -27,6 +27,7 @@ interface SquircleProps {
     isResponsive?: boolean
     className?: string
     children: ReactNode
+    onClick?: () => void
 }
 
 export const Squircle = ({
@@ -38,6 +39,7 @@ export const Squircle = ({
     isResponsive = false,
     className,
     children,
+    onClick,
 }: SquircleProps) => {
     // Tracking dynamic dimensions for responsive behavior
     const [dimensions, setDimensions] = useState({ width, height })
@@ -88,6 +90,7 @@ export const Squircle = ({
                 borderRadius: !svgPath ? `${effectiveCornerRadius}px` : undefined,
                 overflow: 'hidden',
             }}
+            onClick={onClick}
         >
             {children}
         </div>

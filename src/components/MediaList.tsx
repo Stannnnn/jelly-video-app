@@ -146,24 +146,36 @@ export const MediaList = ({
                 <div
                     className={`media-item landscape episode-item ${className || ''}`}
                     ref={el => setRowRefs(index, el)}
-                    {...(disableEvents
-                        ? {}
-                        : {
-                              onClick: () => handleItemClick(item),
-                          })}
                 >
-                    <Squircle width={240} height={135} cornerRadius={8} className="media-thumbnail">
+                    <Squircle
+                        width={240}
+                        height={135}
+                        cornerRadius={8}
+                        className="media-thumbnail"
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () => {
+                                      navigate(`/play/${item.Id}`)
+                                  },
+                              })}
+                    >
                         <JellyImg item={item} type={'Primary'} width={240} height={135} />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         <div className="overlay">
-                            <div
-                                className="play" //onClick={() => navigate(`/play/${item.Id}`)}
-                            >
+                            <div className="play">
                                 <VideoPlayIcon width={24} height={24} />
                             </div>
                         </div>
                     </Squircle>
-                    <div className="media-details">
+                    <div
+                        className="media-details"
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () => handleItemClick(item),
+                              })}
+                    >
                         <span className="title" title={item.Name}>
                             {item.Name}
                         </span>
@@ -182,13 +194,20 @@ export const MediaList = ({
                 <div
                     className={`media-item continue-watching landscape mixed-item ${className || ''}`}
                     ref={el => setRowRefs(index, el)}
-                    {...(disableEvents
-                        ? {}
-                        : {
-                              onClick: () => handleItemClick(item),
-                          })}
                 >
-                    <Squircle width={280} height={158} cornerRadius={8} className="media-thumbnail">
+                    <Squircle
+                        width={280}
+                        height={158}
+                        cornerRadius={8}
+                        className="media-thumbnail"
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () => {
+                                      navigate(`/play/${item.Id}`)
+                                  },
+                              })}
+                    >
                         <JellyImg
                             item={item}
                             type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
@@ -197,9 +216,7 @@ export const MediaList = ({
                         />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         <div className="overlay">
-                            <div
-                                className="play" //onClick={() => navigate(`/play/${item.Id}`)}
-                            >
+                            <div className="play">
                                 <VideoPlayIcon width={32} height={32} />
                             </div>
                         </div>
@@ -217,7 +234,14 @@ export const MediaList = ({
                                 />
                             )}
                     </Squircle>
-                    <div className="media-details">
+                    <div
+                        className="media-details"
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () => handleItemClick(item),
+                              })}
+                    >
                         {item.Type === 'Episode' ? (
                             <>
                                 <span className="title" title={item.SeriesName?.toString()}>
