@@ -451,7 +451,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         parentId: string,
         startIndex = 0,
         limit = 42,
-        sortBy: ItemSortBy[] = [ItemSortBy.SortName],
+        sortBy: ItemSortBy[] = [ItemSortBy.PremiereDate],
         sortOrder: SortOrder[] = [SortOrder.Ascending]
     ) => {
         const itemsApi = new ItemsApi(api.configuration)
