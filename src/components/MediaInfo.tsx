@@ -11,6 +11,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
+import { useJellyfinPlayableItemId } from '../hooks/Jellyfin/useJellyfinPlayableItemId'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { useFavorites } from '../hooks/useFavorites'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
@@ -23,6 +24,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const navigate = useNavigate()
     const { addToFavorites, removeFromFavorites } = useFavorites()
     const { addToDownloads, removeFromDownloads } = useDownloadContext()
+    const { playableItemId, isLoading: isLoadingPlayableItem } = useJellyfinPlayableItemId(item)
     const {
         configuration: { minResumePercentage, maxResumePercentage },
     } = useJellyfinServerConfiguration()
@@ -62,6 +64,10 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         } else {
             removeFromDownloads([item], undefined)
         }
+    }
+
+    const handlePlayClick = () => {
+        navigate(`/play/${playableItemId}`)
     }
 
     const duration = item.RunTimeTicks ? Math.floor(item.RunTimeTicks / 10000000) : null
@@ -151,15 +157,17 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
             <div className="media-actions noSelect">
                 <div className="actions">
                     <div className="primary">
-                        <div className="play-media">
-                            <div className="container" onClick={() => navigate(`/play/${item.Id}`)}>
-                                <PlayIcon className="play-icon" width={16} height={16} />
-                                <div className="text">{shouldShowResume ? 'Resume' : 'Play'}</div>
+                        {!isLoadingPlayableItem && (
+                            <div className="play-media">
+                                <div className="container" onClick={handlePlayClick}>
+                                    <PlayIcon className="play-icon" width={16} height={16} />
+                                    <div className="text">{shouldShowResume ? 'Resume' : 'Play'}</div>
+                                </div>
+                                <div className="version-select" title="Select version">
+                                    <ChevronDownIcon size={16} />
+                                </div>
                             </div>
-                            <div className="version-select" title="Select version">
-                                <ChevronDownIcon size={16} />
-                            </div>
-                        </div>
+                        )}
                         <div className="watch-state icon" title={isPlayed ? 'Mark as watched' : 'Mark as unwatched'}>
                             {isPlayed ? <CheckCircleIcon size={16} /> : <CheckCircleFillIcon size={16} />}
                         </div>

@@ -468,7 +468,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getSeasons = async (seriesId: string) => {
+    const getSeasons = async (seriesId: string, startIndex?: number, limit?: number) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
             userId,
@@ -477,12 +477,14 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortBy: [ItemSortBy.SortName],
             sortOrder: [SortOrder.Ascending],
             fields: extraFields,
+            startIndex,
+            limit,
         })
 
         return await parseItemDtos(response.data.Items)
     }
 
-    const getEpisodes = async (seasonId: string) => {
+    const getEpisodes = async (seasonId: string, startIndex?: number, limit?: number) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
             userId,
@@ -491,6 +493,8 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortBy: [ItemSortBy.SortName],
             sortOrder: [SortOrder.Ascending],
             fields: extraFields,
+            startIndex,
+            limit,
         })
 
         return await parseItemDtos(response.data.Items)
