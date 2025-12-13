@@ -145,7 +145,6 @@
 
 .media-list .media-item.square > .media-details > .title {
     font-size: 0.75rem;
-    margin-bottom: 0;
 }
 
 .media-list .media-item > .media-details > .subtitle {
@@ -155,6 +154,10 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.media-list .media-item.square > .media-details > .subtitle {
+    font-size: 0.725rem;
 }
 
 .media-list .media-item > .media-details > .container {

@@ -301,13 +301,11 @@ export const MediaList = ({
                         <span className="title" title={item.Name}>
                             {item.Name}
                         </span>
-                        {/*
                         {(item as any).Role && (
                             <div className="subtitle role" title={(item as any).Role}>
                                 {(item as any).Role}
                             </div>
                         )}
-                        */}
                     </div>
                 </div>
             )
