@@ -340,6 +340,10 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             }
         }
 
+        if (item.Type === 'Person') {
+            return `${serverUrl}/Items/${item.Id}/Images/${type}?quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+        }
+
         return undefined
     }
 
