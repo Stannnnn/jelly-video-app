@@ -262,7 +262,7 @@ export const MediaList = ({
         } else if (type === 'person') {
             return (
                 <div
-                    className={`media-item portrait person-item ${className || ''}`}
+                    className={`media-item square person-item ${className || ''}`}
                     ref={el => setRowRefs(index, el)}
                     {...(disableEvents
                         ? {}
@@ -270,18 +270,20 @@ export const MediaList = ({
                               onClick: () => handleItemClick(item),
                           })}
                 >
-                    <Squircle width={152} height={228} cornerRadius={8} className="media-thumbnail">
-                        <JellyImg item={item} type={'Primary'} width={152} height={228} />
+                    <Squircle width={124} height={124} cornerRadius={12} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={124} height={124} />
                     </Squircle>
                     <div className="media-details">
                         <span className="title" title={item.Name}>
                             {item.Name}
                         </span>
+                        {/*
                         {(item as any).Role && (
                             <div className="subtitle role" title={(item as any).Role}>
                                 {(item as any).Role}
                             </div>
                         )}
+                        */}
                     </div>
                 </div>
             )

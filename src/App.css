@@ -589,12 +589,21 @@ body.lockscroll {
 }
 
 /* Genric page styles */
-.home-page,
-.search-results-page {
+.home-page {
     margin-top: -8px;
 }
 
-.home-page > .section {
+.search-results-page {
+    margin-top: -4px;
+}
+
+.person-page {
+    margin-top: -4px;
+}
+
+.home-page > .section,
+.search-results-page > .section,
+.person-page > .section {
     margin-bottom: 60px;
 }
 
@@ -602,17 +611,15 @@ body.lockscroll {
     margin-bottom: 40px;
 }
 
-.search-results-page > .section {
-    margin-bottom: 60px;
-}
-
 .home-page > .section:last-of-type,
-.search-results-page > .section:last-of-type {
+.search-results-page > .section:last-of-type,
+.person-page > .section:last-of-type {
     margin-bottom: 0;
 }
 
 .home-page > .section > .container,
-.search-results-page > .section > .container {
+.search-results-page > .section > .container,
+.person-page > .section > .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -621,7 +628,8 @@ body.lockscroll {
 }
 
 .home-page > .section > .container > .title,
-.search-results-page > .section > .container > .title {
+.search-results-page > .section > .container > .title,
+.person-page > .section > .container > .title {
     font-size: 1rem;
     font-weight: 700;
 }

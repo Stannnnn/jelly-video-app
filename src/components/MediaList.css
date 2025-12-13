@@ -16,6 +16,18 @@
     gap: 30px 24px;
 }
 
+.media-list:has(.media-item.square) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+    gap: 30px 24px;
+}
+
+.media-list:has(.media-item > .skeleton-loading.square) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+    gap: 30px 24px;
+}
+
 .media-list:has(.media-item.landscape) .virtuoso-grid-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -45,6 +57,10 @@
     max-width: 152px;
 }
 
+.media-list .media-item.square {
+    max-width: 124px;
+}
+
 .media-list .media-item.landscape {
     max-width: 240px;
 }
@@ -63,6 +79,12 @@
 .media-list .media-item.portrait > .media-thumbnail {
     width: 152px;
     height: 228px;
+}
+
+.media-list .media-item.square > .media-thumbnail {
+    width: 124px;
+    height: 124px;
+    border-radius: 12px;
 }
 
 .media-list .media-item.landscape > .media-thumbnail {
@@ -121,10 +143,18 @@
     text-overflow: ellipsis;
 }
 
+.media-list .media-item.square > .media-details > .title {
+    font-size: 0.75rem;
+    margin-bottom: 0;
+}
+
 .media-list .media-item > .media-details > .subtitle {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--font-color-tertiary);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .media-list .media-item > .media-details > .container {
@@ -137,6 +167,9 @@
 
 .media-list .media-item > .media-details > .container > .subtitle {
     font-weight: 600;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .media-list .media-item > .media-details > .container > .divider {
@@ -156,12 +189,6 @@
 
 .media-list .media-item > .media-details > .container > .subtitle.season-episode {
     flex-shrink: 0;
-}
-
-.media-list .media-item > .media-details > .container > .subtitle.episode-name {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }
 
 /*
@@ -239,6 +266,10 @@
     transform: scale(1.2);
 }
 
+.media-list .media-item.landscape > .media-thumbnail > .overlay > .play > svg {
+    fill: #ffffff;
+}
+
 .media-list .media-item.continue-watching > .media-thumbnail > .progress-indicator {
     position: absolute;
     bottom: 0;
@@ -257,4 +288,35 @@
         rgba(255, 255, 255, 0.16) var(--progress-percent, 0%),
         rgba(255, 255, 255, 0.16) 100%
     );
+}
+
+/* active state for selected episode */
+.media-list .media-item.episode-item.active {
+    pointer-events: none;
+}
+
+.media-list .media-item.episode-item.active > .media-thumbnail > .thumbnail {
+    opacity: 0.7;
+    filter: grayscale(1);
+}
+
+.media-list .media-item.episode-item.active > .media-details {
+    opacity: 0.8;
+}
+
+/* temp */
+.media-list .media-item.square > .media-thumbnail > .fallback-thumbnail::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill-rule='evenodd' d='M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: 62px;
+    background-color: var(--font-color-secondary);
 }

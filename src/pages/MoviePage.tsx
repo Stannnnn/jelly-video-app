@@ -37,20 +37,20 @@ export const MoviePage = () => {
         <div className="media-page movie">
             <MediaInfo item={movie} />
             <div className="media-content">
-                {people && people.length > 0 && (
-                    <div className="section cast-crew">
-                        <div className="container">
-                            <div className="title">Cast & Crew</div>
-                        </div>
-                        <MediaList items={people} isLoading={isLoadingCastCrew} type="person" />
-                    </div>
-                )}
                 {specials && specials.length > 0 && (
                     <div className="section specials">
                         <div className="container">
                             <div className="title">Specials</div>
                         </div>
                         <MediaList items={specials} isLoading={isLoadingSpecials} type="mixed" />
+                    </div>
+                )}
+                {people && people.length > 0 && (
+                    <div className="section cast-crew">
+                        <div className="container">
+                            <div className="title">Cast & Crew</div>
+                        </div>
+                        <MediaList items={people} isLoading={isLoadingCastCrew} type="person" />
                     </div>
                 )}
                 {similarItems && similarItems.length > 0 && (

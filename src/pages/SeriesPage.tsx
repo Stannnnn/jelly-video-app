@@ -91,20 +91,20 @@ export const SeriesPage = () => {
                         <MediaList items={episodes || []} isLoading={isLoadingEpisodes} type="episode" />
                     )}
                 </div>
-                {people && people.length > 0 && (
-                    <div className="section cast-crew">
-                        <div className="container">
-                            <div className="title">Cast & Crew</div>
-                        </div>
-                        <MediaList items={people} isLoading={isLoadingCastCrew} type="person" />
-                    </div>
-                )}
                 {specials && specials.length > 0 && (
                     <div className="section specials">
                         <div className="container">
                             <div className="title">Specials</div>
                         </div>
                         <MediaList items={specials} isLoading={isLoadingSpecials} type="mixed" />
+                    </div>
+                )}
+                {people && people.length > 0 && (
+                    <div className="section cast-crew">
+                        <div className="container">
+                            <div className="title">Cast & Crew</div>
+                        </div>
+                        <MediaList items={people} isLoading={isLoadingCastCrew} type="person" />
                     </div>
                 )}
                 {similarItems && similarItems.length > 0 && (

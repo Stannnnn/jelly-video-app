@@ -200,7 +200,7 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     cursor: pointer;
     padding: 6px;
     margin: 0 -4px;
