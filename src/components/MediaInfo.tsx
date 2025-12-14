@@ -14,6 +14,7 @@ import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useJellyfinPlayableItemId } from '../hooks/Jellyfin/useJellyfinPlayableItemId'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { useFavorites } from '../hooks/useFavorites'
+import { useWatchedState } from '../hooks/useWatchedState'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
 import { getVideoQuality } from '../utils/getVideoQuality'
 import { JellyImg } from './JellyImg'
@@ -23,6 +24,7 @@ import { DownloadedIcon, DownloadingIcon, MoreIcon, PlayIcon } from './SvgIcons'
 export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const navigate = useNavigate()
     const { addToFavorites, removeFromFavorites } = useFavorites()
+    const { markAsPlayed, markAsUnplayed } = useWatchedState()
     const { addToDownloads, removeFromDownloads } = useDownloadContext()
     const { playableItemId, isLoading: isLoadingPlayableItem } = useJellyfinPlayableItemId(item)
     const {
@@ -30,6 +32,8 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     } = useJellyfinServerConfiguration()
     const [isFavorited, setIsFavorited] = useState(item.UserData?.IsFavorite || false)
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false)
+    const [isPlayed, setIsPlayed] = useState(item.UserData?.Played || false)
+    const [isTogglingWatched, setIsTogglingWatched] = useState(false)
 
     const toggleFavorite = async (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -56,6 +60,31 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         }
     }
 
+    const toggleWatched = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        if (isTogglingWatched) return
+
+        setIsTogglingWatched(true)
+        const newWatchedState = !isPlayed
+
+        // Optimistically update UI
+        setIsPlayed(newWatchedState)
+
+        try {
+            if (newWatchedState) {
+                await markAsPlayed(item)
+            } else {
+                await markAsUnplayed(item)
+            }
+        } catch (error) {
+            // Revert on error
+            setIsPlayed(!newWatchedState)
+            console.error('Failed to toggle watched state:', error)
+        } finally {
+            setIsTogglingWatched(false)
+        }
+    }
+
     const toggleDownload = async (e: React.MouseEvent) => {
         e.stopPropagation()
 
@@ -77,7 +106,6 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const communityRating = item.CommunityRating ? item.CommunityRating.toFixed(1) : null
     const playedPercentage = item.UserData?.PlayedPercentage || 0
     const hasProgress = playedPercentage > 0 && playedPercentage < 100
-    const isPlayed = item.UserData?.Played || false
     const videoQuality = getVideoQuality(item)
 
     const shouldShowResume = playedPercentage >= minResumePercentage && playedPercentage <= maxResumePercentage
@@ -168,8 +196,12 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 </div>
                             </div>
                         )}
-                        <div className="watch-state icon" title={isPlayed ? 'Mark as watched' : 'Mark as unwatched'}>
-                            {isPlayed ? <CheckCircleIcon size={16} /> : <CheckCircleFillIcon size={16} />}
+                        <div
+                            className="watch-state icon"
+                            onClick={toggleWatched}
+                            title={isPlayed ? 'Mark as unwatched' : 'Mark as watched'}
+                        >
+                            {isPlayed ? <CheckCircleFillIcon size={16} /> : <CheckCircleIcon size={16} />}
                         </div>
                         <div
                             className={`favorite-state icon ${isFavorited ? 'favorited' : ''}`}

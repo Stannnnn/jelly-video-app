@@ -434,6 +434,25 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return r
     }
 
+    const markAsPlayed = async (item: MediaItem) => {
+        const playstateApi = new PlaystateApi(api.configuration)
+
+        const r = await playstateApi.markPlayedItem({ itemId: item.Id, userId }, { signal: AbortSignal.timeout(20000) })
+
+        return r
+    }
+
+    const markAsUnplayed = async (item: MediaItem) => {
+        const playstateApi = new PlaystateApi(api.configuration)
+
+        const r = await playstateApi.markUnplayedItem(
+            { itemId: item.Id, userId },
+            { signal: AbortSignal.timeout(20000) }
+        )
+
+        return r
+    }
+
     const getItemById = async (itemId: string) => {
         const userLibraryApi = new UserLibraryApi(api.configuration)
         const response = await userLibraryApi.getItem(
@@ -602,6 +621,8 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         getTrickplayUrl,
         addToFavorites,
         removeFromFavorites,
+        markAsPlayed,
+        markAsUnplayed,
         getItemById,
         getItemChildren,
         getSeasons,
