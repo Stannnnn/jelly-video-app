@@ -10,6 +10,7 @@ import {
 import { MediaItem } from '../api/jellyfin'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
+import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { usePatchQueries } from '../hooks/usePatchQueries'
 ;(window as any).command = command
 ;(window as any).setProperty = setProperty
@@ -58,6 +59,9 @@ export type PlaybackManagerProps = {
 export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackManagerProps) => {
     const api = useJellyfinContext()
     const { patchMediaItem } = usePatchQueries()
+    const {
+        configuration: { minResumePercentage, maxResumePercentage },
+    } = useJellyfinServerConfiguration()
 
     // Session based play count for settings page
     const [sessionPlayCount, setSessionPlayCount] = useState(() => {
@@ -153,16 +157,20 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             const positionTicks = currentTime * 10000000
             const playedPercentage = track.RunTimeTicks ? (positionTicks / track.RunTimeTicks) * 100 : 0
 
+            // Calculate Played status based on min/max resume percentages
+            const isPlayed = playedPercentage < minResumePercentage || playedPercentage > maxResumePercentage
+
             patchMediaItem(track.Id, item => ({
                 ...item,
                 UserData: {
                     ...item.UserData,
                     PlaybackPositionTicks: positionTicks,
                     PlayedPercentage: playedPercentage,
+                    Played: isPlayed,
                 },
             }))
         },
-        [api, patchMediaItem]
+        [api, patchMediaItem, minResumePercentage, maxResumePercentage]
     )
 
     // Update Media Session metadata
@@ -412,16 +420,20 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
                 // Check if we need to seek to a saved position
                 const positionTicks = track.UserData?.PlaybackPositionTicks
-                const shouldSeek =
-                    positionTicks &&
-                    positionTicks > 0 &&
-                    positionTicks > 10000000 && // More than 1 second
-                    track.RunTimeTicks &&
-                    positionTicks < track.RunTimeTicks - 10000000 // Less than 1 second from end
+                if (positionTicks && positionTicks > 0 && track.RunTimeTicks) {
+                    const playedPercentage = (positionTicks / track.RunTimeTicks) * 100
 
-                if (shouldSeek) {
-                    const positionSeconds = positionTicks / 10000000
-                    await setProperty('start', `+${positionSeconds}`)
+                    // Only resume if percentage is within the resume range
+                    const shouldSeek =
+                        playedPercentage >= minResumePercentage &&
+                        playedPercentage <= maxResumePercentage &&
+                        positionTicks > 10000000 && // More than 1 second
+                        positionTicks < track.RunTimeTicks - 10000000 // Less than 1 second from end
+
+                    if (shouldSeek) {
+                        const positionSeconds = positionTicks / 10000000
+                        await setProperty('start', `+${positionSeconds}`)
+                    }
                 }
 
                 await setProperty('pause', false)
@@ -431,7 +443,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 console.error('Failed to load video:', error)
             }
         },
-        [api, audioStorage, bitrate, isInitialized]
+        [api, audioStorage, bitrate, isInitialized, minResumePercentage, maxResumePercentage]
     )
 
     const playTrack = useCallback(async () => {
