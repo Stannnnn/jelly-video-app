@@ -1,14 +1,19 @@
 import { Link } from 'react-router-dom'
-import { Loader } from '../components/Loader'
 import { MediaList } from '../components/MediaList'
-import { useJellyfinHomeData } from '../hooks/Jellyfin/useJellyfinHomeData'
+import { useJellyfinRecentlyAddedMovies } from '../hooks/Jellyfin/useJellyfinRecentlyAddedMovies'
+import { useJellyfinRecentlyAddedSeries } from '../hooks/Jellyfin/useJellyfinRecentlyAddedSeries'
+import { useJellyfinRecentlyPlayed } from '../hooks/Jellyfin/useJellyfinRecentlyPlayed'
 
 export const Home = () => {
-    const { recentlyPlayed, recentlyAddedMovies, recentlyAddedSeries, isLoading, error } = useJellyfinHomeData()
+    const {
+        recentlyPlayed,
+        isLoading: isLoadingRecentlyPlayed,
+        error: errorRecentlyPlayed,
+    } = useJellyfinRecentlyPlayed()
+    const { recentlyAddedMovies, isLoading: isLoadingMovies, error: errorMovies } = useJellyfinRecentlyAddedMovies()
+    const { recentlyAddedSeries, isLoading: isLoadingSeries, error: errorSeries } = useJellyfinRecentlyAddedSeries()
 
-    if (isLoading) {
-        return <Loader />
-    }
+    const error = errorRecentlyPlayed || errorMovies || errorSeries
 
     if (error) {
         return <div className="error">{error}</div>
@@ -16,7 +21,7 @@ export const Home = () => {
 
     return (
         <div className="home-page">
-            {recentlyPlayed && recentlyPlayed.length > 0 && (
+            {(isLoadingRecentlyPlayed || (recentlyPlayed && recentlyPlayed.length > 0)) && (
                 <div className="section continue-watching">
                     <div className="container">
                         <div className="title">Continue Watching</div>
@@ -26,11 +31,16 @@ export const Home = () => {
                             </Link>
                         )}
                     </div>
-                    <MediaList items={recentlyPlayed} isLoading={false} type="mixed" virtuosoType="horizontal" />
+                    <MediaList
+                        items={recentlyPlayed}
+                        isLoading={isLoadingRecentlyPlayed}
+                        type="mixed"
+                        virtuosoType="horizontal"
+                    />
                 </div>
             )}
 
-            {recentlyAddedMovies && recentlyAddedMovies.length > 0 && (
+            {(isLoadingMovies || (recentlyAddedMovies && recentlyAddedMovies.length > 0)) && (
                 <div className="section">
                     <div className="container">
                         <div className="title">Latest Movies</div>
@@ -40,11 +50,11 @@ export const Home = () => {
                             </Link>
                         )}
                     </div>
-                    <MediaList items={recentlyAddedMovies} isLoading={false} type="movie" />
+                    <MediaList items={recentlyAddedMovies} isLoading={isLoadingMovies} type="movie" />
                 </div>
             )}
 
-            {recentlyAddedSeries && recentlyAddedSeries.length > 0 && (
+            {(isLoadingSeries || (recentlyAddedSeries && recentlyAddedSeries.length > 0)) && (
                 <div className="section">
                     <div className="container">
                         <div className="title">Latest Series</div>
@@ -54,7 +64,7 @@ export const Home = () => {
                             </Link>
                         )}
                     </div>
-                    <MediaList items={recentlyAddedSeries} isLoading={false} type="series" />
+                    <MediaList items={recentlyAddedSeries} isLoading={isLoadingSeries} type="series" />
                 </div>
             )}
         </div>

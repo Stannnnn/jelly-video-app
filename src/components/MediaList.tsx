@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { useDisplayItems } from '../hooks/useDisplayItems'
 import { JellyImg } from './JellyImg'
-import { Loader } from './Loader'
 import { Skeleton } from './Skeleton'
 import { Squircle } from './Squircle'
 import { VideoPlayIcon } from './SvgIcons'
@@ -312,10 +311,6 @@ export const MediaList = ({
         }
     }
 
-    if (isLoading && items.length === 0) {
-        return <Loader />
-    }
-
     if (items.length === 0 && !isLoading) {
         const emptyMessage = {
             movie: 'No movies were found',
@@ -327,6 +322,10 @@ export const MediaList = ({
         }[type]
 
         return <div className="empty">{emptyMessage}</div>
+    }
+
+    if (!displayItems.length) {
+        return null
     }
 
     return (
