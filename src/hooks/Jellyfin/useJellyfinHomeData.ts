@@ -19,8 +19,8 @@ export const useJellyfinHomeData = () => {
         queryFn: async () => {
             const [recentlyPlayed, recentlyAddedMovies, recentlyAddedSeries] = await Promise.all([
                 api.getRecentlyPlayed(),
-                api.getRecentlyAdded(0, 12, BaseItemKind.Movie),
-                api.getRecentlyAdded(0, 12, BaseItemKind.Series),
+                api.getRecentlyAdded(0, 18, BaseItemKind.Movie),
+                api.getRecentlyAdded(0, 18, BaseItemKind.Series),
             ])
 
             return {

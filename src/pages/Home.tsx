@@ -34,7 +34,7 @@ export const Home = () => {
                 <div className="section">
                     <div className="container">
                         <div className="title">Latest Movies</div>
-                        {recentlyAddedMovies && recentlyAddedMovies.length >= 12 && (
+                        {recentlyAddedMovies && recentlyAddedMovies.length >= 18 && (
                             <Link to="/recently-added-movies" className="see-more noSelect">
                                 See more
                             </Link>
@@ -48,7 +48,7 @@ export const Home = () => {
                 <div className="section">
                     <div className="container">
                         <div className="title">Latest Series</div>
-                        {recentlyAddedSeries && recentlyAddedSeries.length >= 12 && (
+                        {recentlyAddedSeries && recentlyAddedSeries.length >= 18 && (
                             <Link to="/recently-added-series" className="see-more noSelect">
                                 See more
                             </Link>
