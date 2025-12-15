@@ -19,6 +19,7 @@ export const MediaList = ({
     disableEvents = false,
     removeButton,
     className,
+    parentItem,
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
@@ -29,6 +30,7 @@ export const MediaList = ({
     disableEvents?: boolean
     removeButton?: (item: MediaItem) => ReactNode
     className?: string
+    parentItem?: MediaItem
 }) => {
     const { displayItems, setRowRefs } = useDisplayItems(items, isLoading)
     const navigate = useNavigate()
@@ -113,9 +115,11 @@ export const MediaList = ({
                 </div>
             )
         } else if (type === 'episode') {
+            const isDisabled = parentItem && item.Id !== parentItem.Id
+
             return (
                 <div
-                    className={`media-item landscape episode-item ${className || ''}`}
+                    className={`media-item landscape episode-item ${isDisabled ? 'disabled' : ''} ${className || ''}`}
                     ref={el => setRowRefs(index, el)}
                 >
                     <Squircle

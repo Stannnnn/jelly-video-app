@@ -29,7 +29,12 @@ export const EpisodePage = () => {
                     <div className="container">
                         <div className="title">More from {episode.SeasonName || 'Season'}</div>
                     </div>
-                    <MediaList items={seasonEpisodes || []} isLoading={isLoadingEpisodes} type="episode" />
+                    <MediaList
+                        parentItem={episode}
+                        items={seasonEpisodes || []}
+                        isLoading={isLoadingEpisodes}
+                        type="episode"
+                    />
                 </div>
             </div>
         </div>
