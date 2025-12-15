@@ -208,15 +208,15 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             />
                             <Route
                                 path="/recently-played"
-                                element={<Main pageTitle="Recently Played" content={RecentlyPlayed} />}
+                                element={<Main pageTitle="Continue Watching" content={RecentlyPlayed} />}
                             />
                             <Route
                                 path="/recently-added-movies"
-                                element={<Main pageTitle="Recently Added Movies" content={RecentlyAddedMovies} />}
+                                element={<Main pageTitle="Latest Movies" content={RecentlyAddedMovies} />}
                             />
                             <Route
                                 path="/recently-added-series"
-                                element={<Main pageTitle="Recently Added Series" content={RecentlyAddedSeries} />}
+                                element={<Main pageTitle="Latest Series" content={RecentlyAddedSeries} />}
                             />
                             <Route
                                 path="/search/:query"

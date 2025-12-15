@@ -539,6 +539,7 @@
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item.stats-header {
     color: rgba(255, 255, 255, 0.7);
     padding: 6px 12px;
+    padding-bottom: 4px;
     pointer-events: none;
 }
 

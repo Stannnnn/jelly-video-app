@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Loader } from '../components/Loader'
 import { MediaList } from '../components/MediaList'
 import { usePageTitle } from '../context/PageTitleContext/PageTitleContext'
@@ -30,16 +30,8 @@ export const PersonPage = () => {
     return (
         <div className="person-page">
             {totalCount > 0 && (
-                <div className="section movies">
-                    <div className="container">
-                        <div className="title">Movies & Series ({totalCount})</div>
-                        {totalCount > 12 && (
-                            <Link to={`/person/${id}/movies`} className="see-more noSelect">
-                                See more
-                            </Link>
-                        )}
-                    </div>
-                    <MediaList items={items || []} isLoading={isLoadingMovies} type="mixed" />
+                <div className="section items">
+                    <MediaList items={items || []} isLoading={isLoadingMovies} type="collection" />
                 </div>
             )}
         </div>

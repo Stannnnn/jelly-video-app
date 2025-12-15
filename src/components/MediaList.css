@@ -111,7 +111,8 @@
     top: 0;
     right: 0;
     z-index: 1;
-    margin: 5px;
+    margin: 4px;
+    padding: 2px;
     display: flex;
     align-items: center;
     border-radius: 20px;
@@ -122,10 +123,58 @@
     display: none;
 }
 
-.media-list .media-item > .media-thumbnail > .media-indicators > .favorited {
-    padding: 6px;
-    color: var(--font-color-tertiary);
+.media-list .media-item > .media-thumbnail > .media-indicators > .icon {
+    position: relative;
+    padding: 4px;
     color: var(--brand-color);
+}
+
+.media-list .media-item > .media-thumbnail > .media-indicators > .icon.watched::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.media-list .media-item > .media-thumbnail > .media-indicators > .download-state {
+    display: flex;
+    align-items: center;
+}
+
+.media-list .media-item > .media-thumbnail > .media-indicators > .download-state > .icon {
+    padding: 4px;
+    fill: var(--font-color-tertiary);
+    fill: var(--brand-color);
+    transition: fill 0.2s ease-out;
+}
+
+.media-list
+    .media-item
+    > .media-thumbnail
+    > .media-indicators
+    > .download-state
+    > .icon.downloading.active-sync
+    > svg
+    path:last-child {
+    clip-path: inset(100% 0 0 0);
+    animation: syncColorSweepML 1.6s linear infinite;
+}
+
+@keyframes syncColorSweepML {
+    0% {
+        clip-path: inset(0 0 100% 0);
+    }
+    50% {
+        clip-path: inset(0% 0 0 0);
+    }
+    100% {
+        clip-path: inset(100% 0 0 0);
+    }
 }
 
 .media-list .media-item > .media-details {
@@ -141,6 +190,11 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.media-list .media-item.specials > .media-details > .title {
+    font-size: 0.8125rem;
+    margin-bottom: 0;
 }
 
 .media-list .media-item.square > .media-details > .title {
@@ -194,44 +248,6 @@
     flex-shrink: 0;
 }
 
-/*
-.media-list .media-item > .media-thumbnail > .media-indicators > .download-state {
-    display: flex;
-    align-items: center;
-}
-
-.media-list .media-item > .media-thumbnail > .media-indicators > .download-state > .icon {
-    padding: 6px;
-    fill: var(--font-color-tertiary);
-    fill: white;
-    transition: fill 0.2s ease-out;
-}
-
-.media-list
-    .media-item
-    > .media-thumbnail
-    > .media-indicators
-    > .download-state
-    > .icon.downloading.active-sync
-    > svg
-    path:last-child {
-    clip-path: inset(100% 0 0 0);
-    animation: syncColorSweepML 1.6s linear infinite;
-}
-
-@keyframes syncColorSweepML {
-    0% {
-        clip-path: inset(0 0 100% 0);
-    }
-    50% {
-        clip-path: inset(0% 0 0 0);
-    }
-    100% {
-        clip-path: inset(100% 0 0 0);
-    }
-}
-*/
-
 .media-list .media-item.landscape > .media-thumbnail > .overlay {
     position: absolute;
     top: 0;
@@ -273,7 +289,7 @@
     fill: #ffffff;
 }
 
-.media-list .media-item.continue-watching > .media-thumbnail > .progress-indicator {
+.media-list .media-item.landscape > .media-thumbnail > .progress-indicator {
     position: absolute;
     bottom: 0;
     left: 0;

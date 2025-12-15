@@ -26,10 +26,7 @@ export const SearchSeries = () => {
         <div className="search-results-page">
             <div className="search-content">
                 {items.length > 0 && (
-                    <div className="section series">
-                        <div className="title">Series matching '{query}'</div>
-                        <MediaList items={items} isLoading={isLoading} type="series" loadMore={loadMore} />
-                    </div>
+                    <MediaList items={items} isLoading={isLoading} type="series" loadMore={loadMore} />
                 )}
 
                 {items.length === 0 && !isLoading && <div>No series found for '{query}'.</div>}

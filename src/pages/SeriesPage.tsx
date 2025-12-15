@@ -96,7 +96,7 @@ export const SeriesPage = () => {
                         <div className="container">
                             <div className="title">Specials</div>
                         </div>
-                        <MediaList items={specials} isLoading={isLoadingSpecials} type="mixed" />
+                        <MediaList items={specials} isLoading={isLoadingSpecials} type="specials" />
                     </div>
                 )}
                 {people && people.length > 0 && (

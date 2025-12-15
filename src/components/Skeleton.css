@@ -4,6 +4,23 @@
     flex-direction: column;
 }
 
+.skeleton-loading.portrait {
+    max-width: 152px;
+}
+
+.skeleton-loading.square {
+    max-width: 124px;
+}
+
+.skeleton-loading.landscape {
+    max-width: 240px;
+}
+
+.skeleton-loading.landscape.skeleton-loading.continue-watching {
+    max-width: 280px;
+    margin-right: 24px;
+}
+
 .skeleton-effect {
     background-image: linear-gradient(
         90deg,
@@ -34,6 +51,7 @@
 .skeleton-loading.square > .skeleton-effect.thumbnail {
     width: 124px;
     height: 124px;
+    border-radius: 12px;
 }
 
 .skeleton-loading.continue-watching > .skeleton-effect.thumbnail {
@@ -52,21 +70,21 @@
     width: 100%;
     height: 16px;
     margin-bottom: 4px;
-    border-radius: 6px;
+    border-radius: 5px;
 }
 
 .skeleton-loading.square > .skeleton-details > .skeleton-effect.title {
-    border-radius: 8px;
+    height: 14px;
 }
 
 .skeleton-loading > .skeleton-details > .skeleton-effect.subtitle {
     width: 40%;
     height: 14px;
-    border-radius: 6px;
+    border-radius: 4px;
 }
 
 .skeleton-loading.square > .skeleton-details > .skeleton-effect.subtitle {
-    border-radius: 8px;
+    height: 12px;
 }
 
 @keyframes skeleton-shine {

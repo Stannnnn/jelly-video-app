@@ -5,7 +5,7 @@ export const RecentlyAddedMovies = () => {
     const { items, isLoading, error, loadMore } = useJellyfinRecentlyAddedMoviesData()
 
     return (
-        <div className="recently-added-movies-page">
+        <div className="latest-movies-page">
             <MediaList items={items} isLoading={isLoading} type="movie" loadMore={loadMore} />
             {error && <div className="error">{error}</div>}
         </div>

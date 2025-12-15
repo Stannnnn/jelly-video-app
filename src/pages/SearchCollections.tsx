@@ -26,10 +26,7 @@ export const SearchCollections = () => {
         <div className="search-results-page">
             <div className="search-content">
                 {items.length > 0 && (
-                    <div className="section collections">
-                        <div className="title">Collections matching '{query}'</div>
-                        <MediaList items={items} isLoading={isLoading} type="collection" loadMore={loadMore} />
-                    </div>
+                    <MediaList items={items} isLoading={isLoading} type="collection" loadMore={loadMore} />
                 )}
 
                 {items.length === 0 && !isLoading && <div>No collections found for '{query}'.</div>}
