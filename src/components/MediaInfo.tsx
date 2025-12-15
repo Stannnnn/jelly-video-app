@@ -101,7 +101,6 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         }
     }
 
-    const duration = item.RunTimeTicks ? Math.floor(item.RunTimeTicks / 10000000) : null
     //const genres = item.Genres?.join(',') || ''
     const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : null
     const officialRating = item.OfficialRating || ''
@@ -136,7 +135,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                     </div>
                     <div className="details">
                         <div className="statistics noSelect">
-                            {item.RunTimeTicks && (
+                            {item.RunTimeTicks && item.RunTimeTicks > 0 && item.Type !== BaseItemKind.Series && (
                                 <div className="duration" title="Duration">
                                     {formatDurationReadable(item.RunTimeTicks)}
                                 </div>
