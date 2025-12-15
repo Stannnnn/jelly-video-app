@@ -13,6 +13,7 @@ import { MediaItem } from '../api/jellyfin'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useJellyfinNextEpisode } from '../hooks/Jellyfin/useJellyfinNextEpisode'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
+import { useDisplayTitle } from '../hooks/useDisplayTitle'
 import { useFavorites } from '../hooks/useFavorites'
 import { useWatchedState } from '../hooks/useWatchedState'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
@@ -96,9 +97,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     }
 
     const handlePlayClick = () => {
-        if (nextEpisode) {
-            navigate(`/play/${nextEpisode.episodeId}`)
-        }
+        navigate(`/play/${nextEpisode?.episodeId || item.Id}`)
     }
 
     //const genres = item.Genres?.join(',') || ''
@@ -110,6 +109,8 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const videoQuality = getVideoQuality(item)
 
     const shouldShowResume = playedPercentage >= minResumePercentage && playedPercentage <= maxResumePercentage
+
+    const displayTitle = useDisplayTitle(item)
 
     return (
         <div className="media-info">
@@ -127,8 +128,8 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                             width={360}
                             height={120}
                             fallback={
-                                <div className="fallback-logo" title={item.Name}>
-                                    {item.Name}
+                                <div className="fallback-logo" title={displayTitle}>
+                                    {displayTitle}
                                 </div>
                             }
                         />

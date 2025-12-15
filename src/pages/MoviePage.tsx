@@ -1,9 +1,7 @@
-import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
-import { usePageTitle } from '../context/PageTitleContext/PageTitleContext'
 import { useJellyfinCastCrew } from '../hooks/Jellyfin/useJellyfinCastCrew'
 import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import { useJellyfinSimilarItems } from '../hooks/Jellyfin/useJellyfinSimilarItems'
@@ -12,18 +10,11 @@ import './MediaPages.css'
 
 export const MoviePage = () => {
     const { id } = useParams<{ id: string }>()
-    const { setPageTitle } = usePageTitle()
 
     const { mediaItem: movie, isLoading, error } = useJellyfinMediaItem(id)
     const { specials, isLoading: isLoadingSpecials } = useJellyfinSpecials(id)
     const { people, isLoading: isLoadingCastCrew } = useJellyfinCastCrew(id)
     const { similarItems, isLoading: isLoadingSimilar } = useJellyfinSimilarItems(id)
-
-    useEffect(() => {
-        if (movie?.Name) {
-            setPageTitle(movie.Name)
-        }
-    }, [movie?.Name, setPageTitle])
 
     if (isLoading) {
         return <Loader />

@@ -82,6 +82,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [currentSubtitleId, setCurrentSubtitleId] = useState<number | null>(null)
     const [speed, setSpeed] = useState(1.0)
     const [videoLoaded, setVideoLoaded] = useState(false)
+    const [isPending, setIsPending] = useState(true)
     const [isBuffering, setIsBuffering] = useState(false)
     const [cacheDuration, setCacheDuration] = useState(0)
     const [mpvError, setMpvError] = useState<string | null>(null)
@@ -257,7 +258,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                         case 'duration':
                             if (typeof data === 'number') {
                                 setDuration(data)
-                                if (data > 0) setVideoLoaded(true)
+                                if (data > 0) {
+                                    setVideoLoaded(true)
+                                    setIsPending(false)
+                                }
                             }
                             break
                         case 'track-list':
@@ -370,6 +374,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 const errorMessage = error instanceof Error ? error.message : 'Failed to initialize MPV'
                 console.error('Failed to initialize mpv:', error)
                 setMpvError(errorMessage)
+                setIsPending(false)
             }
         }
 
@@ -420,6 +425,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
                 const videoUrl = offlineFilePath || streamUrl
 
+                setIsPending(true)
                 await command('loadfile', [videoUrl])
 
                 // Check if we need to seek to a saved position
@@ -445,6 +451,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 setVideoLoaded(true)
             } catch (error) {
                 console.error('Failed to load video:', error)
+                setIsPending(false)
             }
         },
         [api, audioStorage, bitrate, isInitialized, minResumePercentage, maxResumePercentage]
@@ -670,11 +677,13 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         async (filePath: string) => {
             try {
                 if (isInitialized) {
+                    setIsPending(true)
                     await command('loadfile', [filePath])
                     setVideoLoaded(true)
                 }
             } catch (error) {
                 console.error('Failed to open file:', error)
+                setIsPending(false)
             }
         },
         [isInitialized]
@@ -762,6 +771,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             setTimePos(0)
             setDuration(0)
             setIsPaused(false)
+            setIsPending(true)
 
             // Clear subtitle state
             setSubtitleTracks([])
@@ -802,6 +812,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         isPaused,
         isInitialized,
         videoLoaded,
+        isPending,
         isBuffering,
         cacheDuration,
         timePos,

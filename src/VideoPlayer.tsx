@@ -17,6 +17,7 @@ import {
 import { useHistoryContext } from './context/HistoryContext/HistoryContext'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
+import { useDisplayTitle } from './hooks/useDisplayTitle'
 import { getVideoQuality } from './utils/getVideoQuality'
 import './VideoPlayer.css'
 
@@ -41,13 +42,14 @@ const getSubtitleDisplayName = (
     return mediaStream?.DisplayTitle || track.title || track.lang || 'On'
 }
 
-export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: string | null }) => {
+export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boolean; error: string | null }) => {
     const api = useJellyfinContext()
     const {
         isPaused,
         timePos,
         duration,
         isInitialized,
+        isPending,
         videoLoaded,
         isBuffering,
         cacheDuration,
@@ -87,6 +89,8 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
         fileSize,
         mpvError,
     } = usePlaybackContext()
+
+    const isLoading = _isLoading || isPending
 
     const { goBack: previousPage } = useHistoryContext()
     const [previewTime, setPreviewTime] = useState<number | null>(null)
@@ -323,6 +327,8 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
         }
     }
 
+    const displayTitle = useDisplayTitle(currentTrack)
+
     return (
         <div
             className={isPaused ? 'video-container noSelect' : 'video-container noSelect playing'}
@@ -336,10 +342,7 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
                 <button className="return" title="Return" onClick={previousPage}>
                     <ArrowLeftIcon size={20} className="return-icon" />
                 </button>
-                <div className="video-title">
-                    {currentTrack?.Name || 'Unknown Title'}
-                    {currentTrack?.PremiereDate && ` (${new Date(currentTrack.PremiereDate).getFullYear()})`}
-                </div>
+                <div className="video-title">{displayTitle}</div>
             </div>
 
             <div className="video-overlay">
@@ -350,7 +353,7 @@ export const VideoPlayer = ({ isLoading, error }: { isLoading: boolean; error: s
                         </div>
                     )}
                     {(isLoading || !currentTrack || isBuffering) && <Loader />}
-                    {(error || mpvError || !videoLoaded) && (
+                    {!isLoading && (error || mpvError || !videoLoaded) && (
                         <div className="error-overlay">{error || mpvError || 'Video not loaded'}</div>
                     )}
                 </div>

@@ -344,6 +344,15 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             return `${serverUrl}/Items/${item.Id}/Images/${type}?quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
         }
 
+        if (item.Type === 'Episode' && item.SeriesId) {
+            const seriesThumbId = item.SeriesId
+            const seriesTag = item.SeriesPrimaryImageTag
+
+            if (seriesThumbId && seriesTag) {
+                return `${serverUrl}/Items/${seriesThumbId}/Images/${type}?tag=${seriesTag}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+            }
+        }
+
         return undefined
     }
 

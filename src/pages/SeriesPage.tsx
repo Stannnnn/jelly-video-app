@@ -5,7 +5,6 @@ import { MediaItem } from '../api/jellyfin'
 import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
-import { usePageTitle } from '../context/PageTitleContext/PageTitleContext'
 import { useJellyfinCastCrew } from '../hooks/Jellyfin/useJellyfinCastCrew'
 import { useJellyfinEpisodes } from '../hooks/Jellyfin/useJellyfinEpisodes'
 import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
@@ -16,18 +15,12 @@ import './MediaPages.css'
 
 export const SeriesPage = () => {
     const { id } = useParams<{ id: string }>()
-    const { setPageTitle } = usePageTitle()
+
     const [selectedSeasonId, setSelectedSeasonId] = useState<string | null>(null)
 
     const { mediaItem: series, isLoading: isLoadingSeries, error: seriesError } = useJellyfinMediaItem(id)
     const { people, isLoading: isLoadingCastCrew } = useJellyfinCastCrew(id)
     const { similarItems, isLoading: isLoadingSimilar } = useJellyfinSimilarItems(id)
-
-    useEffect(() => {
-        if (series?.Name) {
-            setPageTitle(series.Name)
-        }
-    }, [series?.Name, setPageTitle])
 
     // Reset selected season when series changes
     useEffect(() => {
