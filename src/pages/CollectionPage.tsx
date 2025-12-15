@@ -1,18 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Loader } from '../components/Loader'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
 import { usePageTitle } from '../context/PageTitleContext/PageTitleContext'
-import { useJellyfinItemChildren } from '../hooks/Jellyfin/useJellyfinItemChildren'
+import { useJellyfinItemChildren } from '../hooks/Jellyfin/Infinite/useJellyfinItemChildren'
 import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import './MediaPages.css'
 
 export const CollectionPage = () => {
     const { id } = useParams<{ id: string }>()
     const { setPageTitle } = usePageTitle()
-    const [startIndex, setStartIndex] = useState(0)
-    const limit = 42
 
     const { mediaItem: collection, isLoading: isLoadingCollection, error: collectionError } = useJellyfinMediaItem(id)
 
@@ -23,10 +21,11 @@ export const CollectionPage = () => {
     }, [collection?.Name, setPageTitle])
 
     const {
-        children,
+        items: children,
         isLoading: isLoadingChildren,
         error: childrenError,
-    } = useJellyfinItemChildren(id, startIndex, limit)
+        loadMore,
+    } = useJellyfinItemChildren(id)
 
     if (isLoadingCollection) {
         return <Loader />
@@ -34,12 +33,6 @@ export const CollectionPage = () => {
 
     if (collectionError || !collection) {
         return <div className="error">{collectionError || 'Collection not found'}</div>
-    }
-
-    const loadMore = () => {
-        if (children && children.length === limit) {
-            setStartIndex(prev => prev + limit)
-        }
     }
 
     return (
