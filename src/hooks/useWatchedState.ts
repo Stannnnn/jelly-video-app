@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { JELLYFIN_MAX_LIMIT, MediaItem } from '../api/jellyfin'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { usePatchQueries } from './usePatchQueries'
@@ -5,6 +6,7 @@ import { usePatchQueries } from './usePatchQueries'
 export const useWatchedState = () => {
     const api = useJellyfinContext()
     const { patchMediaItem, patchMediaItems } = usePatchQueries()
+    const queryClient = useQueryClient()
 
     return {
         markAsPlayed: async (item: MediaItem) => {
@@ -29,6 +31,9 @@ export const useWatchedState = () => {
                 }))
             }
 
+            // Clear nextEpisode cache, preferably with id but we don't know which parent
+            queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
+
             return res
         },
         markAsUnplayed: async (item: MediaItem) => {
@@ -52,6 +57,9 @@ export const useWatchedState = () => {
                     },
                 }))
             }
+
+            // Clear nextEpisode cache, preferably with id but we don't know which parent
+            queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
 
             return res
         },

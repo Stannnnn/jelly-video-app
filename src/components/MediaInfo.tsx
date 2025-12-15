@@ -1,4 +1,4 @@
-import { GenresApi } from '@jellyfin/sdk/lib/generated-client'
+import { BaseItemKind, GenresApi } from '@jellyfin/sdk/lib/generated-client'
 import {
     CheckCircleFillIcon,
     CheckCircleIcon,
@@ -11,7 +11,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
-import { useJellyfinPlayableItemId } from '../hooks/Jellyfin/useJellyfinPlayableItemId'
+import { useJellyfinNextEpisode } from '../hooks/Jellyfin/useJellyfinNextEpisode'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { useFavorites } from '../hooks/useFavorites'
 import { useWatchedState } from '../hooks/useWatchedState'
@@ -26,7 +26,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const { addToFavorites, removeFromFavorites } = useFavorites()
     const { markAsPlayed, markAsUnplayed } = useWatchedState()
     const { addToDownloads, removeFromDownloads } = useDownloadContext()
-    const { playableItemId, isLoading: isLoadingPlayableItem } = useJellyfinPlayableItemId(item)
+    const { nextEpisode, isLoading: isLoadingNextEpisode } = useJellyfinNextEpisode(item)
     const {
         configuration: { minResumePercentage, maxResumePercentage },
     } = useJellyfinServerConfiguration()
@@ -96,7 +96,9 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     }
 
     const handlePlayClick = () => {
-        navigate(`/play/${playableItemId}`)
+        if (nextEpisode) {
+            navigate(`/play/${nextEpisode.episodeId}`)
+        }
     }
 
     const duration = item.RunTimeTicks ? Math.floor(item.RunTimeTicks / 10000000) : null
@@ -185,11 +187,20 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
             <div className="media-actions noSelect">
                 <div className="actions">
                     <div className="primary">
-                        {!isLoadingPlayableItem && (
+                        {!isLoadingNextEpisode && (
                             <div className="play-media">
                                 <div className="container" onClick={handlePlayClick}>
                                     <PlayIcon className="play-icon" width={16} height={16} />
-                                    <div className="text">{shouldShowResume ? 'Resume' : 'Play'}</div>
+                                    <div className="text">
+                                        {item.Type === BaseItemKind.Series && shouldShowResume && nextEpisode
+                                            ? `Resume S${String(nextEpisode.seasonNumber || 0).padStart(
+                                                  2,
+                                                  '0'
+                                              )} E${String(nextEpisode.episodeNumber || 0).padStart(2, '0')}`
+                                            : shouldShowResume
+                                            ? 'Resume'
+                                            : 'Play'}
+                                    </div>
                                 </div>
                                 <div className="version-select" title="Select version">
                                     <ChevronDownIcon size={16} />
