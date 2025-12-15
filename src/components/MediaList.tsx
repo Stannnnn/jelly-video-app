@@ -484,7 +484,7 @@ export const MediaList = ({
                 data={displayItems}
                 itemContent={renderItem}
                 endReached={loadMore}
-                overscan={1000}
+                overscan={800}
             />
         </ul>
     )

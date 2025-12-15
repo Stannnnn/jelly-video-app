@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useJellyfinContext } from '../../context/JellyfinContext/JellyfinContext'
 
-export const useJellyfinPersonMovies = (personId: string | undefined, startIndex: number = 0, limit: number = 42) => {
+export const useJellyfinPersonMovies = (personId: string | undefined, startIndex: number = 0, limit: number = 36) => {
     const api = useJellyfinContext()
 
     const { data, isFetching, isPending, error } = useQuery({

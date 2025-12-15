@@ -101,7 +101,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const getMovies = async (
         startIndex = 0,
-        limit = 42,
+        limit = 36,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
         sortOrder: SortOrder[] = [SortOrder.Descending]
     ) => {
@@ -122,7 +122,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const getSeries = async (
         startIndex = 0,
-        limit = 42,
+        limit = 36,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
         sortOrder: SortOrder[] = [SortOrder.Descending]
     ) => {
@@ -143,7 +143,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const getCollections = async (
         startIndex = 0,
-        limit = 42,
+        limit = 36,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
         sortOrder: SortOrder[] = [SortOrder.Descending]
     ) => {
@@ -164,7 +164,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const getFavorites = async (
         startIndex = 0,
-        limit = 42,
+        limit = 36,
         sortBy: ItemSortBy[] = [ItemSortBy.DateCreated],
         sortOrder: SortOrder[] = [SortOrder.Descending],
         itemKind: BaseItemKind = BaseItemKind.Movie
@@ -185,7 +185,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getRecentlyPlayed = async (startIndex = 0, limit = 42) => {
+    const getRecentlyPlayed = async (startIndex = 0, limit = 36) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getResumeItems({
             userId,
@@ -469,7 +469,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
     const getItemChildren = async (
         parentId: string,
         startIndex = 0,
-        limit = 42,
+        limit = 36,
         sortBy: ItemSortBy[] = [ItemSortBy.PremiereDate],
         sortOrder: SortOrder[] = [SortOrder.Ascending]
     ) => {
@@ -529,7 +529,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data)
     }
 
-    const searchItems = async (searchQuery: string, limit = 42, includeItemTypes?: BaseItemKind[], startIndex = 0) => {
+    const searchItems = async (searchQuery: string, limit = 36, includeItemTypes?: BaseItemKind[], startIndex = 0) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
             userId,
@@ -567,7 +567,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         }
     }
 
-    const getPersonMovies = async (personId: string, startIndex = 0, limit = 42) => {
+    const getPersonMovies = async (personId: string, startIndex = 0, limit = 36) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
             userId,

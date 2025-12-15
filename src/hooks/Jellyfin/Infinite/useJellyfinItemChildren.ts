@@ -5,7 +5,7 @@ import { useJellyfinInfiniteData } from './useJellyfinInfiniteData'
 
 export const useJellyfinItemChildren = (itemId: string | undefined) => {
     const api = useJellyfinContext()
-    const itemsPerPage = 42
+    const itemsPerPage = 36
 
     return useJellyfinInfiniteData({
         queryKey: ['collection-children', itemId],

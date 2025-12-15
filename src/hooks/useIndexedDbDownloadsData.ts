@@ -6,7 +6,7 @@ import { useFilterContext } from '../context/FilterContext/FilterContext'
 export const useIndexedDbDownloadsData = () => {
     const audioStorage = useAudioStorageContext()
     const { jellyItemKind } = useFilterContext()
-    const itemsPerPage = 42
+    const itemsPerPage = 36
 
     const { data, isFetching, isPending, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<
         MediaItem[],

@@ -4,7 +4,7 @@ import { useJellyfinInfiniteData } from './useJellyfinInfiniteData'
 
 export const useJellyfinRecentlyAddedSeriesData = () => {
     const api = useJellyfinContext()
-    const itemsPerPage = 42
+    const itemsPerPage = 36
 
     return useJellyfinInfiniteData({
         queryKey: ['recentlyAddedSeries'],

@@ -3,7 +3,7 @@ import { useJellyfinInfiniteData } from './useJellyfinInfiniteData'
 
 export const useJellyfinPersonMoviesData = (personId: string | undefined) => {
     const api = useJellyfinContext()
-    const itemsPerPage = 42
+    const itemsPerPage = 36
 
     return useJellyfinInfiniteData({
         queryKey: ['person-movies', personId],
