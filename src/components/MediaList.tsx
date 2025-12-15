@@ -115,11 +115,11 @@ export const MediaList = ({
                 </div>
             )
         } else if (type === 'episode') {
-            const isDisabled = parentItem && item.Id !== parentItem.Id
+            const isActive = parentItem && item.Id === parentItem.Id
 
             return (
                 <div
-                    className={`media-item landscape episode-item ${isDisabled ? 'disabled' : ''} ${className || ''}`}
+                    className={`media-item landscape episode-item ${isActive ? 'active' : ''} ${className || ''}`}
                     ref={el => setRowRefs(index, el)}
                 >
                     <Squircle
