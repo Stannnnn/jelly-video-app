@@ -163,17 +163,17 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
             if (isPlayed) {
                 removeItemFromQueryData(['recentlyPlayed'], track.Id)
-            } else {
-                patchMediaItem(track.Id, item => ({
-                    ...item,
-                    UserData: {
-                        ...item.UserData,
-                        PlaybackPositionTicks: positionTicks,
-                        PlayedPercentage: playedPercentage,
-                        Played: false,
-                    },
-                }))
             }
+
+            patchMediaItem(track.Id, item => ({
+                ...item,
+                UserData: {
+                    ...item.UserData,
+                    PlaybackPositionTicks: isPlayed ? 0 : positionTicks,
+                    PlayedPercentage: isPlayed ? 0 : playedPercentage,
+                    Played: isPlayed,
+                },
+            }))
         },
         [api, maxResumePercentage, minResumePercentage, patchMediaItem, removeItemFromQueryData]
     )
@@ -428,6 +428,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 setIsPending(true)
                 await command('loadfile', [videoUrl])
 
+                let setStart = false
+
                 // Check if we need to seek to a saved position
                 const positionTicks = track.UserData?.PlaybackPositionTicks
                 if (positionTicks && positionTicks > 0 && track.RunTimeTicks) {
@@ -443,7 +445,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                     if (shouldSeek) {
                         const positionSeconds = positionTicks / 10000000
                         await setProperty('start', `+${positionSeconds}`)
+                        setStart = true
                     }
+                }
+
+                if (!setStart) {
+                    await setProperty('start', `+0`)
                 }
 
                 await setProperty('pause', false)
