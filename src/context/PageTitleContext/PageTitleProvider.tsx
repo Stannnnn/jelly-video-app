@@ -1,3 +1,5 @@
+import { isTauri } from '@tauri-apps/api/core'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 import { ReactNode, useEffect, useState } from 'react'
 import { PageTitleContext } from './PageTitleContext'
 
@@ -12,6 +14,10 @@ const useInitialState = ({ pageTitle: initialPageTitle }: { pageTitle?: string }
 
     useEffect(() => {
         document.title = [pageTitle, 'Jelly Video App'].filter(Boolean).join(' - ')
+
+        if (isTauri()) {
+            getCurrentWindow().setTitle(['Jelly Video App', pageTitle].filter(Boolean).join(' - '))
+        }
     }, [pageTitle])
 
     return {
