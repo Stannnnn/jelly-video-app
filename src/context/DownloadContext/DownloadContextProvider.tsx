@@ -1,5 +1,5 @@
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client'
-import { invoke } from '@tauri-apps/api/core'
+import { invoke, isTauri } from '@tauri-apps/api/core'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { MediaItem } from '../../api/jellyfin'
 import { usePatchQueries } from '../../hooks/usePatchQueries'
@@ -22,11 +22,13 @@ const useInitialState = () => {
     const [storageStats, setStorageStats] = useState({ usage: 0, trackCount: 0 })
 
     const refreshStorageStats = useCallback(async () => {
-        try {
-            const stats = await invoke<{ usage: number; trackCount: number }>('storage_get_stats')
-            setStorageStats(stats)
-        } catch (error) {
-            console.error('Failed to load storage stats:', error)
+        if (isTauri()) {
+            try {
+                const stats = await invoke<{ usage: number; trackCount: number }>('storage_get_stats')
+                setStorageStats(stats)
+            } catch (error) {
+                console.error('Failed to load storage stats:', error)
+            }
         }
     }, [])
 

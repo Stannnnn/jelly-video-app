@@ -1,3 +1,4 @@
+import { isTauri } from '@tauri-apps/api/core'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
     command,
@@ -378,13 +379,18 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             }
         }
 
-        initMpv()
+        if (isTauri()) {
+            initMpv()
+        }
 
         return () => {
             if (unlisten) {
                 unlisten()
             }
-            destroy().catch(console.error)
+
+            if (isTauri()) {
+                destroy().catch(console.error)
+            }
         }
     }, [])
 
