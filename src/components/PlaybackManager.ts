@@ -725,7 +725,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             if (!isPaused) {
                 setShowControls(false)
             }
-        }, 1000)
+        }, 2000)
     }, [isPaused])
 
     const toggleMenu = useCallback(() => {

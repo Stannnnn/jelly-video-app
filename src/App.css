@@ -174,7 +174,8 @@ html.light {
     --bg-color: #ffffff;
     --bg-color-secondary: #f8f8f8;
     --bg-color-tertiary: #ececec;
-    --bg-color-quaternary: #bbbbbb;
+    --bg-color-quaternary: #bbbbbb; /* Not Used */
+    --bg-color-transparent: rgba(255, 255, 255, 0.8);
     --font-color: #303030;
     --font-color-secondary: #555555;
     --font-color-tertiary: #767676;
@@ -209,7 +210,8 @@ html.dark {
     --bg-color: #111111;
     --bg-color-secondary: #161616;
     --bg-color-tertiary: #222222;
-    --bg-color-quaternary: #414141;
+    --bg-color-quaternary: #414141; /* Not Used */
+    --bg-color-transparent: rgba(17, 17, 17, 0.8);
     --font-color: #dfdde4;
     --font-color-secondary: #bbb9c0;
     --font-color-tertiary: #9b999e;
@@ -448,7 +450,7 @@ body.lockscroll {
 
 .main > .main_header > .primary > .container {
     position: relative;
-    max-width: calc(100% - 14px);
+    max-width: calc(100% - 20px);
 }
 
 .main > .main_header:has(.sorting > .sort) > .primary {
@@ -456,7 +458,7 @@ body.lockscroll {
 }
 
 .main > .main_header:has(.sorting > .sort):has(.sorting.links > .filter) > .primary {
-    max-width: calc(100% - 236px);
+    max-width: calc(100% - 270px);
 }
 
 .main > .main_header > .primary > .return_icon {
@@ -653,6 +655,66 @@ body.lockscroll {
     background-color: var(--bg-color-tertiary);
 }
 
+/* Scroller for continue-watching */
+.home-page > .section > .scroller {
+    position: relative;
+}
+
+.home-page > .section > .scroller > .direction {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    width: 80px;
+    height: 100%;
+    display: flex;
+    transition: opacity 0.2s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.2s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.home-page > .section > .scroller > .direction.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.home-page > .section > .scroller > .direction.left {
+    opacity: 0;
+    visibility: hidden;
+    left: 0;
+    backdrop-filter: blur(2px);
+    mask-image: linear-gradient(to right, #000000 20%, transparent 100%);
+    background: linear-gradient(to right, var(--bg-color) 0%, var(--bg-color-transparent) 20%, transparent 100%);
+}
+
+.home-page > .section > .scroller:hover > .direction.left {
+    opacity: 1;
+    visibility: visible;
+}
+
+.home-page > .section > .scroller > .direction.right {
+    right: 0;
+    justify-content: end;
+    backdrop-filter: blur(2px);
+    mask-image: linear-gradient(to left, #000000 20%, transparent 100%);
+    background: linear-gradient(to left, var(--bg-color) 0%, var(--bg-color-transparent) 20%, transparent 100%);
+}
+
+.home-page > .section > .scroller > .direction > .icon {
+    color: var(--font-color-active);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 6px;
+    transition: transform 0.2s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.home-page > .section > .scroller > .direction.left > .icon:hover {
+    transform: translateX(-2px);
+}
+
+.home-page > .section > .scroller > .direction.right > .icon:hover {
+    transform: translateX(2px);
+}
+
 /* Responsive */
 @media only screen and (max-width: 980px) {
     body.lockscroll,
@@ -671,14 +733,6 @@ body.lockscroll {
 
     .main > .main_header > .primary > .container {
         max-width: calc(100% - 50px);
-    }
-
-    .main > .main_header:has(.sorting > .sort) > .primary > .container {
-        max-width: calc(100% - 86px);
-    }
-
-    .main > .main_header:has(.sorting > .sort):has(.sorting.links > .filter) > .primary > .container {
-        max-width: calc(100% - 122px);
     }
 
     .main > .main_header > .secondary > .sidenav_toggle {

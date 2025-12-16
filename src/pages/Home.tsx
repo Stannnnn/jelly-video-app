@@ -1,3 +1,4 @@
+import { ChevronLeftIcon, ChevronRightIcon } from '@primer/octicons-react'
 import { Link } from 'react-router-dom'
 import { MediaList } from '../components/MediaList'
 import { useJellyfinRecentlyAddedMovies } from '../hooks/Jellyfin/useJellyfinRecentlyAddedMovies'
@@ -31,12 +32,24 @@ export const Home = () => {
                             </Link>
                         )}
                     </div>
-                    <MediaList
-                        items={recentlyPlayed}
-                        isLoading={isLoadingRecentlyPlayed}
-                        type="mixed"
-                        virtuosoType="horizontal"
-                    />
+                    <div className="scroller">
+                        <div className="direction left">
+                            <div className="icon">
+                                <ChevronLeftIcon size={24} />
+                            </div>
+                        </div>
+                        <MediaList
+                            items={recentlyPlayed}
+                            isLoading={isLoadingRecentlyPlayed}
+                            type="mixed"
+                            virtuosoType="horizontal"
+                        />
+                        <div className="direction right">
+                            <div className="icon">
+                                <ChevronRightIcon size={24} />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
 

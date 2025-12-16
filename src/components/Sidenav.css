@@ -238,6 +238,18 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     border-radius: 5px;
 }
 
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
+    > .thumbnail-container
+    > .fallback-thumbnail {
+    background-color: var(--bg-color-tertiary);
+}
+
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .details {
     position: relative;
     overflow: hidden;

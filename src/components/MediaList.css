@@ -43,7 +43,7 @@
 .media-list:has(.media-item.continue-watching) .continue-watching-row {
     overflow-x: auto;
     overflow-y: hidden;
-    scrollbar-width: thin;
+    scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
 }
