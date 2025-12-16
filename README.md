@@ -1,21 +1,29 @@
 ## Jelly Video App
 
-A lightweight & elegant video interface for Jellyfin. Built with Tauri and libmpv for high-performance video playback with a clean, intuitive interface.
+A lightweight & elegant video client for Jellyfin, designed to eliminate server transcoding through direct playback powered by the mpv backend via libmpv. Built with Tauri and libmpv for high-performance video playback with a clean, intuitive interface. Using the Jellyfin API, it provides seamless access to your personal video library.
 
-> **⚠️ Note:** This application is currently in active development and serves as a demo. Features and functionality are subject to change as we continue to improve the experience.
+**Looking for a music player?** Check out [Jelly Music App](https://github.com/Stannnnn/jelly-app/) - the music-focused web app version for your Jellyfin library!
 
-**Looking for a music player?** Check out [Jelly Music App](https://github.com/Stannnnn/jelly-app/) - the music-focused version for your Jellyfin library!
+<div>
+  <img src="https://i.imgur.com/jxzyx6J.png" alt="Light variant" width="49%">
+  <img src="https://i.imgur.com/UqstzHa.png" alt="Dark variant" width="49%">
+</div>
+<details>
+  <summary>Additional screenshots</summary>
+</details>
 
 ### Features
 
 -   **Native Performance:** Built with Tauri for a lightweight, native desktop experience with minimal resource usage.
--   **High-Quality Playback:** Powered by libmpv for reliable, hardware-accelerated video playback.
+-   **Direct Playback:** Powered by libmpv for reliable, hardware-accelerated video playback.
 -   **Seamless Jellyfin Integration:** Connect directly to your Jellyfin server to access your personal video library.
--   **Clean Interface:** A modern, clutter-free design that puts your content front and center.
+-   **Simple Design:** A clean, modern interface focused on smooth content discovery and playback.
 
 ### Installation
 
 Jelly Video App is available as a native desktop application. Pre-built binaries will be available on our [GitHub release page](https://github.com/Stannnnn/jelly-video-app/releases) once we reach a stable release.
+> [!NOTE]
+> Windows is currently the only supported platform for video playback, as linux & macos have issues with the mpv backend.
 <br/>
 <br/>
 
@@ -65,3 +73,4 @@ We're open to pull requests, please merge them to the `develop` branch. If you h
 ### License
 
 See the LICENSE file for more details.
+
