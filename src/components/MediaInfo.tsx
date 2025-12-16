@@ -105,7 +105,8 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     //const officialRating = item.OfficialRating || ''
     const communityRating = item.CommunityRating ? item.CommunityRating.toFixed(1) : null
     const playedPercentage = item.UserData?.PlayedPercentage || 0
-    const hasProgress = playedPercentage > 0 && playedPercentage < 100
+    const hasProgressbar = item.UserData?.Played || (playedPercentage > 0 && playedPercentage < 100)
+    const progressbarPercentage = item.UserData?.Played ? 100 : playedPercentage
     const videoQuality = getVideoQuality(item)
 
     const shouldShowResume = playedPercentage >= minResumePercentage && playedPercentage <= maxResumePercentage
@@ -182,11 +183,11 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                             </div>
                         )}
                     </div>
-                    {hasProgress && (
+                    {hasProgressbar && (
                         <div
                             className="progress-indicator"
                             title="Played duration"
-                            style={{ '--progress-percent': `${playedPercentage}%` } as React.CSSProperties}
+                            style={{ '--progress-percent': `${progressbarPercentage}%` } as React.CSSProperties}
                         />
                     )}
                 </div>
