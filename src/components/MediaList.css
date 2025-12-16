@@ -310,17 +310,18 @@
 }
 
 /* active state for selected episode */
-.media-list .media-item.episode-item.active {
-    pointer-events: none;
-}
-
 .media-list .media-item.episode-item.active > .media-thumbnail > .thumbnail {
-    opacity: 0.7;
+    opacity: 0.6;
     filter: grayscale(1);
 }
 
+.media-list .media-item.episode-item.active > .media-thumbnail > .media-indicators {
+    backdrop-filter: unset;
+}
+
 .media-list .media-item.episode-item.active > .media-details {
-    opacity: 0.8;
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 /* temp */

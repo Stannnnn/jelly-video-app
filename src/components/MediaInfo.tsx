@@ -102,7 +102,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
     //const genres = item.Genres?.join(',') || ''
     const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : null
-    const officialRating = item.OfficialRating || ''
+    //const officialRating = item.OfficialRating || ''
     const communityRating = item.CommunityRating ? item.CommunityRating.toFixed(1) : null
     const playedPercentage = item.UserData?.PlayedPercentage || 0
     const hasProgress = playedPercentage > 0 && playedPercentage < 100
@@ -121,7 +121,14 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                     </div>
                 </div>
                 <div className="banner-content">
-                    <div className="logo noSelect">
+                    <div
+                        className={`logo noSelect ${item.Type === BaseItemKind.Episode && item.SeriesId ? 'link' : ''}`}
+                        onClick={() => {
+                            if (item.Type === BaseItemKind.Episode && item.SeriesId) {
+                                navigate(`/series/${item.SeriesId}`)
+                            }
+                        }}
+                    >
                         <JellyImg
                             item={item}
                             type={'Logo'}

@@ -12,7 +12,7 @@ export const useDisplayTitle = (item: MediaItem | null | undefined) => {
         if (item.Type === BaseItemKind.Episode) {
             const season = String(item.ParentIndexNumber || 0).padStart(2, '0')
             const episode = String(item.IndexNumber || 0).padStart(2, '0')
-            return `S${season}E${episode} - ${item.Name}`
+            return `S${season} E${episode} - ${item.Name}`
         }
 
         if (item.PremiereDate) {

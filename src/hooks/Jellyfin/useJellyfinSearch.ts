@@ -29,9 +29,9 @@ export const useJellyfinSearch = (searchQuery: string) => {
             if (navigator.onLine) {
                 // Fetch each type separately
                 const [movies, series, collections] = await Promise.all([
-                    api.searchItems(debouncedSearchQuery, 4, [BaseItemKind.Movie]),
-                    api.searchItems(debouncedSearchQuery, 4, [BaseItemKind.Series]),
-                    api.searchItems(debouncedSearchQuery, 4, [BaseItemKind.BoxSet]),
+                    api.searchItems(debouncedSearchQuery, 6, [BaseItemKind.Movie]),
+                    api.searchItems(debouncedSearchQuery, 6, [BaseItemKind.Series]),
+                    api.searchItems(debouncedSearchQuery, 6, [BaseItemKind.BoxSet]),
                 ])
 
                 const limitedResults = [...movies, ...series, ...collections]

@@ -50,6 +50,10 @@
     margin-bottom: 10px;
 }
 
+.media-info > .media-header > .banner-content > .logo.link {
+    cursor: pointer;
+}
+
 .media-info > .media-header > .banner-content > .logo:has(> .thumbnail) {
     margin-bottom: 16px;
 }
