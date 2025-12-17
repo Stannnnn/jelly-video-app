@@ -17,7 +17,9 @@ export const useWatchedState = () => {
             })
 
             // Update children
-            const cIds = (await api.getItemChildren(item.Id, 0, JELLYFIN_MAX_LIMIT)).map(i => i.Id)
+            const cIds = (await api.getItemChildren(item.Id, 0, JELLYFIN_MAX_LIMIT, undefined, undefined, true)).map(
+                i => i.Id
+            )
 
             if (cIds.length) {
                 patchMediaItems(cIds, c => ({
@@ -44,7 +46,9 @@ export const useWatchedState = () => {
             })
 
             // Update children
-            const cIds = (await api.getItemChildren(item.Id, 0, JELLYFIN_MAX_LIMIT)).map(i => i.Id)
+            const cIds = (await api.getItemChildren(item.Id, 0, JELLYFIN_MAX_LIMIT, undefined, undefined, true)).map(
+                i => i.Id
+            )
 
             if (cIds.length) {
                 patchMediaItems(cIds, c => ({
