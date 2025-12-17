@@ -39,6 +39,7 @@ import { SearchSeries } from './pages/SearchSeries'
 import { Series } from './pages/Series'
 import { SeriesPage } from './pages/SeriesPage'
 import { Settings } from './pages/Settings'
+import { SpecialPage } from './pages/SpecialPage'
 import { VideoPlayerPage } from './pages/VideoPlayerPage'
 import { persister, queryClient } from './queryClient'
 
@@ -189,6 +190,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             />
                             <Route path="/series/:id" element={<Main pageTitle="Series" content={SeriesPage} />} />
                             <Route path="/episode/:id" element={<Main pageTitle="Episode" content={EpisodePage} />} />
+                            <Route path="/special/:id" element={<Main pageTitle="Special" content={SpecialPage} />} />
                             <Route path="/person/:id" element={<Main pageTitle="Person" content={PersonPage} />} />
                             <Route
                                 path="/person/:id/movies"

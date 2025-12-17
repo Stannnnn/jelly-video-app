@@ -39,7 +39,9 @@ export const MediaList = ({
         // Determine the route based on item type
         const itemType = item.Type?.toLowerCase()
 
-        if (itemType === 'movie') {
+        if (type === 'specials') {
+            navigate(`/special/${item.Id}`)
+        } else if (itemType === 'movie') {
             navigate(`/movie/${item.Id}`)
         } else if (itemType === 'series') {
             navigate(`/series/${item.Id}`)
