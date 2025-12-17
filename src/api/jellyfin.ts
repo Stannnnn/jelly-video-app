@@ -353,6 +353,10 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             }
         }
 
+        if (item.Type === 'Video') {
+            return `${serverUrl}/Items/${item.ParentLogoItemId}/Images/${type}?tag=${item.ParentLogoItemId}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+        }
+
         return undefined
     }
 
