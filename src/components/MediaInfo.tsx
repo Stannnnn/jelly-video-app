@@ -1,4 +1,4 @@
-import { BaseItemKind, GenresApi } from '@jellyfin/sdk/lib/generated-client'
+import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client'
 import {
     CheckCircleFillIcon,
     CheckCircleIcon,
@@ -171,7 +171,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                     {videoQuality}
                                 </div>
                             )}
-                            {GenresApi && (
+                            {item.Genres && item.Genres.length > 0 && (
                                 <div className="genres" title={item.Genres?.join(', ')}>
                                     {item.Genres?.join(', ')}
                                 </div>
