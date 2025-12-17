@@ -10,6 +10,10 @@
     border-bottom: 1px solid var(--border-color);
 }
 
+.media-info > .media-header:has(> .backdrop-container > .backdrop > .fallback-thumbnail) {
+    color: var(--font-color);
+}
+
 .media-info > .media-header > .backdrop-container {
     position: relative;
     width: 100%;
@@ -89,6 +93,15 @@
     display: flex;
     align-items: center;
     gap: 16px;
+}
+
+.media-info
+    > .media-header:has(> .backdrop-container > .backdrop > .fallback-thumbnail)
+    > .banner-content
+    > .details
+    > .statistics {
+    opacity: unset;
+    color: var(--font-color-tertiary);
 }
 
 .media-info > .media-header > .banner-content > .details > .statistics > .rating {
