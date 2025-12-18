@@ -1,6 +1,6 @@
 import { GearIcon } from '@primer/octicons-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import '../App.css'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
@@ -14,6 +14,7 @@ import { DownloadingIcon, SearchClearIcon, SearchIcon } from './SvgIcons'
 
 export const Sidenav = (props: { username: string }) => {
     const navigate = useNavigate()
+    const location = useLocation()
     const searchInputRef = useRef<HTMLInputElement>(null)
     const { showSidenav, closeSidenav } = useSidenavContext()
 
@@ -151,13 +152,21 @@ export const Sidenav = (props: { username: string }) => {
                                     {!searchLoading && !searchError && searchResults.length > 0 && (
                                         <div className="results noSelect">
                                             {searchResults.map(item => {
-                                                const itemClass = ''
+                                                const isActive =
+                                                    (item.Type === 'Movie' &&
+                                                        location.pathname === `/movie/${item.Id}`) ||
+                                                    (item.Type === 'Series' &&
+                                                        location.pathname === `/series/${item.Id}`) ||
+                                                    (item.Type === 'Episode' &&
+                                                        location.pathname === `/episode/${item.Id}`) ||
+                                                    (item.Type === 'BoxSet' &&
+                                                        location.pathname === `/collection/${item.Id}`)
 
                                                 return (
                                                     <div
                                                         key={`${item.Type}-${item.Id}`}
                                                         onClick={() => handleItemClick(item)}
-                                                        className={`result ${itemClass}`}
+                                                        className={`result ${isActive ? 'active' : ''}`}
                                                     >
                                                         <Squircle
                                                             width={36}
