@@ -485,7 +485,8 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         limit = 36,
         sortBy: ItemSortBy[] = [ItemSortBy.PremiereDate],
         sortOrder: SortOrder[] = [SortOrder.Ascending],
-        recursive = false
+        recursive = false,
+        itemTypes?: BaseItemKind[]
     ) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
@@ -497,6 +498,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortOrder,
             fields: extraFields,
             recursive,
+            includeItemTypes: itemTypes,
         })
 
         return await parseItemDtos(response.data.Items)

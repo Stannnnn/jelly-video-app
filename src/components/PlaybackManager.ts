@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { isTauri } from '@tauri-apps/api/core'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -144,6 +145,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const isPlayingTrackRef = useRef<string | undefined>(undefined)
 
     const [currentTrack, setCurrentTrack] = useState<MediaItem | undefined>(undefined)
+    const queryClient = useQueryClient()
 
     // Helper function to report playback stopped, avoiding duplicate reports
     const reportTrackStopped = useCallback(
@@ -155,28 +157,32 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             lastStoppedTrackIdRef.current = track.Id
             await api.reportPlaybackStopped(track.Id, currentTime, signal)
 
-            // Update cached item with new progress percentage
-            const positionTicks = currentTime * 10000000
-            const playedPercentage = track.RunTimeTicks ? (positionTicks / track.RunTimeTicks) * 100 : 0
+            if (duration) {
+                // Update cached item with new progress percentage
+                const positionTicks = currentTime * 10000000
+                const playedPercentage = track.RunTimeTicks ? (positionTicks / track.RunTimeTicks) * 100 : 0
 
-            // Calculate Played status based on min/max resume percentages
-            const isPlayed = playedPercentage < minResumePercentage || playedPercentage > maxResumePercentage
+                // Calculate Played status based on min/max resume percentages
+                const isPlayedComplete = playedPercentage > maxResumePercentage
+                const isPlayedStart = playedPercentage < minResumePercentage
 
-            if (isPlayed) {
-                removeItemFromQueryData(['recentlyPlayed'], track.Id)
+                if (isPlayedComplete || isPlayedStart) {
+                    removeItemFromQueryData(['recentlyPlayed'], track.Id)
+                    queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
+                }
+
+                patchMediaItem(track.Id, item => ({
+                    ...item,
+                    UserData: {
+                        ...item.UserData,
+                        PlaybackPositionTicks: isPlayedComplete || isPlayedStart ? 0 : positionTicks,
+                        PlayedPercentage: isPlayedComplete || isPlayedStart ? 0 : playedPercentage,
+                        Played: isPlayedComplete,
+                    },
+                }))
             }
-
-            patchMediaItem(track.Id, item => ({
-                ...item,
-                UserData: {
-                    ...item.UserData,
-                    PlaybackPositionTicks: isPlayed ? 0 : positionTicks,
-                    PlayedPercentage: isPlayed ? 0 : playedPercentage,
-                    Played: isPlayed,
-                },
-            }))
         },
-        [api, maxResumePercentage, minResumePercentage, patchMediaItem, removeItemFromQueryData]
+        [api, duration, maxResumePercentage, minResumePercentage, patchMediaItem, removeItemFromQueryData, queryClient]
     )
 
     // Update Media Session metadata

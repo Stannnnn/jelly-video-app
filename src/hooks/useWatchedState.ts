@@ -1,3 +1,4 @@
+import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client'
 import { useQueryClient } from '@tanstack/react-query'
 import { JELLYFIN_MAX_LIMIT, MediaItem } from '../api/jellyfin'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
@@ -17,20 +18,22 @@ export const useWatchedState = () => {
             })
 
             // Update children
-            const cIds = (await api.getItemChildren(item.Id, 0, JELLYFIN_MAX_LIMIT, undefined, undefined, true)).map(
-                i => i.Id
-            )
+            if (item.Type === BaseItemKind.Series || item.Type === BaseItemKind.BoxSet) {
+                const cIds = (
+                    await api.getItemChildren(item.Id, 0, JELLYFIN_MAX_LIMIT, undefined, undefined, true)
+                ).map(i => i.Id)
 
-            if (cIds.length) {
-                patchMediaItems(cIds, c => ({
-                    ...c,
-                    UserData: {
-                        ...c.UserData,
-                        PlaybackPositionTicks: 0,
-                        PlayedPercentage: 100,
-                        Played: true,
-                    },
-                }))
+                if (cIds.length) {
+                    patchMediaItems(cIds, c => ({
+                        ...c,
+                        UserData: {
+                            ...c.UserData,
+                            PlaybackPositionTicks: 0,
+                            PlayedPercentage: 100,
+                            Played: true,
+                        },
+                    }))
+                }
             }
 
             // Clear nextEpisode cache, preferably with id but we don't know which parent
@@ -46,20 +49,22 @@ export const useWatchedState = () => {
             })
 
             // Update children
-            const cIds = (await api.getItemChildren(item.Id, 0, JELLYFIN_MAX_LIMIT, undefined, undefined, true)).map(
-                i => i.Id
-            )
+            if (item.Type === BaseItemKind.Series || item.Type === BaseItemKind.BoxSet) {
+                const cIds = (
+                    await api.getItemChildren(item.Id, 0, JELLYFIN_MAX_LIMIT, undefined, undefined, true)
+                ).map(i => i.Id)
 
-            if (cIds.length) {
-                patchMediaItems(cIds, c => ({
-                    ...c,
-                    UserData: {
-                        ...c.UserData,
-                        PlaybackPositionTicks: 0,
-                        PlayedPercentage: 0,
-                        Played: false,
-                    },
-                }))
+                if (cIds.length) {
+                    patchMediaItems(cIds, c => ({
+                        ...c,
+                        UserData: {
+                            ...c.UserData,
+                            PlaybackPositionTicks: 0,
+                            PlayedPercentage: 0,
+                            Played: false,
+                        },
+                    }))
+                }
             }
 
             // Clear nextEpisode cache, preferably with id but we don't know which parent

@@ -13,7 +13,7 @@ interface NextEpisodeInfo {
 export const useJellyfinNextEpisode = (item: MediaItem) => {
     const api = useJellyfinContext()
     const {
-        configuration: { minResumePercentage, maxResumePercentage },
+        configuration: { maxResumePercentage },
     } = useJellyfinServerConfiguration()
     const isSeries = item.Type === BaseItemKind.Series
     const isCollection = item.Type === BaseItemKind.BoxSet
@@ -28,7 +28,15 @@ export const useJellyfinNextEpisode = (item: MediaItem) => {
             // Handle Collections/BoxSets
             if (isCollection) {
                 // Get all items in the collection
-                const collectionItems = await api.getItemChildren(item.Id)
+                const collectionItems = await api.getItemChildren(
+                    item.Id,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    true,
+                    [BaseItemKind.Video]
+                )
 
                 if (collectionItems.length === 0) {
                     return null
@@ -40,8 +48,8 @@ export const useJellyfinNextEpisode = (item: MediaItem) => {
                     const isPlayed = collectionItem.UserData?.Played || false
 
                     // If item is not fully watched (either in progress or unwatched)
-                    // Check if playedPercentage is within resume range (minResumePercentage to maxResumePercentage)
-                    if (!isPlayed && playedPercentage >= minResumePercentage && playedPercentage <= maxResumePercentage) {
+                    // Check if playedPercentage is within resume range (maxResumePercentage)
+                    if (!isPlayed && playedPercentage <= maxResumePercentage) {
                         return {
                             episodeId: collectionItem.Id,
                             seasonNumber: undefined,
@@ -75,8 +83,8 @@ export const useJellyfinNextEpisode = (item: MediaItem) => {
                     const isPlayed = episode.UserData?.Played || false
 
                     // If episode is not fully watched (either in progress or unwatched)
-                    // Check if playedPercentage is within resume range (minResumePercentage to maxResumePercentage)
-                    if (!isPlayed && playedPercentage >= minResumePercentage && playedPercentage <= maxResumePercentage) {
+                    // Check if playedPercentage is within resume range (maxResumePercentage)
+                    if (!isPlayed && playedPercentage <= maxResumePercentage) {
                         return {
                             episodeId: episode.Id,
                             seasonNumber: episode.ParentIndexNumber ?? undefined,

@@ -200,8 +200,13 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 <div className="container" onClick={handlePlayClick}>
                                     <PlayIcon className="play-icon" width={16} height={16} />
                                     <div className="text">
-                                        {item.Type === BaseItemKind.Series && shouldShowResume && nextEpisode
+                                        {item.Type === BaseItemKind.Series && nextEpisode && shouldShowResume
                                             ? `Resume S${String(nextEpisode.seasonNumber || 0).padStart(
+                                                  2,
+                                                  '0'
+                                              )} E${String(nextEpisode.episodeNumber || 0).padStart(2, '0')}`
+                                            : item.Type === BaseItemKind.Series && nextEpisode
+                                            ? `Play S${String(nextEpisode.seasonNumber || 0).padStart(
                                                   2,
                                                   '0'
                                               )} E${String(nextEpisode.episodeNumber || 0).padStart(2, '0')}`
