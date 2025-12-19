@@ -446,8 +446,8 @@ export const MediaList = ({
                               onClick: () => handleItemClick(item),
                           })}
                 >
-                    <Squircle width={124} height={124} cornerRadius={12} className="media-thumbnail">
-                        <JellyImg item={item} type={'Primary'} width={124} height={124} />
+                    <Squircle width={108} height={108} cornerRadius={12} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={108} height={108} />
                     </Squircle>
                     <div className="media-details">
                         <span className="title" title={item.Name}>

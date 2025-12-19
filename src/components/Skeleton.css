@@ -9,7 +9,7 @@
 }
 
 .skeleton-loading.square {
-    max-width: 124px;
+    max-width: 108px;
 }
 
 .skeleton-loading.landscape {
@@ -49,8 +49,8 @@
 }
 
 .skeleton-loading.square > .skeleton-effect.thumbnail {
-    width: 124px;
-    height: 124px;
+    width: 108px;
+    height: 108px;
     border-radius: 12px;
 }
 

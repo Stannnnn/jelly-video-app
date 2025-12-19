@@ -175,7 +175,7 @@ html.light {
     --bg-color-secondary: #f8f8f8;
     --bg-color-tertiary: #ececec;
     --bg-color-quaternary: #bbbbbb; /* Not Used */
-    --bg-color-transparent: rgba(255, 255, 255, 0.8);
+    --bg-color-transparent: rgba(255, 255, 255, 0.4);
     --font-color: #303030;
     --font-color-secondary: #555555;
     --font-color-tertiary: #767676;
@@ -211,7 +211,7 @@ html.dark {
     --bg-color-secondary: #161616;
     --bg-color-tertiary: #222222;
     --bg-color-quaternary: #414141; /* Not Used */
-    --bg-color-transparent: rgba(17, 17, 17, 0.8);
+    --bg-color-transparent: rgba(17, 17, 17, 0.6);
     --font-color: #dfdde4;
     --font-color-secondary: #bbb9c0;
     --font-color-tertiary: #9b999e;
@@ -664,7 +664,7 @@ body.lockscroll {
     position: absolute;
     z-index: 1;
     top: 0;
-    width: 80px;
+    width: 60px;
     height: 100%;
     display: flex;
     transition: opacity 0.2s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.2s cubic-bezier(0.33, 0, 0.2, 1);
@@ -680,8 +680,8 @@ body.lockscroll {
     visibility: hidden;
     left: 0;
     backdrop-filter: blur(2px);
-    mask-image: linear-gradient(to right, #000000 20%, transparent 100%);
-    background: linear-gradient(to right, var(--bg-color) 0%, var(--bg-color-transparent) 20%, transparent 100%);
+    mask-image: linear-gradient(to right, #000000 30%, transparent 100%);
+    background: linear-gradient(to right, var(--bg-color) 0%, var(--bg-color-transparent) 30%, transparent 100%);
 }
 
 .home-page > .section > .scroller:hover > .direction.left {
@@ -693,8 +693,8 @@ body.lockscroll {
     right: 0;
     justify-content: end;
     backdrop-filter: blur(2px);
-    mask-image: linear-gradient(to left, #000000 20%, transparent 100%);
-    background: linear-gradient(to left, var(--bg-color) 0%, var(--bg-color-transparent) 20%, transparent 100%);
+    mask-image: linear-gradient(to left, #000000 30%, transparent 100%);
+    background: linear-gradient(to left, var(--bg-color) 0%, var(--bg-color-transparent) 30%, transparent 100%);
 }
 
 .home-page > .section > .scroller > .direction > .icon {
@@ -704,14 +704,25 @@ body.lockscroll {
     align-items: center;
     height: 100%;
     padding: 6px;
+}
+
+.home-page > .section > .scroller > .direction > .icon > svg {
     transition: transform 0.2s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
-.home-page > .section > .scroller > .direction.left > .icon:hover {
+.home-page > .section > .scroller > .direction.left > .icon > svg {
+    margin-left: -8px;
+}
+
+.home-page > .section > .scroller > .direction.right > .icon > svg {
+    margin-right: -8px;
+}
+
+.home-page > .section > .scroller > .direction.left > .icon:hover > svg {
     transform: translateX(-2px);
 }
 
-.home-page > .section > .scroller > .direction.right > .icon:hover {
+.home-page > .section > .scroller > .direction.right > .icon:hover > svg {
     transform: translateX(2px);
 }
 

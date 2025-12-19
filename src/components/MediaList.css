@@ -18,13 +18,13 @@
 
 .media-list:has(.media-item.square) .virtuoso-grid-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
     gap: 30px 24px;
 }
 
 .media-list:has(.media-item > .skeleton-loading.square) .virtuoso-grid-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
     gap: 30px 24px;
 }
 
@@ -58,7 +58,7 @@
 }
 
 .media-list .media-item.square {
-    max-width: 124px;
+    max-width: 108px;
 }
 
 .media-list .media-item.landscape {
@@ -82,8 +82,8 @@
 }
 
 .media-list .media-item.square > .media-thumbnail {
-    width: 124px;
-    height: 124px;
+    width: 108px;
+    height: 108px;
     border-radius: 12px;
 }
 
