@@ -658,6 +658,8 @@ body.lockscroll {
 /* Scroller for continue-watching */
 .home-page > .section > .scroller {
     position: relative;
+    height: 200px;
+    overflow: hidden;
 }
 
 .home-page > .section > .scroller > .direction {

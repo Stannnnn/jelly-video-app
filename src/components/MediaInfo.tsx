@@ -102,6 +102,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
     //const genres = item.Genres?.join(',') || ''
     const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : null
+    const endyear = item.EndDate ? new Date(item.EndDate).getFullYear() : null
     //const officialRating = item.OfficialRating || ''
     const communityRating = item.CommunityRating ? item.CommunityRating.toFixed(1) : null
     const playedPercentage = item.UserData?.PlayedPercentage || 0
@@ -150,9 +151,19 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 </div>
                             )}
                             {year && (
-                                <span className="date" title="Released">
-                                    {year}
-                                </span>
+                                <div className="date">
+                                    <div className="premiere" title="Released">
+                                        {year}
+                                    </div>
+                                    {endyear && endyear !== year && (
+                                        <>
+                                            <div className="divider">-</div>
+                                            <div className="enddate" title="Ended">
+                                                {endyear}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             )}
                             {communityRating && (
                                 <div className="rating" title="Rating">
@@ -221,7 +232,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                             </div>
                         )}
                         <div
-                            className="watch-state icon"
+                            className={isPlayed ? 'watch-state icon watched' : 'watch-state icon'}
                             onClick={toggleWatched}
                             title={isPlayed ? 'Mark as unwatched' : 'Mark as watched'}
                         >

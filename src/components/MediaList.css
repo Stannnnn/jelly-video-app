@@ -41,6 +41,7 @@
 }
 
 .media-list:has(.media-item.continue-watching) .continue-watching-row {
+    margin-right: -24px;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;

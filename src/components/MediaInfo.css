@@ -114,6 +114,12 @@
     color: #ffd700;
 }
 
+.media-info > .media-header > .banner-content > .details > .statistics > .date {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
 .media-info > .media-header > .banner-content > .details > .description {
     font-size: 0.8125rem;
     line-height: 1.4;
@@ -216,6 +222,8 @@
 }
 
 .media-actions > .actions > .primary > .icon {
+    position: relative;
+    z-index: 1;
     cursor: pointer;
     padding: 6px;
     border-radius: 20px;
@@ -229,6 +237,18 @@
 
 .media-actions > .actions > .primary > .icon > svg {
     color: var(--brand-color);
+}
+
+.media-actions > .actions > .primary > .icon.watch-state.watched::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: #ffffff;
 }
 
 .media-actions > .actions > .secondary {
