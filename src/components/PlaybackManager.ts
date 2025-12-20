@@ -288,8 +288,21 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                             if (Array.isArray(data)) {
                                 const subs = data.filter((track: any) => track.type === 'sub')
                                 setSubtitleTracks(subs)
+
                                 const audio = data.filter((track: any) => track.type === 'audio')
                                 setAudioTracks(audio)
+
+                                const selectedSubtitle = subs.find((track: any) => track.selected)
+
+                                if (selectedSubtitle) {
+                                    setCurrentSubtitleId(selectedSubtitle.id)
+                                }
+
+                                const selectedAudio = audio.find((track: any) => track.selected)
+
+                                if (selectedAudio) {
+                                    setCurrentAudioTrackId(selectedAudio.id)
+                                }
                             }
                             break
                         case 'sid':
