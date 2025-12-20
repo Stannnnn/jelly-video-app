@@ -287,7 +287,7 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
     // Menu animations
     useEffect(() => {
         animateMenu()
-    }, [animateMenu])
+    }, [animateMenu, subtitleTracks, audioTracks, videoLoaded, currentTrack])
 
     // Hide controls when window loses focus (disabled in dev so F12 debugging doesn't hide controls)
     useEffect(() => {
