@@ -33,10 +33,10 @@ const getSubtitleDisplayName = (
     const track = subtitleTracks.find(t => t.id === subtitleId)
     if (!track) return 'On'
 
-    // Find the matching MediaStream by ff-index (which corresponds to MediaStream Index)
-    const mediaStream = currentTrack?.MediaStreams?.find(
-        stream => stream.Type === 'Subtitle' && stream.Index === track['ff-index']
-    )
+    const filteredStreams = currentTrack?.MediaStreams?.filter(stream => !stream.IsExternal) || []
+
+    // Use array position since ff-index is the index in this filtered list
+    const mediaStream = filteredStreams[track['ff-index']]
 
     // Use DisplayTitle from MediaStream if available, otherwise fall back to track properties
     return mediaStream?.DisplayTitle || track.title || track.lang || 'On'
@@ -52,10 +52,10 @@ const getAudioTrackDisplayName = (
     const track = audioTracks.find(t => t.id === audioTrackId)
     if (!track) return 'Unknown'
 
-    // Find the matching MediaStream by ff-index (which corresponds to MediaStream Index)
-    const mediaStream = currentTrack?.MediaStreams?.find(
-        stream => stream.Type === 'Audio' && stream.Index === track['ff-index']
-    )
+    const filteredStreams = currentTrack?.MediaStreams?.filter(stream => !stream.IsExternal) || []
+
+    // Use array position since ff-index is the index in this filtered list
+    const mediaStream = filteredStreams[track['ff-index']]
 
     // Use DisplayTitle from MediaStream if available, otherwise fall back to track properties
     return mediaStream?.DisplayTitle || track.title || track.lang || 'Unknown'
