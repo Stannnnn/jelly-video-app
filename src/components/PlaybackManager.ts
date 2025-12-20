@@ -60,7 +60,7 @@ export type PlaybackManagerProps = {
 
 export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackManagerProps) => {
     const api = useJellyfinContext()
-    const { patchMediaItem, removeItemFromQueryData } = usePatchQueries()
+    const { patchMediaItem } = usePatchQueries()
     const {
         configuration: { minResumePercentage, maxResumePercentage },
     } = useJellyfinServerConfiguration()
@@ -166,11 +166,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 const isPlayedComplete = playedPercentage > maxResumePercentage
                 const isPlayedStart = playedPercentage < minResumePercentage
 
-                if (isPlayedComplete || isPlayedStart) {
-                    removeItemFromQueryData(['recentlyPlayed'], track.Id)
-                    queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
-                }
-
                 patchMediaItem(track.Id, item => ({
                     ...item,
                     UserData: {
@@ -180,9 +175,15 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                         Played: isPlayedComplete,
                     },
                 }))
+
+                queryClient.invalidateQueries({ queryKey: ['recentlyPlayed'] })
+
+                if (isPlayedComplete || isPlayedStart) {
+                    queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
+                }
             }
         },
-        [api, duration, maxResumePercentage, minResumePercentage, patchMediaItem, removeItemFromQueryData, queryClient]
+        [api, duration, maxResumePercentage, minResumePercentage, patchMediaItem, queryClient]
     )
 
     // Update Media Session metadata
