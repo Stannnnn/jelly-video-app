@@ -2,7 +2,7 @@ import { ArrowLeftIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from '@pr
 import { useCallback, useEffect, useRef, useState, WheelEvent } from 'react'
 import { MediaItem } from './api/jellyfin'
 import { Loader } from './components/Loader'
-import { SubtitleTrack } from './components/PlaybackManager'
+import { AudioTrack, SubtitleTrack } from './components/PlaybackManager'
 import {
     GearIcon,
     MaximizeIcon,
@@ -21,7 +21,7 @@ import { useDisplayTitle } from './hooks/useDisplayTitle'
 import { getVideoQuality } from './utils/getVideoQuality'
 import './VideoPlayer.css'
 
-type MenuView = 'home' | 'subtitles' | 'speed' | 'statistics'
+type MenuView = 'home' | 'subtitles' | 'audioTracks' | 'speed' | 'statistics'
 
 const getSubtitleDisplayName = (
     subtitleId: number | null,
@@ -42,6 +42,25 @@ const getSubtitleDisplayName = (
     return mediaStream?.DisplayTitle || track.title || track.lang || 'On'
 }
 
+const getAudioTrackDisplayName = (
+    audioTrackId: number | null,
+    audioTracks: AudioTrack[],
+    currentTrack: MediaItem | null | undefined
+) => {
+    if (audioTrackId === null) return 'Default'
+
+    const track = audioTracks.find(t => t.id === audioTrackId)
+    if (!track) return 'Unknown'
+
+    // Find the matching MediaStream by ff-index (which corresponds to MediaStream Index)
+    const mediaStream = currentTrack?.MediaStreams?.find(
+        stream => stream.Type === 'Audio' && stream.Index === track['ff-index']
+    )
+
+    // Use DisplayTitle from MediaStream if available, otherwise fall back to track properties
+    return mediaStream?.DisplayTitle || track.title || track.lang || 'Unknown'
+}
+
 export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boolean; error: string | null }) => {
     const api = useJellyfinContext()
     const {
@@ -57,6 +76,8 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
         speed,
         subtitleTracks,
         currentSubtitleId,
+        audioTracks,
+        currentAudioTrackId,
         showControls,
         isFullscreen,
         showMenu,
@@ -70,6 +91,7 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
         toggleMute,
         handleSpeedChange,
         handleSubtitleChange,
+        handleAudioTrackChange,
         toggleFullscreen,
         handleMouseMove,
         toggleMenu,
@@ -257,6 +279,7 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
     const viewsRef = useRef<Record<MenuView, HTMLDivElement | null>>({
         home: null,
         subtitles: null,
+        audioTracks: null,
         speed: null,
         statistics: null,
     })
@@ -511,6 +534,27 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                                     </div>
                                 )}
 
+                                {audioTracks.length > 1 && (
+                                    <div
+                                        className="menu-item"
+                                        onClick={() => {
+                                            setCurrentMenuView('audioTracks')
+                                        }}
+                                    >
+                                        <div className="text">Audio</div>
+                                        <div className="menu-item-right">
+                                            <div className="menu-item-value">
+                                                {getAudioTrackDisplayName(
+                                                    currentAudioTrackId,
+                                                    audioTracks,
+                                                    currentTrack
+                                                )}
+                                            </div>
+                                            <ChevronRightIcon size={16} className="icon" />
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div
                                     className="menu-item"
                                     onClick={() => {
@@ -577,6 +621,44 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                                             <CheckIcon className="check-icon" />
                                             <div className="text">
                                                 {getSubtitleDisplayName(track.id, subtitleTracks, currentTrack)}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Audio Tracks Submenu */}
+                            <div
+                                ref={el => {
+                                    viewsRef.current.audioTracks = el
+                                }}
+                                className={`menu-view audio ${currentMenuView === 'audioTracks' ? 'active' : 'hidden'}`}
+                            >
+                                <div
+                                    className="menu-item back-button"
+                                    onClick={() => {
+                                        setCurrentMenuView('home')
+                                    }}
+                                >
+                                    <ChevronLeftIcon size={16} className="return-icon" />
+                                    <div className="text">Audio</div>
+                                </div>
+                                <div className="menu-divider"></div>
+                                <div className="container">
+                                    {audioTracks.map(track => (
+                                        <div
+                                            key={track.id}
+                                            className={`menu-item ${
+                                                currentAudioTrackId === track.id ? 'selected' : ''
+                                            }`}
+                                            onClick={() => {
+                                                handleAudioTrackChange(track.id.toString())
+                                                setTimeout(() => setCurrentMenuView('home'), 60)
+                                            }}
+                                        >
+                                            <CheckIcon className="check-icon" />
+                                            <div className="text">
+                                                {getAudioTrackDisplayName(track.id, audioTracks, currentTrack)}
                                             </div>
                                         </div>
                                     ))}

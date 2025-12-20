@@ -24,6 +24,7 @@ const OBSERVED_PROPERTIES = [
     ['duration', 'double', 'none'],
     ['track-list', 'node'],
     ['sid', 'int64'],
+    ['aid', 'int64'],
     ['volume', 'int64'],
     ['speed', 'double'],
     ['video-codec', 'string'],
@@ -45,6 +46,15 @@ const OBSERVED_PROPERTIES = [
 ] as const satisfies MpvObservableProperty[]
 
 export interface SubtitleTrack {
+    id: number
+    'ff-index': number
+    type: string
+    title?: string
+    lang?: string
+    selected?: boolean
+}
+
+export interface AudioTrack {
     id: number
     'ff-index': number
     type: string
@@ -82,6 +92,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [isInitialized, setIsInitialized] = useState(false)
     const [subtitleTracks, setSubtitleTracks] = useState<SubtitleTrack[]>([])
     const [currentSubtitleId, setCurrentSubtitleId] = useState<number | null>(null)
+    const [audioTracks, setAudioTracks] = useState<AudioTrack[]>([])
+    const [currentAudioTrackId, setCurrentAudioTrackId] = useState<number | null>(null)
     const [speed, setSpeed] = useState(1.0)
     const [videoLoaded, setVideoLoaded] = useState(false)
     const [isPending, setIsPending] = useState(true)
@@ -276,11 +288,18 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                             if (Array.isArray(data)) {
                                 const subs = data.filter((track: any) => track.type === 'sub')
                                 setSubtitleTracks(subs)
+                                const audio = data.filter((track: any) => track.type === 'audio')
+                                setAudioTracks(audio)
                             }
                             break
                         case 'sid':
                             if (typeof data === 'number' || data === null) {
                                 setCurrentSubtitleId(data)
+                            }
+                            break
+                        case 'aid':
+                            if (typeof data === 'number' || data === null) {
+                                setCurrentAudioTrackId(data)
                             }
                             break
                         case 'volume':
@@ -642,6 +661,19 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         [isInitialized]
     )
 
+    const handleAudioTrackChange = useCallback(
+        async (audioTrackId: string) => {
+            if (isInitialized) {
+                try {
+                    await command('set', ['aid', audioTrackId])
+                } catch (error) {
+                    console.error('Failed to change audio track:', error)
+                }
+            }
+        },
+        [isInitialized]
+    )
+
     const handleVolumeChange = useCallback(
         async (newVolume: number) => {
             if (isInitialized) {
@@ -797,6 +829,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             setSubtitleTracks([])
             setCurrentSubtitleId(null)
 
+            // Clear audio track state
+            setAudioTracks([])
+            setCurrentAudioTrackId(null)
+
             // Clear video statistics
             setVideoCodec('N/A')
             setAudioCodec('N/A')
@@ -865,6 +901,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         subtitleTracks,
         currentSubtitleId,
         handleSubtitleChange,
+
+        // Audio track controls
+        audioTracks,
+        currentAudioTrackId,
+        handleAudioTrackChange,
 
         // UI state
         showControls,
