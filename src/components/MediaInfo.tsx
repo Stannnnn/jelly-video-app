@@ -113,6 +113,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const shouldShowResume = playedPercentage >= minResumePercentage && playedPercentage <= maxResumePercentage
 
     const displayTitle = useDisplayTitle(item)
+    const runTimeTicks = item.RunTimeTicks || 0
 
     return (
         <div className="media-info">
@@ -145,9 +146,9 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                     </div>
                     <div className="details">
                         <div className="statistics noSelect">
-                            {item.RunTimeTicks && item.RunTimeTicks > 0 && item.Type !== BaseItemKind.Series && (
+                            {runTimeTicks > 0 && item.Type !== BaseItemKind.Series && (
                                 <div className="duration" title="Duration">
-                                    {formatDurationReadable(item.RunTimeTicks)}
+                                    {formatDurationReadable(runTimeTicks)}
                                 </div>
                             )}
                             {year && (
