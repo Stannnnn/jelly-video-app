@@ -892,10 +892,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
         // Playback controls
         togglePlayPause,
-        playTrack: (track: MediaItem, mediaSourceIndex?: number) => {
+        playTrack: (track: MediaItem, mediaSourceId?: string) => {
             setUserInteracted(true)
             setCurrentTrack(track)
-            setCurrentMediaSourceId(track.MediaSources?.[mediaSourceIndex!]?.Id || track.Id)
+            setCurrentMediaSourceId(mediaSourceId || track.Id)
         },
         clearCurrentTrack,
         handleSeek,

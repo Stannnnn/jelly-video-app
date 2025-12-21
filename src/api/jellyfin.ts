@@ -479,12 +479,12 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return r
     }
 
-    const getItemById = async (itemId: string) => {
+    const getItemById = async (itemId: string, mediaSourceId?: string) => {
         const userLibraryApi = new UserLibraryApi(api.configuration)
         const response = await userLibraryApi.getItem(
             {
                 userId,
-                itemId,
+                itemId: mediaSourceId || itemId,
             },
             { signal: AbortSignal.timeout(20000) }
         )

@@ -109,10 +109,10 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         }
     }
 
-    const handlePlayClick = (mediaSourceIndex?: number) => {
+    const handlePlayClick = (mediaSourceId?: string) => {
         const itemId = nextEpisode?.episodeId || item.Id
-        if (mediaSourceIndex !== undefined) {
-            navigate(`/play/${itemId}/${mediaSourceIndex}`)
+        if (mediaSourceId !== undefined) {
+            navigate(`/play/${itemId}/${mediaSourceId}`)
         } else {
             navigate(`/play/${itemId}`)
         }
@@ -339,7 +339,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                         key={source.Id || index}
                                                         className="version-dropdown-item"
                                                         onClick={() => {
-                                                            handlePlayClick(index)
+                                                            handlePlayClick(source.Id || undefined)
                                                             setIsVersionDropdownOpen(false)
                                                         }}
                                                     >

@@ -154,7 +154,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
     return (
         <Routes>
             <Route
-                path="/play/:id/:mediaSourceIndex?"
+                path="/play/:id/:mediaSourceId?"
                 element={
                     <PageTitleProvider pageTitle="Playing">
                         <VideoPlayerPage />
