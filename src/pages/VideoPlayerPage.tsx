@@ -5,7 +5,7 @@ import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import { VideoPlayer } from '../VideoPlayer'
 
 export const VideoPlayerPage = () => {
-    const { id } = useParams<{ id: string }>()
+    const { id, mediaSourceIndex } = useParams<{ id: string; mediaSourceIndex?: string }>()
     const playback = usePlaybackContext()
     const playbackRef = useRef(playback)
 
@@ -17,9 +17,9 @@ export const VideoPlayerPage = () => {
 
     useEffect(() => {
         if (item) {
-            playbackRef.current.playTrack(item)
+            playbackRef.current.playTrack(item, Number(mediaSourceIndex))
         }
-    }, [item])
+    }, [item, mediaSourceIndex])
 
     useEffect(() => {
         return () => {

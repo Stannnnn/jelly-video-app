@@ -259,7 +259,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return response.data.TotalRecordCount || null
     }
 
-    const reportPlaybackStart = async (trackId: string, signal: AbortSignal) => {
+    const reportPlaybackStart = async (trackId: string, signal: AbortSignal, mediaSourceId?: string) => {
         const sessionsApi = new PlaystateApi(api.configuration)
         await sessionsApi.reportPlaybackStart(
             {
@@ -269,7 +269,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
                     PositionTicks: 0,
                     IsPaused: false,
                     CanSeek: true,
-                    MediaSourceId: trackId,
+                    MediaSourceId: mediaSourceId || trackId,
                     AudioStreamIndex: 1,
                 },
             },
@@ -279,7 +279,12 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     let lastProgress = new AbortController()
 
-    const reportPlaybackProgress = async (trackId: string, position: number, isPaused: boolean) => {
+    const reportPlaybackProgress = async (
+        trackId: string,
+        position: number,
+        isPaused: boolean,
+        mediaSourceId?: string
+    ) => {
         if (lastProgress) {
             lastProgress.abort()
             lastProgress = new AbortController()
@@ -293,7 +298,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
                     PositionTicks: Math.floor(position * 10000000),
                     IsPaused: isPaused,
                     PlayMethod: PlayMethod.DirectStream,
-                    MediaSourceId: trackId,
+                    MediaSourceId: mediaSourceId || trackId,
                     AudioStreamIndex: 1,
                 },
             },
@@ -301,14 +306,19 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         )
     }
 
-    const reportPlaybackStopped = async (trackId: string, position: number, signal?: AbortSignal) => {
+    const reportPlaybackStopped = async (
+        trackId: string,
+        position: number,
+        signal?: AbortSignal,
+        mediaSourceId?: string
+    ) => {
         const sessionsApi = new PlaystateApi(api.configuration)
         await sessionsApi.reportPlaybackStopped(
             {
                 playbackStopInfo: {
                     ItemId: trackId,
                     PositionTicks: Math.floor(position * 10000000),
-                    MediaSourceId: trackId,
+                    MediaSourceId: mediaSourceId || trackId,
                 },
             },
             { signal }
@@ -361,8 +371,10 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return undefined
     }
 
-    const getStreamUrl = (trackId: string, bitrate: number) => {
-        return `${serverUrl}/Videos/${trackId}/stream?UserId=${userId}&api_key=${token}&static=true`
+    const getStreamUrl = (trackId: string, bitrate: number, mediaSourceId?: string) => {
+        return `${serverUrl}/Videos/${trackId}/stream?MediaSourceId=${
+            mediaSourceId || trackId
+        }&UserId=${userId}&api_key=${token}&static=true`
     }
 
     const getTrickplayUrl = (item: MediaItem, timestamp: number, preferredWidth?: number) => {

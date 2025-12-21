@@ -157,17 +157,18 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const isPlayingTrackRef = useRef<string | undefined>(undefined)
 
     const [currentTrack, setCurrentTrack] = useState<MediaItem | undefined>(undefined)
+    const [currentMediaSourceId, setCurrentMediaSourceId] = useState<string | undefined>(undefined)
     const queryClient = useQueryClient()
 
     // Helper function to report playback stopped, avoiding duplicate reports
     const reportTrackStopped = useCallback(
-        async (track: MediaItem | undefined, currentTime: number, signal?: AbortSignal) => {
+        async (track: MediaItem | undefined, currentTime: number, signal?: AbortSignal, mediaSourceId?: string) => {
             if (!track || track.Id === lastStoppedTrackIdRef.current) {
                 return
             }
 
             lastStoppedTrackIdRef.current = track.Id
-            await api.reportPlaybackStopped(track.Id, currentTime, signal)
+            await api.reportPlaybackStopped(track.Id, currentTime, signal, mediaSourceId)
 
             if (duration) {
                 // Update cached item with new progress percentage
@@ -438,11 +439,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         if (isPaused || !currentTrack) return
 
         const interval = setInterval(() => {
-            api.reportPlaybackProgress(currentTrack.Id, timePos, false)
+            api.reportPlaybackProgress(currentTrack.Id, timePos, false, currentMediaSourceId)
         }, 10000)
 
         return () => clearInterval(interval)
-    }, [api, timePos, currentTrack, isPaused])
+    }, [api, timePos, currentTrack, isPaused, currentMediaSourceId])
 
     // Handle login/logout and sync to localStorage
     useEffect(() => {
@@ -461,12 +462,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     }
 
     const loadVideoAndPlay = useCallback(
-        async (track: MediaItem) => {
+        async (track: MediaItem, mediaSourceId?: string) => {
             if (!isInitialized) return
 
             try {
                 const offlineFilePath = await audioStorage.getFilePath(track.Id)
-                const streamUrl = api.getStreamUrl(track.Id, bitrate)
+                const streamUrl = api.getStreamUrl(track.Id, bitrate, mediaSourceId)
 
                 const videoUrl = offlineFilePath || streamUrl
 
@@ -519,26 +520,27 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         const signal = abortControllerRef.current.signal
 
         if (!isPaused && previousTrackRef.current) {
-            reportTrackStopped(previousTrackRef.current, timePos, signal)
+            reportTrackStopped(previousTrackRef.current, timePos, signal, currentMediaSourceId)
         }
 
         previousTrackRef.current = currentTrack
 
         try {
-            await loadVideoAndPlay(currentTrack)
+            await loadVideoAndPlay(currentTrack, currentMediaSourceId)
 
             setSessionPlayCount(prev => prev + 1)
 
             updateMediaSessionMetadata(currentTrack)
 
             // Report playback start to Jellyfin
-            api.reportPlaybackStart(currentTrack.Id, signal)
+            api.reportPlaybackStart(currentTrack.Id, signal, currentMediaSourceId)
         } catch (error) {
             console.error('Error playing track:', error)
         }
     }, [
         api,
         currentTrack,
+        currentMediaSourceId,
         isPaused,
         isInitialized,
         loadVideoAndPlay,
@@ -562,16 +564,16 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
                 if (!isPaused) {
                     lastUserPauseRef.current = Date.now()
-                    api.reportPlaybackProgress(currentTrack.Id, timePos, true)
+                    api.reportPlaybackProgress(currentTrack.Id, timePos, true, currentMediaSourceId)
                 } else {
-                    api.reportPlaybackProgress(currentTrack.Id, timePos, false)
+                    api.reportPlaybackProgress(currentTrack.Id, timePos, false, currentMediaSourceId)
                     updateMediaSessionMetadata(currentTrack)
                 }
             } catch (error) {
                 console.error('Failed to toggle play/pause:', error)
             }
         }
-    }, [api, currentTrack, isPaused, isInitialized, timePos, updateMediaSessionMetadata])
+    }, [api, currentTrack, isPaused, isInitialized, timePos, updateMediaSessionMetadata, currentMediaSourceId])
 
     const protectedPlay = useCallback(async () => {
         const timeSinceLastPause = Date.now() - lastUserPauseRef.current
@@ -636,12 +638,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     // Handle cleanup on logout
     useEffect(() => {
         if (clearOnLogout && currentTrack) {
-            reportTrackStopped(currentTrack, timePos)
+            reportTrackStopped(currentTrack, timePos, undefined, currentMediaSourceId)
             if (isInitialized) {
                 command('stop', []).catch(console.error)
             }
         }
-    }, [clearOnLogout, currentTrack, isInitialized, reportTrackStopped, timePos])
+    }, [clearOnLogout, currentTrack, isInitialized, reportTrackStopped, timePos, currentMediaSourceId])
 
     // Video control functions
     const handleSeek = useCallback(
@@ -810,7 +812,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             }
 
             // Report playback stopped to Jellyfin
-            reportTrackStopped(currentTrack, timePos)
+            reportTrackStopped(currentTrack, timePos, undefined, currentMediaSourceId)
 
             // Stop and clear the video
             if (isInitialized) {
@@ -871,7 +873,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 navigator.mediaSession.metadata = null
             }
         }
-    }, [currentTrack, timePos, reportTrackStopped, isInitialized, isFullscreen])
+    }, [currentTrack, timePos, reportTrackStopped, isInitialized, isFullscreen, currentMediaSourceId])
 
     return {
         // Track info
@@ -890,9 +892,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
         // Playback controls
         togglePlayPause,
-        playTrack: (track: MediaItem) => {
+        playTrack: (track: MediaItem, mediaSourceIndex?: number) => {
             setUserInteracted(true)
             setCurrentTrack(track)
+            setCurrentMediaSourceId(track.MediaSources?.[mediaSourceIndex!]?.Id || track.Id)
         },
         clearCurrentTrack,
         handleSeek,

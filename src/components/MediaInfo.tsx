@@ -44,7 +44,9 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const [isCollectionDropdownOpen, setIsCollectionDropdownOpen] = useState(false)
     const [collectionName, setCollectionName] = useState('')
     const [isCreatingCollection, setIsCreatingCollection] = useState(false)
+    const [isVersionDropdownOpen, setIsVersionDropdownOpen] = useState(false)
     const moreButtonRef = useRef<HTMLDivElement>(null)
+    const versionButtonRef = useRef<HTMLDivElement>(null)
 
     const toggleFavorite = async (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -106,8 +108,18 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         }
     }
 
-    const handlePlayClick = () => {
-        navigate(`/play/${nextEpisode?.episodeId || item.Id}`)
+    const handlePlayClick = (mediaSourceIndex?: number) => {
+        const itemId = nextEpisode?.episodeId || item.Id
+        if (mediaSourceIndex !== undefined) {
+            navigate(`/play/${itemId}/${mediaSourceIndex}`)
+        } else {
+            navigate(`/play/${itemId}`)
+        }
+    }
+
+    const toggleVersionDropdown = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setIsVersionDropdownOpen(!isVersionDropdownOpen)
     }
 
     const toggleMoreDropdown = (e: React.MouseEvent) => {
@@ -164,16 +176,19 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                 setIsCollectionDropdownOpen(false)
                 setIsMoreDropdownOpen(false)
             }
+            if (versionButtonRef.current && !versionButtonRef.current.contains(event.target as Node)) {
+                setIsVersionDropdownOpen(false)
+            }
         }
 
-        if (isMoreDropdownOpen) {
+        if (isMoreDropdownOpen || isVersionDropdownOpen) {
             document.addEventListener('mousedown', handleClickOutside)
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
-    }, [isMoreDropdownOpen])
+    }, [isMoreDropdownOpen, isVersionDropdownOpen])
 
     //const genres = item.Genres?.join(',') || ''
     const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : null
@@ -189,6 +204,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
     const displayTitle = useDisplayTitle(item)
     const runTimeTicks = item.RunTimeTicks || 0
+    const videoSources = item.MediaSources || []
 
     return (
         <div className="media-info">
@@ -284,7 +300,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                     <div className="primary">
                         {!isLoadingNextEpisode && (
                             <div className="play-media">
-                                <div className="container" onClick={handlePlayClick}>
+                                <div className="container" onClick={() => handlePlayClick()}>
                                     <PlayIcon className="play-icon" width={16} height={16} />
                                     <div className="text">
                                         {item.Type === BaseItemKind.Series && nextEpisode && shouldShowResume
@@ -302,9 +318,37 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                             : 'Play'}
                                     </div>
                                 </div>
-                                <div className="version-select" title="Select version">
-                                    <ChevronDownIcon size={16} />
-                                </div>
+                                {videoSources.length > 1 && (
+                                    <div className="version-select-container" ref={versionButtonRef}>
+                                        <div
+                                            className={`version-select ${isVersionDropdownOpen ? 'active' : ''}`}
+                                            onClick={toggleVersionDropdown}
+                                            title="Select version"
+                                        >
+                                            <ChevronDownIcon size={16} />
+                                        </div>
+                                        <div className={`version-dropdown ${isVersionDropdownOpen ? 'open' : ''}`}>
+                                            {videoSources.map((source, index) => {
+                                                const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
+                                                const displayName =
+                                                    source.Name || videoStream?.DisplayTitle || `Version ${index + 1}`
+
+                                                return (
+                                                    <div
+                                                        key={source.Id || index}
+                                                        className="version-dropdown-item"
+                                                        onClick={() => {
+                                                            handlePlayClick(index)
+                                                            setIsVersionDropdownOpen(false)
+                                                        }}
+                                                    >
+                                                        {displayName}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                         <div

@@ -221,6 +221,89 @@
     color: var(--brand-color);
 }
 
+.media-actions > .actions > .primary > .play-media > .version-select-container {
+    position: relative;
+}
+
+.media-actions > .actions > .primary > .play-media > .version-select-container > .version-select {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 6px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.2s ease-out;
+}
+
+.media-actions > .actions > .primary > .play-media > .version-select-container > .version-select:hover,
+.media-actions > .actions > .primary > .play-media > .version-select-container > .version-select.active {
+    background-color: var(--bg-color-tertiary);
+}
+
+.media-actions > .actions > .primary > .play-media > .version-select-container > .version-select > svg {
+    color: var(--brand-color);
+}
+
+.media-actions > .actions > .primary > .play-media > .version-select-container > .version-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    min-width: 200px;
+    background-color: var(--bg-color-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s;
+    z-index: 100;
+}
+
+.media-actions > .actions > .primary > .play-media > .version-select-container > .version-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.media-actions
+    > .actions
+    > .primary
+    > .play-media
+    > .version-select-container
+    > .version-dropdown
+    > .version-dropdown-item {
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-out;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.media-actions
+    > .actions
+    > .primary
+    > .play-media
+    > .version-select-container
+    > .version-dropdown
+    > .version-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.media-actions
+    > .actions
+    > .primary
+    > .play-media
+    > .version-select-container
+    > .version-dropdown
+    > .version-dropdown-item:hover {
+    background-color: var(--bg-color-tertiary);
+}
+
 .media-actions > .actions > .primary > .icon {
     position: relative;
     z-index: 1;
