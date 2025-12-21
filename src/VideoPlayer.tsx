@@ -366,10 +366,14 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                     <ArrowLeftIcon size={20} className="return-icon" />
                 </button>
                 <div className="video-title">
-                    {currentTrack?.Type === 'Episode' && currentTrack?.SeriesName && (
-                        <div className="series-title">{currentTrack.SeriesName}</div>
+                    {currentTrack?.Type === 'Episode' && currentTrack?.SeriesName ? (
+                        <div className="container">
+                            <div className="series">{currentTrack.SeriesName}</div>
+                            <div className="episode">{displayTitle}</div>
+                        </div>
+                    ) : (
+                        <>{displayTitle}</>
                     )}
-                    {displayTitle}
                 </div>
             </div>
 

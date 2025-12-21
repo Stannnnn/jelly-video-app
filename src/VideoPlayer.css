@@ -41,13 +41,13 @@
     position: relative;
     z-index: 1;
     padding: 14px;
-    padding-bottom: 20px;
+    padding-bottom: 22px;
     display: flex;
     align-items: center;
     transform: translateY(0);
     transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
         transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
 }
 
 .video-container > .video-header.hidden {
@@ -62,7 +62,7 @@
     padding: 6px;
     margin-right: 12px;
     border-radius: 20px;
-    transition: background-color 0.2s ease-in;
+    transition: background-color 0.2s ease-out;
     background-color: transparent;
 }
 
@@ -73,6 +73,15 @@
 .video-container > .video-header > .video-title {
     font-size: 1rem;
     font-weight: 500;
+}
+
+.video-container > .video-header > .video-title > .container > .series {
+    margin-bottom: 2px;
+}
+
+.video-container > .video-header > .video-title > .container > .episode {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .video-container > .video-overlay {
@@ -136,14 +145,14 @@
     position: relative;
     z-index: 1;
     padding: 14px;
-    padding-top: 20px;
+    padding-top: 22px;
     display: flex;
     align-items: center;
     gap: 12px;
     transform: translateY(0);
     transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
         transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
 }
 
 .video-container > .video-controls.hidden {
@@ -162,7 +171,7 @@
     padding: 7px;
     border-radius: 20px;
     background-color: transparent;
-    transition: background-color 0.2s ease-in;
+    transition: background-color 0.2s ease-out;
 }
 
 .video-container > .video-controls .controls-btn:hover {
@@ -498,6 +507,7 @@
 }
 
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item {
+    position: relative;
     font-size: 0.8125rem;
     cursor: pointer;
     display: flex;
@@ -506,8 +516,7 @@
     gap: 8px;
     padding: 8px 12px;
     border-radius: 8px;
-    transition: background-color 0.15s ease-in;
-    position: relative;
+    transition: background-color 0.2s ease-out;
 }
 
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item:hover {
