@@ -3,6 +3,7 @@ import {
     CheckCircleFillIcon,
     CheckCircleIcon,
     ChevronDownIcon,
+    ChevronLeftIcon,
     HeartFillIcon,
     HeartIcon,
     StarFillIcon,
@@ -319,7 +320,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                     </div>
                                 </div>
                                 {videoSources.length > 1 && (
-                                    <div className="version-select-container" ref={versionButtonRef}>
+                                    <div className="version-container" ref={versionButtonRef}>
                                         <div
                                             className={`version-select ${isVersionDropdownOpen ? 'active' : ''}`}
                                             onClick={toggleVersionDropdown}
@@ -387,33 +388,26 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 <MoreIcon width={14} height={14} />
                             </div>
                             <div className={`more-dropdown ${isMoreDropdownOpen ? 'open' : ''}`}>
+                                <div className="more-dropdown-item" onClick={toggleDownload}>
+                                    <div className="text">
+                                        {item.offlineState === 'downloaded' ? 'Remove download' : 'Download'}
+                                    </div>
+                                </div>
+                                <div className="dropdown-separator" />
                                 <div className="more-dropdown-item" onClick={handleAddToCollection}>
-                                    <span>Add to collection</span>
-                                    <svg
-                                        className="arrow-icon"
-                                        width="12"
-                                        height="12"
-                                        viewBox="0 0 12 12"
-                                        fill="currentColor"
-                                    >
-                                        <path
-                                            d="M4.5 2L8.5 6L4.5 10"
-                                            stroke="currentColor"
-                                            strokeWidth="1.5"
-                                            fill="none"
-                                        />
-                                    </svg>
-                                    <div className={`collection-subdropdown ${isCollectionDropdownOpen ? 'open' : ''}`}>
-                                        <div className="collection-input-container">
+                                    <div className="text">Add to collection</div>
+                                    <div className="icon">
+                                        <ChevronLeftIcon size={14} />
+                                    </div>
+                                    <div className={`sub-dropdown ${isCollectionDropdownOpen ? 'open' : ''}`}>
+                                        <div className="input-container">
                                             <input
                                                 value={collectionName}
                                                 onChange={handleCollectionNameChange}
                                                 onKeyDown={handleCollectionInputKeyDown}
                                                 onClick={e => e.stopPropagation()}
                                                 placeholder="New collection..."
-                                                className={`collection-input${
-                                                    collectionName.trim() ? ' has-text' : ''
-                                                }`}
+                                                className={`input${collectionName.trim() ? ' has-text' : ''}`}
                                                 disabled={isCreatingCollection}
                                             />
                                             {isCreatingCollection && <InlineLoader />}
@@ -423,25 +417,24 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                 </button>
                                             )}
                                         </div>
-                                        {isLoadingCollections && collections.length === 0 && (
-                                            <div className="collection-loading">
-                                                <InlineLoader />
-                                            </div>
-                                        )}
-                                        {collections.length > 0 && <div className="collection-separator" />}
-                                        {collections.map(collection => (
-                                            <div
-                                                key={collection.Id}
-                                                className="collection-dropdown-item"
-                                                onClick={() => handleSelectCollection(collection.Id)}
-                                            >
-                                                {collection.Name}
-                                            </div>
-                                        ))}
+                                        {collections.length > 0 && <div className="dropdown-separator" />}
+                                        <div className="dropdown-content">
+                                            {isLoadingCollections && collections.length === 0 && (
+                                                <div className="loading">
+                                                    <InlineLoader />
+                                                </div>
+                                            )}
+                                            {collections.map(collection => (
+                                                <div
+                                                    key={collection.Id}
+                                                    className="dropdown-item"
+                                                    onClick={() => handleSelectCollection(collection.Id)}
+                                                >
+                                                    {collection.Name}
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="more-dropdown-item" onClick={toggleDownload}>
-                                    {item.offlineState === 'downloaded' ? 'Remove download' : 'Download'}
                                 </div>
                             </div>
                         </div>
