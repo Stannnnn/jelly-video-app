@@ -399,7 +399,10 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                     <div className="icon">
                                         <ChevronLeftIcon size={14} />
                                     </div>
-                                    <div className={`sub-dropdown ${isCollectionDropdownOpen ? 'open' : ''}`} onClick={e => e.stopPropagation()}>
+                                    <div
+                                        className={`sub-dropdown ${isCollectionDropdownOpen ? 'open' : ''}`}
+                                        onClick={e => e.stopPropagation()}
+                                    >
                                         <div className="input-container">
                                             <input
                                                 value={collectionName}
