@@ -369,15 +369,21 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                     </div>
                     <div className="secondary">
                         <div
-                            className={`download-state ${item.offlineState === 'downloaded' ? 'downloaded' : ''}`}
+                            className={`download-state ${
+                                item.offlineState === 'downloaded'
+                                    ? 'downloaded'
+                                    : item.offlineState === 'downloading'
+                                    ? 'downloading'
+                                    : ''
+                            }`}
                             onClick={toggleDownload}
                             title={item.offlineState === 'downloaded' ? 'Remove from downloads' : 'Add to downloads'}
                         >
                             {item.offlineState === 'downloaded' ? (
                                 <DownloadedIcon width={20} height={20} />
-                            ) : (
+                            ) : item.offlineState === 'downloading' ? (
                                 <DownloadingIcon width={20} height={20} />
-                            )}
+                            ) : null}
                         </div>
                         <div className="more-container" ref={moreButtonRef}>
                             <div
