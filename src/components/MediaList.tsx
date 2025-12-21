@@ -20,6 +20,8 @@ export const MediaList = ({
     removeButton,
     className,
     parentItem,
+    progressBarRef,
+    currentDownloadingId,
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
@@ -31,6 +33,8 @@ export const MediaList = ({
     removeButton?: (item: MediaItem) => ReactNode
     className?: string
     parentItem?: MediaItem
+    progressBarRef?: React.RefObject<HTMLDivElement | null>
+    currentDownloadingId?: string
 }) => {
     const { displayItems, setRowRefs } = useDisplayItems(items, isLoading)
     const navigate = useNavigate()
@@ -83,6 +87,18 @@ export const MediaList = ({
                     <Squircle width={152} height={228} cornerRadius={8} className="media-thumbnail">
                         <JellyImg item={item} type={'Primary'} width={152} height={228} />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                        {currentDownloadingId === item.Id && item.offlineState === 'downloading' && (
+                            <div
+                                ref={progressBarRef as React.RefObject<HTMLDivElement>}
+                                className="progress-indicator"
+                                title="Download progress"
+                                style={
+                                    {
+                                        '--progress-percent': '0%',
+                                    } as React.CSSProperties
+                                }
+                            />
+                        )}
                     </Squircle>
                     <div className="media-details">
                         <span className="title" title={item.Name}>

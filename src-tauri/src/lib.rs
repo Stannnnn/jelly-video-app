@@ -6,6 +6,7 @@ pub fn run() {
         .plugin(tauri_plugin_libmpv::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
+        .manage(storage::DownloadManager::default())
         .invoke_handler(tauri::generate_handler![
             storage::storage_save_track,
             storage::storage_get_track,
@@ -18,6 +19,7 @@ pub fn run() {
             storage::storage_get_page,
             storage::storage_search_items,
             storage::storage_get_stats,
+            storage::storage_abort_downloads,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -2,7 +2,11 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
-use tauri::{AppHandle, Manager};
+use std::sync::{Arc, Mutex};
+use tauri::{AppHandle, Manager, State, Emitter};
+use futures_util::StreamExt;
+use tokio::io::AsyncWriteExt;
+use tokio_util::sync::CancellationToken;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -21,6 +25,11 @@ pub struct StorageTrack {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StorageMetadata {
     pub tracks: HashMap<String, StorageTrack>,
+}
+
+#[derive(Default)]
+pub struct DownloadManager {
+    cancellation_token: Arc<Mutex<Option<CancellationToken>>>,
 }
 
 fn get_storage_dir(app: &AppHandle) -> tauri::Result<PathBuf> {
@@ -62,6 +71,7 @@ fn save_metadata(app: &AppHandle, metadata: &StorageMetadata) -> tauri::Result<(
 #[tauri::command]
 pub async fn storage_save_track(
     app: AppHandle,
+    download_manager: State<'_, DownloadManager>,
     id: String,
     data: StorageTrack,
     video_url: Option<String>,
@@ -69,7 +79,24 @@ pub async fn storage_save_track(
 ) -> Result<(), String> {
     println!("storage_save_track: Starting to save track with id: {}", id);
     
+    // Check if download already in progress
+    {
+        let token = download_manager.cancellation_token.lock().unwrap();
+        if token.is_some() {
+            let err_msg = "Download already in progress".to_string();
+            println!("storage_save_track: Error - {}", err_msg);
+            return Err(err_msg);
+        }
+    }
+    
     let storage_dir = get_storage_dir(&app).map_err(|e| e.to_string())?;
+    
+    // Create cancellation token for this download
+    let cancel_token = CancellationToken::new();
+    {
+        let mut token = download_manager.cancellation_token.lock().unwrap();
+        *token = Some(cancel_token.clone());
+    }
     
     // Download video blob if URL is provided
     if let Some(url) = video_url {
@@ -80,14 +107,70 @@ pub async fn storage_save_track(
         if !response.status().is_success() {
             let err_msg = format!("Failed to download video: HTTP {}", response.status());
             println!("storage_save_track: Error - {}", err_msg);
+            // Cleanup token on error
+            *download_manager.cancellation_token.lock().unwrap() = None;
             return Err(err_msg);
         }
         
-        let blob_data = response.bytes().await.map_err(|e| e.to_string())?;
-        let blob_size = blob_data.len();
+        let total_size = response.content_length().unwrap_or(0);
         let blob_path = storage_dir.join(format!("{}.blob", id));
-        fs::write(blob_path, blob_data).map_err(|e| e.to_string())?;
-        println!("storage_save_track: Video saved successfully ({} bytes) for id: {}", blob_size, id);
+        
+        // Create file for writing
+        let mut file = tokio::fs::File::create(&blob_path).await.map_err(|e| {
+            *download_manager.cancellation_token.lock().unwrap() = None;
+            e.to_string()
+        })?;
+        let mut stream = response.bytes_stream();
+        let mut downloaded: u64 = 0;
+        
+        // Download in chunks and emit progress
+        loop {
+            tokio::select! {
+                _ = cancel_token.cancelled() => {
+                    println!("storage_save_track: Download cancelled for id: {}", id);
+                    // Remove partial file
+                    let _ = tokio::fs::remove_file(&blob_path).await;
+                    *download_manager.cancellation_token.lock().unwrap() = None;
+                    return Err("Download cancelled".to_string());
+                }
+                chunk_result = stream.next() => {
+                    match chunk_result {
+                        Some(Ok(chunk)) => {
+                            file.write_all(&chunk).await.map_err(|e| {
+                                *download_manager.cancellation_token.lock().unwrap() = None;
+                                e.to_string()
+                            })?;
+                            downloaded += chunk.len() as u64;
+                            
+                            let progress = if total_size > 0 {
+                                (downloaded as f64 / total_size as f64 * 100.0) as u32
+                            } else {
+                                0
+                            };
+                            
+                            // Emit progress event
+                            let _ = app.emit("download-progress", serde_json::json!({
+                                "id": id,
+                                "downloaded": downloaded,
+                                "total": total_size,
+                                "progress": progress
+                            }));
+                        }
+                        Some(Err(e)) => {
+                            *download_manager.cancellation_token.lock().unwrap() = None;
+                            return Err(e.to_string());
+                        }
+                        None => break,
+                    }
+                }
+            }
+        }
+        
+        file.flush().await.map_err(|e| {
+            *download_manager.cancellation_token.lock().unwrap() = None;
+            e.to_string()
+        })?;
+        println!("storage_save_track: Video saved successfully ({} bytes) for id: {}", downloaded, id);
     }
     
     // Download thumbnail if URL is provided
@@ -113,6 +196,9 @@ pub async fn storage_save_track(
     metadata.tracks.insert(id.clone(), data);
     save_metadata(&app, &metadata).map_err(|e| e.to_string())?;
     println!("storage_save_track: Track saved successfully with id: {}", id);
+    
+    // Remove cancellation token on success
+    *download_manager.cancellation_token.lock().unwrap() = None;
     
     Ok(())
 }
@@ -366,4 +452,16 @@ pub async fn storage_get_stats(app: AppHandle) -> Result<serde_json::Value, Stri
         "usage": total_size,
         "trackCount": track_count
     }))
+}
+
+#[tauri::command]
+pub async fn storage_abort_downloads(
+    download_manager: State<'_, DownloadManager>,
+) -> Result<(), String> {
+    let mut token = download_manager.cancellation_token.lock().unwrap();
+    if let Some(cancel_token) = token.take() {
+        cancel_token.cancel();
+        println!("storage_abort_downloads: Cancelled download");
+    }
+    Ok(())
 }

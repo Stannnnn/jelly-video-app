@@ -1,5 +1,6 @@
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client'
 import { invoke, isTauri } from '@tauri-apps/api/core'
+import { listen } from '@tauri-apps/api/event'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { MediaItem } from '../../api/jellyfin'
 import { usePatchQueries } from '../../hooks/usePatchQueries'
@@ -20,6 +21,8 @@ const useInitialState = () => {
     const audioStorage = useAudioStorageContext()
     const { patchMediaItem, patchMediaItems, prependItemsToQueryData, removeItemFromQueryData } = usePatchQueries()
     const [storageStats, setStorageStats] = useState({ usage: 0, trackCount: 0 })
+    const progressBarRef = useRef<HTMLDivElement | null>(null)
+    const [currentDownloadingId, setCurrentDownloadingId] = useState<string | undefined>(undefined)
 
     const refreshStorageStats = useCallback(async () => {
         if (isTauri()) {
@@ -36,6 +39,28 @@ const useInitialState = () => {
         refreshStorageStats()
     }, [refreshStorageStats])
 
+    // Listen for download progress events
+    useEffect(() => {
+        if (!isTauri()) return
+
+        const unlisten = listen<{ id: string; downloaded: number; total: number; progress: number }>(
+            'download-progress',
+            event => {
+                const { id, downloaded, total, progress } = event.payload
+                console.log(`Download progress for ${id}: ${progress}% (${downloaded}/${total} bytes)`)
+
+                // Directly update the progress bar element
+                if (progressBarRef.current) {
+                    progressBarRef.current.style.setProperty('--progress-percent', `${progress}%`)
+                }
+            }
+        )
+
+        return () => {
+            unlisten.then(fn => fn())
+        }
+    }, [])
+
     const [queue, setQueue] = useState<Task[]>(() => {
         try {
             const stored = localStorage.getItem(STORAGE_KEY)
@@ -48,6 +73,17 @@ const useInitialState = () => {
 
     const processingRef = useRef(false)
     const abortControllerRef = useRef<AbortController | null>(null)
+
+    // Abort ongoing download on unmount
+    useEffect(() => {
+        return () => {
+            if (isTauri()) {
+                invoke('storage_abort_downloads').catch(err =>
+                    console.error('Failed to abort downloads on unmount:', err)
+                )
+            }
+        }
+    }, [])
 
     // Persist queue
     useEffect(() => {
@@ -112,6 +148,10 @@ const useInitialState = () => {
         if (abortControllerRef.current) {
             abortControllerRef.current.abort('clearQueue')
             abortControllerRef.current = null
+
+            if (isTauri()) {
+                invoke('storage_abort_downloads').catch(err => console.error('Failed to abort downloads:', err))
+            }
         }
 
         queue.forEach(({ mediaItem }) => {
@@ -143,6 +183,7 @@ const useInitialState = () => {
 
             try {
                 if (action === 'download') {
+                    setCurrentDownloadingId(mediaItem.Id)
                     const already = await audioStorage.hasTrack(mediaItem.Id)
 
                     if (already) {
@@ -212,6 +253,11 @@ const useInitialState = () => {
                     patchMediaItem(mediaItem.Id, item => ({ ...item, offlineState: 'downloaded' }))
                 }
             } finally {
+                // Clear progress bar
+                if (progressBarRef.current) {
+                    progressBarRef.current.style.setProperty('--progress-percent', '0%')
+                }
+                setCurrentDownloadingId(undefined)
                 abortControllerRef.current = null
                 setQueue(prev => prev.slice(1))
                 processingRef.current = false
@@ -251,6 +297,10 @@ const useInitialState = () => {
                 abortControllerRef.current.abort('removeFromQueue')
                 abortControllerRef.current = null
                 processingRef.current = false
+
+                if (isTauri()) {
+                    invoke('storage_abort_downloads').catch(err => console.error('Failed to abort download:', err))
+                }
             }
 
             if (task.action === 'download') {
@@ -261,6 +311,11 @@ const useInitialState = () => {
 
             return prev.filter(t => t.mediaItem.Id !== itemId)
         })
+
+        // Clear progress bar if we removed the currently downloading item
+        if (progressBarRef.current) {
+            progressBarRef.current.style.setProperty('--progress-percent', '0%')
+        }
     }
 
     return {
@@ -272,6 +327,8 @@ const useInitialState = () => {
         clearQueue,
         queue,
         removeFromQueue,
+        progressBarRef,
+        currentDownloadingId,
     }
 }
 

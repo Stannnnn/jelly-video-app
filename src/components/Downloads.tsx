@@ -8,7 +8,7 @@ import './Downloads.css'
 export const Downloads = () => {
     const { items, isLoading, error, loadMore } = useIndexedDbDownloadsData()
     const { jellyItemKind } = useFilterContext()
-    const { queue, removeFromQueue } = useDownloadContext()
+    const { queue, removeFromQueue, progressBarRef, currentDownloadingId } = useDownloadContext()
 
     const queueItems = queue
         .filter(task => task.mediaItem.Type === jellyItemKind)
@@ -27,9 +27,11 @@ export const Downloads = () => {
                     <MediaList
                         items={queueItems}
                         isLoading={false}
-                        type={'mixed'}
+                        type={'movie'}
                         disableActions={true}
                         disableEvents={true}
+                        progressBarRef={progressBarRef}
+                        currentDownloadingId={currentDownloadingId}
                         removeButton={item => (
                             <div
                                 className="remove-queue-button"
