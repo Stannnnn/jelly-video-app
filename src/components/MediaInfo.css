@@ -257,7 +257,11 @@
     gap: 8px;
 }
 
-.media-actions > .actions > .secondary > .more {
+.media-actions > .actions > .secondary > .more-container {
+    position: relative;
+}
+
+.media-actions > .actions > .secondary > .more-container > .more {
     cursor: pointer;
     padding: 7px;
     border-radius: 20px;
@@ -265,14 +269,242 @@
     transition: background-color 0.2s ease-out;
 }
 
-.media-actions > .actions > .secondary > .more:hover {
+.media-actions > .actions > .secondary > .more-container > .more:hover {
     background-color: var(--bg-color-tertiary);
 }
 
-.media-actions > .actions > .secondary > .more.active {
+.media-actions > .actions > .secondary > .more-container > .more.active {
     background-color: var(--bg-color-tertiary);
 }
 
-.media-actions > .actions > .secondary > .more > svg {
+.media-actions > .actions > .secondary > .more-container > .more > svg {
     fill: var(--brand-color);
+}
+
+.media-actions > .actions > .secondary > .more-container > .more-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    min-width: 180px;
+    background-color: var(--bg-color-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: visible;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s;
+    z-index: 100;
+}
+
+.media-actions > .actions > .secondary > .more-container > .more-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.media-actions > .actions > .secondary > .more-container > .more-dropdown > .more-dropdown-item {
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-out;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.media-actions > .actions > .secondary > .more-container > .more-dropdown > .more-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.media-actions > .actions > .secondary > .more-container > .more-dropdown > .more-dropdown-item:hover {
+    background-color: var(--bg-color-tertiary);
+}
+
+.media-actions > .actions > .secondary > .more-container > .more-dropdown > .more-dropdown-item > .arrow-icon {
+    opacity: 0.5;
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown {
+    position: absolute;
+    right: calc(100% + 4px);
+    top: -1px;
+    min-width: 220px;
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: var(--bg-color-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(8px);
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s;
+    z-index: 101;
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown
+    > .collection-input-container {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-color-secondary);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1;
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown
+    > .collection-input-container
+    > .collection-input {
+    flex: 1;
+    padding: 6px 10px;
+    font-size: 0.875rem;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--font-color);
+    outline: none;
+    transition: border-color 0.15s ease-out;
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown
+    > .collection-input-container
+    > .collection-input:focus {
+    border-color: var(--brand-color);
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown
+    > .collection-input-container
+    > .create-btn {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    background-color: var(--brand-color);
+    color: var(--font-color-inverted);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.15s ease-out;
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown
+    > .collection-input-container
+    > .create-btn:hover {
+    opacity: 0.9;
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown
+    > .collection-separator {
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown
+    > .collection-dropdown-item {
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-out;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown
+    > .collection-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown
+    > .collection-dropdown-item:hover {
+    background-color: var(--bg-color-tertiary);
+}
+
+.media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .collection-subdropdown
+    > .collection-loading {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

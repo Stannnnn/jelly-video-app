@@ -1,5 +1,6 @@
 import { Jellyfin } from '@jellyfin/sdk'
 import { UserLibraryApi } from '@jellyfin/sdk/lib/generated-client'
+import { CollectionApi } from '@jellyfin/sdk/lib/generated-client/api/collection-api'
 import { ConfigurationApi } from '@jellyfin/sdk/lib/generated-client/api/configuration-api'
 import { ItemsApi } from '@jellyfin/sdk/lib/generated-client/api/items-api'
 import { LibraryApi } from '@jellyfin/sdk/lib/generated-client/api/library-api'
@@ -616,6 +617,52 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
+    const addToCollection = async (collectionId: string, items: MediaItem[]) => {
+        const collectionApi = new CollectionApi(api.configuration)
+        const itemIds = items.map(item => item.Id)
+        await collectionApi.addToCollection({
+            collectionId,
+            ids: itemIds,
+        })
+    }
+
+    const removeFromCollection = async (collectionId: string, item: MediaItem) => {
+        const collectionApi = new CollectionApi(api.configuration)
+        await collectionApi.removeFromCollection({
+            collectionId,
+            ids: [item.Id],
+        })
+    }
+
+    const createCollection = async (name: string) => {
+        const collectionApi = new CollectionApi(api.configuration)
+        const response = await collectionApi.createCollection({
+            name,
+            isLocked: false,
+        })
+        return response.data
+    }
+
+    const renameCollection = async (collectionId: string, newName: string) => {
+        // Jellyfin doesn't have a direct API for renaming. We need to use the raw API endpoint
+        await fetch(`${serverUrl}/Items/${collectionId}`, {
+            method: 'POST',
+            headers: {
+                'X-Emby-Authorization': `MediaBrowser Client="Jelly Video App", Device="Web", DeviceId="${deviceId}", Version="${__VERSION__}"`,
+                'X-Emby-Token': token,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ Name: newName }),
+        })
+    }
+
+    const deleteCollection = async (collectionId: string) => {
+        const libraryApi = new LibraryApi(api.configuration)
+        await libraryApi.deleteItem({
+            itemId: collectionId,
+        })
+    }
+
     return {
         loginToJellyfin,
         getMovies,
@@ -649,5 +696,10 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         getCastCrew,
         getPersonMovies,
         getSimilarItems,
+        addToCollection,
+        removeFromCollection,
+        createCollection,
+        renameCollection,
+        deleteCollection,
     }
 }

@@ -7,17 +7,20 @@ import {
     HeartIcon,
     StarFillIcon,
 } from '@primer/octicons-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
+import { useJellyfinCollections } from '../hooks/Jellyfin/useJellyfinCollections'
 import { useJellyfinNextEpisode } from '../hooks/Jellyfin/useJellyfinNextEpisode'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
+import { useCollections } from '../hooks/useCollections'
 import { useDisplayTitle } from '../hooks/useDisplayTitle'
 import { useFavorites } from '../hooks/useFavorites'
 import { useWatchedState } from '../hooks/useWatchedState'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
 import { getVideoQuality } from '../utils/getVideoQuality'
+import { InlineLoader } from './InlineLoader'
 import { JellyImg } from './JellyImg'
 import './MediaInfo.css'
 import { DownloadedIcon, DownloadingIcon, MoreIcon, PlayIcon } from './SvgIcons'
@@ -27,6 +30,8 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const { addToFavorites, removeFromFavorites } = useFavorites()
     const { markAsPlayed, markAsUnplayed } = useWatchedState()
     const { addToDownloads, removeFromDownloads } = useDownloadContext()
+    const { addToCollection, createCollection } = useCollections()
+    const { collections, isLoading: isLoadingCollections } = useJellyfinCollections()
     const { nextEpisode, isLoading: isLoadingNextEpisode } = useJellyfinNextEpisode(item)
     const {
         configuration: { minResumePercentage, maxResumePercentage },
@@ -35,6 +40,11 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false)
     const [isPlayed, setIsPlayed] = useState(item.UserData?.Played || false)
     const [isTogglingWatched, setIsTogglingWatched] = useState(false)
+    const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
+    const [isCollectionDropdownOpen, setIsCollectionDropdownOpen] = useState(false)
+    const [collectionName, setCollectionName] = useState('')
+    const [isCreatingCollection, setIsCreatingCollection] = useState(false)
+    const moreButtonRef = useRef<HTMLDivElement>(null)
 
     const toggleFavorite = async (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -99,6 +109,71 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const handlePlayClick = () => {
         navigate(`/play/${nextEpisode?.episodeId || item.Id}`)
     }
+
+    const toggleMoreDropdown = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setIsMoreDropdownOpen(!isMoreDropdownOpen)
+    }
+
+    const handleAddToCollection = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setIsCollectionDropdownOpen(!isCollectionDropdownOpen)
+    }
+
+    const handleCollectionNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCollectionName(e.target.value)
+    }
+
+    const handleCollectionInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && collectionName.trim()) {
+            handleCreateCollection()
+        }
+    }
+
+    const handleCreateCollection = async () => {
+        if (!collectionName.trim() || isCreatingCollection) return
+
+        setIsCreatingCollection(true)
+        try {
+            const newCollection = await createCollection(collectionName.trim())
+            await addToCollection(item, newCollection.Id)
+            setCollectionName('')
+            setIsCollectionDropdownOpen(false)
+            setIsMoreDropdownOpen(false)
+        } catch (error) {
+            console.error('Failed to create collection:', error)
+        } finally {
+            setIsCreatingCollection(false)
+        }
+    }
+
+    const handleSelectCollection = async (collectionId: string) => {
+        try {
+            await addToCollection(item, collectionId)
+            setIsCollectionDropdownOpen(false)
+            setIsMoreDropdownOpen(false)
+        } catch (error) {
+            console.error('Failed to add to collection:', error)
+        }
+    }
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (moreButtonRef.current && !moreButtonRef.current.contains(event.target as Node)) {
+                setIsCollectionDropdownOpen(false)
+                setIsMoreDropdownOpen(false)
+            }
+        }
+
+        if (isMoreDropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside)
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [isMoreDropdownOpen])
 
     //const genres = item.Genres?.join(',') || ''
     const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : null
@@ -259,8 +334,72 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 <DownloadingIcon width={20} height={20} />
                             )}
                         </div>
-                        <div className="more" title="More">
-                            <MoreIcon width={14} height={14} />
+                        <div className="more-container" ref={moreButtonRef}>
+                            <div
+                                className={`more ${isMoreDropdownOpen ? 'active' : ''}`}
+                                onClick={toggleMoreDropdown}
+                                title="More"
+                            >
+                                <MoreIcon width={14} height={14} />
+                            </div>
+                            <div className={`more-dropdown ${isMoreDropdownOpen ? 'open' : ''}`}>
+                                <div className="more-dropdown-item" onClick={handleAddToCollection}>
+                                    <span>Add to collection</span>
+                                    <svg
+                                        className="arrow-icon"
+                                        width="12"
+                                        height="12"
+                                        viewBox="0 0 12 12"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            d="M4.5 2L8.5 6L4.5 10"
+                                            stroke="currentColor"
+                                            strokeWidth="1.5"
+                                            fill="none"
+                                        />
+                                    </svg>
+                                    <div className={`collection-subdropdown ${isCollectionDropdownOpen ? 'open' : ''}`}>
+                                        <div className="collection-input-container">
+                                            <input
+                                                value={collectionName}
+                                                onChange={handleCollectionNameChange}
+                                                onKeyDown={handleCollectionInputKeyDown}
+                                                onClick={e => e.stopPropagation()}
+                                                placeholder="New collection..."
+                                                className={`collection-input${
+                                                    collectionName.trim() ? ' has-text' : ''
+                                                }`}
+                                                disabled={isCreatingCollection}
+                                            />
+                                            {isCreatingCollection && <InlineLoader />}
+                                            {!isCreatingCollection && collectionName.trim() && (
+                                                <button className="create-btn" onClick={handleCreateCollection}>
+                                                    Create
+                                                </button>
+                                            )}
+                                        </div>
+                                        {isLoadingCollections && collections.length === 0 && (
+                                            <div className="collection-loading">
+                                                <InlineLoader />
+                                            </div>
+                                        )}
+                                        {collections.length > 0 && <div className="collection-separator" />}
+                                        {collections.map(collection => (
+                                            <div
+                                                key={collection.Id}
+                                                className="collection-dropdown-item"
+                                                onClick={() => handleSelectCollection(collection.Id)}
+                                            >
+                                                {collection.Name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="more-dropdown-item" onClick={toggleDownload}>
+                                    {item.offlineState === 'downloaded' ? 'Remove download' : 'Download'}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
