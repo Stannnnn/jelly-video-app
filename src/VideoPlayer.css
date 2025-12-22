@@ -138,7 +138,7 @@
 }
 
 .video-container > .video-overlay > .container > .loading_container > .loading > circle:nth-child(1) {
-    stroke: rgba(46, 46, 46, 0.4);
+    stroke: rgba(70, 70, 70, 0.4);
 }
 
 .video-container > .video-controls {

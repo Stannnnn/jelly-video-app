@@ -310,7 +310,30 @@
 .media-actions > .actions > .secondary {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+}
+
+.media-actions > .actions > .secondary > .download-state {
+    padding: 4px;
+    fill: var(--font-color-secondary);
+    transition: fill 0.2s ease-out;
+}
+
+.media-actions > .actions > .secondary > .download-state.downloading > svg path:last-child {
+    clip-path: inset(100% 0 0 0);
+    animation: syncColorSweepMI 1.6s linear infinite;
+}
+
+@keyframes syncColorSweepMI {
+    0% {
+        clip-path: inset(0 0 100% 0);
+    }
+    50% {
+        clip-path: inset(0% 0 0 0);
+    }
+    100% {
+        clip-path: inset(100% 0 0 0);
+    }
 }
 
 .media-actions > .actions > .secondary > .more-container {
@@ -416,6 +439,12 @@
     background-color: var(--bg-color-tertiary);
 }
 
+.media-actions > .actions > .secondary > .more-container > .more-dropdown > .more-dropdown-item.disabled {
+    opacity: 0.3;
+    cursor: initial;
+    background-color: unset !important;
+}
+
 .media-actions > .actions > .secondary > .more-container > .more-dropdown > .more-dropdown-item > .text {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -435,6 +464,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    cursor: initial;
     padding: 4px;
     border-radius: 10px;
     box-shadow: var(--dropdown-shadow);

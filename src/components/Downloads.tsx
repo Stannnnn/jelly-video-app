@@ -49,7 +49,7 @@ export const Downloads = () => {
             <MediaList
                 items={items}
                 isLoading={isLoading && queueItems.length === 0}
-                type={'mixed'}
+                type={'mixedSmall'}
                 loadMore={loadMore}
                 disableActions={true}
             />
