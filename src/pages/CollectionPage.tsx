@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { Loader } from '../components/Loader'
+import { MediaFooter } from '../components/MediaFooter'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
 import { useJellyfinItemChildren } from '../hooks/Jellyfin/Infinite/useJellyfinItemChildren'
@@ -40,6 +41,7 @@ export const CollectionPage = () => {
                     {childrenError && <div className="error">{childrenError || 'Collection items not found'}</div>}
                 </div>
             </div>
+            <MediaFooter item={collection} />
         </div>
     )
 }

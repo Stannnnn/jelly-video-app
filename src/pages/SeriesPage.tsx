@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { Loader } from '../components/Loader'
+import { MediaFooter } from '../components/MediaFooter'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
 import { useJellyfinCastCrew } from '../hooks/Jellyfin/useJellyfinCastCrew'
@@ -109,6 +110,7 @@ export const SeriesPage = () => {
                     </div>
                 )}
             </div>
+            <MediaFooter item={series} />
         </div>
     )
 }

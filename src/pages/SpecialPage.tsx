@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { Loader } from '../components/Loader'
+import { MediaFooter } from '../components/MediaFooter'
 import { MediaInfo } from '../components/MediaInfo'
 import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import './MediaPages.css'
@@ -20,6 +21,7 @@ export const SpecialPage = () => {
     return (
         <div className="media-page special">
             <MediaInfo item={special} />
+            <MediaFooter item={special} />
         </div>
     )
 }

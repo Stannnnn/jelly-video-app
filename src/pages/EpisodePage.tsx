@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { Loader } from '../components/Loader'
+import { MediaFooter } from '../components/MediaFooter'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
 import { useJellyfinEpisodes } from '../hooks/Jellyfin/useJellyfinEpisodes'
@@ -37,6 +38,7 @@ export const EpisodePage = () => {
                     />
                 </div>
             </div>
+            <MediaFooter item={episode} />
         </div>
     )
 }
