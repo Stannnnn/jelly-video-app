@@ -207,6 +207,14 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const runTimeTicks = item.RunTimeTicks || 0
     const videoSources = item.MediaSources || []
 
+    const sortedVideoSources = [...videoSources].sort((a, b) => {
+        const heightA = a.MediaStreams?.find(s => s.Type === 'Video')?.Height || 0
+        const heightB = b.MediaStreams?.find(s => s.Type === 'Video')?.Height || 0
+        return heightB - heightA
+    })
+
+    const defaultMediaSourceId = sortedVideoSources[0]?.Id ?? undefined
+
     return (
         <div className="media-info">
             <div className="media-header">
@@ -301,7 +309,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                     <div className="primary">
                         {!isLoadingNextEpisode && (
                             <div className="play-media">
-                                <div className="container" onClick={() => handlePlayClick()}>
+                                <div className="container" onClick={() => handlePlayClick(defaultMediaSourceId)}>
                                     <PlayIcon className="play-icon" width={16} height={16} />
                                     <div className="text">
                                         {item.Type === BaseItemKind.Series && nextEpisode && shouldShowResume
@@ -329,7 +337,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                             <ChevronDownIcon size={16} />
                                         </div>
                                         <div className={`version-dropdown ${isVersionDropdownOpen ? 'open' : ''}`}>
-                                            {videoSources.map((source, index) => {
+                                            {sortedVideoSources.map((source, index) => {
                                                 const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
                                                 const displayName =
                                                     source.Name || videoStream?.DisplayTitle || `Version ${index + 1}`
@@ -452,9 +460,13 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                 </div>
             </div>
             <div className="media-footer">
-                {videoSources.map((source, index) => {
+                {sortedVideoSources.map((source, index) => {
                     const fileName = source.Path?.split(/[\\/]/).pop() || source.Name || `Version ${index + 1}`
-                    const fileSize = source.Size ? `${(source.Size / 1e9).toFixed(2)}GB` : null
+                    const fileSize = source.Size
+                        ? source.Size >= 1e9
+                            ? `${(source.Size / 1e9).toFixed(2)}GB`
+                            : `${(source.Size / 1e6).toFixed(0)}MB`
+                        : null
                     const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
                     const vcodec =
                         videoStream?.DisplayTitle ||

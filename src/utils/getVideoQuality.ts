@@ -46,12 +46,19 @@ export const getQualityLabel = (
  * @returns Quality label (4K, 1080p, 720p, 480p, SD) or short code (4K, HD, SD), or null if no video stream found
  */
 export const getVideoQuality = (item: MediaItem | undefined, shortCode?: boolean): string | null => {
-    if (!item?.MediaStreams || item.MediaStreams.length === 0) {
+    if (!item) {
         return null
     }
 
-    // Find all video streams
-    const videoStreams = item.MediaStreams.filter(stream => stream.Type === 'Video')
+    let videoStreams: any[] = []
+
+    if (item.MediaSources && item.MediaSources.length > 0) {
+        videoStreams = item.MediaSources.flatMap(
+            source => source.MediaStreams?.filter(stream => stream.Type === 'Video') || []
+        )
+    } else if (item.MediaStreams && item.MediaStreams.length > 0) {
+        videoStreams = item.MediaStreams.filter(stream => stream.Type === 'Video')
+    }
 
     if (videoStreams.length === 0) {
         return null
