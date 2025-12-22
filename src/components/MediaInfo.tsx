@@ -339,8 +339,26 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                         <div className={`version-dropdown ${isVersionDropdownOpen ? 'open' : ''}`}>
                                             {sortedVideoSources.map((source, index) => {
                                                 const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
-                                                const displayName =
+                                                const baseName =
                                                     source.Name || videoStream?.DisplayTitle || `Version ${index + 1}`
+
+                                                const bitrate = source.Bitrate || videoStream?.BitRate
+                                                const bitrateMbps = bitrate ? (bitrate / 1_000_000).toFixed(1) : null
+
+                                                let qualityBadge = getVideoQuality(item, false, source.Id || undefined)
+
+                                                if (videoStream?.VideoRange === 'HDR' && qualityBadge) {
+                                                    qualityBadge = `${qualityBadge} HDR`
+                                                }
+
+                                                const details = [
+                                                    bitrateMbps ? `${bitrateMbps} Mbps` : null,
+                                                    qualityBadge,
+                                                ]
+                                                    .filter(Boolean)
+                                                    .join(', ')
+
+                                                const displayName = details ? `${baseName} (${details})` : baseName
 
                                                 return (
                                                     <div
