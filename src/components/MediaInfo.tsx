@@ -451,6 +451,34 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                     </div>
                 </div>
             </div>
+            <div className="media-footer">
+                {videoSources.map((source, index) => {
+                    const fileName = source.Path?.split(/[\\/]/).pop() || source.Name || `Version ${index + 1}`
+                    const fileSize = source.Size ? `${(source.Size / 1e9).toFixed(2)}GB` : null
+                    const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
+                    const vcodec =
+                        videoStream?.DisplayTitle ||
+                        (videoStream
+                            ? `${videoStream.Codec?.toUpperCase()} ${
+                                  videoStream.BitDepth ? `${videoStream.BitDepth}bit` : ''
+                              } ${videoStream.VideoRange === 'HDR' ? 'HDR' : ''}`.trim()
+                            : '')
+
+                    return fileName || vcodec || fileSize ? (
+                        <div key={source.Id || index} className="fileinfo">
+                            <div className="name" title={fileName}>
+                                {fileName}
+                            </div>
+                            {(vcodec || fileSize) && (
+                                <div className="container">
+                                    {vcodec && <div className="vcodec">{vcodec}</div>}
+                                    {fileSize && <div className="size">{fileSize}</div>}
+                                </div>
+                            )}
+                        </div>
+                    ) : null
+                })}
+            </div>
         </div>
     )
 }
