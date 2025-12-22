@@ -5,6 +5,7 @@
 
 .media-page > .media-content > .section {
     margin-bottom: 60px;
+    min-height: 120px;
 }
 
 .media-page > .media-content > .section:last-of-type {
@@ -75,7 +76,40 @@
     color: var(--font-color);
 }
 
-/* for section items with MediaList */
-.media-page > .media-content > .section > .loading_container {
-    height: unset;
+.media-page > .media-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 60px;
+    margin-bottom: -48px;
+}
+
+.media-page > .media-footer > .fileinfo {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--font-color-tertiary);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.media-page > .media-footer > .fileinfo > .container {
+    display: flex;
+    gap: 4px;
+}
+
+.media-page > .media-footer > .fileinfo > .container > .size {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Responsive */
+@media only screen and (max-width: 1060px) {
+    .media-page > .media-footer {
+        gap: 10px;
+    }
+
+    .media-page > .media-footer > .fileinfo {
+        flex-direction: column-reverse;
+    }
 }

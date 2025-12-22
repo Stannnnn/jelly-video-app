@@ -20,7 +20,7 @@ export const MediaFooter = ({ item }: { item: MediaItem }) => {
                     : null
                 const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
                 const vcodec =
-                    videoStream?.DisplayTitle ||
+                    videoStream?.DisplayTitle?.split('-').slice(-3).join('-').trim() ||
                     (videoStream
                         ? `${videoStream.Codec?.toUpperCase()} ${
                               videoStream.BitDepth ? `${videoStream.BitDepth}bit` : ''
@@ -35,6 +35,7 @@ export const MediaFooter = ({ item }: { item: MediaItem }) => {
                         {(vcodec || fileSize) && (
                             <div className="container">
                                 {vcodec && <div className="vcodec">{vcodec}</div>}
+                                <div className="divider">-</div>
                                 {fileSize && <div className="size">{fileSize}</div>}
                             </div>
                         )}

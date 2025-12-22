@@ -523,6 +523,24 @@ const MediaIndicators = ({
 }) => {
     return (
         <div className="media-indicators">
+            {/*
+            <div
+                className={`icon download-state ${
+                    item.offlineState === 'downloaded'
+                        ? 'icon download-state downloaded'
+                        : item.offlineState === 'downloading'
+                        ? 'icon download-state downloading'
+                        : ''
+                }`}
+                title={item.offlineState === 'downloaded' ? 'Downloaded' : 'Downloading'}
+            >
+                {item.offlineState === 'downloaded' ? (
+                    <DownloadedIcon width={16} height={16} />
+                ) : item.offlineState === 'downloading' ? (
+                    <DownloadingIcon width={16} height={16} />
+                ) : null}
+            </div>
+            */}
             {removeButton && removeButton(item)}
             {!disableActions && item.UserData?.Played && (
                 <div className="icon watched" title="Watched">
