@@ -1,7 +1,6 @@
 import { GearIcon } from '@primer/octicons-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { MediaItem } from '../api/jellyfin'
 import '../App.css'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
@@ -28,19 +27,6 @@ export const Sidenav = (props: { username: string }) => {
 
     const handleClearSearch = () => {
         setSearchQuery('')
-    }
-
-    const handleItemClick = (item: MediaItem) => {
-        if (item.Type === 'Movie') {
-            navigate(`/movie/${item.Id}`)
-        } else if (item.Type === 'Series') {
-            navigate(`/series/${item.Id}`)
-        } else if (item.Type === 'Episode') {
-            navigate(`/episode/${item.Id}`)
-        } else if (item.Type === 'BoxSet') {
-            navigate(`/collection/${item.Id}`)
-        }
-        closeSidenav()
     }
 
     // Debounced URL update for search query
@@ -96,7 +82,7 @@ export const Sidenav = (props: { username: string }) => {
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/series" onClick={closeSidenav}>
+                            <NavLink to="/series" onClick={closeSidenav} end>
                                 Series
                             </NavLink>
                         </li>
@@ -152,21 +138,22 @@ export const Sidenav = (props: { username: string }) => {
                                     {!searchLoading && !searchError && searchResults.length > 0 && (
                                         <div className="results noSelect">
                                             {searchResults.map(item => {
-                                                const isActive =
-                                                    (item.Type === 'Movie' &&
-                                                        location.pathname === `/movie/${item.Id}`) ||
-                                                    (item.Type === 'Series' &&
-                                                        location.pathname === `/series/${item.Id}`) ||
-                                                    (item.Type === 'Episode' &&
-                                                        location.pathname === `/episode/${item.Id}`) ||
-                                                    (item.Type === 'BoxSet' &&
-                                                        location.pathname === `/collection/${item.Id}`)
-
                                                 return (
-                                                    <div
+                                                    <NavLink
                                                         key={`${item.Type}-${item.Id}`}
-                                                        onClick={() => handleItemClick(item)}
-                                                        className={`result ${isActive ? 'active' : ''}`}
+                                                        to={
+                                                            item.Type === 'Movie'
+                                                                ? `/movie/${item.Id}`
+                                                                : item.Type === 'Series'
+                                                                ? `/series/${item.Id}`
+                                                                : item.Type === 'Episode'
+                                                                ? `/episode/${item.Id}`
+                                                                : item.Type === 'BoxSet'
+                                                                ? `/collection/${item.Id}`
+                                                                : '#'
+                                                        }
+                                                        onClick={closeSidenav}
+                                                        className="result"
                                                     >
                                                         <Squircle
                                                             width={36}
@@ -211,7 +198,7 @@ export const Sidenav = (props: { username: string }) => {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </NavLink>
                                                 )
                                             })}
                                             <div className="additional">
