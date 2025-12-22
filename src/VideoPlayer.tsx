@@ -83,6 +83,7 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
         showMenu,
         togglePlayPause,
         currentTrack,
+        currentMediaSourceId,
         clearCurrentTrack,
         handleSeek,
         skip,
@@ -512,7 +513,9 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                             title="Settings"
                         >
                             <GearIcon width={18} height={18} />
-                            <div className="quality-label">{getVideoQuality(currentTrack, true)}</div>
+                            <div className="quality-label">
+                                {getVideoQuality(currentTrack, true, currentMediaSourceId)}
+                            </div>
                         </button>
                         <div className="menu-container" ref={menuContainerRef}>
                             {/* Home Menu */}

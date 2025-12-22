@@ -14,8 +14,6 @@ import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStor
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { usePatchQueries } from '../hooks/usePatchQueries'
-;(window as any).command = command
-;(window as any).setProperty = setProperty
 
 // Define observed properties with their types
 const OBSERVED_PROPERTIES = [
@@ -878,6 +876,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     return {
         // Track info
         currentTrack,
+        currentMediaSourceId,
 
         // Playback state
         isPaused,

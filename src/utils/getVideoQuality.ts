@@ -1,3 +1,4 @@
+import { MediaStream } from '@jellyfin/sdk/lib/generated-client/models'
 import { MediaItem } from '../api/jellyfin'
 
 /**
@@ -45,15 +46,23 @@ export const getQualityLabel = (
  * @param shortCode If true, returns short codes: 4K, HD, or SD
  * @returns Quality label (4K, 1080p, 720p, 480p, SD) or short code (4K, HD, SD), or null if no video stream found
  */
-export const getVideoQuality = (item: MediaItem | undefined, shortCode?: boolean): string | null => {
+export const getVideoQuality = (
+    item: MediaItem | undefined,
+    shortCode?: boolean,
+    currentMediaSourceId?: string
+): string | null => {
     if (!item) {
         return null
     }
 
-    let videoStreams: any[] = []
+    let videoStreams: MediaStream[] = []
 
     if (item.MediaSources && item.MediaSources.length > 0) {
-        videoStreams = item.MediaSources.flatMap(
+        const mediaSources = currentMediaSourceId
+            ? item.MediaSources.filter(source => source.Id === currentMediaSourceId)
+            : item.MediaSources
+
+        videoStreams = mediaSources.flatMap(
             source => source.MediaStreams?.filter(stream => stream.Type === 'Video') || []
         )
     } else if (item.MediaStreams && item.MediaStreams.length > 0) {
