@@ -687,10 +687,12 @@ body.lockscroll {
     background: linear-gradient(to right, var(--bg-color) 0%, var(--bg-color-transparent) 30%, transparent 100%);
 }
 
+/*
 .home-page > .section > .scroller:hover > .direction.left {
     opacity: 1;
     visibility: visible;
 }
+*/
 
 .home-page > .section > .scroller > .direction.right {
     right: 0;
