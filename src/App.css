@@ -701,7 +701,8 @@ body.lockscroll {
 }
 
 .home-page > .section > .scroller > .direction > .icon {
-    color: var(--font-color-active);
+    fill: var(--font-color-active);
+    opacity: 0.9;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -714,18 +715,18 @@ body.lockscroll {
 }
 
 .home-page > .section > .scroller > .direction.left > .icon > svg {
-    margin-left: -8px;
+    margin-left: -4px;
 }
 
 .home-page > .section > .scroller > .direction.right > .icon > svg {
-    margin-right: -8px;
+    margin-right: -4px;
 }
 
-.home-page > .section > .scroller > .direction.left > .icon:hover > svg {
+.home-page > .section > .scroller > .direction.left > .icon:active > svg {
     transform: translateX(-2px);
 }
 
-.home-page > .section > .scroller > .direction.right > .icon:hover > svg {
+.home-page > .section > .scroller > .direction.right > .icon:active > svg {
     transform: translateX(2px);
 }
 
