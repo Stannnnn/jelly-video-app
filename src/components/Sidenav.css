@@ -451,12 +451,19 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     fill: var(--font-color-active);
 }
 
-.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon.synced.active-sync > svg path:last-child {
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_footer
+    > .account
+    > .actions
+    > .icon.downloads.downloading
+    > svg
+    path:last-child {
     clip-path: inset(100% 0 0 0);
-    animation: syncColorSweep 1.6s linear infinite;
+    animation: downloadColorSweep 1.6s linear infinite;
 }
 
-@keyframes syncColorSweep {
+@keyframes downloadColorSweep {
     0% {
         clip-path: inset(0 0 100% 0);
     }

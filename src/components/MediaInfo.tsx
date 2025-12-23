@@ -394,22 +394,21 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                         </div>
                     </div>
                     <div className="secondary">
-                        <div
-                            className={`download-state ${
-                                item.offlineState === 'downloaded'
-                                    ? 'downloaded'
-                                    : item.offlineState === 'downloading'
-                                    ? 'downloading'
-                                    : ''
-                            }`}
-                            title={item.offlineState === 'downloaded' ? 'Remove from downloads' : 'Downloading'}
-                        >
-                            {item.offlineState === 'downloaded' ? (
-                                <DownloadedIcon width={18} height={18} />
-                            ) : item.offlineState === 'downloading' ? (
-                                <DownloadingIcon width={18} height={18} />
-                            ) : null}
-                        </div>
+                        {item.offlineState &&
+                            (item.offlineState === 'downloaded' || item.offlineState === 'downloading') && (
+                                <div
+                                    className={`download-state ${
+                                        item.offlineState === 'downloaded' ? 'downloaded' : 'downloading'
+                                    }`}
+                                    title={item.offlineState === 'downloaded' ? 'Remove from downloads' : 'Downloading'}
+                                >
+                                    {item.offlineState === 'downloaded' ? (
+                                        <DownloadedIcon width={18} height={18} />
+                                    ) : (
+                                        <DownloadingIcon width={18} height={18} />
+                                    )}
+                                </div>
+                            )}
                         <div className="more-container" ref={moreButtonRef}>
                             <div
                                 className={`more ${isMoreDropdownOpen ? 'active' : ''}`}

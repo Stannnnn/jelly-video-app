@@ -176,7 +176,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             <Route path="/" element={<Main pageTitle="Home" content={Home}></Main>} />
                             <Route path="/settings" element={<Main pageTitle="Settings" content={memoSettings} />} />
                             <Route
-                                path="/synced"
+                                path="/downloads"
                                 element={<Main pageTitle="Downloads" content={Downloads} filterType={'favorites'} />}
                             />
                             <Route

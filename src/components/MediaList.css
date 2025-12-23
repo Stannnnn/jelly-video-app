@@ -170,10 +170,10 @@
     > svg
     path:last-child {
     clip-path: inset(100% 0 0 0);
-    animation: syncColorSweepML 1.6s linear infinite;
+    animation: downloadColorSweepML 1.6s linear infinite;
 }
 
-@keyframes syncColorSweepML {
+@keyframes downloadColorSweepML {
     0% {
         clip-path: inset(0 0 100% 0);
     }

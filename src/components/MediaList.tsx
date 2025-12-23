@@ -6,7 +6,7 @@ import { useDisplayItems } from '../hooks/useDisplayItems'
 import { JellyImg } from './JellyImg'
 import { Skeleton } from './Skeleton'
 import { Squircle } from './Squircle'
-import { VideoPlayIcon } from './SvgIcons'
+import { DownloadedIcon, DownloadingIcon, VideoPlayIcon } from './SvgIcons'
 import { VirtuosoWindow } from './VirtuosoWindow'
 
 export const MediaList = ({
@@ -523,24 +523,24 @@ const MediaIndicators = ({
 }) => {
     return (
         <div className="media-indicators">
-            {/*
-            <div
-                className={`icon download-state ${
-                    item.offlineState === 'downloaded'
-                        ? 'icon download-state downloaded'
-                        : item.offlineState === 'downloading'
-                        ? 'icon download-state downloading'
-                        : ''
-                }`}
-                title={item.offlineState === 'downloaded' ? 'Downloaded' : 'Downloading'}
-            >
-                {item.offlineState === 'downloaded' ? (
-                    <DownloadedIcon width={16} height={16} />
-                ) : item.offlineState === 'downloading' ? (
-                    <DownloadingIcon width={16} height={16} />
-                ) : null}
-            </div>
-            */}
+            {item.offlineState &&
+                (item.offlineState === 'downloaded' || item.offlineState === 'downloading') &&
+                location.pathname !== '/downloads' && (
+                    <div
+                        className={`icon download-state ${
+                            item.offlineState === 'downloaded'
+                                ? 'icon download-state downloaded'
+                                : 'icon download-state downloading'
+                        }`}
+                        title={item.offlineState === 'downloaded' ? 'Downloaded' : 'Downloading'}
+                    >
+                        {item.offlineState === 'downloaded' ? (
+                            <DownloadedIcon width={16} height={16} />
+                        ) : (
+                            <DownloadingIcon width={16} height={16} />
+                        )}
+                    </div>
+                )}
             {removeButton && removeButton(item)}
             {!disableActions && item.UserData?.Played && (
                 <div className="icon watched" title="Watched">

@@ -225,7 +225,12 @@ export const Sidenav = (props: { username: string }) => {
                             </div>
                         </div>
                         <div className="actions">
-                            <NavLink to="/synced" className="icon synced" onClick={closeSidenav} title="Synced">
+                            <NavLink
+                                to="/downloads"
+                                className="icon downloads"
+                                onClick={closeSidenav}
+                                title="Downloads"
+                            >
                                 <DownloadingIcon width={16} height={16} />
                             </NavLink>
                             <NavLink to="/settings" className="icon settings" onClick={closeSidenav} title="Settings">

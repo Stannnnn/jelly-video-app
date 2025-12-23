@@ -2,13 +2,12 @@ import { ChevronDownIcon } from '@primer/octicons-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { ask } from '@tauri-apps/plugin-dialog'
 import { useCallback, useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { useThemeContext } from '../context/ThemeContext/ThemeContext'
 import { persister } from '../queryClient'
-import { formatFileSize } from '../utils/formatFileSize'
 import './Settings.css'
 
 export const Settings = ({ onLogout }: { onLogout: () => void }) => {
@@ -355,12 +354,13 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
             </div>
 
+            {/*
             <div className="section offline-sync">
                 <div className="primary">
                     <div className="container">
-                        <div className="title">Offline Sync</div>
+                        <div className="title">Downloads</div>
                         <div className="desc">
-                            Synced - <span className="number">{storageStats.trackCount}</span> Track
+                            Downloads - <span className="number">{storageStats.trackCount}</span> Track
                             {storageStats.trackCount === 1 ? '' : 's'}
                             {queueCount > 0 ? (
                                 <>
@@ -392,13 +392,14 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     <div className="info">
                         Cache your music library for seamless offline playback, with new tracks auto-syncing to saved
                         playlists, albums, or artists.{' '}
-                        <Link to="/synced" className="textlink">
+                        <Link to="/downloads" className="textlink">
                             Browse music library
                         </Link>
                         , available once tracks are synced
                     </div>
                 </div>
             </div>
+            */}
 
             <div className="section misc ui">
                 <div className="title">Misc</div>
