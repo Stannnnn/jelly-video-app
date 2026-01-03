@@ -11,7 +11,8 @@
 }
 
 .media-info > .media-header:has(> .backdrop-container > .backdrop > .fallback-thumbnail) {
-    color: var(--font-color);
+    /* color: var(--font-color); not in use */
+    display: none;
 }
 
 .media-info > .media-header > .backdrop-container {
@@ -21,9 +22,11 @@
     overflow: hidden;
 }
 
+/* not in use
 .media-info > .media-header:has(> .backdrop-container > .backdrop > .fallback-thumbnail) > .backdrop-container {
     height: unset;
 }
+*/
 
 .media-info > .media-header > .backdrop-container > .backdrop {
     width: 100%;
@@ -48,6 +51,7 @@
     background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
 }
 
+/* not in use
 .media-info > .media-header:has(> .backdrop-container > .backdrop > .fallback-thumbnail) > .banner-content {
     position: relative;
     backdrop-filter: unset;
@@ -56,6 +60,7 @@
     padding-top: 18px;
     padding-bottom: 18px;
 }
+*/
 
 .media-info > .media-header > .banner-content:has(> .progress-indicator) {
     padding-bottom: 20px;
@@ -95,6 +100,7 @@
     gap: 16px;
 }
 
+/* not in use
 .media-info
     > .media-header:has(> .backdrop-container > .backdrop > .fallback-thumbnail)
     > .banner-content
@@ -103,6 +109,7 @@
     opacity: unset;
     color: var(--font-color-tertiary);
 }
+*/
 
 .media-info > .media-header > .banner-content > .details > .statistics > .rating {
     display: flex;
@@ -399,7 +406,6 @@
 }
 
 .media-info:has(> .media-header > .backdrop-container > .backdrop > .fallback-thumbnail)
-    > .media-info
     > .media-actions
     > .actions
     > .secondary
