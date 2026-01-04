@@ -443,7 +443,11 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                 className={`input${collectionName.trim() ? ' has-text' : ''}`}
                                                 disabled={isCreatingCollection}
                                             />
-                                            {isCreatingCollection && <InlineLoader />}
+                                            {isCreatingCollection && (
+                                                <div className="loading">
+                                                    <InlineLoader />
+                                                </div>
+                                            )}
                                             {!isCreatingCollection && collectionName.trim() && (
                                                 <button className="create-btn" onClick={handleCreateCollection}>
                                                     Create

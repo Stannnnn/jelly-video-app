@@ -689,10 +689,27 @@
     > .more-dropdown
     > .more-dropdown-item
     > .sub-dropdown
+    > .input-container
+    > .loading {
+    flex-shrink: 0;
+    padding: 7px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .sub-dropdown
     > .dropdown-content
     > .loading {
     flex-shrink: 0;
-    padding: 7px;
+    padding: 7px 10px;
     display: flex;
     justify-content: center;
     align-items: center;
