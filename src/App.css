@@ -580,6 +580,11 @@ body.lockscroll {
     margin-bottom: 60px;
 }
 
+.main_content:has(.media-page > .media-footer) {
+    height: 100%;
+    margin-bottom: 12px;
+}
+
 .main > .main_content .empty {
     font-size: 0.85rem;
     margin-top: -4px;
