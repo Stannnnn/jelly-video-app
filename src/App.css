@@ -675,17 +675,17 @@ body.lockscroll {
     width: 60px;
     height: 100%;
     display: flex;
+    opacity: 0;
+    visibility: hidden;
     transition: opacity 0.2s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.2s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
-.home-page > .section > .scroller > .direction.active {
+.home-page > .section > .scroller > .direction.visible {
     opacity: 1;
     visibility: visible;
 }
 
 .home-page > .section > .scroller > .direction.left {
-    opacity: 0;
-    visibility: hidden;
     left: 0;
     backdrop-filter: blur(2px);
     mask-image: linear-gradient(to right, #000000 30%, transparent 100%);

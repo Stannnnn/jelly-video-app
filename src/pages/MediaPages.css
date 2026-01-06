@@ -91,7 +91,8 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 2px;
+    row-gap: 2px;
+    column-gap: 10px;
 }
 
 .media-page > .media-footer > .fileinfo > .container {
@@ -104,7 +105,7 @@
 }
 
 /* Responsive */
-@media only screen and (max-width: 1060px) {
+@media only screen and (max-width: 1080px) {
     .media-page > .media-footer {
         gap: 10px;
     }

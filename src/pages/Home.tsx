@@ -44,7 +44,7 @@ export const Home = () => {
                             type="mixed"
                             virtuosoType="horizontal"
                         />
-                        <div className="direction right">
+                        <div className="direction right visible">
                             <div className="icon">
                                 <ChevronCompactRightIcon width={20} height={20} />
                             </div>
