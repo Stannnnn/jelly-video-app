@@ -19,6 +19,10 @@
     margin-bottom: 20px;
 }
 
+.media-page > .media-content > .section > .container:has(> .title) {
+    margin-bottom: 16px;
+}
+
 .media-page > .media-content > .section > .container > .title {
     font-size: 1rem;
     font-weight: 700;

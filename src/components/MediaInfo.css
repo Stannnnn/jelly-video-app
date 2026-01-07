@@ -283,6 +283,19 @@
     > .version-select
     > svg {
     color: var(--brand-color);
+    transition: transform 0.18s linear;
+}
+
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .primary
+    > .play-media
+    > .version-container
+    > .version-select.active
+    > svg {
+    transform: rotate(-180deg) translateY(1px);
 }
 
 .media-page

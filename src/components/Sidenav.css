@@ -403,7 +403,7 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0 12px;
+    margin: 0 8px;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_footer > .account > .status {
