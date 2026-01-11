@@ -11,7 +11,7 @@ import { SortingIcon } from './SvgIcons'
 
 export const Main = (props: Parameters<typeof MainContent>[0] & { pageTitle?: string }) => {
     return (
-        <PageTitleProvider pageTitle={props.pageTitle}>
+        <PageTitleProvider key={props.pageTitle} pageTitle={props.pageTitle}>
             <FilterContextProvider key={(props.content as { name?: string })?.name}>
                 <MainContent {...props} />
             </FilterContextProvider>

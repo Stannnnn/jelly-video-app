@@ -9,10 +9,6 @@ const useInitialState = ({ pageTitle: initialPageTitle }: { pageTitle?: string }
     const [pageTitle, setPageTitle] = useState(initialPageTitle)
 
     useEffect(() => {
-        setPageTitle(initialPageTitle)
-    }, [initialPageTitle])
-
-    useEffect(() => {
         document.title = [pageTitle, 'Jelly Video App'].filter(Boolean).join(' - ')
 
         if (isTauri()) {
