@@ -431,22 +431,20 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 <div
                                     className={`more-dropdown-item ${videoSources.length > 1 ? 'download-item' : ''}`}
                                     ref={downloadButtonRef}
+                                    onClick={e =>
+                                        videoSources.length > 1
+                                            ? toggleDownloadDropdown(e)
+                                            : toggleDownload(e, defaultMediaSourceId)
+                                    }
                                 >
-                                    <div
-                                        className="download-main"
-                                        onClick={e =>
-                                            videoSources.length > 1
-                                                ? toggleDownloadDropdown(e)
-                                                : toggleDownload(e, defaultMediaSourceId)
-                                        }
-                                    >
+                                    <div className="download-main">
                                         <div className="text">
                                             {item.offlineState === 'downloaded' ? 'Remove download' : 'Download'}
                                         </div>
                                     </div>
                                     {videoSources.length > 1 && (
                                         <>
-                                            <div className="icon" onClick={toggleDownloadDropdown}>
+                                            <div className="icon">
                                                 <ChevronLeftIcon size={14} />
                                             </div>
                                             <div
