@@ -2,6 +2,7 @@ import { GearIcon } from '@primer/octicons-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import '../App.css'
+import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
 import { useJellyfinSearch } from '../hooks/Jellyfin/useJellyfinSearch'
@@ -20,6 +21,7 @@ export const Sidenav = (props: { username: string }) => {
     const { disabled, setDisabled } = useScrollContext()
     const [searchQuery, setSearchQuery] = useState(new URLSearchParams(location.search).get('search') || '')
     const { searchResults, searchLoading, searchError, searchAttempted } = useJellyfinSearch(searchQuery)
+    const { storageStats, queueCount } = useDownloadContext()
 
     const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value)
@@ -227,9 +229,15 @@ export const Sidenav = (props: { username: string }) => {
                         <div className="actions">
                             <NavLink
                                 to="/downloads"
-                                className="icon downloads"
+                                className={`icon downloads ${queueCount > 0 ? 'downloading' : ''}`}
                                 onClick={closeSidenav}
-                                title="Downloads"
+                                title={`Downloads - ${storageStats.trackCount} Track${
+                                    storageStats.trackCount === 1 ? '' : 's'
+                                }${
+                                    queueCount > 0
+                                        ? ` (${queueCount} track${queueCount === 1 ? '' : 's'} in queue)`
+                                        : ''
+                                }`}
                             >
                                 <DownloadingIcon width={16} height={16} />
                             </NavLink>
