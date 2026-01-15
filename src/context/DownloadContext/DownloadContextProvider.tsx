@@ -11,7 +11,7 @@ import { DownloadContext } from './DownloadContext'
 
 const STORAGE_KEY = 'mediaTaskQueue'
 
-type Task = { mediaItem: MediaItem; action: 'download' | 'remove'; containerId?: string }
+type Task = { mediaItem: MediaItem; action: 'download' | 'remove'; containerId?: string; mediaSourceId?: string }
 
 export type IDownloadContext = ReturnType<typeof useInitialState>
 
@@ -95,7 +95,7 @@ const useInitialState = () => {
     }, [queue])
 
     // Enqueue download
-    const addToDownloads = (items: MediaItem[], container: MediaItem | undefined) => {
+    const addToDownloads = (items: MediaItem[], container?: MediaItem, mediaSourceId?: string) => {
         const containerId = container?.Id
 
         patchMediaItems(
@@ -109,7 +109,12 @@ const useInitialState = () => {
 
         setQueue(prev => {
             const filtered = prev.filter(task => !items.some(i => i.Id === task.mediaItem.Id))
-            const newTasks: Task[] = items.map(item => ({ mediaItem: item, action: 'download' as const, containerId }))
+            const newTasks: Task[] = items.map(item => ({
+                mediaItem: item,
+                action: 'download' as const,
+                containerId,
+                mediaSourceId,
+            }))
 
             if (containerId) {
                 newTasks.push({ mediaItem: container, action: 'download' })
@@ -120,7 +125,7 @@ const useInitialState = () => {
     }
 
     // Enqueue removal
-    const removeFromDownloads = (items: MediaItem[], container: MediaItem | undefined) => {
+    const removeFromDownloads = (items: MediaItem[], container?: MediaItem, mediaSourceId?: string) => {
         const containerId = container?.Id
 
         patchMediaItems(
@@ -134,7 +139,12 @@ const useInitialState = () => {
 
         setQueue(prev => {
             const filtered = prev.filter(task => !items.some(i => i.Id === task.mediaItem.Id))
-            const newTasks: Task[] = items.map(item => ({ mediaItem: item, action: 'remove' as const, containerId }))
+            const newTasks: Task[] = items.map(item => ({
+                mediaItem: item,
+                action: 'remove' as const,
+                containerId,
+                mediaSourceId,
+            }))
 
             if (containerId) {
                 newTasks.push({ mediaItem: container, action: 'remove' })
@@ -198,7 +208,7 @@ const useInitialState = () => {
                             mediaItem.Type === BaseItemKind.BoxSet ||
                             mediaItem.Type === BaseItemKind.Movie
                         ) {
-                            const streamUrl = api.getStreamUrl(mediaItem.Id, playback.bitrate)
+                            const streamUrl = api.getStreamUrl(mediaItem.Id, playback.bitrate, next.mediaSourceId)
                             const thumbnailUrl = api.getImageUrl(mediaItem, 'Primary', { width: 360, height: 360 })
 
                             const [trackInfo] = await Promise.all([api.getItemById(mediaItem.Id)])
