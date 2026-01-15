@@ -10,7 +10,6 @@
 .downloads-page > .queue-list > .media-list .media-item > :not(.media-indicators) {
     opacity: 0.6;
     user-select: none;
-    pointer-events: none;
 }
 
 .downloads-page > .queue-list > .media-list .media-item:hover > .media-state > .overlay {
@@ -26,8 +25,8 @@
     padding: 6px;
     border-radius: 20px;
     transition: background-color 0.2s ease-out;
+    color: var(--font-color-inverted);
 }
 
 .downloads-page > .queue-list > .media-list .media-item .remove-queue-button:hover {
-    background-color: var(--bg-color-tertiary);
 }
