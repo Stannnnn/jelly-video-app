@@ -34,10 +34,9 @@ export const Downloads = () => {
                         currentDownloadingId={currentDownloadingId}
                         removeButton={item => (
                             <div
-                                className="remove-queue-button"
+                                className="icon remove"
                                 onClick={() => removeFromQueue(item.Id)}
                                 title="Remove from queue"
-                                aria-label="Remove from queue"
                             >
                                 <XCircleIcon size={16} />
                             </div>
@@ -49,7 +48,7 @@ export const Downloads = () => {
             <MediaList
                 items={items}
                 isLoading={isLoading && queueItems.length === 0}
-                type={'mixedSmall'}
+                type={'movie'}
                 loadMore={loadMore}
                 disableActions={true}
             />

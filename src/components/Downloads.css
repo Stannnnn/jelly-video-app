@@ -3,30 +3,33 @@
 }
 
 .downloads-page > .queue-list > .media-list .media-item {
+    user-select: none;
     cursor: unset;
     background-color: unset;
 }
 
-.downloads-page > .queue-list > .media-list .media-item > :not(.media-indicators) {
-    opacity: 0.6;
-    user-select: none;
-}
-
-.downloads-page > .queue-list > .media-list .media-item:hover > .media-state > .overlay {
-    display: none;
-}
-
-.downloads-page > .queue-list > .media-list .media-item > .media-state > .thumbnail {
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .thumbnail {
     filter: grayscale(0.8) brightness(0.8);
+    opacity: 0.6;
 }
 
-.downloads-page > .queue-list > .media-list .media-item .remove-queue-button {
+.downloads-page > .queue-list > .media-list .media-item > .media-details {
+    opacity: 0.8;
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .media-indicators {
+    backdrop-filter: unset;
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .media-indicators > .icon {
     cursor: pointer;
-    padding: 6px;
-    border-radius: 20px;
-    transition: background-color 0.2s ease-out;
-    color: var(--font-color-inverted);
+    transition: opacity 0.2s ease-out;
 }
 
-.downloads-page > .queue-list > .media-list .media-item .remove-queue-button:hover {
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .media-indicators > .icon.remove {
+    color: var(--font-color-active);
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .media-indicators > .icon.remove:hover {
+    opacity: 0.7;
 }
