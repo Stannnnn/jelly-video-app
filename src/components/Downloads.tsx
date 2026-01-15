@@ -19,7 +19,7 @@ export const Downloads = () => {
         .reverse()
 
     return (
-        <div className="favorites-page downloads-page">
+        <div className="downloads-page">
             {error && <div className="error">{error}</div>}
 
             {queueItems.length > 0 && (

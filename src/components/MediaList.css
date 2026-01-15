@@ -150,7 +150,7 @@
     transition: fill 0.2s ease-out;
 }
 
-.media-list .media-item > .media-thumbnail > .media-indicators > .icon.download-state::after {
+.media-list .media-item > .media-thumbnail > .media-indicators > .icon.download-state.downloaded::after {
     content: '';
     position: absolute;
     z-index: -1;

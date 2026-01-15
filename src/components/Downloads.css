@@ -1,3 +1,8 @@
+.downloads-page {
+    display: grid;
+    gap: 40px;
+}
+
 .downloads-page > .queue-list > .media-list {
     margin: 0;
 }
@@ -14,7 +19,7 @@
 }
 
 .downloads-page > .queue-list > .media-list .media-item > .media-details {
-    opacity: 0.8;
+    opacity: 0.6;
 }
 
 .downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .media-indicators {
