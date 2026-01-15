@@ -428,7 +428,10 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 <MoreIcon width={14} height={14} />
                             </div>
                             <div className={`more-dropdown ${isMoreDropdownOpen ? 'open' : ''}`}>
-                                <div className="more-dropdown-item download-item" ref={downloadButtonRef}>
+                                <div
+                                    className={`more-dropdown-item ${videoSources.length > 1 ? 'download-item' : ''}`}
+                                    ref={downloadButtonRef}
+                                >
                                     <div
                                         className="download-main"
                                         onClick={e =>
