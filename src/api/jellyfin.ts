@@ -338,12 +338,6 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             return `${serverUrl}/Items/${item.Id}/Images/${type}?tag=${item.ImageTags[type]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
         }
 
-        // Fallback for 'Continue watching'
-        if (type === 'Backdrop' && !item.ImageTags?.[type] && item.ImageTags?.['Thumb'] && size.width <= 280) {
-            const type = 'Thumb'
-            return `${serverUrl}/Items/${item.Id}/Images/${type}?tag=${item.ImageTags[type]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
-        }
-
         if (item.AlbumId) {
             return `${serverUrl}/Items/${item.AlbumId}/Images/${type}?quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
         }
@@ -376,6 +370,12 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
         if (item.Type === 'Video') {
             return `${serverUrl}/Items/${item.ParentLogoItemId}/Images/${type}?tag=${item.ParentLogoItemId}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+        }
+
+        // Fallback for 'Continue watching'
+        if (type === 'Backdrop' && !item.ImageTags?.[type] && item.ImageTags?.['Thumb'] && size.width <= 280) {
+            const type = 'Thumb'
+            return `${serverUrl}/Items/${item.Id}/Images/${type}?tag=${item.ImageTags[type]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
         }
 
         return undefined
