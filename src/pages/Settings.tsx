@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from '@primer/octicons-react'
+import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, ChevronDownIcon } from '@primer/octicons-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { ask } from '@tauri-apps/plugin-dialog'
 import { useCallback, useEffect, useState } from 'react'
@@ -426,13 +426,39 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
             <div className="section shortcuts">
                 <div className="title">Shortcuts</div>
                 <div className="desc">
-                    <p>Left/right arrow keys to skip back/forward 5 seconds</p>
-                    <p>J/L keys to skip back/forward 10 seconds</p>
-                    <p>Arrow up/down to adjust volume</p>
-                    <p>Space bar or K to pause/unpause</p>
-                    <p>M to mute/unmute</p>
-                    <p>F key to fullscreen</p>
-                    <p>ESC key to exit fullscreen</p>
+                    <div className="subtitle">Available shortcuts in the video player</div>
+                    <div className="keys">
+                        <p className="container">
+                            <div className="key">
+                                <ArrowLeftIcon size={14} />
+                            </div>{' '}
+                            <div className="key">
+                                <ArrowRightIcon size={14} />
+                            </div>{' '}
+                            to skip back or forward by 5 seconds
+                        </p>
+                        <p className="container">
+                            <div className="key">
+                                <ArrowUpIcon size={14} />
+                            </div>{' '}
+                            <div className="key">
+                                <ArrowDownIcon size={14} />
+                            </div>{' '}
+                            to adjust volume by 5%
+                        </p>
+                        <p className="container">
+                            <div className="key">Space</div> <div className="key">K</div> to pause or unpause
+                        </p>
+                        <p className="container">
+                            <div className="key">M</div> to mute or unmute
+                        </p>
+                        <p className="container">
+                            <div className="key">F</div> to fullscreen or undo
+                        </p>
+                        <p className="container">
+                            <div className="key">ESC</div> to exit fullscreen
+                        </p>
+                    </div>
                 </div>
             </div>
 

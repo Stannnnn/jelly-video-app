@@ -6,14 +6,13 @@
     padding: 12px 16px;
     margin-bottom: 20px;
     border-radius: 12px;
-    border-bottom: 1px solid var(--border-color);
-    background-color: var(--bg-color-secondary);
+    border: 1px solid var(--border-color);
 }
 
 .settings-page > .section > .title {
     font-size: 0.85rem;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .settings-page > .section .btn {
@@ -121,7 +120,7 @@
     bottom: 0;
     border-radius: 20px;
     border: 1px solid var(--border-color-secondary);
-    background-color: var(--bg-color-tertiary);
+    background-color: var(--bg-color-secondary);
     transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
 }
 
@@ -293,6 +292,43 @@
     background-color: var(--volume-dot-color-active);
 }
 */
+
+/* Shortcuts */
+.settings-page > .section.shortcuts > .title {
+    margin-bottom: 4px;
+}
+
+.settings-page > .section.shortcuts > .desc > .subtitle {
+    margin-bottom: 8px;
+}
+
+.settings-page > .section.shortcuts > .desc > .keys > .container {
+    margin-bottom: 10px;
+}
+
+.settings-page > .section.shortcuts > .desc > .keys > .container:last-child {
+    margin-bottom: 0;
+}
+
+.settings-page > .section.shortcuts > .desc > .keys > .container > .key {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-align: center;
+    display: inline-block;
+    min-width: 48px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border-bottom: 1px solid var(--brand-color);
+    background-color: var(--bg-color-secondary);
+}
+
+.settings-page > .section.shortcuts > .desc > .keys > .container > .key:last-child {
+    margin-right: 2px;
+}
+
+.settings-page > .section.shortcuts > .desc > .keys > .container > .key > svg {
+    display: inline-block;
+}
 
 /* About and Session */
 .settings-page > .section .desc {
