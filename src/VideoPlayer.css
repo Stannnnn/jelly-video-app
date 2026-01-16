@@ -186,7 +186,7 @@
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .video-container > .video-controls > .progress > .time {
@@ -356,7 +356,7 @@
     left: 15px;
     transform: rotate(-90deg);
     transform-origin: left;
-    width: 142px;
+    width: 144px;
     height: 32px;
     border-radius: 20px;
     opacity: 0;

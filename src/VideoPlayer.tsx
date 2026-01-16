@@ -357,11 +357,13 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
         <div
             className={isPaused ? 'video-container noSelect' : 'video-container noSelect playing'}
             onMouseMove={handleMouseMove}
+            onDoubleClick={toggleFullscreen}
         >
             <div
                 className={`video-header ${shouldShowControls ? 'visible' : 'hidden'}`}
                 onMouseEnter={() => setIsHoveringControls(true)}
                 onMouseLeave={() => setIsHoveringControls(false)}
+                onDoubleClick={e => e.stopPropagation()}
             >
                 <button className="return" title="Return" onClick={previousPage}>
                     <ArrowLeftIcon size={20} className="return-icon" />
@@ -396,6 +398,7 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                 className={`video-controls ${shouldShowControls ? 'visible' : 'hidden'}`}
                 onMouseEnter={() => setIsHoveringControls(true)}
                 onMouseLeave={() => setIsHoveringControls(false)}
+                onDoubleClick={e => e.stopPropagation()}
             >
                 <div className="playback">
                     <button
