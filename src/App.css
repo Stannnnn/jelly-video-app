@@ -672,12 +672,12 @@ body.lockscroll {
     position: absolute;
     z-index: 1;
     top: 0;
-    width: 60px;
+    width: 30px;
     height: 100%;
     display: flex;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.2s cubic-bezier(0.33, 0, 0.2, 1);
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
 }
 
 .home-page > .section > .scroller > .direction.visible {
@@ -687,46 +687,55 @@ body.lockscroll {
 
 .home-page > .section > .scroller > .direction.left {
     left: 0;
+}
+
+.home-page > .section > .scroller > .direction.left::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 60px;
+    height: 100%;
+    pointer-events: none;
     backdrop-filter: blur(2px);
     mask-image: linear-gradient(to right, #000000 30%, transparent 100%);
     background: linear-gradient(to right, var(--bg-color) 0%, var(--bg-color-transparent) 30%, transparent 100%);
 }
 
-/*
-.home-page > .section > .scroller:hover > .direction.left {
-    opacity: 1;
-    visibility: visible;
-}
-*/
-
 .home-page > .section > .scroller > .direction.right {
     right: 0;
     justify-content: end;
+}
+
+.home-page > .section > .scroller > .direction.right::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 60px;
+    height: 100%;
+    pointer-events: none;
     backdrop-filter: blur(2px);
     mask-image: linear-gradient(to left, #000000 30%, transparent 100%);
     background: linear-gradient(to left, var(--bg-color) 0%, var(--bg-color-transparent) 30%, transparent 100%);
 }
 
 .home-page > .section > .scroller > .direction > .icon {
-    fill: var(--font-color-active);
-    opacity: 0.9;
+    z-index: 1;
+    width: 30px;
+    height: 100%;
+    padding: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    height: 100%;
-    padding: 6px;
+    fill: var(--font-color-active);
 }
 
 .home-page > .section > .scroller > .direction > .icon > svg {
+    flex-shrink: 0;
     transition: transform 0.2s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .home-page > .section > .scroller > .direction.left > .icon > svg {
-    margin-left: -4px;
-}
-
-.home-page > .section > .scroller > .direction.right > .icon > svg {
-    margin-right: -4px;
+    margin-left: -6px;
 }
 
 .home-page > .section > .scroller > .direction.left > .icon:active > svg {
