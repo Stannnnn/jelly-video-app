@@ -30,7 +30,7 @@ export const HorizontalScroller = ({ items, isLoading, type, itemWidth }: Horizo
         if (!container) return
 
         const onScroll = () => {
-            setTimeout(() => updateArrows(container), 0)
+            setTimeout(() => updateArrows(container), 40)
         }
         const observer = new ResizeObserver(onScroll)
 
@@ -46,12 +46,21 @@ export const HorizontalScroller = ({ items, isLoading, type, itemWidth }: Horizo
 
     const handleScroll = useCallback(
         (direction: 'left' | 'right') => {
-            const visibleItems = Math.floor(scrollerRef.current!.offsetWidth / itemWidth)
+            const containerWidth = scrollerRef.current?.offsetWidth ?? 0
+            const arrowWidth = 50
+
+            const visibleItems = Math.floor((containerWidth - arrowWidth) / itemWidth)
             const scrollAmount = direction === 'left' ? -visibleItems : visibleItems
             const newIndex = Math.max(0, targetIndexRef.current + scrollAmount)
 
             targetIndexRef.current = newIndex
-            virtuosoRef.current?.scrollToIndex({ index: newIndex, align: 'start', behavior: 'smooth' })
+
+            virtuosoRef.current?.scrollToIndex({
+                index: newIndex,
+                align: 'start',
+                behavior: 'smooth',
+                offset: direction === 'right' ? -arrowWidth : 0,
+            })
         },
         [itemWidth]
     )
