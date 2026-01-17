@@ -25,6 +25,7 @@ export const MediaList = ({
     currentDownloadingId,
     virtuosoRef,
     onRangeChange,
+    overscan,
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
@@ -40,6 +41,7 @@ export const MediaList = ({
     currentDownloadingId?: string
     virtuosoRef?: React.RefObject<VirtuosoHandle | null>
     onRangeChange?: (range: { startIndex: number; endIndex: number }) => void
+    overscan?: number
 }) => {
     const { displayItems, setRowRefs } = useDisplayItems(items, isLoading)
     const navigate = useNavigate()
@@ -511,7 +513,7 @@ export const MediaList = ({
                 data={displayItems}
                 itemContent={renderItem}
                 endReached={loadMore}
-                overscan={800}
+                overscan={overscan || 800}
                 virtuosoRef={virtuosoRef}
                 onRangeChange={onRangeChange}
             />

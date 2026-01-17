@@ -68,6 +68,7 @@ export const HorizontalScroller = ({ items, isLoading, type, itemWidth }: Horizo
                 virtuosoType="horizontal"
                 virtuosoRef={virtuosoRef}
                 onRangeChange={({ startIndex }) => (targetIndexRef.current = startIndex)}
+                overscan={1600}
             />
             <div className={`direction right ${arrowState.right ? 'visible' : ''}`}>
                 <div className="icon" onClick={() => handleScroll('right')}>
