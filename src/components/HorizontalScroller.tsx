@@ -29,7 +29,9 @@ export const HorizontalScroller = ({ items, isLoading, type, itemWidth }: Horizo
         const container = scrollerRef.current?.querySelector('[style*="overflow"]') as HTMLElement
         if (!container) return
 
-        const onScroll = () => updateArrows(container)
+        const onScroll = () => {
+            setTimeout(() => updateArrows(container), 0)
+        }
         const observer = new ResizeObserver(onScroll)
 
         container.addEventListener('scroll', onScroll, { passive: true })
