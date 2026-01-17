@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
+import { HorizontalScroller } from '../components/HorizontalScroller'
 import { MediaList } from '../components/MediaList'
-import { ChevronCompactLeftIcon, ChevronCompactRightIcon } from '../components/SvgIcons'
 import { useJellyfinRecentlyAddedMovies } from '../hooks/Jellyfin/useJellyfinRecentlyAddedMovies'
 import { useJellyfinRecentlyAddedSeries } from '../hooks/Jellyfin/useJellyfinRecentlyAddedSeries'
 import { useJellyfinRecentlyPlayed } from '../hooks/Jellyfin/useJellyfinRecentlyPlayed'
@@ -32,24 +32,12 @@ export const Home = () => {
                             </Link>
                         )}
                     </div>
-                    <div className="scroller">
-                        <div className="direction left">
-                            <div className="icon">
-                                <ChevronCompactLeftIcon width={20} height={20} />
-                            </div>
-                        </div>
-                        <MediaList
-                            items={recentlyPlayed}
-                            isLoading={isLoadingRecentlyPlayed}
-                            type="mixed"
-                            virtuosoType="horizontal"
-                        />
-                        <div className="direction right visible">
-                            <div className="icon">
-                                <ChevronCompactRightIcon width={20} height={20} />
-                            </div>
-                        </div>
-                    </div>
+                    <HorizontalScroller
+                        items={recentlyPlayed}
+                        isLoading={isLoadingRecentlyPlayed}
+                        type="mixed"
+                        itemWidth={304}
+                    />
                 </div>
             )}
 

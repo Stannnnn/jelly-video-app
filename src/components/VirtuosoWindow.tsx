@@ -9,14 +9,28 @@ type IVirtuosoListProps = VirtuosoProps<MediaItem | { isPlaceholder: true }, any
 type IVirtuosoGridProps = VirtuosoGridProps<MediaItem | { isPlaceholder: true }, any>
 
 type VirtuosoWindowProps =
-    | ({ type: 'vertical' | 'horizontal' } & IVirtuosoListProps)
-    | ({ type: 'grid' } & IVirtuosoGridProps)
+    | ({
+          type: 'vertical' | 'horizontal'
+          virtuosoRef?: React.RefObject<VirtuosoHandle | null>
+          onRangeChange?: (range: { startIndex: number; endIndex: number }) => void
+      } & IVirtuosoListProps)
+    | ({
+          type: 'grid'
+          virtuosoRef?: React.RefObject<VirtuosoGridHandle | null>
+          onRangeChange?: (range: { startIndex: number; endIndex: number }) => void
+      } & IVirtuosoGridProps)
 
 // Global Map to store scroll offsets keyed by history state index
 const scrollOffsets = new Map<number, { pathname: string; offset: number }>()
 
-export const VirtuosoWindow = ({ type, ...virtuosoProps }: VirtuosoWindowProps) => {
-    const virtuosoRef = useRef<VirtuosoHandle | VirtuosoGridHandle>(null)
+export const VirtuosoWindow = ({
+    type,
+    virtuosoRef: externalRef,
+    onRangeChange,
+    ...virtuosoProps
+}: VirtuosoWindowProps) => {
+    const internalRef = useRef<VirtuosoHandle | VirtuosoGridHandle>(null)
+    const virtuosoRef = externalRef || internalRef
     const wrapperRef = useRef<HTMLDivElement>(null)
 
     const [initialOffset, setInitialOffset] = useState(0)
@@ -71,6 +85,7 @@ export const VirtuosoWindow = ({ type, ...virtuosoProps }: VirtuosoWindowProps) 
                     horizontalDirection
                     style={{ height: '200px' }}
                     className="continue-watching-row"
+                    rangeChanged={onRangeChange}
                 />
             </div>
         )

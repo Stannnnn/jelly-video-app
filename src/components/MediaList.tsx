@@ -1,6 +1,7 @@
 import { CheckCircleFillIcon, HeartFillIcon } from '@primer/octicons-react'
 import { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { VirtuosoHandle } from 'react-virtuoso'
 import { MediaItem } from '../api/jellyfin'
 import { useDisplayItems } from '../hooks/useDisplayItems'
 import { JellyImg } from './JellyImg'
@@ -22,6 +23,8 @@ export const MediaList = ({
     parentItem,
     progressBarRef,
     currentDownloadingId,
+    virtuosoRef,
+    onRangeChange,
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
@@ -35,6 +38,8 @@ export const MediaList = ({
     parentItem?: MediaItem
     progressBarRef?: React.RefObject<HTMLDivElement | null>
     currentDownloadingId?: string
+    virtuosoRef?: React.RefObject<VirtuosoHandle | null>
+    onRangeChange?: (range: { startIndex: number; endIndex: number }) => void
 }) => {
     const { displayItems, setRowRefs } = useDisplayItems(items, isLoading)
     const navigate = useNavigate()
@@ -507,6 +512,8 @@ export const MediaList = ({
                 itemContent={renderItem}
                 endReached={loadMore}
                 overscan={800}
+                virtuosoRef={virtuosoRef}
+                onRangeChange={onRangeChange}
             />
         </ul>
     )
