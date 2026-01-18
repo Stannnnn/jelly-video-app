@@ -83,6 +83,20 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [rememberFilters, setRememberFilters] = useState(localStorage.getItem('rememberFilters') === 'on')
     useEffect(() => localStorage.setItem('rememberFilters', rememberFilters ? 'on' : 'off'), [rememberFilters])
 
+    // Next Episode Autoplay Settings
+    const [autoplayNextEpisode, setAutoplayNextEpisode] = useState(
+        localStorage.getItem('autoplayNextEpisode') !== 'off'
+    )
+    useEffect(
+        () => localStorage.setItem('autoplayNextEpisode', autoplayNextEpisode ? 'on' : 'off'),
+        [autoplayNextEpisode]
+    )
+
+    // Next Episode Overlay State
+    const [showNextEpisodeOverlay, setShowNextEpisodeOverlay] = useState(false)
+    const [nextEpisodeCountdown, setNextEpisodeCountdown] = useState(10)
+    const nextEpisodeTimerRef = useRef<number | null>(null)
+
     // MPV state
     const [isPaused, setIsPaused] = useState(false)
     const [timePos, setTimePos] = useState(0)
@@ -797,6 +811,82 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         setShowMenu(v => !v)
     }, [])
 
+    const cancelNextEpisodeCountdown = useCallback(() => {
+        if (nextEpisodeTimerRef.current) {
+            clearInterval(nextEpisodeTimerRef.current)
+            nextEpisodeTimerRef.current = null
+        }
+        setShowNextEpisodeOverlay(false)
+        setNextEpisodeCountdown(10)
+    }, [])
+
+    const startNextEpisodeCountdown = useCallback(() => {
+        setShowNextEpisodeOverlay(true)
+        setNextEpisodeCountdown(10)
+
+        if (nextEpisodeTimerRef.current) {
+            clearInterval(nextEpisodeTimerRef.current)
+        }
+
+        nextEpisodeTimerRef.current = window.setInterval(() => {
+            setNextEpisodeCountdown(prev => {
+                if (prev <= 1) {
+                    if (nextEpisodeTimerRef.current) {
+                        clearInterval(nextEpisodeTimerRef.current)
+                        nextEpisodeTimerRef.current = null
+                    }
+                    return 0
+                }
+                return prev - 1
+            })
+        }, 1000)
+    }, [])
+
+    // Cleanup countdown on unmount or when track changes
+    useEffect(() => {
+        return () => {
+            cancelNextEpisodeCountdown()
+        }
+    }, [cancelNextEpisodeCountdown, currentTrack])
+
+    const clearStates = useCallback(() => {
+        // Reset playback state
+        setTimePos(0)
+        setDuration(0)
+        setIsPaused(false)
+        setIsPending(true)
+
+        // Clear subtitle state
+        setSubtitleTracks([])
+        setCurrentSubtitleId(null)
+
+        // Clear audio track state
+        setAudioTracks([])
+        setCurrentAudioTrackId(null)
+
+        // Clear video statistics
+        setVideoCodec('N/A')
+        setAudioCodec('N/A')
+        setVideoWidth(0)
+        setVideoHeight(0)
+        setFps(0)
+        setVideoBitrate(0)
+        setAudioBitrate(0)
+        setAudioChannels(0)
+        setAudioSampleRate(0)
+        setHwdec('N/A')
+        setContainerFps(0)
+        setVideoFormat('N/A')
+        setAudioCodecName('N/A')
+        setFileSize(0)
+
+        // Clear buffering state
+        setIsBuffering(false)
+        setCacheDuration(0)
+
+        cancelNextEpisodeCountdown()
+    }, [])
+
     const clearCurrentTrack = useCallback(async () => {
         if (currentTrack) {
             // Exit fullscreen only if it was enabled by the app
@@ -832,46 +922,14 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             abortControllerRef.current?.abort('clearCurrentTrack')
             abortControllerRef.current = null
 
-            // Reset playback state
-            setTimePos(0)
-            setDuration(0)
-            setIsPaused(false)
-            setIsPending(true)
-
-            // Clear subtitle state
-            setSubtitleTracks([])
-            setCurrentSubtitleId(null)
-
-            // Clear audio track state
-            setAudioTracks([])
-            setCurrentAudioTrackId(null)
-
-            // Clear video statistics
-            setVideoCodec('N/A')
-            setAudioCodec('N/A')
-            setVideoWidth(0)
-            setVideoHeight(0)
-            setFps(0)
-            setVideoBitrate(0)
-            setAudioBitrate(0)
-            setAudioChannels(0)
-            setAudioSampleRate(0)
-            setHwdec('N/A')
-            setContainerFps(0)
-            setVideoFormat('N/A')
-            setAudioCodecName('N/A')
-            setFileSize(0)
-
-            // Clear buffering state
-            setIsBuffering(false)
-            setCacheDuration(0)
+            clearStates()
 
             // Clear Media Session metadata
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = null
             }
         }
-    }, [currentTrack, timePos, reportTrackStopped, isInitialized, isFullscreen, currentMediaSourceId])
+    }, [clearStates, currentMediaSourceId, currentTrack, isFullscreen, isInitialized, reportTrackStopped, timePos])
 
     return {
         // Track info
@@ -892,6 +950,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         // Playback controls
         togglePlayPause,
         playTrack: (track: MediaItem, mediaSourceId?: string) => {
+            clearStates()
             setUserInteracted(true)
             setCurrentTrack(track)
             setCurrentMediaSourceId(mediaSourceId || track.Id)
@@ -943,6 +1002,14 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         setBitrate,
         rememberFilters,
         setRememberFilters,
+
+        // Next Episode Autoplay
+        autoplayNextEpisode,
+        setAutoplayNextEpisode,
+        showNextEpisodeOverlay,
+        nextEpisodeCountdown,
+        startNextEpisodeCountdown,
+        cancelNextEpisodeCountdown,
 
         // Video statistics
         videoCodec,

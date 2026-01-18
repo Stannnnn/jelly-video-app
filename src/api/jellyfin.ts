@@ -15,7 +15,10 @@ import { PlayMethod } from '@jellyfin/sdk/lib/generated-client/models/play-metho
 import { SortOrder } from '@jellyfin/sdk/lib/generated-client/models/sort-order'
 
 export class ApiError extends Error {
-    constructor(message: string, public response: Response) {
+    constructor(
+        message: string,
+        public response: Response
+    ) {
         super(message)
         this.response = response
     }
@@ -72,7 +75,7 @@ export const loginToJellyfin = async (serverUrl: string, username: string, passw
 
 export const JELLYFIN_MAX_LIMIT = 2000 // Safety fallback upper limit for API calls
 
-const extraFields: ItemFields[] = ['Trickplay', 'MediaStreams']
+const extraFields: ItemFields[] = ['Trickplay', 'MediaStreams', 'Chapters']
 
 export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: string; userId: string; token: string }) => {
     const jellyfin = new Jellyfin({

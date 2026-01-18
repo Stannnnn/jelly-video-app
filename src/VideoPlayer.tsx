@@ -1,7 +1,9 @@
 import { ArrowLeftIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from '@primer/octicons-react'
 import { useCallback, useEffect, useRef, useState, WheelEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { MediaItem } from './api/jellyfin'
 import { Loader } from './components/Loader'
+import { NextEpisodeOverlay } from './components/NextEpisodeOverlay'
 import { AudioTrack, SubtitleTrack } from './components/PlaybackManager'
 import {
     GearIcon,
@@ -17,6 +19,7 @@ import {
 import { useHistoryContext } from './context/HistoryContext/HistoryContext'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
+import { useJellyfinSequentialNextEpisode } from './hooks/Jellyfin/useJellyfinSequentialNextEpisode'
 import { useDisplayTitle } from './hooks/useDisplayTitle'
 import { getVideoQuality } from './utils/getVideoQuality'
 import './VideoPlayer.css'
@@ -63,6 +66,7 @@ const getAudioTrackDisplayName = (
 
 export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boolean; error: string | null }) => {
     const api = useJellyfinContext()
+    const navigate = useNavigate()
     const {
         isPaused,
         timePos,
@@ -111,11 +115,20 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
         audioCodecName,
         fileSize,
         mpvError,
+        autoplayNextEpisode,
+        showNextEpisodeOverlay,
+        nextEpisodeCountdown,
+        startNextEpisodeCountdown,
+        cancelNextEpisodeCountdown,
     } = usePlaybackContext()
 
     const isLoading = _isLoading || isPending
 
     const { goBack: previousPage } = useHistoryContext()
+
+    // Get next episode (for autoplay - gets sequential next episode regardless of watched state)
+    const { nextEpisode } = useJellyfinSequentialNextEpisode(currentTrack || ({} as MediaItem))
+
     const [previewTime, setPreviewTime] = useState<number | null>(null)
     const [previewPosition, setPreviewPosition] = useState(0)
     const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
@@ -289,6 +302,91 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
     useEffect(() => {
         animateMenu()
     }, [animateMenu, subtitleTracks, audioTracks, videoLoaded, currentTrack])
+
+    // Next Episode Detection - Monitor time position and detect credits or near end
+    useEffect(() => {
+        if (!currentTrack || !duration || !timePos || !videoLoaded || !autoplayNextEpisode || !nextEpisode) {
+            return
+        }
+
+        // Check if we're already showing the overlay or if countdown reached 0
+        if (showNextEpisodeOverlay) {
+            // Auto-navigate when countdown reaches 0
+            if (nextEpisodeCountdown === 0 && nextEpisode?.Id) {
+                cancelNextEpisodeCountdown()
+                navigate(`/play/${nextEpisode.Id}`, { replace: true })
+            }
+            return
+        }
+
+        // Prevent immediate countdown on new episode by checking we're past the first 5 seconds
+        // This ensures timePos has properly reset for the new video
+        if (timePos < 5) {
+            return
+        }
+
+        const timeRemaining = duration - timePos
+
+        // Check for credits chapter
+        let creditsStartTime: number | null = null
+        if (currentTrack.Chapters && currentTrack.Chapters.length > 0) {
+            const creditsChapter = currentTrack.Chapters.find(
+                chapter =>
+                    chapter.Name?.toLowerCase().includes('credit') ||
+                    chapter.Name?.toLowerCase().includes('ending') ||
+                    chapter.Name?.toLowerCase().includes('outro')
+            )
+            if (creditsChapter && creditsChapter.StartPositionTicks) {
+                creditsStartTime = creditsChapter.StartPositionTicks / 10000000 // Convert ticks to seconds
+            }
+        }
+
+        // Show overlay if:
+        // 1. Credits chapter started, OR
+        // 2. Less than 30 seconds remaining (fallback for videos without chapters)
+        const shouldShowOverlay =
+            (creditsStartTime !== null && timePos >= creditsStartTime) ||
+            (creditsStartTime === null && timeRemaining <= 30 && timeRemaining > 0)
+
+        // Only start countdown if user hasn't manually canceled it
+        if (shouldShowOverlay) {
+            startNextEpisodeCountdown()
+        }
+    }, [
+        currentTrack,
+        duration,
+        timePos,
+        videoLoaded,
+        autoplayNextEpisode,
+        nextEpisode,
+        showNextEpisodeOverlay,
+        nextEpisodeCountdown,
+        startNextEpisodeCountdown,
+        navigate,
+        cancelNextEpisodeCountdown,
+    ])
+
+    // If video ends naturally (timePos reaches duration), immediately go to next episode
+    useEffect(() => {
+        if (!currentTrack || !duration || !timePos || !videoLoaded || !autoplayNextEpisode || !nextEpisode) {
+            return
+        }
+
+        // If we're within 1 second of the end, navigate immediately
+        if (duration - timePos < 1 && duration - timePos > 0 && nextEpisode.Id) {
+            cancelNextEpisodeCountdown()
+            navigate(`/play/${nextEpisode.Id}`, { replace: true })
+        }
+    }, [
+        currentTrack,
+        duration,
+        timePos,
+        videoLoaded,
+        autoplayNextEpisode,
+        nextEpisode,
+        navigate,
+        cancelNextEpisodeCountdown,
+    ])
 
     // Hide controls when window loses focus (disabled in dev so F12 debugging doesn't hide controls)
     useEffect(() => {
@@ -757,8 +855,8 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                                             {fps > 0
                                                 ? fps.toFixed(2)
                                                 : containerFps > 0
-                                                ? containerFps.toFixed(2)
-                                                : 'N/A'}
+                                                  ? containerFps.toFixed(2)
+                                                  : 'N/A'}
                                         </div>
                                     </div>
                                     <div className="menu-item stats-item">
@@ -819,6 +917,17 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                     </div>
                 </div>
             </div>
+
+            <NextEpisodeOverlay
+                nextEpisode={nextEpisode}
+                countdown={nextEpisodeCountdown}
+                onPlayNow={() => {
+                    cancelNextEpisodeCountdown()
+                    navigate(`/play/${nextEpisode?.Id}`, { replace: true })
+                }}
+                onCancel={cancelNextEpisodeCountdown}
+                isVisible={!!(showNextEpisodeOverlay && nextEpisode)}
+            />
         </div>
     )
 }

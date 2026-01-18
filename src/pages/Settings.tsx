@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
+import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { useThemeContext } from '../context/ThemeContext/ThemeContext'
 import { persister } from '../queryClient'
 import './Settings.css'
@@ -14,6 +15,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
     const navigate = useNavigate()
     const api = useJellyfinContext()
     const audioStorage = useAudioStorageContext()
+    const { autoplayNextEpisode, setAutoplayNextEpisode } = usePlaybackContext()
 
     const { theme, toggleTheme } = useThemeContext()
 
@@ -167,8 +169,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <label className="switch">
                                 <input
                                     type="checkbox"
-                                    //checked={playback.isPreloadActive}
-                                    //onChange={e => playback.setIsPreloadActive(e.target.checked)}
+                                    checked={autoplayNextEpisode}
+                                    onChange={e => setAutoplayNextEpisode(e.target.checked)}
                                 ></input>
                                 <span className="slider"></span>
                             </label>
