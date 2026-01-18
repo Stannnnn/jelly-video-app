@@ -639,7 +639,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             fields: extraFields,
         })
 
-        return await parseItemDtos(response.data.Items)
+        return (await parseItemDtos(response.data.Items)).slice(0, 12)
     }
 
     const addToCollection = async (collectionId: string, items: MediaItem[]) => {
