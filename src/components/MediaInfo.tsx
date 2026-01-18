@@ -328,13 +328,13 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                   '0'
                                               )} E${String(nextEpisode.episodeNumber || 0).padStart(2, '0')}`
                                             : item.Type === BaseItemKind.Series && nextEpisode
-                                            ? `Play S${String(nextEpisode.seasonNumber || 0).padStart(
-                                                  2,
-                                                  '0'
-                                              )} E${String(nextEpisode.episodeNumber || 0).padStart(2, '0')}`
-                                            : shouldShowResume
-                                            ? 'Resume'
-                                            : 'Play'}
+                                              ? `Play S${String(nextEpisode.seasonNumber || 0).padStart(
+                                                    2,
+                                                    '0'
+                                                )} E${String(nextEpisode.episodeNumber || 0).padStart(2, '0')}`
+                                              : shouldShowResume
+                                                ? 'Resume'
+                                                : 'Play'}
                                     </div>
                                 </div>
                                 {videoSources.length > 1 && (
@@ -378,6 +378,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                             handlePlayClick(source.Id || undefined)
                                                             setIsVersionDropdownOpen(false)
                                                         }}
+                                                        title={displayName}
                                                     >
                                                         {displayName}
                                                     </div>
@@ -496,6 +497,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                                     setIsDownloadDropdownOpen(false)
                                                                     setIsMoreDropdownOpen(false)
                                                                 }}
+                                                                title={displayName}
                                                             >
                                                                 {displayName}
                                                             </div>
