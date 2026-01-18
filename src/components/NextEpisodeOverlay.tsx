@@ -21,17 +21,6 @@ export const NextEpisodeOverlay = ({
 
     if (!nextEpisode) return null
 
-    const episodeInfo = nextEpisode.IndexNumber
-        ? `Episode ${nextEpisode.IndexNumber}`
-        : nextEpisode.ParentIndexNumber
-          ? `Season ${nextEpisode.ParentIndexNumber}`
-          : ''
-
-    const seasonInfo =
-        nextEpisode.ParentIndexNumber && nextEpisode.IndexNumber
-            ? `S${nextEpisode.ParentIndexNumber}E${nextEpisode.IndexNumber}`
-            : episodeInfo
-
     return (
         <div className={`next-episode-overlay ${isVisible ? 'visible' : ''}`}>
             <div className="next-episode-content">
