@@ -1,4 +1,5 @@
 import { MediaItem } from '../api/jellyfin'
+import { useDisplayTitle } from '../hooks/useDisplayTitle'
 import './NextEpisodeOverlay.css'
 
 interface NextEpisodeOverlayProps {
@@ -16,6 +17,8 @@ export const NextEpisodeOverlay = ({
     onCancel,
     isVisible,
 }: NextEpisodeOverlayProps) => {
+    const displayTitle = useDisplayTitle(nextEpisode)
+
     if (!nextEpisode) return null
 
     const episodeInfo = nextEpisode.IndexNumber
@@ -37,9 +40,10 @@ export const NextEpisodeOverlay = ({
                     <div className="next-episode-countdown">{countdown}s</div>
                 </div>
                 <div className="next-episode-info">
-                    <div className="next-episode-name">{nextEpisode.Name}</div>
-                    {seasonInfo && <div className="next-episode-number">{seasonInfo}</div>}
-                    {nextEpisode.SeriesName && <div className="next-episode-series">{nextEpisode.SeriesName}</div>}
+                    <div className="container">
+                        <div className="series">{nextEpisode.SeriesName}</div>
+                    </div>
+                    <div className="next-episode-number">{displayTitle}</div>
                 </div>
                 <div className="next-episode-actions">
                     <button className="next-episode-btn play-now" onClick={onPlayNow}>
