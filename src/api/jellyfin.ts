@@ -596,7 +596,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         const item = await getItemById(itemId)
 
         // Convert People to MediaItem format for rendering
-        const peopleAsItems = (item.People || []).map(person => ({
+        const peopleAsItems = (item.People || []).slice(0, 16).map(person => ({
             Id: person.Id || '',
             Name: person.Name || '',
             Type: 'Person' as const,
