@@ -885,7 +885,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         setCacheDuration(0)
 
         cancelNextEpisodeCountdown()
-    }, [])
+    }, [cancelNextEpisodeCountdown])
 
     const clearCurrentTrack = useCallback(async () => {
         if (currentTrack) {

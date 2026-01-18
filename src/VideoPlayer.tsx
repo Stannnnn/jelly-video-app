@@ -126,6 +126,9 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
 
     const { goBack: previousPage } = useHistoryContext()
 
+    // Track whether user has manually canceled the countdown for this episode
+    const userCanceledCountdownRef = useRef(false)
+
     // Get next episode (for autoplay - gets sequential next episode regardless of watched state)
     const { nextEpisode } = useJellyfinSequentialNextEpisode(currentTrack || ({} as MediaItem))
 
@@ -348,8 +351,8 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
             (creditsStartTime !== null && timePos >= creditsStartTime) ||
             (creditsStartTime === null && timeRemaining <= 30 && timeRemaining > 0)
 
-        // Only start countdown if user hasn't manually canceled it
-        if (shouldShowOverlay) {
+        // Only start countdown if user hasn't manually canceled it and conditions are met
+        if (shouldShowOverlay && !userCanceledCountdownRef.current) {
             startNextEpisodeCountdown()
         }
     }, [
@@ -364,7 +367,13 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
         startNextEpisodeCountdown,
         navigate,
         cancelNextEpisodeCountdown,
+        userCanceledCountdownRef,
     ])
+
+    // Reset cancellation flag when track changes
+    useEffect(() => {
+        userCanceledCountdownRef.current = false
+    }, [currentTrack?.Id])
 
     // If video ends naturally (timePos reaches duration), immediately go to next episode
     useEffect(() => {
@@ -925,7 +934,10 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                     cancelNextEpisodeCountdown()
                     navigate(`/play/${nextEpisode?.Id}`, { replace: true })
                 }}
-                onCancel={cancelNextEpisodeCountdown}
+                onCancel={() => {
+                    userCanceledCountdownRef.current = true
+                    cancelNextEpisodeCountdown()
+                }}
                 isVisible={!!(showNextEpisodeOverlay && nextEpisode)}
             />
         </div>
