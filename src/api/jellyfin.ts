@@ -600,7 +600,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             Id: person.Id || '',
             Name: person.Name || '',
             Type: 'Person' as const,
-            Role: person.Role,
+            Role: person.Role || person.Type,
             PrimaryImageTag: person.PrimaryImageTag,
         }))
 
