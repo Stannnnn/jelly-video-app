@@ -22,23 +22,21 @@ export const NextEpisodeOverlay = ({
     if (!nextEpisode) return null
 
     return (
-        <div className={`next-episode-overlay ${isVisible ? 'visible' : ''}`}>
+        <div className={`next-episode-overlay ${isVisible ? 'visible' : ''}`} onDoubleClick={e => e.stopPropagation()}>
             <div className="next-episode-content">
                 <div className="next-episode-header">
-                    <div className="next-episode-title">Next Episode</div>
-                    <div className="next-episode-countdown">{countdown}s</div>
+                    <div className="title">Next Episode</div>
+                    <div className="countdown">{countdown}s</div>
                 </div>
                 <div className="next-episode-info">
-                    <div className="container">
-                        <div className="series">{nextEpisode.SeriesName}</div>
-                    </div>
-                    <div className="next-episode-number">{displayTitle}</div>
+                    <div className="series">{nextEpisode.SeriesName}</div>
+                    <div className="episode">{displayTitle}</div>
                 </div>
                 <div className="next-episode-actions">
-                    <button className="next-episode-btn play-now" onClick={onPlayNow}>
+                    <button className="btn play-now" onClick={onPlayNow}>
                         Play Now
                     </button>
-                    <button className="next-episode-btn cancel" onClick={onCancel}>
+                    <button className="btn cancel" onClick={onCancel}>
                         Cancel
                     </button>
                 </div>

@@ -440,6 +440,10 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             to skip back or forward by 5 seconds
                         </p>
                         <p className="container">
+                            <div className="key">J</div> <div className="key">L</div> to skip back or forward by 10
+                            seconds
+                        </p>
+                        <p className="container">
                             <div className="key">
                                 <ArrowUpIcon size={14} />
                             </div>{' '}

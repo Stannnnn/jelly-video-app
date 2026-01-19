@@ -94,7 +94,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     // Next Episode Overlay State
     const [showNextEpisodeOverlay, setShowNextEpisodeOverlay] = useState(false)
-    const [nextEpisodeCountdown, setNextEpisodeCountdown] = useState(10)
+    const [nextEpisodeCountdown, setNextEpisodeCountdown] = useState(20)
     const nextEpisodeTimerRef = useRef<number | null>(null)
 
     // MPV state
@@ -817,12 +817,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             nextEpisodeTimerRef.current = null
         }
         setShowNextEpisodeOverlay(false)
-        setNextEpisodeCountdown(10)
+        setNextEpisodeCountdown(20)
     }, [])
 
     const startNextEpisodeCountdown = useCallback(() => {
         setShowNextEpisodeOverlay(true)
-        setNextEpisodeCountdown(10)
+        setNextEpisodeCountdown(20)
 
         if (nextEpisodeTimerRef.current) {
             clearInterval(nextEpisodeTimerRef.current)

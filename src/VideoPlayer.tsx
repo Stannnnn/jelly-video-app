@@ -462,7 +462,7 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
 
     return (
         <div
-            className={isPaused ? 'video-container noSelect' : 'video-container noSelect playing'}
+            className={`video-container noSelect ${isPaused ? '' : 'playing'} ${isFullscreen ? 'fullscreen' : ''}`}
             onMouseMove={handleMouseMove}
             onDoubleClick={toggleFullscreen}
         >
