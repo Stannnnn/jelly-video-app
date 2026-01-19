@@ -188,7 +188,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                                 path="/series"
                                 element={<Main pageTitle="Series" content={Series} filterType={'movies'} />}
                             />
-                            <Route path="/series/:id" element={<Main pageTitle="Series" content={SeriesPage} />} />
+                            <Route path="/series/:id" element={<Main pageTitle="Serie" content={SeriesPage} />} />
                             <Route path="/episode/:id" element={<Main pageTitle="Episode" content={EpisodePage} />} />
                             <Route path="/special/:id" element={<Main pageTitle="Special" content={SpecialPage} />} />
                             <Route path="/person/:id" element={<Main pageTitle="Person" content={PersonPage} />} />
