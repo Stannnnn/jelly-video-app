@@ -1,12 +1,20 @@
-.video-container.fullscreen .next-episode-overlay {
+.video-container.fullscreen > .next-episode-overlay {
     right: 90px;
-    bottom: 100px;
+    bottom: 90px;
+}
+
+.video-container > .video-controls.hidden ~ .next-episode-overlay {
+    transform: translateY(0);
+}
+
+.video-container > .video-controls.visible ~ .next-episode-overlay {
+    transform: translateY(-20px);
 }
 
 .next-episode-overlay {
     position: absolute;
-    right: 50px;
-    bottom: 80px;
+    right: 60px;
+    bottom: 60px;
     padding: 14px;
     min-width: 320px;
     max-width: 380px;
@@ -22,12 +30,14 @@
         opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1),
         visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
         transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+    pointer-events: none;
 }
 
 .next-episode-overlay.visible {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+    pointer-events: auto;
 }
 
 .next-episode-overlay > .next-episode-content {
@@ -40,7 +50,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0 2px;
+    padding: 0 2px;
     margin-top: -4px;
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -83,7 +93,7 @@
 .next-episode-overlay > .next-episode-content > .next-episode-actions {
     display: flex;
     gap: 12px;
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 .next-episode-overlay > .next-episode-content > .next-episode-actions > .btn {
