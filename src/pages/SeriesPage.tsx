@@ -1,3 +1,4 @@
+import { ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client'
 import { ChevronDownIcon } from '@primer/octicons-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -7,6 +8,7 @@ import { MediaFooter } from '../components/MediaFooter'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
 import { SortingIcon } from '../components/SvgIcons'
+import { SortState } from '../context/FilterContext/FilterContext'
 import { useJellyfinCastCrew } from '../hooks/Jellyfin/useJellyfinCastCrew'
 import { useJellyfinEpisodes } from '../hooks/Jellyfin/useJellyfinEpisodes'
 import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
@@ -19,6 +21,9 @@ export const SeriesPage = () => {
     const { id } = useParams<{ id: string }>()
 
     const [selectedSeasonId, setSelectedSeasonId] = useState<string | null>(null)
+    const [uiSortBy, setUiSortBy] = useState<SortState>(SortState.Released)
+    const [sortBy, setSortBy] = useState<ItemSortBy[]>([ItemSortBy.PremiereDate])
+    const [sortOrder, setSortOrder] = useState<SortOrder[]>([SortOrder.Ascending])
 
     const { mediaItem: series, isLoading: isLoadingSeries, error: seriesError } = useJellyfinMediaItem(id)
     const { people, isLoading: isLoadingCastCrew } = useJellyfinCastCrew(id)
@@ -31,7 +36,7 @@ export const SeriesPage = () => {
 
     const { seasons, isLoading: isLoadingSeasons, error: seasonsError } = useJellyfinSeasons(id)
 
-    const { episodes, isLoading: isLoadingEpisodes } = useJellyfinEpisodes(selectedSeasonId)
+    const { episodes, isLoading: isLoadingEpisodes } = useJellyfinEpisodes(selectedSeasonId, sortBy, sortOrder)
 
     const { specials, isLoading: isLoadingSpecials } = useJellyfinSpecials(id)
 
@@ -50,6 +55,36 @@ export const SeriesPage = () => {
 
     const handleSeasonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedSeasonId(e.target.value)
+    }
+
+    const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value as SortState
+        setUiSortBy(value)
+
+        let newSortBy: ItemSortBy[]
+
+        switch (value) {
+            case SortState.Added:
+                newSortBy = [ItemSortBy.DateCreated]
+                break
+            case SortState.Released:
+                newSortBy = [ItemSortBy.PremiereDate]
+                break
+            case SortState.Runtime:
+                newSortBy = [ItemSortBy.Runtime]
+                break
+            case SortState.Name:
+                newSortBy = [ItemSortBy.Name]
+                break
+            default:
+                newSortBy = [ItemSortBy.PremiereDate]
+        }
+
+        setSortBy(newSortBy)
+    }
+
+    const handleSortOrderToggle = () => {
+        setSortOrder(prev => (prev[0] === SortOrder.Ascending ? [SortOrder.Descending] : [SortOrder.Ascending]))
     }
 
     return (
@@ -79,18 +114,26 @@ export const SeriesPage = () => {
                                 <div className="option secondary">
                                     <div className="sorting date">
                                         <div className="filter">
-                                            <select>
-                                                <option value="Premiered">Premiered</option>
-                                                <option value="Runtime">Runtime</option>
-                                                <option value="Rating">Rating</option>
-                                                <option value="Watched">Watched</option>
+                                            <select value={uiSortBy} onChange={handleSortChange}>
+                                                <option value={SortState.Released}>Premiered</option>
+                                                <option value={SortState.Runtime}>Runtime</option>
+                                                <option value={SortState.Name}>Name</option>
+                                                <option value={SortState.Added}>Added</option>
                                             </select>
                                             <div className="icon">
                                                 <ChevronDownIcon size={12} />
                                             </div>
                                         </div>
-                                        <div className="sort">
-                                            <div className={'icon'}>
+                                        <div
+                                            className="sort"
+                                            onClick={handleSortOrderToggle}
+                                            title={sortOrder[0] === SortOrder.Ascending ? 'Ascending' : 'Descending'}
+                                        >
+                                            <div
+                                                className={
+                                                    'icon' + (sortOrder[0] === SortOrder.Ascending ? ' active' : '')
+                                                }
+                                            >
                                                 <SortingIcon width={12} height={12} />
                                             </div>
                                         </div>

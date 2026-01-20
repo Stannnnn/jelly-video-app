@@ -546,14 +546,14 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getEpisodes = async (seasonId: string, startIndex?: number, limit?: number) => {
+    const getEpisodes = async (seasonId: string, startIndex?: number, limit?: number, sortBy?: ItemSortBy[], sortOrder?: SortOrder[]) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
             userId,
             parentId: seasonId,
             includeItemTypes: [BaseItemKind.Episode],
-            sortBy: [ItemSortBy.SortName],
-            sortOrder: [SortOrder.Ascending],
+            sortBy: sortBy || [ItemSortBy.SortName],
+            sortOrder: sortOrder || [SortOrder.Ascending],
             fields: extraFields,
             startIndex,
             limit,
