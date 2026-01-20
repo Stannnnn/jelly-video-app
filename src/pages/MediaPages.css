@@ -15,6 +15,8 @@
 .media-page > .media-content > .section > .container {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 20px;
 }
@@ -41,7 +43,13 @@
     transition: background-color 0.2s ease-out;
 }
 
-.media-page > .media-content > .section > .container > .sorting {
+.media-page > .media-content > .section > .container > .option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting {
     position: relative;
     display: flex;
     align-items: center;
@@ -51,14 +59,14 @@
     background-color: var(--bg-color);
 }
 
-.media-page > .media-content > .section > .container > .sorting > .filter {
+.media-page > .media-content > .section > .container > .option > .sorting > .filter {
     position: relative;
     display: flex;
     align-items: center;
     flex-shrink: 0;
 }
 
-.media-page > .media-content > .section > .container > .sorting > .filter > select {
+.media-page > .media-content > .section > .container > .option > .sorting > .filter > select {
     font-size: 0.725rem;
     font-weight: 500;
     color: var(--brand-color);
@@ -67,7 +75,7 @@
     padding-right: 24px;
 }
 
-.media-page > .media-content > .section > .container > .sorting > .filter > .icon {
+.media-page > .media-content > .section > .container > .option > .sorting > .filter > .icon {
     position: absolute;
     right: 6px;
     color: var(--brand-color);
@@ -75,9 +83,52 @@
     pointer-events: none;
 }
 
-.media-page > .media-content > .section > .container > .sorting > .filter > select > option {
+.media-page > .media-content > .section > .container > .option > .sorting > .filter > select > option {
     font-weight: 500;
     color: var(--font-color);
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    border-left: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort > .icon {
+    padding: 7px;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort > .icon > svg {
+    fill: var(--brand-color);
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort > .icon > svg > g > .arrow {
+    transition: opacity 0.2s ease-out;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort > .icon > svg > g > .arrow.down {
+    opacity: 0.4;
+}
+
+/* Ascending */
+.media-page
+    > .media-content
+    > .section
+    > .container
+    > .option
+    > .sorting
+    > .sort
+    > .icon.active
+    > svg
+    > g
+    > .arrow.down {
+    opacity: 1;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort > .icon.active > svg > g > .arrow.up {
+    opacity: 0.4;
 }
 
 .media-page > .media-footer {

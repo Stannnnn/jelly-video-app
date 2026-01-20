@@ -24,8 +24,8 @@ pub fn run() {
                 let min_w = win_cfg.min_width.unwrap_or(600.0) as u32;
                 let min_h = win_cfg.min_height.unwrap_or(600.0) as u32;
 
-                let avail_w = (mon_size.width as f64 * 0.9) as u32;
-                let avail_h = (mon_size.height as f64 * 0.9) as u32;
+                let avail_w = (mon_size.width as f64 * 0.86) as u32;
+                let avail_h = (mon_size.height as f64 * 0.86) as u32;
 
                 let w = def_w.min(avail_w).max(min_w);
                 let h = def_h.min(avail_h).max(min_h);

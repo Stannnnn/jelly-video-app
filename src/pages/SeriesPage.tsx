@@ -6,6 +6,7 @@ import { Loader } from '../components/Loader'
 import { MediaFooter } from '../components/MediaFooter'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
+import { SortingIcon } from '../components/SvgIcons'
 import { useJellyfinCastCrew } from '../hooks/Jellyfin/useJellyfinCastCrew'
 import { useJellyfinEpisodes } from '../hooks/Jellyfin/useJellyfinEpisodes'
 import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
@@ -55,31 +56,48 @@ export const SeriesPage = () => {
         <div className="media-page series">
             <MediaInfo item={series} />
             <div className="media-content">
-                <div className="section seasons">
+                <div className="section options">
                     <div className="container">
                         {seasons && seasons.length > 0 && (
-                            <div className="sorting">
-                                <div className="filter">
-                                    <select value={selectedSeasonId || ''} onChange={handleSeasonChange}>
-                                        {seasons.map((season: MediaItem) => (
-                                            <option key={season.Id} value={season.Id}>
-                                                {season.Name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <div className="icon">
-                                        <ChevronDownIcon size={12} />
+                            <>
+                                <div className="option primary">
+                                    <div className="sorting seasons">
+                                        <div className="filter">
+                                            <select value={selectedSeasonId || ''} onChange={handleSeasonChange}>
+                                                {seasons.map((season: MediaItem) => (
+                                                    <option key={season.Id} value={season.Id}>
+                                                        {season.Name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <div className="icon">
+                                                <ChevronDownIcon size={12} />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                                <div className="option secondary">
+                                    <div className="sorting date">
+                                        <div className="filter">
+                                            <select>
+                                                <option value="Premiered">Premiered</option>
+                                                <option value="Runtime">Runtime</option>
+                                                <option value="Rating">Rating</option>
+                                                <option value="Watched">Watched</option>
+                                            </select>
+                                            <div className="icon">
+                                                <ChevronDownIcon size={12} />
+                                            </div>
+                                        </div>
+                                        <div className="sort">
+                                            <div className={'icon'}>
+                                                <SortingIcon width={12} height={12} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
                         )}
-                        {/* Inline loader test next to select
-                        {isLoadingSeasons ? (
-                            <InlineLoader />
-                        ) : seasonsError ? (
-                            <div className="error">{seasonsError || 'Failed to load season'}</div>
-                        ) : null}
-                        */}
                     </div>
                     {!isLoadingSeasons && !seasonsError && (
                         <MediaList items={episodes || []} isLoading={isLoadingEpisodes} type="episode" />
