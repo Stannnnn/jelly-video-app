@@ -8,13 +8,13 @@ pub fn run() {
         .plugin(tauri_plugin_libmpv::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_shell::init())
         .manage(storage::DownloadManager::default())
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
 
             if let Ok(Some(monitor)) = window.current_monitor() {
                 let mon_size = monitor.size();
-                let scale = monitor.scale_factor();
 
                 let config = app.config();
                 let win_cfg = &config.app.windows[0];
@@ -52,6 +52,7 @@ pub fn run() {
             storage::storage_search_items,
             storage::storage_get_stats,
             storage::storage_abort_downloads,
+            storage::get_storage_path,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

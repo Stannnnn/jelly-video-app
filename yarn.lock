@@ -675,6 +675,13 @@
   dependencies:
     "@tauri-apps/api" "^2.8.0"
 
+"@tauri-apps/plugin-shell@^2.3.4":
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-shell/-/plugin-shell-2.3.4.tgz#26cbfca659d127da81b0d4583dec9a56d13f5dfe"
+  integrity sha512-ktsRWf8wHLD17aZEyqE8c5x98eNAuTizR1FSX475zQ4TxaiJnhwksLygQz+AGwckJL5bfEP13nWrlTNQJUpKpA==
+  dependencies:
+    "@tauri-apps/api" "^2.8.0"
+
 "@types/babel__core@^7.20.5":
   version "7.20.5"
   resolved "https://registry.npmjs.org/@types/babel__core/-/babel__core-7.20.5.tgz"

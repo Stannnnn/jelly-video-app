@@ -1,14 +1,17 @@
 import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, ChevronDownIcon } from '@primer/octicons-react'
 import { useQueryClient } from '@tanstack/react-query'
+import { invoke } from '@tauri-apps/api/core'
 import { ask } from '@tauri-apps/plugin-dialog'
+import { open } from '@tauri-apps/plugin-shell'
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { useThemeContext } from '../context/ThemeContext/ThemeContext'
 import { persister } from '../queryClient'
+import { formatFileSize } from '../utils/formatFileSize'
 import './Settings.css'
 
 export const Settings = ({ onLogout }: { onLogout: () => void }) => {
@@ -95,6 +98,15 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
             setClearing(false)
         }
     }, [audioStorage, clearQueue, queryClient, refreshStorageStats])
+
+    const handleOpenDownloadsFolder = useCallback(async () => {
+        try {
+            const storagePath = await invoke<string>('get_storage_path')
+            await open(storagePath)
+        } catch (error) {
+            console.error('Failed to open downloads folder:', error)
+        }
+    }, [])
 
     const reloadApp = async () => {
         queryClient.clear()
@@ -356,52 +368,42 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
             </div>
 
-            {/*
             <div className="section offline-sync">
-                <div className="primary">
-                    <div className="container">
-                        <div className="title">Downloads</div>
-                        <div className="desc">
-                            Downloads - <span className="number">{storageStats.trackCount}</span> Track
-                            {storageStats.trackCount === 1 ? '' : 's'}
-                            {queueCount > 0 ? (
-                                <>
-                                    {' '}
-                                    (<span className="number">{queueCount}</span> track{queueCount === 1 ? '' : 's'} in
-                                    queue)
-                                </>
-                            ) : (
-                                ''
-                            )}{' '}
-                            /{' '}
-                            <span className="number">
-                                {formatFileSize(storageStats.trackCount === 0 ? 0 : storageStats?.usage || 0)}
-                            </span>{' '}
-                            Used
-                        </div>
-                    </div>
-                    <div className="options noSelect">
-                        <div className="option">
-                            {(storageStats.trackCount > 0 || queueCount > 0 || !audioStorage.isInitialized()) && (
-                                <button className="btn clear" onClick={handleClearAll} disabled={clearing}>
-                                    {clearing ? 'Clearing...' : 'Clear All'}
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                </div>
+                <div className="title">Downloads</div>
                 <div className="desc">
-                    <div className="info">
-                        Cache your music library for seamless offline playback, with new tracks auto-syncing to saved
-                        playlists, albums, or artists.{' '}
+                    <p>
+                        <span className="number">{storageStats.trackCount}</span> Video
+                        {storageStats.trackCount === 1 ? '' : 's'}
+                        {queueCount > 0 && (
+                            <>
+                                {' '}
+                                (<span className="number">{queueCount}</span> in queue)
+                            </>
+                        )}{' '}
+                        /{' '}
+                        <span className="number">
+                            {formatFileSize(storageStats.trackCount === 0 ? 0 : storageStats?.usage || 0)}
+                        </span>
+                    </p>
+                    <p>
+                        Cache your videos for offline playback.{' '}
                         <Link to="/downloads" className="textlink">
-                            Browse music library
+                            Browse downloads
                         </Link>
-                        , available once tracks are synced
-                    </div>
+                        .{' '}
+                        <button onClick={handleOpenDownloadsFolder} className="textlink">
+                            Open downloads folder
+                        </button>
+                    </p>
+                </div>
+                <div className="actions noSelect">
+                    {(storageStats.trackCount > 0 || queueCount > 0 || !audioStorage.isInitialized()) && (
+                        <button className="btn clear" onClick={handleClearAll} disabled={clearing}>
+                            {clearing ? 'Clearing...' : 'Clear All'}
+                        </button>
+                    )}
                 </div>
             </div>
-            */}
 
             <div className="section misc ui">
                 <div className="title">Misc</div>

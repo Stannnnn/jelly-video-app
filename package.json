@@ -24,6 +24,7 @@
         "@tanstack/react-query-persist-client": "^5.90.13",
         "@tauri-apps/api": "^2.9.0",
         "@tauri-apps/plugin-dialog": "^2.4.2",
+        "@tauri-apps/plugin-shell": "^2.3.4",
         "@types/node": "^24.10.1",
         "axios": "^1.13.2",
         "figma-squircle": "^1.1.0",
