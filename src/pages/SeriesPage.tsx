@@ -44,7 +44,9 @@ export const SeriesPage = () => {
                 : SortOrder.Descending
             : sortOrder[0]
 
-    const { episodes, isLoading: isLoadingEpisodes } = useJellyfinEpisodes(selectedSeasonId, sortBy, [
+    const effectiveSortBy = sortBy.concat(ItemSortBy.IndexNumber)
+
+    const { episodes, isLoading: isLoadingEpisodes } = useJellyfinEpisodes(selectedSeasonId, effectiveSortBy, [
         effectiveSortOrder,
     ])
 
