@@ -104,11 +104,18 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const toggleDownload = async (e: React.MouseEvent, mediaSourceId?: string) => {
         e.stopPropagation()
 
+        // Disable action if currently downloading or deleting
+        if (item.offlineState === 'downloading' || item.offlineState === 'deleting') {
+            return
+        }
+
         if (!item.offlineState) {
             addToDownloads([item], undefined, mediaSourceId)
         } else {
             removeFromDownloads([item], undefined, mediaSourceId)
         }
+
+        setIsMoreDropdownOpen(false)
     }
 
     const toggleDownloadDropdown = (e: React.MouseEvent) => {
@@ -430,7 +437,11 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                             </div>
                             <div className={`more-dropdown ${isMoreDropdownOpen ? 'open' : ''}`}>
                                 <div
-                                    className={`more-dropdown-item ${videoSources.length > 1 ? 'download-item' : ''}`}
+                                    className={`more-dropdown-item ${videoSources.length > 1 ? 'download-item' : ''} ${
+                                        item.offlineState === 'downloading' || item.offlineState === 'deleting'
+                                            ? 'disabled'
+                                            : ''
+                                    }`}
                                     ref={downloadButtonRef}
                                     onClick={e =>
                                         videoSources.length > 1
@@ -440,7 +451,13 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 >
                                     <div className="download-main">
                                         <div className="text">
-                                            {item.offlineState === 'downloaded' ? 'Remove download' : 'Download'}
+                                            {item.offlineState === 'downloaded'
+                                                ? 'Remove download'
+                                                : item.offlineState === 'deleting'
+                                                  ? 'Removing...'
+                                                  : item.offlineState === 'downloading'
+                                                    ? 'Downloading...'
+                                                    : 'Download'}
                                         </div>
                                     </div>
                                     {videoSources.length > 1 && (
