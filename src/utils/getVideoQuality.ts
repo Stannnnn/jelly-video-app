@@ -93,7 +93,7 @@ export const getVideoQuality = (
         return null
     }
 
-    const displayTitleMatch = highestDisplayTitle?.match(new RegExp('[0-9]+[pk]'))?.[0]
+    const displayTitleMatch = highestDisplayTitle?.match(new RegExp('[0-9]+[pki]'))?.[0]
 
     if (shortCode && displayTitleMatch) {
         // Convert displayTitle match to short code
