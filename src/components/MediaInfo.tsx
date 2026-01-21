@@ -436,96 +436,102 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 <MoreIcon width={14} height={14} />
                             </div>
                             <div className={`more-dropdown ${isMoreDropdownOpen ? 'open' : ''}`}>
-                                <div
-                                    className={`more-dropdown-item ${videoSources.length > 1 ? 'download-item' : ''} ${
-                                        item.offlineState === 'downloading' || item.offlineState === 'deleting'
-                                            ? 'disabled'
-                                            : ''
-                                    }`}
-                                    ref={downloadButtonRef}
-                                    onClick={e =>
-                                        videoSources.length > 1
-                                            ? toggleDownloadDropdown(e)
-                                            : toggleDownload(e, defaultMediaSourceId)
-                                    }
-                                >
-                                    <div className="download-main">
-                                        <div className="text">
-                                            {item.offlineState === 'downloaded'
-                                                ? 'Remove download'
-                                                : item.offlineState === 'deleting'
-                                                  ? 'Removing...'
-                                                  : item.offlineState === 'downloading'
-                                                    ? 'Downloading...'
-                                                    : 'Download'}
-                                        </div>
-                                    </div>
-                                    {videoSources.length > 1 && (
-                                        <>
-                                            <div className="icon">
-                                                <ChevronLeftIcon size={14} />
-                                            </div>
-                                            <div
-                                                className={`sub-dropdown ${isDownloadDropdownOpen ? 'open' : ''}`}
-                                                onClick={e => e.stopPropagation()}
-                                            >
-                                                <div className="dropdown-content">
-                                                    {sortedVideoSources.map((source, index) => {
-                                                        const videoStream = source.MediaStreams?.find(
-                                                            s => s.Type === 'Video'
-                                                        )
-                                                        const baseName =
-                                                            source.Name ||
-                                                            videoStream?.DisplayTitle ||
-                                                            `Version ${index + 1}`
-
-                                                        const bitrate = source.Bitrate || videoStream?.BitRate
-                                                        const bitrateMbps = bitrate
-                                                            ? (bitrate / 1_000_000).toFixed(1)
-                                                            : null
-
-                                                        let qualityBadge = getVideoQuality(
-                                                            item,
-                                                            false,
-                                                            source.Id || undefined
-                                                        )
-
-                                                        if (videoStream?.VideoRange === 'HDR' && qualityBadge) {
-                                                            qualityBadge = `${qualityBadge} HDR`
-                                                        }
-
-                                                        const details = [
-                                                            bitrateMbps ? `${bitrateMbps} Mbps` : null,
-                                                            qualityBadge,
-                                                        ]
-                                                            .filter(Boolean)
-                                                            .join(', ')
-
-                                                        const displayName = details
-                                                            ? `${baseName} (${details})`
-                                                            : baseName
-
-                                                        return (
-                                                            <div
-                                                                key={source.Id || index}
-                                                                className="dropdown-item"
-                                                                onClick={e => {
-                                                                    toggleDownload(e, source.Id || undefined)
-                                                                    setIsDownloadDropdownOpen(false)
-                                                                    setIsMoreDropdownOpen(false)
-                                                                }}
-                                                                title={displayName}
-                                                            >
-                                                                {displayName}
-                                                            </div>
-                                                        )
-                                                    })}
+                                {(item.Type === BaseItemKind.Movie ||
+                                    item.Type === BaseItemKind.Video ||
+                                    item.Type === BaseItemKind.Episode) && (
+                                    <>
+                                        <div
+                                            className={`more-dropdown-item ${videoSources.length > 1 ? 'download-item' : ''} ${
+                                                item.offlineState === 'downloading' || item.offlineState === 'deleting'
+                                                    ? 'disabled'
+                                                    : ''
+                                            }`}
+                                            ref={downloadButtonRef}
+                                            onClick={e =>
+                                                videoSources.length > 1
+                                                    ? toggleDownloadDropdown(e)
+                                                    : toggleDownload(e, defaultMediaSourceId)
+                                            }
+                                        >
+                                            <div className="download-main">
+                                                <div className="text">
+                                                    {item.offlineState === 'downloaded'
+                                                        ? 'Remove download'
+                                                        : item.offlineState === 'deleting'
+                                                          ? 'Removing...'
+                                                          : item.offlineState === 'downloading'
+                                                            ? 'Downloading...'
+                                                            : 'Download'}
                                                 </div>
                                             </div>
-                                        </>
-                                    )}
-                                </div>
-                                <div className="dropdown-separator" />
+                                            {videoSources.length > 1 && (
+                                                <>
+                                                    <div className="icon">
+                                                        <ChevronLeftIcon size={14} />
+                                                    </div>
+                                                    <div
+                                                        className={`sub-dropdown ${isDownloadDropdownOpen ? 'open' : ''}`}
+                                                        onClick={e => e.stopPropagation()}
+                                                    >
+                                                        <div className="dropdown-content">
+                                                            {sortedVideoSources.map((source, index) => {
+                                                                const videoStream = source.MediaStreams?.find(
+                                                                    s => s.Type === 'Video'
+                                                                )
+                                                                const baseName =
+                                                                    source.Name ||
+                                                                    videoStream?.DisplayTitle ||
+                                                                    `Version ${index + 1}`
+
+                                                                const bitrate = source.Bitrate || videoStream?.BitRate
+                                                                const bitrateMbps = bitrate
+                                                                    ? (bitrate / 1_000_000).toFixed(1)
+                                                                    : null
+
+                                                                let qualityBadge = getVideoQuality(
+                                                                    item,
+                                                                    false,
+                                                                    source.Id || undefined
+                                                                )
+
+                                                                if (videoStream?.VideoRange === 'HDR' && qualityBadge) {
+                                                                    qualityBadge = `${qualityBadge} HDR`
+                                                                }
+
+                                                                const details = [
+                                                                    bitrateMbps ? `${bitrateMbps} Mbps` : null,
+                                                                    qualityBadge,
+                                                                ]
+                                                                    .filter(Boolean)
+                                                                    .join(', ')
+
+                                                                const displayName = details
+                                                                    ? `${baseName} (${details})`
+                                                                    : baseName
+
+                                                                return (
+                                                                    <div
+                                                                        key={source.Id || index}
+                                                                        className="dropdown-item"
+                                                                        onClick={e => {
+                                                                            toggleDownload(e, source.Id || undefined)
+                                                                            setIsDownloadDropdownOpen(false)
+                                                                            setIsMoreDropdownOpen(false)
+                                                                        }}
+                                                                        title={displayName}
+                                                                    >
+                                                                        {displayName}
+                                                                    </div>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                        <div className="dropdown-separator" />
+                                    </>
+                                )}
                                 <div className="more-dropdown-item" onClick={handleAddToCollection}>
                                     <div className="text">Add to collection</div>
                                     <div className="icon">
