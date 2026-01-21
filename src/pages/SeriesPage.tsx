@@ -23,7 +23,7 @@ export const SeriesPage = () => {
     const [selectedSeasonId, setSelectedSeasonId] = useState<string | null>(null)
     const [uiSortBy, setUiSortBy] = useState<SortState>(SortState.Released)
     const [sortBy, setSortBy] = useState<ItemSortBy[]>([ItemSortBy.PremiereDate])
-    const [sortOrder, setSortOrder] = useState<SortOrder[]>([SortOrder.Ascending])
+    const [sortOrder, setSortOrder] = useState<SortOrder[]>([SortOrder.Descending])
 
     const { mediaItem: series, isLoading: isLoadingSeries, error: seriesError } = useJellyfinMediaItem(id)
     const { people, isLoading: isLoadingCastCrew } = useJellyfinCastCrew(id)
@@ -36,7 +36,17 @@ export const SeriesPage = () => {
 
     const { seasons, isLoading: isLoadingSeasons, error: seasonsError } = useJellyfinSeasons(id)
 
-    const { episodes, isLoading: isLoadingEpisodes } = useJellyfinEpisodes(selectedSeasonId, sortBy, sortOrder)
+    /* Flipping sort order for PremiereDate so it makes sense visually */
+    const effectiveSortOrder =
+        sortBy[0] === ItemSortBy.PremiereDate
+            ? sortOrder[0] === SortOrder.Descending
+                ? SortOrder.Ascending
+                : SortOrder.Descending
+            : sortOrder[0]
+
+    const { episodes, isLoading: isLoadingEpisodes } = useJellyfinEpisodes(selectedSeasonId, sortBy, [
+        effectiveSortOrder,
+    ])
 
     const { specials, isLoading: isLoadingSpecials } = useJellyfinSpecials(id)
 
