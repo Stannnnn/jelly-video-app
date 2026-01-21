@@ -8,6 +8,7 @@ import {
     HeartIcon,
     StarFillIcon,
 } from '@primer/octicons-react'
+import { ask } from '@tauri-apps/plugin-dialog'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
@@ -31,7 +32,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const { addToFavorites, removeFromFavorites } = useFavorites()
     const { markAsPlayed, markAsUnplayed } = useWatchedState()
     const { addToDownloads, removeFromDownloads } = useDownloadContext()
-    const { addToCollection, createCollection } = useCollections()
+    const { addToCollection, createCollection, renameCollection, deleteCollection } = useCollections()
     const { collections, isLoading: isLoadingCollections } = useJellyfinCollections()
     const { nextEpisode, isLoading: isLoadingNextEpisode } = useJellyfinNextEpisode(item)
     const {
@@ -47,6 +48,9 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const [isCreatingCollection, setIsCreatingCollection] = useState(false)
     const [isVersionDropdownOpen, setIsVersionDropdownOpen] = useState(false)
     const [isDownloadDropdownOpen, setIsDownloadDropdownOpen] = useState(false)
+    const [renameCollectionName, setRenameCollectionName] = useState('')
+    const [isRenamingCollection, setIsRenamingCollection] = useState(false)
+    const [isDeletingCollection, setIsDeletingCollection] = useState(false)
     const moreButtonRef = useRef<HTMLDivElement>(null)
     const versionButtonRef = useRef<HTMLDivElement>(null)
     const downloadButtonRef = useRef<HTMLDivElement>(null)
@@ -162,7 +166,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
         setIsCreatingCollection(true)
         try {
-            const newCollection = await createCollection(collectionName.trim())
+            const newCollection = await createCollection(collectionName.trim(), item.Id)
             await addToCollection(item, newCollection.Id)
             setCollectionName('')
             setIsCollectionDropdownOpen(false)
@@ -181,6 +185,48 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
             setIsMoreDropdownOpen(false)
         } catch (error) {
             console.error('Failed to add to collection:', error)
+        }
+    }
+
+    const handleRenameCollection = async () => {
+        if (!renameCollectionName.trim() || isRenamingCollection) return
+
+        setIsRenamingCollection(true)
+        try {
+            await renameCollection(item.Id, renameCollectionName.trim())
+            setRenameCollectionName('')
+            setIsMoreDropdownOpen(false)
+        } catch (error) {
+            console.error('Failed to rename collection:', error)
+        } finally {
+            setIsRenamingCollection(false)
+        }
+    }
+
+    const handleRenameInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && renameCollectionName.trim()) {
+            handleRenameCollection()
+        }
+    }
+
+    const handleDeleteCollection = async () => {
+        if (isDeletingCollection) return
+
+        const confirmed = await ask(`Are you sure you want to delete "${item.Name}"? This cannot be undone.`, {
+            title: 'Delete Collection',
+            kind: 'warning',
+        })
+        if (!confirmed) return
+
+        setIsDeletingCollection(true)
+        try {
+            await deleteCollection(item.Id)
+            setIsMoreDropdownOpen(false)
+            // Navigate back to collections page
+            navigate('/collections')
+        } catch (error) {
+            console.error('Failed to delete collection:', error)
+            setIsDeletingCollection(false)
         }
     }
 
@@ -582,6 +628,43 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                         </div>
                                     </div>
                                 </div>
+                                {item.Type === BaseItemKind.BoxSet && (
+                                    <>
+                                        <div className="more-dropdown-item rename-item">
+                                            <div className="text">Rename collection</div>
+                                            <div className="input-wrapper">
+                                                <input
+                                                    value={renameCollectionName}
+                                                    onChange={e => setRenameCollectionName(e.target.value)}
+                                                    onKeyDown={handleRenameInputKeyDown}
+                                                    onClick={e => e.stopPropagation()}
+                                                    placeholder={item.Name || 'Collection name...'}
+                                                    className={`input${renameCollectionName.trim() ? ' has-text' : ''}`}
+                                                    disabled={isRenamingCollection}
+                                                />
+                                                {isRenamingCollection && (
+                                                    <div className="loading">
+                                                        <InlineLoader />
+                                                    </div>
+                                                )}
+                                                {!isRenamingCollection && renameCollectionName.trim() && (
+                                                    <button className="create-btn" onClick={handleRenameCollection}>
+                                                        Rename
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="dropdown-separator" />
+                                        <div
+                                            className={`more-dropdown-item ${isDeletingCollection ? 'disabled' : ''}`}
+                                            onClick={handleDeleteCollection}
+                                        >
+                                            <div className="text">
+                                                {isDeletingCollection ? 'Deleting...' : 'Delete collection'}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>

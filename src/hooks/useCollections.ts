@@ -19,8 +19,8 @@ export const useCollections = () => {
             await api.removeFromCollection(collectionId, item)
             removeItemFromQueryData(['collection-children', collectionId], item.Id)
         },
-        createCollection: async (name: string) => {
-            const res = await api.createCollection(name)
+        createCollection: async (name: string, sourceItemId?: string) => {
+            const res = await api.createCollection(name, sourceItemId)
             const collection = await api.getItemById(res.Id!)
             prependItemsToQueryData(['collections'], [collection])
             return collection

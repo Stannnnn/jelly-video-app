@@ -34,6 +34,19 @@ const generateDeviceId = () => {
 
 const deviceId = generateDeviceId()
 
+const blobToBase64 = async (blob: Blob): Promise<string> => {
+    return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+            const dataUrl = reader.result as string
+            const base64 = dataUrl.split(',')[1]
+            resolve(base64)
+        }
+        reader.onerror = reject
+        reader.readAsDataURL(blob)
+    })
+}
+
 interface AuthResponse {
     AccessToken: string
     User: { Id: string; Name: string }
@@ -546,7 +559,13 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getEpisodes = async (seasonId: string, startIndex?: number, limit?: number, sortBy?: ItemSortBy[], sortOrder?: SortOrder[]) => {
+    const getEpisodes = async (
+        seasonId: string,
+        startIndex?: number,
+        limit?: number,
+        sortBy?: ItemSortBy[],
+        sortOrder?: SortOrder[]
+    ) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
             userId,
@@ -659,13 +678,74 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         })
     }
 
-    const createCollection = async (name: string) => {
+    const createCollection = async (name: string, sourceItemId?: string) => {
         const collectionApi = new CollectionApi(api.configuration)
         const response = await collectionApi.createCollection({
             name,
             isLocked: false,
         })
+
+        // If a source item is provided, copy its Primary image to the collection
+        if (sourceItemId && response.data.Id) {
+            try {
+                await setCollectionImage(response.data.Id, sourceItemId)
+            } catch (error) {
+                console.error('Failed to set collection image:', error)
+                // Don't fail collection creation if image copy fails
+            }
+        }
+
         return response.data
+    }
+
+    const setCollectionImage = async (collectionId: string, sourceItemId: string) => {
+        const sourceItem = await getItemById(sourceItemId)
+
+        const imageTypes: Array<'Primary' | 'Thumb' | 'Backdrop'> = ['Primary', 'Thumb', 'Backdrop']
+
+        // First, find a valid image
+        let validImageUrl: string | undefined
+        let validImageBlob: Blob | undefined
+        let validContentType: string | undefined
+
+        for (const imageType of imageTypes) {
+            const imageUrl = getImageUrl(sourceItem, imageType, { width: 1000, height: 1000 })
+
+            if (!imageUrl) continue
+
+            try {
+                const imageResponse = await fetch(imageUrl)
+
+                if (!imageResponse.ok) continue
+
+                validImageBlob = await imageResponse.blob()
+                validContentType = imageResponse.headers.get('content-type') || 'image/webp'
+                validImageUrl = imageUrl
+                break
+            } catch {
+                continue
+            }
+        }
+
+        if (!validImageUrl || !validImageBlob || !validContentType) {
+            throw new Error('No valid images found on source item')
+        }
+
+        const base64 = await blobToBase64(validImageBlob)
+
+        const uploadUrl = `${serverUrl}/Items/${collectionId}/Images/Primary`
+        const uploadResponse = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+                authorization: `MediaBrowser Client="Jelly Video App", Device="Web", DeviceId="${deviceId}", Version="${__VERSION__}", Token="${token}"`,
+                'content-type': validContentType,
+            },
+            body: base64,
+        })
+
+        if (!uploadResponse.ok) {
+            throw new Error(`Upload failed with status: ${uploadResponse.status}`)
+        }
     }
 
     const renameCollection = async (collectionId: string, newName: string) => {
