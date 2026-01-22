@@ -579,7 +579,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                         <div className="dropdown-separator" />
                                     </>
                                 )}
-                                <div className="more-dropdown-item" onClick={handleAddToCollection}>
+                                <div className="more-dropdown-item add-item" onClick={handleAddToCollection}>
                                     <div className="text">Add to collection</div>
                                     <div className="icon">
                                         <ChevronLeftIcon size={14} />
@@ -633,7 +633,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                     <>
                                         <div className="dropdown-separator" />
                                         <div
-                                            className="more-dropdown-item"
+                                            className="more-dropdown-item rename-item"
                                             onClick={e => {
                                                 e.stopPropagation()
                                                 setIsRenamingCollectionOpen(!isRenamingCollectionOpen)

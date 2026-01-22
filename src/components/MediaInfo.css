@@ -698,9 +698,24 @@
     font-weight: 500;
     text-overflow: ellipsis;
     color: var(--font-color);
-    padding: 6px 8px;
-    padding-left: 6px;
+    padding: 6px 12px;
+    padding-right: 8px;
     background-color: var(--bg-color);
+}
+
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item.rename-item
+    > .sub-dropdown
+    > .input-container
+    > .input {
+    padding: 6px 10px;
+    padding-left: 6px;
 }
 
 .media-page
@@ -729,7 +744,7 @@
     > .input-container
     > .create-btn {
     position: absolute;
-    right: 6px;
+    right: 12px;
     font-size: 0.75rem;
     font-weight: 500;
     cursor: pointer;
@@ -737,6 +752,20 @@
     border-radius: 5px;
     background-color: var(--bg-color-tertiary);
     transition: background-color 0.2s ease-out;
+}
+
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item.rename-item
+    > .sub-dropdown
+    > .input-container
+    > .create-btn {
+    right: 6px;
 }
 
 .media-page
