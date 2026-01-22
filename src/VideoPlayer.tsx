@@ -468,9 +468,16 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
         const time = percentage * duration
 
         setPreviewTime(time)
-        // Clamp preview position to keep it on screen (80px on each side for the thumbnail width/2)
-        const clampedPercentage = Math.max(10, Math.min(90, percentage * 100))
-        setPreviewPosition(clampedPercentage)
+
+        // Clamp preview within progress bar bounds
+        const PREVIEW_HALF_WIDTH = 100
+        const clampedOffsetX = Math.max(PREVIEW_HALF_WIDTH, Math.min(rect.width - PREVIEW_HALF_WIDTH, offsetX))
+
+        setPreviewPosition((clampedOffsetX / rect.width) * 100)
+
+        // Old percentage clamp
+        // const clampedPercentage = Math.max(10, Math.min(90, percentage * 100))
+        // setPreviewPosition(clampedPercentage)
 
         // Get trickplay preview image - only if trickplay data is available
         if (currentTrack.Trickplay) {
