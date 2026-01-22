@@ -9,7 +9,7 @@ import {
     StarFillIcon,
 } from '@primer/octicons-react'
 import { ask } from '@tauri-apps/plugin-dialog'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
@@ -55,6 +55,17 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const moreButtonRef = useRef<HTMLDivElement>(null)
     const versionButtonRef = useRef<HTMLDivElement>(null)
     const downloadButtonRef = useRef<HTMLDivElement>(null)
+
+    const closeMoreSubdropdowns = () => {
+        setIsCollectionDropdownOpen(false)
+        setIsDownloadDropdownOpen(false)
+        setIsRenamingCollectionOpen(false)
+    }
+
+    const closeMoreDropdown = useCallback(() => {
+        setIsMoreDropdownOpen(false)
+        closeMoreSubdropdowns()
+    }, [])
 
     const toggleFavorite = async (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -120,11 +131,12 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
             removeFromDownloads([item], undefined, mediaSourceId)
         }
 
-        setIsMoreDropdownOpen(false)
+        closeMoreDropdown()
     }
 
     const toggleDownloadDropdown = (e: React.MouseEvent) => {
         e.stopPropagation()
+        closeMoreSubdropdowns()
         setIsDownloadDropdownOpen(!isDownloadDropdownOpen)
     }
 
@@ -149,6 +161,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
     const handleAddToCollection = (e: React.MouseEvent) => {
         e.stopPropagation()
+        closeMoreSubdropdowns()
         setIsCollectionDropdownOpen(!isCollectionDropdownOpen)
     }
 
@@ -170,8 +183,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
             const newCollection = await createCollection(collectionName.trim(), item.Id)
             await addToCollection(item, newCollection.Id)
             setCollectionName('')
-            setIsCollectionDropdownOpen(false)
-            setIsMoreDropdownOpen(false)
+            closeMoreDropdown()
         } catch (error) {
             console.error('Failed to create collection:', error)
         } finally {
@@ -182,8 +194,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const handleSelectCollection = async (collectionId: string) => {
         try {
             await addToCollection(item, collectionId)
-            setIsCollectionDropdownOpen(false)
-            setIsMoreDropdownOpen(false)
+            closeMoreDropdown()
         } catch (error) {
             console.error('Failed to add to collection:', error)
         }
@@ -196,7 +207,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         try {
             await renameCollection(item.Id, renameCollectionName.trim())
             setRenameCollectionName('')
-            setIsMoreDropdownOpen(false)
+            closeMoreDropdown()
         } catch (error) {
             console.error('Failed to rename collection:', error)
         } finally {
@@ -222,7 +233,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         setIsDeletingCollection(true)
         try {
             await deleteCollection(item.Id)
-            setIsMoreDropdownOpen(false)
+            closeMoreDropdown()
             // Navigate back to collections page
             navigate('/collections')
         } catch (error) {
@@ -235,8 +246,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (moreButtonRef.current && !moreButtonRef.current.contains(event.target as Node)) {
-                setIsCollectionDropdownOpen(false)
-                setIsMoreDropdownOpen(false)
+                closeMoreDropdown()
             }
             if (versionButtonRef.current && !versionButtonRef.current.contains(event.target as Node)) {
                 setIsVersionDropdownOpen(false)
@@ -253,7 +263,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
-    }, [isMoreDropdownOpen, isVersionDropdownOpen, isDownloadDropdownOpen])
+    }, [closeMoreDropdown, isDownloadDropdownOpen, isMoreDropdownOpen, isVersionDropdownOpen])
 
     //const genres = item.Genres?.join(',') || ''
     const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : null
@@ -636,6 +646,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                             className="more-dropdown-item rename-item"
                                             onClick={e => {
                                                 e.stopPropagation()
+                                                closeMoreSubdropdowns()
                                                 setIsRenamingCollectionOpen(!isRenamingCollectionOpen)
                                             }}
                                         >
