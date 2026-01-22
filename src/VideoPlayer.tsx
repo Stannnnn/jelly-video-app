@@ -1,3 +1,4 @@
+import { BaseItemKind, ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client'
 import { ArrowLeftIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from '@primer/octicons-react'
 import { useCallback, useEffect, useRef, useState, WheelEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -19,12 +20,13 @@ import {
 import { useHistoryContext } from './context/HistoryContext/HistoryContext'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
+import { useJellyfinEpisodes } from './hooks/Jellyfin/useJellyfinEpisodes'
 import { useJellyfinSequentialNextEpisode } from './hooks/Jellyfin/useJellyfinSequentialNextEpisode'
 import { useDisplayTitle } from './hooks/useDisplayTitle'
 import { getVideoQuality } from './utils/getVideoQuality'
 import './VideoPlayer.css'
 
-type MenuView = 'home' | 'subtitles' | 'audioTracks' | 'speed' | 'statistics'
+type MenuView = 'home' | 'subtitles' | 'audioTracks' | 'videoSources' | 'speed' | 'statistics' | 'episodes'
 
 const getSubtitleDisplayName = (
     subtitleId: number | null,
@@ -64,7 +66,15 @@ const getAudioTrackDisplayName = (
     return mediaStream?.DisplayTitle || track.title || track.lang || 'Unknown'
 }
 
-export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boolean; error: string | null }) => {
+export const VideoPlayer = ({
+    isLoading: _isLoading,
+    error,
+    sourceItem,
+}: {
+    isLoading: boolean
+    error: string | null
+    sourceItem: MediaItem | undefined
+}) => {
     const api = useJellyfinContext()
     const navigate = useNavigate()
     const {
@@ -131,6 +141,13 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
 
     // Get next episode (for autoplay - gets sequential next episode regardless of watched state)
     const { nextEpisode } = useJellyfinSequentialNextEpisode(currentTrack || ({} as MediaItem))
+
+    // Get episodes from the current season only
+    const { episodes: allEpisodes = [] } = useJellyfinEpisodes(
+        currentTrack?.Type === BaseItemKind.Episode ? currentTrack?.SeasonId || null : null,
+        [ItemSortBy.ParentIndexNumber, ItemSortBy.IndexNumber],
+        [SortOrder.Ascending]
+    )
 
     const [previewTime, setPreviewTime] = useState<number | null>(null)
     const [previewPosition, setPreviewPosition] = useState(0)
@@ -326,8 +343,10 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
         home: null,
         subtitles: null,
         audioTracks: null,
+        videoSources: null,
         speed: null,
         statistics: null,
+        episodes: null,
     })
 
     // Menu animations
@@ -495,6 +514,14 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
     }
 
     const displayTitle = useDisplayTitle(currentTrack)
+
+    // Get and sort video sources
+    const videoSources = sourceItem?.MediaSources || []
+    const sortedVideoSources = [...videoSources].sort((a, b) => {
+        const heightA = a.MediaStreams?.find(s => s.Type === 'Video')?.Height || 0
+        const heightB = b.MediaStreams?.find(s => s.Type === 'Video')?.Height || 0
+        return heightB - heightA
+    })
 
     return (
         <div
@@ -713,6 +740,24 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                                     </div>
                                 )}
 
+                                {sortedVideoSources.length > 1 && (
+                                    <div
+                                        className="menu-item"
+                                        onClick={() => {
+                                            setCurrentMenuView('videoSources')
+                                        }}
+                                    >
+                                        <div className="text">Version</div>
+                                        <div className="menu-item-right">
+                                            <div className="menu-item-value">
+                                                {sortedVideoSources.find(s => s.Id === currentMediaSourceId)?.Name ||
+                                                    getVideoQuality(currentTrack, true, currentMediaSourceId)}
+                                            </div>
+                                            <ChevronRightIcon size={16} className="icon" />
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div
                                     className="menu-item"
                                     onClick={() => {
@@ -725,6 +770,23 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                                         <ChevronRightIcon size={16} className="icon" />
                                     </div>
                                 </div>
+
+                                {allEpisodes.length > 0 && (
+                                    <div
+                                        className="menu-item"
+                                        onClick={() => {
+                                            setCurrentMenuView('episodes')
+                                        }}
+                                    >
+                                        <div className="text">Episodes</div>
+                                        <div className="menu-item-right">
+                                            <div className="menu-item-value">
+                                                {`S${String(currentTrack?.ParentIndexNumber || 0).padStart(2, '0')} E${String(currentTrack?.IndexNumber || 0).padStart(2, '0')} - ${currentTrack?.Name || 'Untitled'}`}
+                                            </div>
+                                            <ChevronRightIcon size={16} className="icon" />
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div
                                     className="menu-item"
@@ -823,6 +885,67 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                                 </div>
                             </div>
 
+                            {/* Video Sources Submenu */}
+                            <div
+                                ref={el => {
+                                    viewsRef.current.videoSources = el
+                                }}
+                                className={`menu-view versions ${currentMenuView === 'videoSources' ? 'active' : 'hidden'}`}
+                            >
+                                <div
+                                    className="menu-item back-button"
+                                    onClick={() => {
+                                        setCurrentMenuView('home')
+                                    }}
+                                >
+                                    <ChevronLeftIcon size={16} className="return-icon" />
+                                    <div className="text">Version</div>
+                                </div>
+                                <div className="menu-divider"></div>
+                                <div className="container">
+                                    {sortedVideoSources.map((source, index) => {
+                                        const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
+                                        const baseName =
+                                            source.Name || videoStream?.DisplayTitle || `Version ${index + 1}`
+
+                                        const bitrate = source.Bitrate || videoStream?.BitRate
+                                        const bitrateMbps = bitrate ? (bitrate / 1_000_000).toFixed(1) : null
+
+                                        let qualityBadge = getVideoQuality(sourceItem, false, source.Id || undefined)
+
+                                        if (videoStream?.VideoRange === 'HDR' && qualityBadge) {
+                                            qualityBadge = `${qualityBadge} HDR`
+                                        }
+
+                                        const details = [bitrateMbps ? `${bitrateMbps} Mbps` : null, qualityBadge]
+                                            .filter(Boolean)
+                                            .join(', ')
+
+                                        const displayName = details ? `${baseName} (${details})` : baseName
+
+                                        return (
+                                            <div
+                                                key={source.Id || index}
+                                                className={`menu-item ${
+                                                    currentMediaSourceId === source.Id ? 'selected' : ''
+                                                }`}
+                                                onClick={() => {
+                                                    if (source.Id) {
+                                                        navigate(`/play/${sourceItem?.Id}/${source.Id}`, {
+                                                            replace: true,
+                                                        })
+                                                        toggleMenu()
+                                                    }
+                                                }}
+                                            >
+                                                <CheckIcon className="check-icon" />
+                                                <div className="text">{displayName}</div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+
                             {/* Speed Submenu */}
                             <div
                                 ref={el => {
@@ -854,6 +977,58 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
                                             <div className="text">{speedValue === 1 ? 'Normal' : `${speedValue}x`}</div>
                                         </div>
                                     ))}
+                                </div>
+                            </div>
+
+                            {/* Episodes Submenu */}
+                            <div
+                                ref={el => {
+                                    viewsRef.current.episodes = el
+                                }}
+                                className={`menu-view episodes ${currentMenuView === 'episodes' ? 'active' : 'hidden'}`}
+                            >
+                                <div
+                                    className="menu-item back-button"
+                                    onClick={() => {
+                                        setCurrentMenuView('home')
+                                    }}
+                                >
+                                    <ChevronLeftIcon size={16} className="return-icon" />
+                                    <div className="text">Episodes</div>
+                                </div>
+                                <div className="menu-divider"></div>
+                                <div className="container">
+                                    {allEpisodes.map((episode, index) => {
+                                        const isCurrentEpisode = episode.Id === currentTrack?.Id
+                                        const season = String(episode.ParentIndexNumber || 0).padStart(2, '0')
+                                        const episodeNum = String(episode.IndexNumber || index + 1).padStart(2, '0')
+                                        const episodeName = episode.Name || 'Untitled'
+
+                                        return (
+                                            <div
+                                                key={episode.Id}
+                                                className={`menu-item ${isCurrentEpisode ? 'selected' : ''}`}
+                                                onClick={() => {
+                                                    if (!isCurrentEpisode) {
+                                                        clearCurrentTrack()
+                                                        navigate(`/play/${episode.Id}`, { replace: true })
+                                                        toggleMenu()
+                                                    }
+                                                }}
+                                            >
+                                                <div className="text">
+                                                    <div style={{ fontWeight: 500 }}>
+                                                        S{season} E{episodeNum} - {episodeName}
+                                                    </div>
+                                                </div>
+                                                {isCurrentEpisode && (
+                                                    <div className="menu-item-right">
+                                                        <CheckIcon size={16} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )
+                                    })}
                                 </div>
                             </div>
 

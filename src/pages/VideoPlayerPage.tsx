@@ -9,7 +9,8 @@ export const VideoPlayerPage = () => {
     const playback = usePlaybackContext()
     const playbackRef = useRef(playback)
 
-    const { mediaItem: item, isLoading, error } = useJellyfinMediaItem(id, mediaSourceId)
+    const { mediaItem: item, isLoading, error } = useJellyfinMediaItem(mediaSourceId || id)
+    const { mediaItem: sourceItem } = useJellyfinMediaItem(id)
 
     useEffect(() => {
         playbackRef.current = playback
@@ -85,5 +86,5 @@ export const VideoPlayerPage = () => {
         return () => window.removeEventListener('keydown', handleKeyPress)
     }, [playback])
 
-    return <VideoPlayer isLoading={isLoading} error={error} />
+    return <VideoPlayer isLoading={isLoading} error={error} sourceItem={sourceItem} />
 }
