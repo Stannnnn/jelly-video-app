@@ -264,6 +264,35 @@ export const VideoPlayer = ({ isLoading: _isLoading, error }: { isLoading: boole
         })
     }, [currentMenuView, showMenu])
 
+    // Reset dimensions on menu close
+    useEffect(() => {
+        if (showMenu) return
+
+        const container = menuContainerRef.current
+        if (!container) return
+
+        container.style.width = ''
+        container.style.height = ''
+    }, [showMenu])
+
+    // Recalc dimensions if window is resized or maximized
+    useEffect(() => {
+        if (!showMenu) return
+
+        const activeView = viewsRef.current[currentMenuView]
+        if (!activeView) return
+
+        const observer = new ResizeObserver(() => {
+            animateMenu()
+        })
+
+        observer.observe(activeView)
+
+        return () => {
+            observer.disconnect()
+        }
+    }, [currentMenuView, showMenu, animateMenu])
+
     // Handle outside click to close menu
     useEffect(() => {
         if (!showMenu) return
