@@ -733,6 +733,7 @@ body.lockscroll {
 
 .home-page > .section > .scroller > .direction > .icon > svg {
     flex-shrink: 0;
+    margin-top: -36px;
     transition: transform 0.2s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
