@@ -591,6 +591,17 @@
     > .secondary
     > .more-container
     > .more-dropdown
+    > .more-dropdown-item.delete-item {
+    color: var(--font-color-error-light);
+}
+
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
     > .more-dropdown-item
     > .text {
     overflow: hidden;
@@ -622,7 +633,7 @@
     z-index: 2;
     bottom: -5px;
     right: calc(100% + 4px);
-    min-width: 220px;
+    min-width: 200px;
     max-width: 60dvw;
     display: flex;
     flex-direction: column;
@@ -683,11 +694,12 @@
     > .input-container
     > .input {
     flex: 1;
-    padding: 6px 12px;
     font-size: 0.75rem;
     font-weight: 500;
     text-overflow: ellipsis;
     color: var(--font-color);
+    padding: 6px 8px;
+    padding-left: 6px;
     background-color: var(--bg-color);
 }
 
@@ -717,7 +729,7 @@
     > .input-container
     > .create-btn {
     position: absolute;
-    right: 12px;
+    right: 6px;
     font-size: 0.75rem;
     font-weight: 500;
     cursor: pointer;

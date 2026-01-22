@@ -50,6 +50,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const [isDownloadDropdownOpen, setIsDownloadDropdownOpen] = useState(false)
     const [renameCollectionName, setRenameCollectionName] = useState('')
     const [isRenamingCollection, setIsRenamingCollection] = useState(false)
+    const [isRenamingCollectionOpen, setIsRenamingCollectionOpen] = useState(false)
     const [isDeletingCollection, setIsDeletingCollection] = useState(false)
     const moreButtonRef = useRef<HTMLDivElement>(null)
     const versionButtonRef = useRef<HTMLDivElement>(null)
@@ -630,33 +631,48 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                 </div>
                                 {item.Type === BaseItemKind.BoxSet && (
                                     <>
-                                        <div className="more-dropdown-item rename-item">
-                                            <div className="text">Rename collection</div>
-                                            <div className="input-wrapper">
-                                                <input
-                                                    value={renameCollectionName}
-                                                    onChange={e => setRenameCollectionName(e.target.value)}
-                                                    onKeyDown={handleRenameInputKeyDown}
-                                                    onClick={e => e.stopPropagation()}
-                                                    placeholder={item.Name || 'Collection name...'}
-                                                    className={`input${renameCollectionName.trim() ? ' has-text' : ''}`}
-                                                    disabled={isRenamingCollection}
-                                                />
-                                                {isRenamingCollection && (
-                                                    <div className="loading">
-                                                        <InlineLoader />
-                                                    </div>
-                                                )}
-                                                {!isRenamingCollection && renameCollectionName.trim() && (
-                                                    <button className="create-btn" onClick={handleRenameCollection}>
-                                                        Rename
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
                                         <div className="dropdown-separator" />
                                         <div
-                                            className={`more-dropdown-item ${isDeletingCollection ? 'disabled' : ''}`}
+                                            className="more-dropdown-item"
+                                            onClick={e => {
+                                                e.stopPropagation()
+                                                setIsRenamingCollectionOpen(!isRenamingCollectionOpen)
+                                            }}
+                                        >
+                                            <div className="text">Rename collection</div>
+                                            <div className="icon">
+                                                <ChevronLeftIcon size={14} />
+                                            </div>
+
+                                            <div
+                                                className={`sub-dropdown ${isRenamingCollectionOpen ? 'open' : ''}`}
+                                                onClick={e => e.stopPropagation()}
+                                            >
+                                                <div className="input-container">
+                                                    <input
+                                                        value={renameCollectionName}
+                                                        onChange={e => setRenameCollectionName(e.target.value)}
+                                                        onKeyDown={handleRenameInputKeyDown}
+                                                        onClick={e => e.stopPropagation()}
+                                                        placeholder={item.Name || 'New name...'}
+                                                        className={`input${renameCollectionName.trim() ? ' has-text' : ''}`}
+                                                        disabled={isRenamingCollection}
+                                                    />
+                                                    {isRenamingCollection && (
+                                                        <div className="loading">
+                                                            <InlineLoader />
+                                                        </div>
+                                                    )}
+                                                    {!isRenamingCollection && renameCollectionName.trim() && (
+                                                        <button className="create-btn" onClick={handleRenameCollection}>
+                                                            Rename
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            className={`more-dropdown-item delete-item ${isDeletingCollection ? 'disabled' : ''}`}
                                             onClick={handleDeleteCollection}
                                         >
                                             <div className="text">

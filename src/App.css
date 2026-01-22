@@ -182,7 +182,7 @@ html.light {
     --font-color-inverted: #ffffff;
     --font-color-active: #000000;
     --font-color-error: #e95151;
-    --font-color-error-light: #e64e4e; /* Not Used */
+    --font-color-error-light: #e64e4e;
     --border-color: #ececec;
     --border-color-secondary: #d6d6d6;
     --link-color: #a386e7;
@@ -218,7 +218,7 @@ html.dark {
     --font-color-inverted: #ffffff;
     --font-color-active: #ffffff;
     --font-color-error: #cc3a3a;
-    --font-color-error-light: #e45353; /* Not Used */
+    --font-color-error-light: #e45353;
     --border-color: #1f1f1f;
     --border-color-secondary: #303030;
     --link-color: #9e7de9;
@@ -677,7 +677,9 @@ body.lockscroll {
     display: flex;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+    transition:
+        opacity 0.2s ease-out,
+        visibility 0.2s ease-out;
 }
 
 .home-page > .section > .scroller > .direction.visible {
@@ -805,7 +807,9 @@ body.lockscroll {
         opacity: 0;
         visibility: hidden;
         background-color: var(--bg-color-dimmer);
-        transition: opacity 0.2s ease, visibility 0.2s ease;
+        transition:
+            opacity 0.2s ease,
+            visibility 0.2s ease;
     }
 
     .dimmer.active {
