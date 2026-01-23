@@ -1,22 +1,19 @@
 import { XCircleIcon } from '@primer/octicons-react'
 import { MediaList } from '../components/MediaList'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
-import { useFilterContext } from '../context/FilterContext/FilterContext'
 import { useIndexedDbDownloadsData } from '../hooks/useIndexedDbDownloadsData'
+import { formatFileSize } from '../utils/formatFileSize'
+import { formatTimeRemaining } from '../utils/formatTimeRemaining'
 import './Downloads.css'
 
 export const Downloads = () => {
     const { items, isLoading, error, loadMore } = useIndexedDbDownloadsData()
-    const { jellyItemKind } = useFilterContext()
-    const { queue, removeFromQueue, progressBarRef, currentDownloadingId } = useDownloadContext()
+    const { queue, removeFromQueue, progressBarRef, currentDownloadingId, downloadProgress } = useDownloadContext()
 
-    const queueItems = queue
-        .filter(task => task.mediaItem.Type === jellyItemKind)
-        .map(task => ({
-            ...task.mediaItem,
-            offlineState: (task.action === 'remove' ? 'deleting' : 'downloading') as 'downloading' | 'deleting',
-        }))
-        .reverse()
+    const queueItems = queue.map(task => ({
+        ...task.mediaItem,
+        offlineState: (task.action === 'remove' ? 'deleting' : 'downloading') as 'downloading' | 'deleting',
+    }))
 
     return (
         <div className="downloads-page">
@@ -24,6 +21,22 @@ export const Downloads = () => {
 
             {queueItems.length > 0 && (
                 <div className="queue-list">
+                    {downloadProgress && currentDownloadingId && (
+                        <div className="download-info">
+                            <div className="download-stats">
+                                <span className="download-speed">{formatFileSize(downloadProgress.speed)}/s</span>
+                                <span className="download-separator">•</span>
+                                <span className="download-size">
+                                    {formatFileSize(downloadProgress.downloaded)} of{' '}
+                                    {formatFileSize(downloadProgress.total)}
+                                </span>
+                                <span className="download-separator">•</span>
+                                <span className="download-time">
+                                    {formatTimeRemaining(downloadProgress.timeRemaining)} left
+                                </span>
+                            </div>
+                        </div>
+                    )}
                     <MediaList
                         items={queueItems}
                         isLoading={false}

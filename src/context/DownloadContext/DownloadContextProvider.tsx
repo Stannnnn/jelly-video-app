@@ -23,6 +23,15 @@ const useInitialState = () => {
     const [storageStats, setStorageStats] = useState({ usage: 0, trackCount: 0 })
     const progressBarRef = useRef<HTMLDivElement | null>(null)
     const [currentDownloadingId, setCurrentDownloadingId] = useState<string | undefined>(undefined)
+    const [downloadProgress, setDownloadProgress] = useState<{
+        speed: number
+        downloaded: number
+        total: number
+        timeRemaining: number
+    } | null>(null)
+    const downloadStartTimeRef = useRef<number>(0)
+    const lastDownloadedRef = useRef<number>(0)
+    const lastSpeedUpdateRef = useRef<number>(0)
 
     const refreshStorageStats = useCallback(async () => {
         if (isTauri()) {
@@ -52,6 +61,29 @@ const useInitialState = () => {
                 // Directly update the progress bar element
                 if (progressBarRef.current) {
                     progressBarRef.current.style.setProperty('--progress-percent', `${progress}%`)
+                }
+
+                // Calculate download speed and time remaining
+                const now = Date.now()
+                const timeSinceLastUpdate = (now - lastSpeedUpdateRef.current) / 1000 // seconds
+
+                if (timeSinceLastUpdate >= 0.5) {
+                    // Update speed every 0.5 seconds
+                    const bytesDownloaded = downloaded - lastDownloadedRef.current
+                    const speed = timeSinceLastUpdate > 0 ? bytesDownloaded / timeSinceLastUpdate : 0
+
+                    const remainingBytes = total - downloaded
+                    const timeRemaining = speed > 0 ? remainingBytes / speed : 0
+
+                    setDownloadProgress({
+                        speed,
+                        downloaded,
+                        total,
+                        timeRemaining,
+                    })
+
+                    lastDownloadedRef.current = downloaded
+                    lastSpeedUpdateRef.current = now
                 }
             }
         )
@@ -171,8 +203,8 @@ const useInitialState = () => {
                     item.offlineState === 'downloading'
                         ? undefined
                         : item.offlineState === 'deleting'
-                        ? 'downloaded'
-                        : item.offlineState,
+                          ? 'downloaded'
+                          : item.offlineState,
             }))
         })
 
@@ -194,6 +226,10 @@ const useInitialState = () => {
             try {
                 if (action === 'download') {
                     setCurrentDownloadingId(mediaItem.Id)
+                    setDownloadProgress(null)
+                    downloadStartTimeRef.current = Date.now()
+                    lastDownloadedRef.current = 0
+                    lastSpeedUpdateRef.current = Date.now()
                     const already = await audioStorage.hasTrack(mediaItem.Id)
 
                     if (already) {
@@ -268,6 +304,7 @@ const useInitialState = () => {
                     progressBarRef.current.style.setProperty('--progress-percent', '0%')
                 }
                 setCurrentDownloadingId(undefined)
+                setDownloadProgress(null)
                 abortControllerRef.current = null
                 setQueue(prev => prev.slice(1))
                 processingRef.current = false
@@ -322,10 +359,11 @@ const useInitialState = () => {
             return prev.filter(t => t.mediaItem.Id !== itemId)
         })
 
-        // Clear progress bar if we removed the currently downloading item
+        // Clear progress bar and download progress if we removed the currently downloading item
         if (progressBarRef.current) {
             progressBarRef.current.style.setProperty('--progress-percent', '0%')
         }
+        setDownloadProgress(null)
     }
 
     return {
@@ -339,6 +377,7 @@ const useInitialState = () => {
         removeFromQueue,
         progressBarRef,
         currentDownloadingId,
+        downloadProgress,
     }
 }
 

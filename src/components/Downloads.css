@@ -3,6 +3,34 @@
     gap: 40px;
 }
 
+.downloads-page .download-info {
+    padding: 16px 0;
+    margin-bottom: 12px;
+}
+
+.downloads-page .download-stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--font-color-secondary);
+    font-weight: 500;
+}
+
+.downloads-page .download-speed {
+    color: var(--brand-color);
+    font-weight: 600;
+}
+
+.downloads-page .download-separator {
+    opacity: 0.5;
+}
+
+.downloads-page .download-size,
+.downloads-page .download-time {
+    color: var(--font-color-secondary);
+}
+
 .downloads-page > .queue-list > .media-list {
     margin: 0;
 }
