@@ -147,12 +147,12 @@ export const Sidenav = (props: { username: string }) => {
                                                             item.Type === 'Movie'
                                                                 ? `/movie/${item.Id}`
                                                                 : item.Type === 'Series'
-                                                                ? `/series/${item.Id}`
-                                                                : item.Type === 'Episode'
-                                                                ? `/episode/${item.Id}`
-                                                                : item.Type === 'BoxSet'
-                                                                ? `/collection/${item.Id}`
-                                                                : '#'
+                                                                  ? `/series/${item.Id}`
+                                                                  : item.Type === 'Episode'
+                                                                    ? `/episode/${item.Id}`
+                                                                    : item.Type === 'BoxSet'
+                                                                      ? `/collection/${item.Id}`
+                                                                      : '#'
                                                         }
                                                         onClick={closeSidenav}
                                                         className="result"
@@ -231,11 +231,11 @@ export const Sidenav = (props: { username: string }) => {
                                 to="/downloads"
                                 className={`icon downloads ${queueCount > 0 ? 'downloading' : ''}`}
                                 onClick={closeSidenav}
-                                title={`Downloads - ${storageStats.trackCount} Track${
+                                title={`Downloads - ${storageStats.trackCount} Video${
                                     storageStats.trackCount === 1 ? '' : 's'
                                 }${
                                     queueCount > 0
-                                        ? ` (${queueCount} track${queueCount === 1 ? '' : 's'} in queue)`
+                                        ? ` (${queueCount} video${queueCount === 1 ? '' : 's'} in queue)`
                                         : ''
                                 }`}
                             >

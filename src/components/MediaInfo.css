@@ -627,6 +627,7 @@
     > .more-dropdown-item.disabled {
     opacity: 0.3;
     cursor: initial;
+    pointer-events: none;
     background-color: unset !important;
 }
 

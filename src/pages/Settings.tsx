@@ -368,43 +368,6 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
             </div>
 
-            <div className="section offline-sync">
-                <div className="title">Downloads</div>
-                <div className="desc">
-                    <p>
-                        <span className="number">{storageStats.trackCount}</span> Video
-                        {storageStats.trackCount === 1 ? '' : 's'}
-                        {queueCount > 0 && (
-                            <>
-                                {' '}
-                                (<span className="number">{queueCount}</span> in queue)
-                            </>
-                        )}{' '}
-                        /{' '}
-                        <span className="number">
-                            {formatFileSize(storageStats.trackCount === 0 ? 0 : storageStats?.usage || 0)}
-                        </span>
-                    </p>
-                    <p>
-                        Cache your videos for offline playback.{' '}
-                        <Link to="/downloads" className="textlink">
-                            Browse downloads
-                        </Link>
-                        .{' '}
-                        <button onClick={handleOpenDownloadsFolder} className="textlink">
-                            Open downloads folder
-                        </button>
-                    </p>
-                </div>
-                <div className="actions noSelect">
-                    {(storageStats.trackCount > 0 || queueCount > 0 || !audioStorage.isInitialized()) && (
-                        <button className="btn clear" onClick={handleClearAll} disabled={clearing}>
-                            {clearing ? 'Clearing...' : 'Clear All'}
-                        </button>
-                    )}
-                </div>
-            </div>
-
             <div className="section misc ui">
                 <div className="title">Misc</div>
                 <div className="inner row">
@@ -423,6 +386,49 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                 <span className="slider"></span>
                             </label>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="section downloads">
+                <div className="primary">
+                    <div className="container">
+                        <div className="title">Downloads</div>
+                        <div className="desc">
+                            <span className="number">{storageStats.trackCount}</span> Video
+                            {storageStats.trackCount === 1 ? '' : 's'}
+                            {queueCount > 0 && (
+                                <>
+                                    {' '}
+                                    (<span className="number">{queueCount}</span> in queue)
+                                </>
+                            )}{' '}
+                            /{' '}
+                            <span className="number">
+                                {formatFileSize(storageStats.trackCount === 0 ? 0 : storageStats?.usage || 0)}
+                            </span>
+                        </div>
+                    </div>
+                    <div className="actions noSelect">
+                        {(storageStats.trackCount > 0 || queueCount > 0 || !audioStorage.isInitialized()) && (
+                            <button className="btn clear" onClick={handleClearAll} disabled={clearing}>
+                                {clearing ? 'Clearing...' : 'Clear All'}
+                            </button>
+                        )}
+                    </div>
+                </div>
+                <div className="desc">
+                    <div className="info">
+                        Download your video library for seamless offline playback. Supports movies, tv shows, and
+                        episodes.{' '}
+                        <Link to="/downloads" className="textlink">
+                            View downloads
+                        </Link>{' '}
+                        - Storage folder location can be found{' '}
+                        <Link to="" onClick={handleOpenDownloadsFolder} className="textlink">
+                            here
+                        </Link>
+                        .
                     </div>
                 </div>
             </div>

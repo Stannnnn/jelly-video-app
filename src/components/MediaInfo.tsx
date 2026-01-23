@@ -475,7 +475,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                     className={`download-state ${
                                         item.offlineState === 'downloaded' ? 'downloaded' : 'downloading'
                                     }`}
-                                    title={item.offlineState === 'downloaded' ? 'Remove from downloads' : 'Downloading'}
+                                    title={item.offlineState === 'downloaded' ? 'Downloaded' : 'Downloading'}
                                 >
                                     {item.offlineState === 'downloaded' ? (
                                         <DownloadedIcon width={18} height={18} />
@@ -498,11 +498,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                     item.Type === BaseItemKind.Episode) && (
                                     <>
                                         <div
-                                            className={`more-dropdown-item ${videoSources.length > 1 ? 'download-item' : ''} ${
-                                                item.offlineState === 'downloading' || item.offlineState === 'deleting'
-                                                    ? 'disabled'
-                                                    : ''
-                                            }`}
+                                            className={`more-dropdown-item ${videoSources.length > 1 ? 'download-item' : ''} ${item.offlineState === 'downloaded' ? 'delete-item' : ''} ${item.offlineState === 'downloading' || item.offlineState === 'deleting' ? 'disabled' : ''}`}
                                             ref={downloadButtonRef}
                                             onClick={e =>
                                                 videoSources.length > 1
@@ -510,17 +506,16 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                     : toggleDownload(e, defaultMediaSourceId)
                                             }
                                         >
-                                            <div className="download-main">
-                                                <div className="text">
-                                                    {item.offlineState === 'downloaded'
-                                                        ? 'Remove download'
-                                                        : item.offlineState === 'deleting'
-                                                          ? 'Removing...'
-                                                          : item.offlineState === 'downloading'
-                                                            ? 'Downloading...'
-                                                            : 'Download'}
-                                                </div>
+                                            <div className="text">
+                                                {item.offlineState === 'downloaded'
+                                                    ? 'Remove download'
+                                                    : item.offlineState === 'deleting'
+                                                      ? 'Removing...'
+                                                      : item.offlineState === 'downloading'
+                                                        ? 'Downloading...'
+                                                        : 'Download'}
                                             </div>
+
                                             {videoSources.length > 1 && (
                                                 <>
                                                     <div className="icon">

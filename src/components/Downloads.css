@@ -18,6 +18,26 @@
     opacity: 0.6;
 }
 
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .progress-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    margin: 8px;
+    height: 5px;
+    width: calc(100% - 16px);
+    border-radius: 8px;
+    backdrop-filter: blur(2px);
+    background-color: rgba(255, 255, 255, 0.16);
+    background: linear-gradient(
+        to right,
+        var(--brand-color) 0%,
+        var(--brand-color) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.16) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.16) 100%
+    );
+}
+
 .downloads-page > .queue-list > .media-list .media-item > .media-details {
     opacity: 0.6;
 }

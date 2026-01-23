@@ -120,7 +120,9 @@
     bottom: 0;
     border-radius: 20px;
     border: 1px solid var(--border-color-secondary);
-    transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
+    transition:
+        border-color 0.2s ease-out,
+        background-color 0.2s ease-out;
 }
 
 .switch > input:checked + .slider {
@@ -137,40 +139,15 @@
     bottom: 2px;
     border-radius: 50%;
     background-color: var(--font-color-tertiary);
-    transition: transform 0.2s ease-out, background-color 0.2s ease-out;
+    transition:
+        transform 0.2s ease-out,
+        background-color 0.2s ease-out;
 }
 
 .switch > input:checked + .slider:before {
     transform: translateX(11px);
     background-color: var(--font-color-inverted);
 }
-
-/* Offline Sync and Crossfade
-.settings-page > .section > .primary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.settings-page > .section > .primary > .container > .title {
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.settings-page > .section > .primary > .container > .desc {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--font-color-secondary);
-}
-
-.settings-page > .section > .primary > .container > .desc > .number {
-    font-variant-numeric: tabular-nums;
-}
-*/
 
 .settings-page > .section.ui > .inner:not(:last-child) {
     margin-bottom: 10px;
@@ -291,6 +268,30 @@
     background-color: var(--volume-dot-color-active);
 }
 */
+
+/* Downloads */
+.settings-page > .section > .primary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.settings-page > .section > .primary > .container > .title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.settings-page > .section > .primary > .container > .desc {
+    font-weight: 500;
+}
+
+.settings-page > .section > .primary > .container > .desc > .number {
+    font-variant-numeric: tabular-nums;
+}
 
 /* Shortcuts */
 .settings-page > .section.shortcuts > .title {
