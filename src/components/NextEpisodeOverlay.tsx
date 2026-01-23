@@ -34,7 +34,7 @@ export const NextEpisodeOverlay = ({
                 </div>
                 <div className="next-episode-actions">
                     <button className="btn play-now" onClick={onPlayNow}>
-                        Play Now
+                        Play
                     </button>
                     <button className="btn cancel" onClick={onCancel}>
                         Cancel

@@ -688,4 +688,5 @@
     scrollbar-width: thin;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    color-scheme: dark;
 }

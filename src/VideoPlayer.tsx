@@ -719,6 +719,24 @@ export const VideoPlayer = ({
                                     </div>
                                 )}
 
+                                {sortedVideoSources.length > 1 && (
+                                    <div
+                                        className="menu-item"
+                                        onClick={() => {
+                                            setCurrentMenuView('videoSources')
+                                        }}
+                                    >
+                                        <div className="text">Version</div>
+                                        <div className="menu-item-right">
+                                            <div className="menu-item-value">
+                                                {sortedVideoSources.find(s => s.Id === currentMediaSourceId)?.Name ||
+                                                    getVideoQuality(currentTrack, true, currentMediaSourceId)}
+                                            </div>
+                                            <ChevronRightIcon size={16} className="icon" />
+                                        </div>
+                                    </div>
+                                )}
+
                                 {audioTracks.length > 1 && (
                                     <div
                                         className="menu-item"
@@ -740,18 +758,17 @@ export const VideoPlayer = ({
                                     </div>
                                 )}
 
-                                {sortedVideoSources.length > 1 && (
+                                {allEpisodes.length > 0 && (
                                     <div
                                         className="menu-item"
                                         onClick={() => {
-                                            setCurrentMenuView('videoSources')
+                                            setCurrentMenuView('episodes')
                                         }}
                                     >
-                                        <div className="text">Version</div>
+                                        <div className="text">Episodes</div>
                                         <div className="menu-item-right">
                                             <div className="menu-item-value">
-                                                {sortedVideoSources.find(s => s.Id === currentMediaSourceId)?.Name ||
-                                                    getVideoQuality(currentTrack, true, currentMediaSourceId)}
+                                                {`S${String(currentTrack?.ParentIndexNumber || 0).padStart(2, '0')} E${String(currentTrack?.IndexNumber || 0).padStart(2, '0')} - ${currentTrack?.Name || 'Untitled'}`}
                                             </div>
                                             <ChevronRightIcon size={16} className="icon" />
                                         </div>
@@ -770,23 +787,6 @@ export const VideoPlayer = ({
                                         <ChevronRightIcon size={16} className="icon" />
                                     </div>
                                 </div>
-
-                                {allEpisodes.length > 0 && (
-                                    <div
-                                        className="menu-item"
-                                        onClick={() => {
-                                            setCurrentMenuView('episodes')
-                                        }}
-                                    >
-                                        <div className="text">Episodes</div>
-                                        <div className="menu-item-right">
-                                            <div className="menu-item-value">
-                                                {`S${String(currentTrack?.ParentIndexNumber || 0).padStart(2, '0')} E${String(currentTrack?.IndexNumber || 0).padStart(2, '0')} - ${currentTrack?.Name || 'Untitled'}`}
-                                            </div>
-                                            <ChevronRightIcon size={16} className="icon" />
-                                        </div>
-                                    </div>
-                                )}
 
                                 <div
                                     className="menu-item"
@@ -841,44 +841,6 @@ export const VideoPlayer = ({
                                             <CheckIcon className="check-icon" />
                                             <div className="text">
                                                 {getSubtitleDisplayName(track.id, subtitleTracks, currentTrack)}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Audio Tracks Submenu */}
-                            <div
-                                ref={el => {
-                                    viewsRef.current.audioTracks = el
-                                }}
-                                className={`menu-view audio ${currentMenuView === 'audioTracks' ? 'active' : 'hidden'}`}
-                            >
-                                <div
-                                    className="menu-item back-button"
-                                    onClick={() => {
-                                        setCurrentMenuView('home')
-                                    }}
-                                >
-                                    <ChevronLeftIcon size={16} className="return-icon" />
-                                    <div className="text">Audio</div>
-                                </div>
-                                <div className="menu-divider"></div>
-                                <div className="container">
-                                    {audioTracks.map(track => (
-                                        <div
-                                            key={track.id}
-                                            className={`menu-item ${
-                                                currentAudioTrackId === track.id ? 'selected' : ''
-                                            }`}
-                                            onClick={() => {
-                                                handleAudioTrackChange(track.id.toString())
-                                                setTimeout(() => setCurrentMenuView('home'), 60)
-                                            }}
-                                        >
-                                            <CheckIcon className="check-icon" />
-                                            <div className="text">
-                                                {getAudioTrackDisplayName(track.id, audioTracks, currentTrack)}
                                             </div>
                                         </div>
                                     ))}
@@ -943,6 +905,44 @@ export const VideoPlayer = ({
                                             </div>
                                         )
                                     })}
+                                </div>
+                            </div>
+
+                            {/* Audio Tracks Submenu */}
+                            <div
+                                ref={el => {
+                                    viewsRef.current.audioTracks = el
+                                }}
+                                className={`menu-view audio ${currentMenuView === 'audioTracks' ? 'active' : 'hidden'}`}
+                            >
+                                <div
+                                    className="menu-item back-button"
+                                    onClick={() => {
+                                        setCurrentMenuView('home')
+                                    }}
+                                >
+                                    <ChevronLeftIcon size={16} className="return-icon" />
+                                    <div className="text">Audio</div>
+                                </div>
+                                <div className="menu-divider"></div>
+                                <div className="container">
+                                    {audioTracks.map(track => (
+                                        <div
+                                            key={track.id}
+                                            className={`menu-item ${
+                                                currentAudioTrackId === track.id ? 'selected' : ''
+                                            }`}
+                                            onClick={() => {
+                                                handleAudioTrackChange(track.id.toString())
+                                                setTimeout(() => setCurrentMenuView('home'), 60)
+                                            }}
+                                        >
+                                            <CheckIcon className="check-icon" />
+                                            <div className="text">
+                                                {getAudioTrackDisplayName(track.id, audioTracks, currentTrack)}
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 
@@ -1016,16 +1016,11 @@ export const VideoPlayer = ({
                                                     }
                                                 }}
                                             >
+                                                <CheckIcon className="check-icon" />
                                                 <div className="text">
-                                                    <div style={{ fontWeight: 500 }}>
-                                                        S{season} E{episodeNum} - {episodeName}
-                                                    </div>
+                                                    S{season} E{episodeNum} - {episodeName}
                                                 </div>
-                                                {isCurrentEpisode && (
-                                                    <div className="menu-item-right">
-                                                        <CheckIcon size={16} />
-                                                    </div>
-                                                )}
+                                                {isCurrentEpisode && <div className="menu-item-right"></div>}
                                             </div>
                                         )
                                     })}

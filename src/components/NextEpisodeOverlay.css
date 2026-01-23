@@ -17,7 +17,7 @@
     bottom: 60px;
     padding: 14px;
     min-width: 320px;
-    max-width: 380px;
+    max-width: 360px;
     border-radius: 14px;
     backdrop-filter: blur(8px);
     background-color: rgba(16, 16, 16, 0.92);
@@ -51,7 +51,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 2px;
-    margin-top: -4px;
+    margin-top: -3px;
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -82,12 +82,14 @@
     font-weight: 500;
     color: rgba(255, 255, 255, 0.6);
     margin-bottom: 6px;
+    word-break: break-word;
 }
 
 .next-episode-overlay > .next-episode-content > .next-episode-info > .episode {
     font-size: 0.9rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.9);
+    word-break: break-word;
 }
 
 .next-episode-overlay > .next-episode-content > .next-episode-actions {
