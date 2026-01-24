@@ -160,6 +160,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     const [userInteracted, setUserInteracted] = useState(false)
 
+    // Update Checker Setting
+    const [checkForUpdates, setCheckForUpdates] = useState(localStorage.getItem('checkForUpdates') === 'on')
+
+    useEffect(() => localStorage.setItem('checkForUpdates', checkForUpdates ? 'on' : 'off'), [checkForUpdates])
+
     // Track user-initiated pause to prevent unwanted auto-resume on devicechange
     const lastUserPauseRef = useRef<number>(0)
 
@@ -1026,5 +1031,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         videoFormat,
         audioCodecName,
         fileSize,
+
+        checkForUpdates,
+        setCheckForUpdates,
     }
 }

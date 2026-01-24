@@ -3,9 +3,11 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import '../App.css'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
+import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
 import { useJellyfinSearch } from '../hooks/Jellyfin/useJellyfinSearch'
+import { useUpdateChecker } from '../hooks/useUpdateChecker'
 import { InlineLoader } from './InlineLoader'
 import { JellyImg } from './JellyImg'
 import './Sidenav.css'
@@ -14,6 +16,9 @@ import { DownloadingIcon, SearchClearIcon, SearchIcon } from './SvgIcons'
 
 export const Sidenav = (props: { username: string }) => {
     const navigate = useNavigate()
+    const { checkForUpdates } = usePlaybackContext()
+
+    const { updateStatus } = useUpdateChecker(checkForUpdates)
     const location = useLocation()
     const searchInputRef = useRef<HTMLInputElement>(null)
     const { showSidenav, closeSidenav } = useSidenavContext()
@@ -241,8 +246,18 @@ export const Sidenav = (props: { username: string }) => {
                             >
                                 <DownloadingIcon width={16} height={16} />
                             </NavLink>
-                            <NavLink to="/settings" className="icon settings" onClick={closeSidenav} title="Settings">
+                            <NavLink
+                                to="/settings"
+                                className="icon settings"
+                                onClick={closeSidenav}
+                                title={updateStatus === 'available' ? 'Settings - Update available!' : 'Settings'}
+                            >
                                 <GearIcon size={16} />
+                                {updateStatus === 'available' && (
+                                    <div className="update-checker">
+                                        <div className="dot" />
+                                    </div>
+                                )}
                             </NavLink>
                         </div>
                     </div>
