@@ -187,7 +187,9 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     <div className="container">
                         <div className="desc">
                             <div className="subtitle">Next episode</div>
-                            <div className="subdesc">Play next episode automatically</div>
+                            <div className="subdesc">
+                                Play next episode automatically, next up during end credits if available
+                            </div>
                         </div>
                         <div className="option">
                             <label className="switch">
@@ -360,6 +362,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                 //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
                                 //value={filter.kind}
                                 >
+                                    <option value="light">Light</option>
                                     <option value="normal">Normal</option>
                                     <option value="bold">Bold</option>
                                 </select>
@@ -373,8 +376,46 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
-                            <div className="subtitle">Font position</div>
-                            <div className="subdesc">Subtitles vertical position</div>
+                            <div className="subtitle">Font color</div>
+                            <div className="subdesc">Subtitle text color</div>
+                        </div>
+                        <div className="sorting">
+                            <div className="filter">
+                                <select
+                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
+                                //value={filter.kind}
+                                >
+                                    <option value="white">White</option>
+                                    <option value="black">Black</option>
+                                </select>
+                                <div className="icon">
+                                    <ChevronDownIcon size={12} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Font opacity</div>
+                            <div className="subdesc">Subtitle text transparency</div>
+                        </div>
+                        <div className="sorting">
+                            <div className="filter">
+                                <select
+                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
+                                //value={filter.kind}
+                                >
+                                    <option value="25">25%</option>
+                                    <option value="50">50%</option>
+                                    <option value="75">75%</option>
+                                    <option value="100">100%</option>
+                                </select>
+                                <div className="icon">
+                                    <ChevronDownIcon size={12} />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
