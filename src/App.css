@@ -195,7 +195,7 @@ html.light {
     --btn-brand-color: #b282e9;
     --btn-brand-color-hover: #9470e9;
     --btn-brand-color-disabled: #caa5f0;
-    --success-color: #2faf25; /* Not used */
+    --success-color: #2da825;
     --overlay-bg: rgb(0 0 0 / 25%); /* Not used */
     --bg-color-dimmer: rgba(22, 11, 37, 0.4);
     --volume-dot-color: #bbbbbb; /* Not used */
@@ -231,7 +231,7 @@ html.dark {
     --btn-brand-color: #834ec0;
     --btn-brand-color-hover: #9e53f3;
     --btn-brand-color-disabled: #b487e7;
-    --success-color: #2faf25; /* Not used */
+    --success-color: #48ed3c;
     --overlay-bg: rgb(0 0 0 / 40%); /* Not used */
     --bg-color-dimmer: rgba(7, 3, 12, 0.6);
     --volume-dot-color: #87868a; /* Not used */

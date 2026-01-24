@@ -488,6 +488,47 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     }
 }
 
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon.settings > .update-checker {
+    position: absolute;
+    top: -2px;
+    right: 1px;
+    padding: 2px;
+    border-radius: 20px;
+    background-color: var(--bg-color-secondary);
+    transition: background-color 0.2s ease-out;
+    pointer-events: none;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon.settings:hover .update-checker {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon.settings > .update-checker > .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 20px;
+    background-color: var(--brand-color);
+    transform: scale(1);
+    animation: dotPulseAnimation 2s infinite;
+}
+
+@keyframes dotPulseAnimation {
+    0% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 var(--brand-color);
+    }
+
+    80% {
+        transform: scale(1);
+        box-shadow: 0 0 0 7px rgba(0, 0, 0, 0);
+    }
+
+    100% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    }
+}
+
 /* Responsive */
 @media only screen and (max-width: 980px) {
     .sidenav {

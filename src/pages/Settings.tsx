@@ -440,7 +440,6 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         <Link to="" onClick={handleOpenDownloadsFolder} className="textlink">
                             here
                         </Link>
-                        .
                     </div>
                 </div>
             </div>

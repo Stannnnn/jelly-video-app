@@ -331,6 +331,76 @@
     display: inline-block;
 }
 
+/* Updates */
+.settings-page > .section.updates > .inner:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.settings-page > .section.updates .desc > .subtitle {
+    margin-bottom: 0;
+}
+
+.settings-page > .section.updates .desc > .subdesc {
+    color: var(--font-color-tertiary);
+}
+
+.settings-page > .section.updates > .inner {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.settings-page > .section.updates > .inner > .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc {
+    font-size: 0.725rem;
+    font-weight: 500;
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon {
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: -3px;
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon.success {
+    margin-right: 6px;
+    color: var(--success-color);
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon.error {
+    color: var(--font-color-error-light);
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon.available {
+    color: var(--brand-color);
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon.checking {
+    color: var(--brand-color);
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon.checking > svg {
+    animation: iconCheckingSpin 1.4s linear infinite;
+}
+
+@keyframes iconCheckingSpin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .text > .divider {
+    font-weight: 700;
+}
+
 /* About and Session */
 .settings-page > .section .desc {
     font-size: 0.75rem;
