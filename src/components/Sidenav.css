@@ -1,7 +1,9 @@
 .sidenav {
     position: relative;
     flex-basis: 210px;
-    transition: flex-basis 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+    transition:
+        flex-basis 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 0.2s ease;
 }
 
 .sidenav > .sidenav_wrapper {
@@ -18,7 +20,9 @@
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
     transform: translate(0);
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+    transition:
+        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 0.2s ease;
 }
 
 /* Isolate volume scroll */
@@ -109,7 +113,9 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     margin: 0 16px;
     padding: 7px 14px;
     border-radius: 8px;
-    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    transition:
+        background-color 0.2s ease-out,
+        color 0.2s ease-out;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > ul > li > a:hover {
@@ -171,7 +177,10 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     cursor: pointer;
     padding: 7px;
     fill: var(--font-color-secondary);
-    transition: opacity 0.2s ease-out, visibility 0.2s ease-out, fill 0.2s ease-out;
+    transition:
+        opacity 0.2s ease-out,
+        visibility 0.2s ease-out,
+        fill 0.2s ease-out;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_header > .input_container > .search-clear:hover {
@@ -206,7 +215,9 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     margin: 0 -4px;
     margin-bottom: 6px;
     border-radius: 8px;
-    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    transition:
+        background-color 0.2s ease-out,
+        color 0.2s ease-out;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result:hover {
@@ -376,7 +387,9 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     margin-bottom: 2px;
     padding: 6px 8px;
     border-radius: 6px;
-    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    transition:
+        background-color 0.2s ease-out,
+        color 0.2s ease-out;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .playlists > .container > .playlist:hover {

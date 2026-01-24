@@ -14,18 +14,19 @@ A lightweight & elegant video client for Jellyfin, designed to eliminate server 
 
 ### Features
 
--   **Native Performance:** Built with Tauri for a lightweight, native desktop experience with minimal resource usage.
--   **Direct Playback:** Powered by libmpv for reliable, hardware-accelerated video playback.
--   **Seamless Jellyfin Integration:** Connect directly to your Jellyfin server to access your personal video library.
--   **Simple Design:** A clean, modern interface focused on smooth content discovery and playback.
+- **Native Performance:** Built with Tauri for a lightweight, native desktop experience with minimal resource usage.
+- **Direct Playback:** Powered by libmpv for reliable, hardware-accelerated video playback.
+- **Seamless Jellyfin Integration:** Connect directly to your Jellyfin server to access your personal video library.
+- **Simple Design:** A clean, modern interface focused on smooth content discovery and playback.
 
 ### Installation
 
 Jelly Video App is available as a native desktop application. Pre-built binaries will be available on our [GitHub release page](https://github.com/Stannnnn/jelly-video-app/releases) once we reach a stable release.
+
 > [!NOTE]
 > Windows is currently the only supported platform for video playback, as linux & macos have issues with the mpv backend.
-<br/>
-<br/>
+> <br/>
+> <br/>
 
 [Yarn](https://classic.yarnpkg.com/lang/en/docs/install) (`npm i -g yarn`) is required if you wish to build the project or run the development server yourself.
 
@@ -60,11 +61,11 @@ The built application will be available in `src-tauri/target/release/bundle/`.
 
 ### Development
 
--   `yarn dev` - Start the Vite development server
--   `yarn tauri:dev` - Start the Tauri development app with hot-reload
--   `yarn build` - Build the web frontend
--   `yarn tauri:build` - Build the complete Tauri application
--   `yarn lint` - Run ESLint to check code quality
+- `yarn dev` - Start the Vite development server
+- `yarn tauri:dev` - Start the Tauri development app with hot-reload
+- `yarn build` - Build the web frontend
+- `yarn tauri:build` - Build the complete Tauri application
+- `yarn lint` - Run ESLint to check code quality
 
 ### Contributing
 
@@ -73,4 +74,3 @@ We're open to pull requests, please merge them to the `develop` branch. If you h
 ### License
 
 See the LICENSE file for more details.
-

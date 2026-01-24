@@ -22,8 +22,8 @@ export const Skeleton = ({
                     type === 'episode' || type === 'specials' || type === 'mixedSmall'
                         ? 'episode'
                         : type === 'mixed'
-                        ? 'continue-watching'
-                        : ''
+                          ? 'continue-watching'
+                          : ''
                 }`}
             />
             <div className="skeleton-details">

@@ -13,7 +13,8 @@
         "tauri": "tauri",
         "tauri:build": "tauri build",
         "tauri:dev": "tauri dev",
-        "tauri:dev:nocache": "tauri dev"
+        "tauri:dev:nocache": "tauri dev",
+        "format": "prettier --write . --ignore-path .gitignore --ignore-path src-tauri/.gitignore"
     },
     "dependencies": {
         "@fontsource-variable/inter": "^5.2.8",
@@ -43,6 +44,7 @@
         "eslint": "^9.39.1",
         "eslint-plugin-react-hooks": "^7.0.1",
         "eslint-plugin-react-refresh": "^0.4.24",
+        "prettier": "^3.8.1",
         "typescript": "~5.8.3",
         "typescript-eslint": "^8.48.1",
         "vite": "^7.0.4"
