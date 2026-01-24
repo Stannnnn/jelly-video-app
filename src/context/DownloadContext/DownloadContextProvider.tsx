@@ -206,8 +206,10 @@ const useInitialState = () => {
 
             processingRef.current = true
             abortControllerRef.current = new AbortController()
+            const signal = abortControllerRef.current.signal
 
             const { mediaItem, action } = next
+            let shouldRemoveFromQueue = true
 
             try {
                 if (action === 'download') {
@@ -276,10 +278,14 @@ const useInitialState = () => {
             } catch (error) {
                 console.error(`Task failed for ${action} id=${mediaItem.Id}`, error)
 
-                if (action === 'download') {
-                    patchMediaItem(mediaItem.Id, item => ({ ...item, offlineState: undefined }))
-                } else if (action === 'remove') {
-                    patchMediaItem(mediaItem.Id, item => ({ ...item, offlineState: 'downloaded' }))
+                if (signal.aborted && signal.reason === 'removeFromQueue') {
+                    shouldRemoveFromQueue = false
+                } else {
+                    if (action === 'download') {
+                        patchMediaItem(mediaItem.Id, item => ({ ...item, offlineState: undefined }))
+                    } else if (action === 'remove') {
+                        patchMediaItem(mediaItem.Id, item => ({ ...item, offlineState: 'downloaded' }))
+                    }
                 }
             } finally {
                 // Clear progress bar
@@ -289,7 +295,10 @@ const useInitialState = () => {
                 setCurrentDownloadingId(undefined)
                 setDownloadProgress(null)
                 abortControllerRef.current = null
-                setQueue(prev => prev.slice(1))
+                // Only remove from queue if it wasn't manually removed
+                if (shouldRemoveFromQueue) {
+                    setQueue(prev => prev.slice(1))
+                }
                 processingRef.current = false
             }
         }
@@ -326,11 +335,15 @@ const useInitialState = () => {
             if (isFirstInQueue && abortControllerRef.current) {
                 abortControllerRef.current.abort('removeFromQueue')
                 abortControllerRef.current = null
-                processingRef.current = false
+                ;(async () => {
+                    if (isTauri()) {
+                        await invoke('storage_abort_downloads').catch(err =>
+                            console.error('Failed to abort download:', err)
+                        )
+                    }
 
-                if (isTauri()) {
-                    invoke('storage_abort_downloads').catch(err => console.error('Failed to abort download:', err))
-                }
+                    processingRef.current = false
+                })()
             }
 
             if (task.action === 'download') {
