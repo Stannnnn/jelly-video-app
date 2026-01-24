@@ -29,9 +29,6 @@ const useInitialState = () => {
         total: number
         timeRemaining: number
     } | null>(null)
-    const downloadStartTimeRef = useRef<number>(0)
-    const lastDownloadedRef = useRef<number>(0)
-    const lastSpeedUpdateRef = useRef<number>(0)
 
     const refreshStorageStats = useCallback(async () => {
         if (isTauri()) {
@@ -52,41 +49,30 @@ const useInitialState = () => {
     useEffect(() => {
         if (!isTauri()) return
 
-        const unlisten = listen<{ id: string; downloaded: number; total: number; progress: number }>(
-            'download-progress',
-            event => {
-                const { id, downloaded, total, progress } = event.payload
-                console.log(`Download progress for ${id}: ${progress}% (${downloaded}/${total} bytes)`)
+        const unlisten = listen<{
+            id: string
+            downloaded: number
+            total: number
+            progress: number
+            speed: number
+            timeRemaining: number
+        }>('download-progress', event => {
+            const { id, downloaded, total, progress, speed, timeRemaining } = event.payload
+            console.log(`Download progress for ${id}: ${progress}% (${downloaded}/${total} bytes)`)
 
-                // Directly update the progress bar element
-                if (progressBarRef.current) {
-                    progressBarRef.current.style.setProperty('--progress-percent', `${progress}%`)
-                }
-
-                // Calculate download speed and time remaining
-                const now = Date.now()
-                const timeSinceLastUpdate = (now - lastSpeedUpdateRef.current) / 1000 // seconds
-
-                if (timeSinceLastUpdate >= 0.5) {
-                    // Update speed every 0.5 seconds
-                    const bytesDownloaded = downloaded - lastDownloadedRef.current
-                    const speed = timeSinceLastUpdate > 0 ? bytesDownloaded / timeSinceLastUpdate : 0
-
-                    const remainingBytes = total - downloaded
-                    const timeRemaining = speed > 0 ? remainingBytes / speed : 0
-
-                    setDownloadProgress({
-                        speed,
-                        downloaded,
-                        total,
-                        timeRemaining,
-                    })
-
-                    lastDownloadedRef.current = downloaded
-                    lastSpeedUpdateRef.current = now
-                }
+            // Update the progress bar element
+            if (progressBarRef.current) {
+                progressBarRef.current.style.setProperty('--progress-percent', `${progress}%`)
             }
-        )
+
+            // Update download progress state with data from Rust
+            setDownloadProgress({
+                speed,
+                downloaded,
+                total,
+                timeRemaining,
+            })
+        })
 
         return () => {
             unlisten.then(fn => fn())
@@ -227,9 +213,6 @@ const useInitialState = () => {
                 if (action === 'download') {
                     setCurrentDownloadingId(mediaItem.Id)
                     setDownloadProgress(null)
-                    downloadStartTimeRef.current = Date.now()
-                    lastDownloadedRef.current = 0
-                    lastSpeedUpdateRef.current = Date.now()
                     const already = await audioStorage.hasTrack(mediaItem.Id)
 
                     if (already) {

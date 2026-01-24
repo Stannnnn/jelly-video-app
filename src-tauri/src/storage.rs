@@ -128,6 +128,8 @@ pub async fn storage_save_track(
         })?;
         let mut stream = response.bytes_stream();
         let mut downloaded: u64 = 0;
+        let mut last_emit_time = std::time::Instant::now();
+        let mut last_emit_downloaded: u64 = 0;
         
         // Download in chunks and emit progress
         loop {
@@ -148,19 +150,45 @@ pub async fn storage_save_track(
                             })?;
                             downloaded += chunk.len() as u64;
                             
-                            let progress = if total_size > 0 {
-                                (downloaded as f64 / total_size as f64 * 100.0) as u32
-                            } else {
-                                0
-                            };
+                            let now = std::time::Instant::now();
+                            let elapsed = now.duration_since(last_emit_time).as_secs_f64();
                             
-                            // Emit progress event
-                            let _ = app.emit("download-progress", serde_json::json!({
-                                "id": id,
-                                "downloaded": downloaded,
-                                "total": total_size,
-                                "progress": progress
-                            }));
+                            // Emit progress event every 0.5 seconds (debounced)
+                            if elapsed >= 0.5 {
+                                let progress = if total_size > 0 {
+                                    (downloaded as f64 / total_size as f64 * 100.0) as u32
+                                } else {
+                                    0
+                                };
+                                
+                                // Calculate speed (bytes per second)
+                                let bytes_since_last = downloaded - last_emit_downloaded;
+                                let speed = if elapsed > 0.0 {
+                                    bytes_since_last as f64 / elapsed
+                                } else {
+                                    0.0
+                                };
+                                
+                                // Calculate time remaining (seconds)
+                                let remaining_bytes = total_size.saturating_sub(downloaded);
+                                let time_remaining = if speed > 0.0 {
+                                    remaining_bytes as f64 / speed
+                                } else {
+                                    0.0
+                                };
+                                
+                                let _ = app.emit("download-progress", serde_json::json!({
+                                    "id": id,
+                                    "downloaded": downloaded,
+                                    "total": total_size,
+                                    "progress": progress,
+                                    "speed": speed,
+                                    "timeRemaining": time_remaining
+                                }));
+                                
+                                last_emit_time = now;
+                                last_emit_downloaded = downloaded;
+                            }
                         }
                         Some(Err(e)) => {
                             *download_manager.cancellation_token.lock().unwrap() = None;
