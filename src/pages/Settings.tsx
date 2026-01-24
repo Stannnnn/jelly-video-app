@@ -441,6 +441,9 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             here
                         </Link>
                     </div>
+                    <div className="note">
+                        Note: Refreshing the app window while downloads are in progress will reset the progress
+                    </div>
                 </div>
             </div>
 

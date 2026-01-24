@@ -293,6 +293,11 @@
     font-variant-numeric: tabular-nums;
 }
 
+.settings-page > .section .desc > .note {
+    margin-top: 8px;
+    color: var(--font-color-tertiary);
+}
+
 /* Shortcuts */
 .settings-page > .section.shortcuts > .title {
     margin-bottom: 4px;
