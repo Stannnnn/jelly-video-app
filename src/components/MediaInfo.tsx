@@ -12,6 +12,7 @@ import { ask } from '@tauri-apps/plugin-dialog'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
+import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useJellyfinCollections } from '../hooks/Jellyfin/useJellyfinCollections'
 import { useJellyfinNextEpisode } from '../hooks/Jellyfin/useJellyfinNextEpisode'
@@ -32,6 +33,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const { addToFavorites, removeFromFavorites } = useFavorites()
     const { markAsPlayed, markAsUnplayed } = useWatchedState()
     const { addToDownloads, removeFromDownloads } = useDownloadContext()
+    const audioStorage = useAudioStorageContext()
     const { addToCollection, createCollection, renameCollection, deleteCollection } = useCollections()
     const { collections, isLoading: isLoadingCollections } = useJellyfinCollections()
     const { nextEpisode, isLoading: isLoadingNextEpisode } = useJellyfinNextEpisode(item)
@@ -52,9 +54,26 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const [isRenamingCollection, setIsRenamingCollection] = useState(false)
     const [isRenamingCollectionOpen, setIsRenamingCollectionOpen] = useState(false)
     const [isDeletingCollection, setIsDeletingCollection] = useState(false)
+    const [downloadedMediaSourceId, setDownloadedMediaSourceId] = useState<string | undefined>(undefined)
     const moreButtonRef = useRef<HTMLDivElement>(null)
     const versionButtonRef = useRef<HTMLDivElement>(null)
     const downloadButtonRef = useRef<HTMLDivElement>(null)
+
+    // Load downloaded media source ID
+    useEffect(() => {
+        const loadDownloadedSource = async () => {
+            if (item.offlineState === 'downloaded') {
+                const track = await audioStorage.getTrack(item.Id)
+                if (track && track.type === 'video' && track.mediaSources) {
+                    const sources = Array.isArray(track.mediaSources) ? track.mediaSources : [track.mediaSources]
+                    setDownloadedMediaSourceId(sources[0]?.Id ?? undefined)
+                }
+            } else {
+                setDownloadedMediaSourceId(undefined)
+            }
+        }
+        loadDownloadedSource()
+    }, [item.Id, item.offlineState, audioStorage])
 
     const closeMoreSubdropdowns = () => {
         setIsCollectionDropdownOpen(false)
@@ -526,56 +545,69 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                         onClick={e => e.stopPropagation()}
                                                     >
                                                         <div className="dropdown-content">
-                                                            {sortedVideoSources.map((source, index) => {
-                                                                const videoStream = source.MediaStreams?.find(
-                                                                    s => s.Type === 'Video'
+                                                            {sortedVideoSources
+                                                                .filter(
+                                                                    source =>
+                                                                        !item.offlineState ||
+                                                                        source.Id === downloadedMediaSourceId
                                                                 )
-                                                                const baseName =
-                                                                    source.Name ||
-                                                                    videoStream?.DisplayTitle ||
-                                                                    `Version ${index + 1}`
+                                                                .map((source, index) => {
+                                                                    const videoStream = source.MediaStreams?.find(
+                                                                        s => s.Type === 'Video'
+                                                                    )
+                                                                    const baseName =
+                                                                        source.Name ||
+                                                                        videoStream?.DisplayTitle ||
+                                                                        `Version ${index + 1}`
 
-                                                                const bitrate = source.Bitrate || videoStream?.BitRate
-                                                                const bitrateMbps = bitrate
-                                                                    ? (bitrate / 1_000_000).toFixed(1)
-                                                                    : null
+                                                                    const bitrate =
+                                                                        source.Bitrate || videoStream?.BitRate
+                                                                    const bitrateMbps = bitrate
+                                                                        ? (bitrate / 1_000_000).toFixed(1)
+                                                                        : null
 
-                                                                let qualityBadge = getVideoQuality(
-                                                                    item,
-                                                                    false,
-                                                                    source.Id || undefined
-                                                                )
+                                                                    let qualityBadge = getVideoQuality(
+                                                                        item,
+                                                                        false,
+                                                                        source.Id || undefined
+                                                                    )
 
-                                                                if (videoStream?.VideoRange === 'HDR' && qualityBadge) {
-                                                                    qualityBadge = `${qualityBadge} HDR`
-                                                                }
+                                                                    if (
+                                                                        videoStream?.VideoRange === 'HDR' &&
+                                                                        qualityBadge
+                                                                    ) {
+                                                                        qualityBadge = `${qualityBadge} HDR`
+                                                                    }
 
-                                                                const details = [
-                                                                    bitrateMbps ? `${bitrateMbps} Mbps` : null,
-                                                                    qualityBadge,
-                                                                ]
-                                                                    .filter(Boolean)
-                                                                    .join(', ')
+                                                                    const details = [
+                                                                        bitrateMbps ? `${bitrateMbps} Mbps` : null,
+                                                                        qualityBadge,
+                                                                    ]
+                                                                        .filter(Boolean)
+                                                                        .join(', ')
 
-                                                                const displayName = details
-                                                                    ? `${baseName} (${details})`
-                                                                    : baseName
+                                                                    const displayName = details
+                                                                        ? `${baseName} (${details})`
+                                                                        : baseName
 
-                                                                return (
-                                                                    <div
-                                                                        key={source.Id || index}
-                                                                        className="dropdown-item"
-                                                                        onClick={e => {
-                                                                            toggleDownload(e, source.Id || undefined)
-                                                                            setIsDownloadDropdownOpen(false)
-                                                                            setIsMoreDropdownOpen(false)
-                                                                        }}
-                                                                        title={displayName}
-                                                                    >
-                                                                        {displayName}
-                                                                    </div>
-                                                                )
-                                                            })}
+                                                                    return (
+                                                                        <div
+                                                                            key={source.Id || index}
+                                                                            className="dropdown-item"
+                                                                            onClick={e => {
+                                                                                toggleDownload(
+                                                                                    e,
+                                                                                    source.Id || undefined
+                                                                                )
+                                                                                setIsDownloadDropdownOpen(false)
+                                                                                setIsMoreDropdownOpen(false)
+                                                                            }}
+                                                                            title={displayName}
+                                                                        >
+                                                                            {displayName}
+                                                                        </div>
+                                                                    )
+                                                                })}
                                                         </div>
                                                     </div>
                                                 </>
