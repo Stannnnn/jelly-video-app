@@ -40,6 +40,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         setSubtitleFontWeight,
         subtitleFontColor,
         setSubtitleFontColor,
+        subtitlePosition,
+        setSubtitlePosition,
         seekBackIncrement,
         setSeekBackIncrement,
         seekForwardIncrement,
@@ -415,12 +417,15 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                         <div className="sorting">
                             <div className="filter">
-                                <select onChange={e => setSubtitleFontColor(e.target.value)} value={subtitleFontColor}>
-                                    <option value="60">60%</option>
-                                    <option value="80">80%</option>
+                                <select
+                                    onChange={e => setSubtitlePosition(Number(e.target.value))}
+                                    value={subtitlePosition}
+                                >
+                                    <option value="90">90%</option>
+                                    <option value="95">95%</option>
                                     <option value="100">100%</option>
-                                    <option value="120">120%</option>
-                                    <option value="120">140%</option>
+                                    <option value="105">105%</option>
+                                    <option value="110">110%</option>
                                 </select>
                                 <div className="icon">
                                     <ChevronDownIcon size={12} />

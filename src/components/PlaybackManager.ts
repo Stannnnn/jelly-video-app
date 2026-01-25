@@ -175,6 +175,9 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [subtitleFontColor, setSubtitleFontColor] = useState(localStorage.getItem('subtitleFontColor') || 'white')
     useEffect(() => localStorage.setItem('subtitleFontColor', subtitleFontColor), [subtitleFontColor])
 
+    const [subtitlePosition, setSubtitlePosition] = useState(Number(localStorage.getItem('subtitlePosition')) || 100)
+    useEffect(() => localStorage.setItem('subtitlePosition', String(subtitlePosition)), [subtitlePosition])
+
     // Seek Increment Settings
     const [seekBackIncrement, setSeekBackIncrement] = useState(Number(localStorage.getItem('seekBackIncrement')) || 5)
     useEffect(() => localStorage.setItem('seekBackIncrement', String(seekBackIncrement)), [seekBackIncrement])
@@ -308,16 +311,18 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             // await setProperty('sub-border-size', 3)
             // await setProperty('sub-shadow-offset', 1)
             // await setProperty('sub-shadow-color', '#000000')
+            await setProperty('sub-pos', subtitlePosition)
 
             console.log('[MPV] Applied subtitle settings:', {
                 fontSize,
                 isBold,
                 color,
+                position: subtitlePosition,
             })
         } catch (error) {
             console.error('Failed to apply subtitle settings:', error)
         }
-    }, [isInitialized, subtitleFontSize, subtitleFontWeight, subtitleFontColor])
+    }, [isInitialized, subtitleFontSize, subtitleFontWeight, subtitleFontColor, subtitlePosition])
 
     // Apply subtitle settings when they change
     useEffect(() => {
@@ -1058,6 +1063,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         setSubtitleFontWeight,
         subtitleFontColor,
         setSubtitleFontColor,
+        subtitlePosition,
+        setSubtitlePosition,
 
         // Seek increment settings
         seekBackIncrement,
