@@ -28,6 +28,7 @@ import { Home } from './pages/Home'
 import { Login } from './pages/Login'
 import { MoviePage } from './pages/MoviePage'
 import { Movies } from './pages/Movies'
+import { NextUp } from './pages/NextUp'
 import { PersonMovies } from './pages/PersonMovies'
 import { PersonPage } from './pages/PersonPage'
 import { RecentlyAddedMovies } from './pages/RecentlyAddedMovies'
@@ -220,6 +221,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                                 path="/recently-added-series"
                                 element={<Main pageTitle="Latest Series" content={RecentlyAddedSeries} />}
                             />
+                            <Route path="/next-up" element={<Main pageTitle="Next Up" content={NextUp} />} />
                             <Route
                                 path="/search/:query"
                                 element={<Main pageTitle="Search" content={SearchResults} />}

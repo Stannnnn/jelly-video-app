@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { HorizontalScroller } from '../components/HorizontalScroller'
 import { MediaList } from '../components/MediaList'
+import { useJellyfinNextUp } from '../hooks/Jellyfin/useJellyfinNextUp'
 import { useJellyfinRecentlyAddedMovies } from '../hooks/Jellyfin/useJellyfinRecentlyAddedMovies'
 import { useJellyfinRecentlyAddedSeries } from '../hooks/Jellyfin/useJellyfinRecentlyAddedSeries'
 import { useJellyfinRecentlyPlayed } from '../hooks/Jellyfin/useJellyfinRecentlyPlayed'
@@ -11,10 +12,11 @@ export const Home = () => {
         isLoading: isLoadingRecentlyPlayed,
         error: errorRecentlyPlayed,
     } = useJellyfinRecentlyPlayed()
+    const { nextUp, isLoading: isLoadingNextUp, error: errorNextUp } = useJellyfinNextUp()
     const { recentlyAddedMovies, isLoading: isLoadingMovies, error: errorMovies } = useJellyfinRecentlyAddedMovies()
     const { recentlyAddedSeries, isLoading: isLoadingSeries, error: errorSeries } = useJellyfinRecentlyAddedSeries()
 
-    const error = errorRecentlyPlayed || errorMovies || errorSeries
+    const error = errorRecentlyPlayed || errorNextUp || errorMovies || errorSeries
 
     if (error) {
         return <div className="error">{error}</div>
@@ -66,6 +68,20 @@ export const Home = () => {
                         )}
                     </div>
                     <MediaList items={recentlyAddedSeries} isLoading={isLoadingSeries} type="series" />
+                </div>
+            )}
+
+            {(isLoadingNextUp || (nextUp && nextUp.length > 0)) && (
+                <div className="section">
+                    <div className="container">
+                        <div className="title">Next Up</div>
+                        {nextUp && nextUp.length >= 12 && (
+                            <Link to="/next-up" className="see-more noSelect">
+                                See more
+                            </Link>
+                        )}
+                    </div>
+                    <MediaList items={nextUp} isLoading={isLoadingNextUp} type="mixedSmall" />
                 </div>
             )}
         </div>

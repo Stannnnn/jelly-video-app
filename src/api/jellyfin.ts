@@ -7,6 +7,7 @@ import { LibraryApi } from '@jellyfin/sdk/lib/generated-client/api/library-api'
 import { PlaystateApi } from '@jellyfin/sdk/lib/generated-client/api/playstate-api'
 import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
 import { SystemApi } from '@jellyfin/sdk/lib/generated-client/api/system-api'
+import { TvShowsApi } from '@jellyfin/sdk/lib/generated-client/api/tv-shows-api'
 import { UserApi } from '@jellyfin/sdk/lib/generated-client/api/user-api'
 import { BaseItemDto, BaseItemKind, ItemFields } from '@jellyfin/sdk/lib/generated-client/models'
 import { ItemFilter } from '@jellyfin/sdk/lib/generated-client/models/item-filter'
@@ -214,6 +215,18 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             limit,
             fields: extraFields,
             includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Episode],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
+    const getNextUp = async (startIndex = 0, limit = 36) => {
+        const tvShowsApi = new TvShowsApi(api.configuration)
+        const response = await tvShowsApi.getNextUp({
+            userId,
+            startIndex,
+            limit,
+            fields: extraFields,
         })
 
         return await parseItemDtos(response.data.Items)
@@ -775,6 +788,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         getCollections,
         getFavorites,
         getRecentlyPlayed,
+        getNextUp,
         getRecentlyAdded,
         fetchUserInfo,
         fetchClientIp,
