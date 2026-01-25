@@ -379,7 +379,6 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     onChange={e => setSubtitleFontWeight(e.target.value)}
                                     value={subtitleFontWeight}
                                 >
-                                    <option value="light">Light</option>
                                     <option value="normal">Normal</option>
                                     <option value="bold">Bold</option>
                                 </select>
@@ -400,7 +399,11 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <div className="filter">
                                 <select onChange={e => setSubtitleFontColor(e.target.value)} value={subtitleFontColor}>
                                     <option value="white">White</option>
-                                    <option value="black">Black</option>
+                                    <option value="yellow">Yellow</option>
+                                    <option value="green">Green</option>
+                                    <option value="blue">Blue</option>
+                                    <option value="red">Red</option>
+                                    <option value="magenta">Magenta</option>
                                 </select>
                                 <div className="icon">
                                     <ChevronDownIcon size={12} />

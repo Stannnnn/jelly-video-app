@@ -286,8 +286,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 smaller: 0.6,
                 small: 0.8,
                 normal: 1.0,
-                large: 1.25,
-                larger: 1.5,
+                large: 1.2,
+                larger: 1.4,
             }
             const fontSize = fontSizeMap[subtitleFontSize] || 1.0
 
@@ -297,7 +297,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             // Convert color to hex (MPV uses &HAABBGGRR format)
             const colorMap: Record<string, string> = {
                 white: '#FFFFFF',
-                black: '#000000',
+                yellow: '#eecf1d',
+                green: '#1d881a',
+                blue: '#2a4fb6',
+                magenta: '#b919b9',
+                red: '#c21e1e',
             }
             const color = colorMap[subtitleFontColor] || '#FFFFFF'
 
