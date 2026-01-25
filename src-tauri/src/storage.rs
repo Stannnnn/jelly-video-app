@@ -24,7 +24,7 @@ pub struct StorageTrack {
     pub media_source_id: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StorageMetadata {
     pub tracks: HashMap<String, StorageTrack>,
 }
@@ -32,6 +32,7 @@ pub struct StorageMetadata {
 #[derive(Default)]
 pub struct DownloadManager {
     cancellation_token: Arc<Mutex<Option<CancellationToken>>>,
+    cached_metadata: Arc<Mutex<Option<StorageMetadata>>>,
 }
 
 fn get_storage_dir(app: &AppHandle) -> tauri::Result<PathBuf> {
@@ -74,6 +75,40 @@ fn save_metadata(app: &AppHandle, metadata: &StorageMetadata) -> tauri::Result<(
         .map_err(|e| tauri::Error::Io(std::io::Error::new(std::io::ErrorKind::InvalidData, e)))?;
     fs::write(&metadata_path, content)?;
     Ok(())
+}
+
+fn get_cached_metadata(
+    app: &AppHandle,
+    download_manager: &State<DownloadManager>,
+) -> tauri::Result<StorageMetadata> {
+    let mut cache = download_manager.cached_metadata.lock().unwrap();
+    
+    if cache.is_none() {
+        // Load from disk if not cached
+        *cache = Some(load_metadata(app)?);
+    }
+    
+    Ok(cache.as_ref().unwrap().clone())
+}
+
+fn update_cached_metadata(
+    app: &AppHandle,
+    download_manager: &State<DownloadManager>,
+    metadata: &StorageMetadata,
+) -> tauri::Result<()> {
+    // Save to disk
+    save_metadata(app, metadata)?;
+    
+    // Update cache
+    let mut cache = download_manager.cached_metadata.lock().unwrap();
+    *cache = Some(metadata.clone());
+    
+    Ok(())
+}
+
+fn invalidate_cache(download_manager: &State<DownloadManager>) {
+    let mut cache = download_manager.cached_metadata.lock().unwrap();
+    *cache = None;
 }
 
 #[tauri::command]
@@ -228,9 +263,9 @@ pub async fn storage_save_track(
     
     // Update metadata
     println!("storage_save_track: Updating metadata for id: {}", id);
-    let mut metadata = load_metadata(&app).map_err(|e| e.to_string())?;
+    let mut metadata = get_cached_metadata(&app, &download_manager).map_err(|e| e.to_string())?;
     metadata.tracks.insert(id.clone(), data);
-    save_metadata(&app, &metadata).map_err(|e| e.to_string())?;
+    update_cached_metadata(&app, &download_manager, &metadata).map_err(|e| e.to_string())?;
     println!("storage_save_track: Track saved successfully with id: {}", id);
     
     // Remove cancellation token on success
@@ -242,20 +277,29 @@ pub async fn storage_save_track(
 #[tauri::command]
 pub async fn storage_get_track(
     app: AppHandle,
+    download_manager: State<'_, DownloadManager>,
     id: String,
 ) -> Result<Option<StorageTrack>, String> {
-    let metadata = load_metadata(&app).map_err(|e| e.to_string())?;
+    let metadata = get_cached_metadata(&app, &download_manager).map_err(|e| e.to_string())?;
     Ok(metadata.tracks.get(&id).cloned())
 }
 
 #[tauri::command]
-pub async fn storage_has_track(app: AppHandle, id: String) -> Result<bool, String> {
-    let metadata = load_metadata(&app).map_err(|e| e.to_string())?;
+pub async fn storage_has_track(
+    app: AppHandle,
+    download_manager: State<'_, DownloadManager>,
+    id: String,
+) -> Result<bool, String> {
+    let metadata = get_cached_metadata(&app, &download_manager).map_err(|e| e.to_string())?;
     Ok(metadata.tracks.contains_key(&id))
 }
 
 #[tauri::command]
-pub async fn storage_remove_track(app: AppHandle, id: String) -> Result<(), String> {
+pub async fn storage_remove_track(
+    app: AppHandle,
+    download_manager: State<'_, DownloadManager>,
+    id: String,
+) -> Result<(), String> {
     let storage_dir = get_storage_dir(&app).map_err(|e| e.to_string())?;
     
     // Remove blob file
@@ -271,7 +315,7 @@ pub async fn storage_remove_track(app: AppHandle, id: String) -> Result<(), Stri
     }
     
     // Update metadata
-    let mut metadata = load_metadata(&app).map_err(|e| e.to_string())?;
+    let mut metadata = get_cached_metadata(&app, &download_manager).map_err(|e| e.to_string())?;
     
     // If this is a container, also remove all children
     if let Some(track) = metadata.tracks.get(&id) {
@@ -299,7 +343,7 @@ pub async fn storage_remove_track(app: AppHandle, id: String) -> Result<(), Stri
     }
     
     metadata.tracks.remove(&id);
-    save_metadata(&app, &metadata).map_err(|e| e.to_string())?;
+    update_cached_metadata(&app, &download_manager, &metadata).map_err(|e| e.to_string())?;
     
     Ok(())
 }
@@ -330,8 +374,12 @@ pub async fn storage_get_thumbnail(app: AppHandle, id: String) -> Result<Option<
 }
 
 #[tauri::command]
-pub async fn storage_get_track_count(app: AppHandle, kind: String) -> Result<usize, String> {
-    let metadata = load_metadata(&app).map_err(|e| e.to_string())?;
+pub async fn storage_get_track_count(
+    app: AppHandle,
+    download_manager: State<'_, DownloadManager>,
+    kind: String,
+) -> Result<usize, String> {
+    let metadata = get_cached_metadata(&app, &download_manager).map_err(|e| e.to_string())?;
     let count = metadata
         .tracks
         .values()
@@ -348,7 +396,10 @@ pub async fn storage_get_track_count(app: AppHandle, kind: String) -> Result<usi
 }
 
 #[tauri::command]
-pub async fn storage_clear_all(app: AppHandle) -> Result<(), String> {
+pub async fn storage_clear_all(
+    app: AppHandle,
+    download_manager: State<'_, DownloadManager>,
+) -> Result<(), String> {
     let storage_dir = get_storage_dir(&app).map_err(|e| e.to_string())?;
     
     // Remove all files in storage directory
@@ -357,17 +408,21 @@ pub async fn storage_clear_all(app: AppHandle) -> Result<(), String> {
         fs::create_dir_all(&storage_dir).map_err(|e| e.to_string())?;
     }
     
+    // Invalidate cache
+    invalidate_cache(&download_manager);
+    
     Ok(())
 }
 
 #[tauri::command]
 pub async fn storage_get_page(
     app: AppHandle,
+    download_manager: State<'_, DownloadManager>,
     page_index: usize,
     item_kind: String,
     items_per_page: usize,
 ) -> Result<Vec<serde_json::Value>, String> {
-    let metadata = load_metadata(&app).map_err(|e| e.to_string())?;
+    let metadata = get_cached_metadata(&app, &download_manager).map_err(|e| e.to_string())?;
     
     // Filter and sort by timestamp (descending)
     let mut filtered: Vec<_> = metadata
@@ -420,10 +475,11 @@ pub async fn storage_get_page(
 #[tauri::command]
 pub async fn storage_search_items(
     app: AppHandle,
+    download_manager: State<'_, DownloadManager>,
     search_term: String,
     limit: usize,
 ) -> Result<Vec<serde_json::Value>, String> {
-    let metadata = load_metadata(&app).map_err(|e| e.to_string())?;
+    let metadata = get_cached_metadata(&app, &download_manager).map_err(|e| e.to_string())?;
     let search_lower = search_term.to_lowercase();
     
     if search_term.trim().is_empty() {
@@ -467,9 +523,12 @@ pub async fn storage_search_items(
 }
 
 #[tauri::command]
-pub async fn storage_get_stats(app: AppHandle) -> Result<serde_json::Value, String> {
+pub async fn storage_get_stats(
+    app: AppHandle,
+    download_manager: State<'_, DownloadManager>,
+) -> Result<serde_json::Value, String> {
     let storage_dir = get_storage_dir(&app).map_err(|e| e.to_string())?;
-    let metadata = load_metadata(&app).map_err(|e| e.to_string())?;
+    let metadata = get_cached_metadata(&app, &download_manager).map_err(|e| e.to_string())?;
     
     let mut total_size: u64 = 0;
     
