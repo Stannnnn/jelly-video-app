@@ -325,10 +325,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                         <div className="sorting">
                             <div className="filter">
-                                <select
-                                    onChange={e => setSubtitleLanguage(e.target.value)}
-                                    value={subtitleLanguage}
-                                >
+                                <select onChange={e => setSubtitleLanguage(e.target.value)} value={subtitleLanguage}>
                                     <option value="eng">English</option>
                                     <option value="nob">Norwegian</option>
                                     <option value="dut">Dutch</option>
@@ -348,10 +345,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                         <div className="sorting">
                             <div className="filter">
-                                <select
-                                    onChange={e => setSubtitleFontSize(e.target.value)}
-                                    value={subtitleFontSize}
-                                >
+                                <select onChange={e => setSubtitleFontSize(e.target.value)} value={subtitleFontSize}>
                                     <option value="smaller">Smaller</option>
                                     <option value="small">Small</option>
                                     <option value="normal">Normal</option>
@@ -396,10 +390,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                         <div className="sorting">
                             <div className="filter">
-                                <select
-                                    onChange={e => setSubtitleFontColor(e.target.value)}
-                                    value={subtitleFontColor}
-                                >
+                                <select onChange={e => setSubtitleFontColor(e.target.value)} value={subtitleFontColor}>
                                     <option value="white">White</option>
                                     <option value="black">Black</option>
                                 </select>
