@@ -56,8 +56,6 @@ Jelly Video App is available as a native desktop application, available on our [
 
 > [!NOTE]
 > Unfortunately, Windows is currently the only supported platform for video playback, as Linux & Mac have issues with the mpv backend. [Reference](https://github.com/nini22P/tauri-plugin-libmpv?tab=readme-ov-file#platform-support).
-> <br/>
-> <br/>
 
 <br />
 
@@ -103,3 +101,4 @@ The built application will be available in `src-tauri/target/release/bundle/`.
 ### Contributing
 
 We're open to pull requests, please merge them to the `develop` branch. If you have any suggestions or improvements, feel free to open an issue or submit a pull request. Your contributions are welcome and appreciated!
+
