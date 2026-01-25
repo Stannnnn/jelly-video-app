@@ -280,13 +280,13 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         try {
             // Convert font size to MPV scale
             const fontSizeMap: Record<string, number> = {
-                smaller: 20,
-                small: 24,
-                normal: 32,
-                large: 40,
-                larger: 48,
+                smaller: 0.6,
+                small: 0.8,
+                normal: 1.0,
+                large: 1.25,
+                larger: 1.5,
             }
-            const fontSize = fontSizeMap[subtitleFontSize] || 32
+            const fontSize = fontSizeMap[subtitleFontSize] || 1.0
 
             // Convert font weight to MPV bold flag
             const isBold = subtitleFontWeight === 'bold'
@@ -301,7 +301,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             // Convert opacity percentage to hex alpha (00-FF)
 
             // Apply settings to MPV
-            await setProperty('sub-font-size', fontSize)
+            await setProperty('sub-scale', fontSize)
             await setProperty('sub-bold', isBold)
             await setProperty('sub-color', color)
             // await setProperty('sub-border-color', '#000000')
