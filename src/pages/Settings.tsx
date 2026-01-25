@@ -29,7 +29,22 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
     const navigate = useNavigate()
     const api = useJellyfinContext()
     const audioStorage = useAudioStorageContext()
-    const { autoplayNextEpisode, setAutoplayNextEpisode, checkForUpdates, setCheckForUpdates } = usePlaybackContext()
+    const {
+        autoplayNextEpisode,
+        setAutoplayNextEpisode,
+        checkForUpdates,
+        setCheckForUpdates,
+        subtitleLanguage,
+        setSubtitleLanguage,
+        subtitleFontSize,
+        setSubtitleFontSize,
+        subtitleFontWeight,
+        setSubtitleFontWeight,
+        subtitleFontColor,
+        setSubtitleFontColor,
+        subtitleFontOpacity,
+        setSubtitleFontOpacity,
+    } = usePlaybackContext()
 
     const { theme, toggleTheme } = useThemeContext()
 
@@ -311,8 +326,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         <div className="sorting">
                             <div className="filter">
                                 <select
-                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
-                                //value={filter.kind}
+                                    onChange={e => setSubtitleLanguage(e.target.value)}
+                                    value={subtitleLanguage}
                                 >
                                     <option value="eng">English</option>
                                     <option value="nob">Norwegian</option>
@@ -334,8 +349,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         <div className="sorting">
                             <div className="filter">
                                 <select
-                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
-                                //value={filter.kind}
+                                    onChange={e => setSubtitleFontSize(e.target.value)}
+                                    value={subtitleFontSize}
                                 >
                                     <option value="smaller">Smaller</option>
                                     <option value="small">Small</option>
@@ -359,8 +374,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         <div className="sorting">
                             <div className="filter">
                                 <select
-                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
-                                //value={filter.kind}
+                                    onChange={e => setSubtitleFontWeight(e.target.value)}
+                                    value={subtitleFontWeight}
                                 >
                                     <option value="light">Light</option>
                                     <option value="normal">Normal</option>
@@ -382,8 +397,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         <div className="sorting">
                             <div className="filter">
                                 <select
-                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
-                                //value={filter.kind}
+                                    onChange={e => setSubtitleFontColor(e.target.value)}
+                                    value={subtitleFontColor}
                                 >
                                     <option value="white">White</option>
                                     <option value="black">Black</option>
@@ -404,8 +419,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         <div className="sorting">
                             <div className="filter">
                                 <select
-                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
-                                //value={filter.kind}
+                                    onChange={e => setSubtitleFontOpacity(e.target.value)}
+                                    value={subtitleFontOpacity}
                                 >
                                     <option value="25">25%</option>
                                     <option value="50">50%</option>

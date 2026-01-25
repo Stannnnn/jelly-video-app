@@ -165,6 +165,22 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     useEffect(() => localStorage.setItem('checkForUpdates', checkForUpdates ? 'on' : 'off'), [checkForUpdates])
 
+    // Subtitle Settings
+    const [subtitleLanguage, setSubtitleLanguage] = useState(localStorage.getItem('subtitleLanguage') || 'eng')
+    useEffect(() => localStorage.setItem('subtitleLanguage', subtitleLanguage), [subtitleLanguage])
+
+    const [subtitleFontSize, setSubtitleFontSize] = useState(localStorage.getItem('subtitleFontSize') || 'normal')
+    useEffect(() => localStorage.setItem('subtitleFontSize', subtitleFontSize), [subtitleFontSize])
+
+    const [subtitleFontWeight, setSubtitleFontWeight] = useState(localStorage.getItem('subtitleFontWeight') || 'normal')
+    useEffect(() => localStorage.setItem('subtitleFontWeight', subtitleFontWeight), [subtitleFontWeight])
+
+    const [subtitleFontColor, setSubtitleFontColor] = useState(localStorage.getItem('subtitleFontColor') || 'white')
+    useEffect(() => localStorage.setItem('subtitleFontColor', subtitleFontColor), [subtitleFontColor])
+
+    const [subtitleFontOpacity, setSubtitleFontOpacity] = useState(localStorage.getItem('subtitleFontOpacity') || '100')
+    useEffect(() => localStorage.setItem('subtitleFontOpacity', subtitleFontOpacity), [subtitleFontOpacity])
+
     // Track user-initiated pause to prevent unwanted auto-resume on devicechange
     const lastUserPauseRef = useRef<number>(0)
 
@@ -253,6 +269,61 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         },
         [isInitialized]
     )
+
+    // Helper function to apply subtitle settings to MPV
+    const applySubtitleSettings = useCallback(async () => {
+        if (!isInitialized) return
+
+        try {
+            // Convert font size to MPV scale
+            const fontSizeMap: Record<string, number> = {
+                smaller: 40,
+                small: 46,
+                normal: 55,
+                large: 64,
+                larger: 72,
+            }
+            const fontSize = fontSizeMap[subtitleFontSize] || 55
+
+            // Convert font weight to MPV bold flag
+            const isBold = subtitleFontWeight === 'bold'
+
+            // Convert color to hex (MPV uses &HAABBGGRR format)
+            const colorMap: Record<string, string> = {
+                white: '#FFFFFF',
+                black: '#000000',
+            }
+            const color = colorMap[subtitleFontColor] || '#FFFFFF'
+
+            // Convert opacity percentage to hex alpha (00-FF)
+            const opacity = Math.round((parseInt(subtitleFontOpacity) / 100) * 255)
+            const alphaHex = opacity.toString(16).padStart(2, '0').toUpperCase()
+
+            // Apply settings to MPV
+            await setProperty('sub-font-size', fontSize)
+            await setProperty('sub-bold', isBold)
+            await setProperty('sub-color', color)
+            // await setProperty('sub-border-color', '#000000')
+            // await setProperty('sub-border-size', 3)
+            // await setProperty('sub-shadow-offset', 1)
+            // await setProperty('sub-shadow-color', '#000000')
+            await setProperty('sub-alpha', alphaHex)
+
+            console.log('[MPV] Applied subtitle settings:', {
+                fontSize,
+                isBold,
+                color,
+                opacity: alphaHex,
+            })
+        } catch (error) {
+            console.error('Failed to apply subtitle settings:', error)
+        }
+    }, [isInitialized, subtitleFontSize, subtitleFontWeight, subtitleFontColor, subtitleFontOpacity])
+
+    // Apply subtitle settings when they change
+    useEffect(() => {
+        applySubtitleSettings()
+    }, [applySubtitleSettings])
 
     // Initialize MPV and observe properties
     useEffect(() => {
@@ -980,6 +1051,18 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         subtitleTracks,
         currentSubtitleId,
         handleSubtitleChange,
+
+        // Subtitle settings
+        subtitleLanguage,
+        setSubtitleLanguage,
+        subtitleFontSize,
+        setSubtitleFontSize,
+        subtitleFontWeight,
+        setSubtitleFontWeight,
+        subtitleFontColor,
+        setSubtitleFontColor,
+        subtitleFontOpacity,
+        setSubtitleFontOpacity,
 
         // Audio track controls
         audioTracks,
