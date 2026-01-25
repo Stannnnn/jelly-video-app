@@ -1,6 +1,7 @@
 import { XCircleIcon } from '@primer/octicons-react'
 import { MediaList } from '../components/MediaList'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
+import { useFilterContext } from '../context/FilterContext/FilterContext'
 import { useIndexedDbDownloadsData } from '../hooks/useIndexedDbDownloadsData'
 import { formatFileSize } from '../utils/formatFileSize'
 import { formatTimeRemaining } from '../utils/formatTimeRemaining'
@@ -9,11 +10,14 @@ import './Downloads.css'
 export const Downloads = () => {
     const { items, isLoading, error, loadMore } = useIndexedDbDownloadsData()
     const { queue, removeFromQueue, progressBarRef, currentDownloadingId, downloadProgress } = useDownloadContext()
+    const { jellyItemKind } = useFilterContext()
 
     const queueItems = queue.map(task => ({
         ...task.mediaItem,
         offlineState: (task.action === 'remove' ? 'deleting' : 'downloading') as 'downloading' | 'deleting',
     }))
+
+    console.log(jellyItemKind)
 
     return (
         <div className="downloads-page">
@@ -61,7 +65,7 @@ export const Downloads = () => {
             <MediaList
                 items={items}
                 isLoading={isLoading && queueItems.length === 0}
-                type={'movie'}
+                type={jellyItemKind === 'Episode' ? 'episode' : 'movie'}
                 loadMore={loadMore}
                 disableActions={true}
             />
