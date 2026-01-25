@@ -227,6 +227,12 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             startIndex,
             limit,
             fields: extraFields,
+            imageTypeLimit: 1,
+            enableImageTypes: ['Primary', 'Backdrop', 'Banner', 'Thumb'],
+            enableTotalRecordCount: false,
+            disableFirstEpisode: false,
+            enableResumable: false,
+            enableRewatching: false,
         })
 
         return await parseItemDtos(response.data.Items)
