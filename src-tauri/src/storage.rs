@@ -20,6 +20,8 @@ pub struct StorageTrack {
     pub container_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub media_sources: Option<serde_json::Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub media_source_id: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

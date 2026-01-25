@@ -15,6 +15,7 @@ export type IStorageTrack =
           blob: Blob
           containerId?: string
           mediaSources?: MediaSourceInfo[]
+          mediaSourceId?: string
           thumbnail?: Blob
       }
 
@@ -31,6 +32,7 @@ const useInitialState = () => {
                 bitrate: number
                 containerId?: string
                 mediaSources?: MediaSourceInfo[]
+                mediaSourceId?: string
             },
             videoUrl?: string,
             thumbnailUrl?: string
@@ -44,6 +46,7 @@ const useInitialState = () => {
                     bitrate: data.bitrate,
                     containerId: data.containerId,
                     mediaSources: data.mediaSources,
+                    mediaSourceId: data.mediaSourceId,
                 }
 
                 await invoke('storage_save_track', {
@@ -187,7 +190,6 @@ const useInitialState = () => {
 
     const audioStorage = {
         saveTrack,
-        downloadAndSaveTrack: saveTrack,
         removeTrack,
         getTrack,
         hasTrack,

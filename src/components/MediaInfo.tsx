@@ -64,13 +64,13 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         const loadDownloadedSource = async () => {
             if (item.offlineState === 'downloaded') {
                 const track = await audioStorage.getTrack(item.Id)
-                if (track && track.type === 'video' && track.mediaSources) {
-                    const sources = Array.isArray(track.mediaSources) ? track.mediaSources : [track.mediaSources]
-                    setDownloadedMediaSourceId(sources[0]?.Id ?? undefined)
+                if (track && track.type === 'video') {
+                    setDownloadedMediaSourceId(track.mediaSourceId)
+                    return
                 }
-            } else {
-                setDownloadedMediaSourceId(undefined)
             }
+
+            setDownloadedMediaSourceId(undefined)
         }
         loadDownloadedSource()
     }, [item.Id, item.offlineState, audioStorage])
@@ -420,7 +420,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                 : 'Play'}
                                     </div>
                                 </div>
-                                {videoSources.length > 1 && (
+                                {sortedVideoSources.length > 1 && (
                                     <div className="version-container" ref={versionButtonRef}>
                                         <div
                                             className={`version-select ${isVersionDropdownOpen ? 'active' : ''}`}
@@ -535,7 +535,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                         : 'Download'}
                                             </div>
 
-                                            {videoSources.length > 1 && (
+                                            {sortedVideoSources.length > 1 && (
                                                 <>
                                                     <div className="icon">
                                                         <ChevronLeftIcon size={14} />

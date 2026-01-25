@@ -236,7 +236,7 @@ const useInitialState = () => {
 
                             if (!trackInfo) throw new Error(`Track info not found for ${mediaItem.Id}`)
 
-                            await audioStorage.downloadAndSaveTrack(
+                            await audioStorage.saveTrack(
                                 mediaItem.Id,
                                 {
                                     type: 'video',
@@ -245,6 +245,7 @@ const useInitialState = () => {
                                     mediaItem,
                                     containerId: next.containerId,
                                     mediaSources: trackInfo.MediaSources || undefined,
+                                    mediaSourceId: next.mediaSourceId,
                                 },
                                 streamUrl,
                                 thumbnailUrl
@@ -252,7 +253,7 @@ const useInitialState = () => {
                         } else {
                             const thumbnailUrl = api.getImageUrl(mediaItem, 'Primary', { width: 360, height: 360 })
 
-                            await audioStorage.downloadAndSaveTrack(
+                            await audioStorage.saveTrack(
                                 mediaItem.Id,
                                 {
                                     type: 'container',
