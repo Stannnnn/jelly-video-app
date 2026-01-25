@@ -27,17 +27,12 @@ export const Downloads = () => {
                 <div className="queue-list">
                     {downloadProgress && currentDownloadingId && (
                         <div className="download-info">
-                            <div className="download-stats">
-                                <span className="download-speed">{formatFileSize(downloadProgress.speed)}/s</span>
-                                <span className="download-separator">•</span>
-                                <span className="download-size">
-                                    {formatFileSize(downloadProgress.downloaded)} of{' '}
-                                    {formatFileSize(downloadProgress.total)}
-                                </span>
-                                <span className="download-separator">•</span>
-                                <span className="download-time">
-                                    {formatTimeRemaining(downloadProgress.timeRemaining)} left
-                                </span>
+                            <div className="stats">
+                                <div className="speed">{formatFileSize(downloadProgress.speed)}/s</div>-
+                                <div className="progress">{formatFileSize(downloadProgress.downloaded)}</div>
+                                of
+                                <div className="total">{formatFileSize(downloadProgress.total)},</div>
+                                <div className="time">{formatTimeRemaining(downloadProgress.timeRemaining)} left</div>
                             </div>
                         </div>
                     )}
