@@ -181,6 +181,15 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [subtitleFontOpacity, setSubtitleFontOpacity] = useState(localStorage.getItem('subtitleFontOpacity') || '100')
     useEffect(() => localStorage.setItem('subtitleFontOpacity', subtitleFontOpacity), [subtitleFontOpacity])
 
+    // Seek Increment Settings
+    const [seekBackIncrement, setSeekBackIncrement] = useState(Number(localStorage.getItem('seekBackIncrement')) || 5)
+    useEffect(() => localStorage.setItem('seekBackIncrement', String(seekBackIncrement)), [seekBackIncrement])
+
+    const [seekForwardIncrement, setSeekForwardIncrement] = useState(
+        Number(localStorage.getItem('seekForwardIncrement')) || 5
+    )
+    useEffect(() => localStorage.setItem('seekForwardIncrement', String(seekForwardIncrement)), [seekForwardIncrement])
+
     // Track user-initiated pause to prevent unwanted auto-resume on devicechange
     const lastUserPauseRef = useRef<number>(0)
 
@@ -1063,6 +1072,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         setSubtitleFontColor,
         subtitleFontOpacity,
         setSubtitleFontOpacity,
+
+        // Seek increment settings
+        seekBackIncrement,
+        setSeekBackIncrement,
+        seekForwardIncrement,
+        setSeekForwardIncrement,
 
         // Audio track controls
         audioTracks,

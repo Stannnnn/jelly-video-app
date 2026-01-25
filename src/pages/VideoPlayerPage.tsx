@@ -46,22 +46,22 @@ export const VideoPlayerPage = () => {
                 case 'j':
                 case 'J':
                     e.preventDefault()
-                    playback.skip(-10)
+                    playback.skip(-playback.seekBackIncrement * 2)
                     break
                 case 'l':
                 case 'L':
                     e.preventDefault()
-                    playback.skip(10)
+                    playback.skip(playback.seekForwardIncrement * 2)
                     break
                 case 'f':
                 case 'F':
                     playback.toggleFullscreen()
                     break
                 case 'ArrowLeft':
-                    playback.skip(-5)
+                    playback.skip(-playback.seekBackIncrement)
                     break
                 case 'ArrowRight':
-                    playback.skip(5)
+                    playback.skip(playback.seekForwardIncrement)
                     break
                 case 'ArrowUp':
                     e.preventDefault()

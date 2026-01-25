@@ -44,6 +44,10 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         setSubtitleFontColor,
         subtitleFontOpacity,
         setSubtitleFontOpacity,
+        seekBackIncrement,
+        setSeekBackIncrement,
+        seekForwardIncrement,
+        setSeekForwardIncrement,
     } = usePlaybackContext()
 
     const { theme, toggleTheme } = useThemeContext()
@@ -227,8 +231,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         <div className="sorting">
                             <div className="filter">
                                 <select
-                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
-                                //value={filter.kind}
+                                    onChange={e => setSeekBackIncrement(Number(e.target.value))}
+                                    value={seekBackIncrement}
                                 >
                                     <option value="5">5 seconds</option>
                                     <option value="10">10 seconds</option>
@@ -252,8 +256,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         <div className="sorting">
                             <div className="filter">
                                 <select
-                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
-                                //value={filter.kind}
+                                    onChange={e => setSeekForwardIncrement(Number(e.target.value))}
+                                    value={seekForwardIncrement}
                                 >
                                     <option value="5">5 seconds</option>
                                     <option value="10">10 seconds</option>
@@ -506,10 +510,17 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <div className="key">
                                 <ArrowRightIcon size={14} />
                             </div>{' '}
-                            to skip back or forward by 5 seconds
+                            to skip back or forward by{' '}
+                            {seekBackIncrement === seekForwardIncrement
+                                ? seekBackIncrement
+                                : `${seekBackIncrement}/${seekForwardIncrement}`}{' '}
+                            seconds
                         </p>
                         <p className="container">
-                            <div className="key">J</div> <div className="key">L</div> to skip back or forward by 10
+                            <div className="key">J</div> <div className="key">L</div> to skip back or forward by{' '}
+                            {seekBackIncrement === seekForwardIncrement
+                                ? seekBackIncrement * 2
+                                : `${seekBackIncrement * 2}/${seekForwardIncrement * 2}`}
                             seconds
                         </p>
                         <p className="container">
