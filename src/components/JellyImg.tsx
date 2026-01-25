@@ -47,7 +47,7 @@ const InternalJellyImg = ({
                     alt={item.Name}
                     className="thumbnail"
                     loading="lazy"
-                    style={{ opacity: isLoaded ? 1 : 0, ...imageProps?.style }}
+                    style={{ opacity: isLoaded ? undefined : 0, ...imageProps?.style }}
                     onLoad={() => setIsLoaded(true)}
                     onError={() => setError(true)}
                 />
