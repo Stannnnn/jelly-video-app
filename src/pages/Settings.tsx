@@ -184,8 +184,10 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
 
             <div className="section player ui">
                 <div className="title">Player</div>
+                {/*
                 <div className="inner row">
                     <div className="container">
+                    
                         <div className="desc">
                             <div className="subtitle">Trickplay</div>
                             <div className="subdesc">Display preview images while scrubbing</div>
@@ -202,6 +204,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                     </div>
                 </div>
+                */}
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
@@ -274,8 +277,10 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
             </div>
 
+            {/*
             <div className="section audio ui">
                 <div className="title">Audio</div>
+                
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
@@ -284,10 +289,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                         <div className="sorting">
                             <div className="filter">
-                                <select
-                                //onChange={e => setFilter(c => ({ ...c, kind: e.target.value }))}
-                                //value={filter.kind}
-                                >
+                                <select>
                                     <option value="eng">English</option>
                                     <option value="nob">Norwegian</option>
                                     <option value="dut">Dutch</option>
@@ -299,6 +301,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                     </div>
                 </div>
+                
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
@@ -318,9 +321,11 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     </div>
                 </div>
             </div>
+            */}
 
             <div className="section subs ui">
                 <div className="title">Subtitles</div>
+                {/*
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
@@ -341,6 +346,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                     </div>
                 </div>
+                */}
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
@@ -408,19 +414,17 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
-                            <div className="subtitle">Font opacity</div>
-                            <div className="subdesc">Subtitle text transparency</div>
+                            <div className="subtitle">Font position</div>
+                            <div className="subdesc">Subtitle vertical position</div>
                         </div>
                         <div className="sorting">
                             <div className="filter">
-                                <select
-                                    onChange={e => setSubtitleFontOpacity(e.target.value)}
-                                    value={subtitleFontOpacity}
-                                >
-                                    <option value="25">25%</option>
-                                    <option value="50">50%</option>
-                                    <option value="75">75%</option>
+                                <select onChange={e => setSubtitleFontColor(e.target.value)} value={subtitleFontColor}>
+                                    <option value="60">60%</option>
+                                    <option value="80">80%</option>
                                     <option value="100">100%</option>
+                                    <option value="120">120%</option>
+                                    <option value="120">140%</option>
                                 </select>
                                 <div className="icon">
                                     <ChevronDownIcon size={12} />
@@ -513,14 +517,14 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             to skip back or forward by{' '}
                             {seekBackIncrement === seekForwardIncrement
                                 ? seekBackIncrement
-                                : `${seekBackIncrement}/${seekForwardIncrement}`}{' '}
+                                : `${seekBackIncrement} / ${seekForwardIncrement}`}{' '}
                             seconds
                         </p>
                         <p className="container">
                             <div className="key">J</div> <div className="key">L</div> to skip back or forward by{' '}
                             {seekBackIncrement === seekForwardIncrement
                                 ? seekBackIncrement * 2
-                                : `${seekBackIncrement * 2}/${seekForwardIncrement * 2}`}{' '}
+                                : `${seekBackIncrement * 2} / ${seekForwardIncrement * 2}`}{' '}
                             seconds
                         </p>
                         <p className="container">

@@ -198,6 +198,12 @@
     align-items: center;
     justify-content: space-between;
     margin-right: 6px;
+    transition: opacity 0.2s ease-out;
+}
+
+.media-page > .media-info > .media-actions > .actions > .primary > .play-media.disabled {
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 .media-page > .media-info > .media-actions > .actions > .primary > .play-media > .container {

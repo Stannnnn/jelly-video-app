@@ -286,13 +286,13 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         try {
             // Convert font size to MPV scale
             const fontSizeMap: Record<string, number> = {
-                smaller: 40,
-                small: 46,
-                normal: 55,
-                large: 64,
-                larger: 72,
+                smaller: 20,
+                small: 24,
+                normal: 32,
+                large: 40,
+                larger: 48,
             }
-            const fontSize = fontSizeMap[subtitleFontSize] || 55
+            const fontSize = fontSizeMap[subtitleFontSize] || 32
 
             // Convert font weight to MPV bold flag
             const isBold = subtitleFontWeight === 'bold'

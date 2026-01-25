@@ -608,6 +608,7 @@
 
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item > .text {
     flex: 1;
+    font-variant-numeric: tabular-nums;
 }
 
 .video-container
