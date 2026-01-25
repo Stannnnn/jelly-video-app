@@ -520,7 +520,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <div className="key">J</div> <div className="key">L</div> to skip back or forward by{' '}
                             {seekBackIncrement === seekForwardIncrement
                                 ? seekBackIncrement * 2
-                                : `${seekBackIncrement * 2}/${seekForwardIncrement * 2}`}
+                                : `${seekBackIncrement * 2}/${seekForwardIncrement * 2}`}{' '}
                             seconds
                         </p>
                         <p className="container">
