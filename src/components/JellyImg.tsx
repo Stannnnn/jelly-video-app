@@ -19,6 +19,7 @@ export const JellyImg = ({
 }) => {
     const api = useJellyfinContext()
     const [hasError, setError] = useState(false)
+    const [isLoaded, setIsLoaded] = useState(false)
 
     const onlineImageUrl = api.getImageUrl(item, type, { width, height })
 
@@ -26,6 +27,7 @@ export const JellyImg = ({
 
     useEffect(() => {
         setError(false)
+        setIsLoaded(false)
     }, [src])
 
     return (
@@ -37,6 +39,8 @@ export const JellyImg = ({
                     alt={item.Name}
                     className="thumbnail"
                     loading="lazy"
+                    style={{ opacity: isLoaded ? 1 : 0, ...imageProps?.style }}
+                    onLoad={() => setIsLoaded(true)}
                     onError={() => setError(true)}
                 />
             )}
