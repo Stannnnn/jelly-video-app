@@ -14,9 +14,9 @@ export const useJellyfinSequentialNextEpisode = (item: MediaItem) => {
 
     const { data, isLoading } = useQuery({
         queryKey: ['sequentialNextEpisode', item.Id],
-        queryFn: async (): Promise<MediaItem | null> => {
+        queryFn: async (): Promise<MediaItem | undefined> => {
             if (!isEpisode) {
-                return null
+                return
             }
 
             const seriesId = item.SeriesId
@@ -30,21 +30,21 @@ export const useJellyfinSequentialNextEpisode = (item: MediaItem) => {
                 currentEpisodeNumber === undefined ||
                 currentEpisodeNumber === null
             ) {
-                return null
+                return
             }
 
             // Get all seasons for the series
             const seasons = await api.getSeasons(seriesId)
 
             if (seasons.length === 0) {
-                return null
+                return
             }
 
             // Find the current season
             const currentSeasonIndex = seasons.findIndex(s => s.IndexNumber === currentSeasonNumber)
 
             if (currentSeasonIndex === -1) {
-                return null
+                return
             }
 
             const currentSeason = seasons[currentSeasonIndex]
@@ -77,7 +77,7 @@ export const useJellyfinSequentialNextEpisode = (item: MediaItem) => {
             }
 
             // No next episode found
-            return null
+            return
         },
         enabled: isEpisode,
     })

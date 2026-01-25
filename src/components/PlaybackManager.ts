@@ -166,9 +166,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     useEffect(() => localStorage.setItem('checkForUpdates', checkForUpdates ? 'on' : 'off'), [checkForUpdates])
 
     // Subtitle Settings
-    const [subtitleLanguage, setSubtitleLanguage] = useState(localStorage.getItem('subtitleLanguage') || 'eng')
-    useEffect(() => localStorage.setItem('subtitleLanguage', subtitleLanguage), [subtitleLanguage])
-
     const [subtitleFontSize, setSubtitleFontSize] = useState(localStorage.getItem('subtitleFontSize') || 'normal')
     useEffect(() => localStorage.setItem('subtitleFontSize', subtitleFontSize), [subtitleFontSize])
 
@@ -177,9 +174,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     const [subtitleFontColor, setSubtitleFontColor] = useState(localStorage.getItem('subtitleFontColor') || 'white')
     useEffect(() => localStorage.setItem('subtitleFontColor', subtitleFontColor), [subtitleFontColor])
-
-    const [subtitleFontOpacity, setSubtitleFontOpacity] = useState(localStorage.getItem('subtitleFontOpacity') || '100')
-    useEffect(() => localStorage.setItem('subtitleFontOpacity', subtitleFontOpacity), [subtitleFontOpacity])
 
     // Seek Increment Settings
     const [seekBackIncrement, setSeekBackIncrement] = useState(Number(localStorage.getItem('seekBackIncrement')) || 5)
@@ -305,8 +299,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             const color = colorMap[subtitleFontColor] || '#FFFFFF'
 
             // Convert opacity percentage to hex alpha (00-FF)
-            const opacity = Math.round((parseInt(subtitleFontOpacity) / 100) * 255)
-            const alphaHex = opacity.toString(16).padStart(2, '0').toUpperCase()
 
             // Apply settings to MPV
             await setProperty('sub-font-size', fontSize)
@@ -316,18 +308,16 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             // await setProperty('sub-border-size', 3)
             // await setProperty('sub-shadow-offset', 1)
             // await setProperty('sub-shadow-color', '#000000')
-            await setProperty('sub-alpha', alphaHex)
 
             console.log('[MPV] Applied subtitle settings:', {
                 fontSize,
                 isBold,
                 color,
-                opacity: alphaHex,
             })
         } catch (error) {
             console.error('Failed to apply subtitle settings:', error)
         }
-    }, [isInitialized, subtitleFontSize, subtitleFontWeight, subtitleFontColor, subtitleFontOpacity])
+    }, [isInitialized, subtitleFontSize, subtitleFontWeight, subtitleFontColor])
 
     // Apply subtitle settings when they change
     useEffect(() => {
@@ -1062,16 +1052,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         handleSubtitleChange,
 
         // Subtitle settings
-        subtitleLanguage,
-        setSubtitleLanguage,
         subtitleFontSize,
         setSubtitleFontSize,
         subtitleFontWeight,
         setSubtitleFontWeight,
         subtitleFontColor,
         setSubtitleFontColor,
-        subtitleFontOpacity,
-        setSubtitleFontOpacity,
 
         // Seek increment settings
         seekBackIncrement,

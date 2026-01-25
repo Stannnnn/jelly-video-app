@@ -34,16 +34,12 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         setAutoplayNextEpisode,
         checkForUpdates,
         setCheckForUpdates,
-        subtitleLanguage,
-        setSubtitleLanguage,
         subtitleFontSize,
         setSubtitleFontSize,
         subtitleFontWeight,
         setSubtitleFontWeight,
         subtitleFontColor,
         setSubtitleFontColor,
-        subtitleFontOpacity,
-        setSubtitleFontOpacity,
         seekBackIncrement,
         setSeekBackIncrement,
         seekForwardIncrement,
@@ -507,7 +503,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 <div className="desc">
                     <div className="subtitle">Available shortcuts in the video player</div>
                     <div className="keys">
-                        <p className="container">
+                        <div className="container">
                             <div className="key">
                                 <ArrowLeftIcon size={14} />
                             </div>{' '}
@@ -519,15 +515,15 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                 ? seekBackIncrement
                                 : `${seekBackIncrement} / ${seekForwardIncrement}`}{' '}
                             seconds
-                        </p>
-                        <p className="container">
+                        </div>
+                        <div className="container">
                             <div className="key">J</div> <div className="key">L</div> to skip back or forward by{' '}
                             {seekBackIncrement === seekForwardIncrement
                                 ? seekBackIncrement * 2
                                 : `${seekBackIncrement * 2} / ${seekForwardIncrement * 2}`}{' '}
                             seconds
-                        </p>
-                        <p className="container">
+                        </div>
+                        <div className="container">
                             <div className="key">
                                 <ArrowUpIcon size={14} />
                             </div>{' '}
@@ -535,19 +531,19 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                 <ArrowDownIcon size={14} />
                             </div>{' '}
                             to adjust volume by 5%
-                        </p>
-                        <p className="container">
+                        </div>
+                        <div className="container">
                             <div className="key">Space</div> <div className="key">K</div> to pause or unpause
-                        </p>
-                        <p className="container">
+                        </div>
+                        <div className="container">
                             <div className="key">M</div> to mute or unmute
-                        </p>
-                        <p className="container">
+                        </div>
+                        <div className="container">
                             <div className="key">F</div> to fullscreen or undo
-                        </p>
-                        <p className="container">
+                        </div>
+                        <div className="container">
                             <div className="key">ESC</div> to exit fullscreen
-                        </p>
+                        </div>
                     </div>
                 </div>
             </div>
