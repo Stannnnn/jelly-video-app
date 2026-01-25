@@ -400,78 +400,76 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
             <div className="media-actions noSelect">
                 <div className="actions">
                     <div className="primary">
-                        {!isLoadingNextEpisode && (
-                            <div className="play-media">
-                                <div className="container" onClick={() => handlePlayClick(defaultMediaSourceId)}>
-                                    <PlayIcon className="play-icon" width={16} height={16} />
-                                    <div className="text">
-                                        {item.Type === BaseItemKind.Series && nextEpisode && shouldShowResume
-                                            ? `Resume S${String(nextEpisode.seasonNumber || 0).padStart(
-                                                  2,
-                                                  '0'
-                                              )} E${String(nextEpisode.episodeNumber || 0).padStart(2, '0')}`
-                                            : item.Type === BaseItemKind.Series && nextEpisode
-                                              ? `Play S${String(nextEpisode.seasonNumber || 0).padStart(
-                                                    2,
-                                                    '0'
-                                                )} E${String(nextEpisode.episodeNumber || 0).padStart(2, '0')}`
-                                              : shouldShowResume
-                                                ? 'Resume'
-                                                : 'Play'}
+                        <div className={`play-media ${isLoadingNextEpisode ? 'disabled' : ''}`}>
+                            <div
+                                className="container"
+                                onClick={() => !isLoadingNextEpisode && handlePlayClick(defaultMediaSourceId)}
+                            >
+                                <PlayIcon className="play-icon" width={16} height={16} />
+                                <div className="text">
+                                    {item.Type === BaseItemKind.Series && nextEpisode && shouldShowResume
+                                        ? `Resume S${String(nextEpisode.seasonNumber || 0).padStart(
+                                              2,
+                                              '0'
+                                          )} E${String(nextEpisode.episodeNumber || 0).padStart(2, '0')}`
+                                        : item.Type === BaseItemKind.Series && nextEpisode
+                                          ? `Play S${String(nextEpisode.seasonNumber || 0).padStart(
+                                                2,
+                                                '0'
+                                            )} E${String(nextEpisode.episodeNumber || 0).padStart(2, '0')}`
+                                          : shouldShowResume
+                                            ? 'Resume'
+                                            : 'Play'}
+                                </div>
+                            </div>
+                            {sortedVideoSources.length > 1 && (
+                                <div className="version-container" ref={versionButtonRef}>
+                                    <div
+                                        className={`version-select ${isVersionDropdownOpen ? 'active' : ''}`}
+                                        onClick={toggleVersionDropdown}
+                                        title="Select version"
+                                    >
+                                        <ChevronDownIcon size={16} />
+                                    </div>
+                                    <div className={`version-dropdown ${isVersionDropdownOpen ? 'open' : ''}`}>
+                                        {sortedVideoSources.map((source, index) => {
+                                            const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
+                                            const baseName =
+                                                source.Name || videoStream?.DisplayTitle || `Version ${index + 1}`
+
+                                            const bitrate = source.Bitrate || videoStream?.BitRate
+                                            const bitrateMbps = bitrate ? (bitrate / 1_000_000).toFixed(1) : null
+
+                                            let qualityBadge = getVideoQuality(item, false, source.Id || undefined)
+
+                                            if (videoStream?.VideoRange === 'HDR' && qualityBadge) {
+                                                qualityBadge = `${qualityBadge} HDR`
+                                            }
+
+                                            const details = [bitrateMbps ? `${bitrateMbps} Mbps` : null, qualityBadge]
+                                                .filter(Boolean)
+                                                .join(', ')
+
+                                            const displayName = details ? `${baseName} (${details})` : baseName
+
+                                            return (
+                                                <div
+                                                    key={source.Id || index}
+                                                    className="version-dropdown-item"
+                                                    onClick={() => {
+                                                        handlePlayClick(source.Id || undefined)
+                                                        setIsVersionDropdownOpen(false)
+                                                    }}
+                                                    title={displayName}
+                                                >
+                                                    {displayName}
+                                                </div>
+                                            )
+                                        })}
                                     </div>
                                 </div>
-                                {sortedVideoSources.length > 1 && (
-                                    <div className="version-container" ref={versionButtonRef}>
-                                        <div
-                                            className={`version-select ${isVersionDropdownOpen ? 'active' : ''}`}
-                                            onClick={toggleVersionDropdown}
-                                            title="Select version"
-                                        >
-                                            <ChevronDownIcon size={16} />
-                                        </div>
-                                        <div className={`version-dropdown ${isVersionDropdownOpen ? 'open' : ''}`}>
-                                            {sortedVideoSources.map((source, index) => {
-                                                const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
-                                                const baseName =
-                                                    source.Name || videoStream?.DisplayTitle || `Version ${index + 1}`
-
-                                                const bitrate = source.Bitrate || videoStream?.BitRate
-                                                const bitrateMbps = bitrate ? (bitrate / 1_000_000).toFixed(1) : null
-
-                                                let qualityBadge = getVideoQuality(item, false, source.Id || undefined)
-
-                                                if (videoStream?.VideoRange === 'HDR' && qualityBadge) {
-                                                    qualityBadge = `${qualityBadge} HDR`
-                                                }
-
-                                                const details = [
-                                                    bitrateMbps ? `${bitrateMbps} Mbps` : null,
-                                                    qualityBadge,
-                                                ]
-                                                    .filter(Boolean)
-                                                    .join(', ')
-
-                                                const displayName = details ? `${baseName} (${details})` : baseName
-
-                                                return (
-                                                    <div
-                                                        key={source.Id || index}
-                                                        className="version-dropdown-item"
-                                                        onClick={() => {
-                                                            handlePlayClick(source.Id || undefined)
-                                                            setIsVersionDropdownOpen(false)
-                                                        }}
-                                                        title={displayName}
-                                                    >
-                                                        {displayName}
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                            )}
+                        </div>
                         <div
                             className={isPlayed ? 'watch-state icon watched' : 'watch-state icon'}
                             onClick={toggleWatched}
