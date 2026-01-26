@@ -674,34 +674,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 setIsPending(true)
                 await command('loadfile', [videoUrl])
 
-                // Add external subtitle streams
-                if (track.MediaStreams && Array.isArray(track.MediaStreams)) {
-                    const externalSubtitles = track.MediaStreams.filter(
-                        stream =>
-                            stream.Type === 'Subtitle' &&
-                            (stream.DeliveryMethod === 'External' || stream.IsExternal) &&
-                            stream.Index !== undefined
-                    )
-
-                    for (const subtitle of externalSubtitles) {
-                        try {
-                            const subtitleUrl = `${api.auth.serverUrl}/Videos/${track.Id}/${mediaSourceId || track.Id}/Subtitles/${subtitle.Index}/Stream.${subtitle.Codec || 'srt'}?api_key=${api.auth.token}`
-
-                            // Add subtitle with title if available
-                            const title = subtitle.DisplayTitle || subtitle.Language || `Subtitle ${subtitle.Index}`
-                            await command('sub-add', [subtitleUrl, 'cached', title])
-
-                            console.log(`[MPV] Added external subtitle: ${title}`, subtitle)
-                        } catch (error) {
-                            console.error(`[MPV] Failed to add external subtitle ${subtitle.Index}:`, error)
-                        }
-                    }
-                }
-
                 let setStart = false
 
                 // Check if we need to seek to a saved position
                 const positionTicks = track.UserData?.PlaybackPositionTicks
+
                 if (positionTicks && positionTicks > 0 && track.RunTimeTicks) {
                     const playedPercentage = (positionTicks / track.RunTimeTicks) * 100
 
@@ -721,6 +698,30 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
                 if (!setStart) {
                     await setProperty('start', `+0`)
+                }
+
+                // Add external subtitle streams
+                if (track.MediaStreams && Array.isArray(track.MediaStreams)) {
+                    const externalSubtitles = track.MediaStreams.filter(
+                        stream =>
+                            stream.Type === 'Subtitle' &&
+                            (stream.DeliveryMethod === 'External' || stream.IsExternal) &&
+                            stream.Index !== undefined
+                    )
+
+                    for (const subtitle of externalSubtitles) {
+                        try {
+                            const subtitleUrl = `${api.auth.serverUrl}/Videos/${track.Id}/${mediaSourceId || track.Id}/Subtitles/${subtitle.Index}/Stream.${subtitle.Codec || 'srt'}?api_key=${api.auth.token}`
+
+                            // Add subtitle with title if available
+                            const title = subtitle.DisplayTitle || subtitle.Language || `Subtitle ${subtitle.Index}`
+                            await command('sub-add', [subtitleUrl, 'cached', title])
+
+                            // console.log(`[MPV] Added external subtitle: ${title}`, subtitle)
+                        } catch (error) {
+                            console.error(`[MPV] Failed to add external subtitle ${subtitle.Index}:`, error)
+                        }
+                    }
                 }
 
                 await setProperty('pause', false)
