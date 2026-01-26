@@ -13,8 +13,8 @@ A lightweight & elegant video client for Jellyfin, designed to eliminate server 
   <br/>
   <b>Sidenav search</b>
   <p>Search for movies, tv shows, collections</p>
-  <img src="public/sidenav-search-light.png" alt="Sidenav search light variant" width="30%">
-  <img src="public/sidenav-search-dark.png" alt="Sidenav search dark variant" width="30%">
+  <img src="public/sidenav-search-light.png" alt="Sidenav search light variant" width="24%">
+  <img src="public/sidenav-search-dark.png" alt="Sidenav search dark variant" width="24%">
   <br/>
   <br/>
   <b>Search results</b>
