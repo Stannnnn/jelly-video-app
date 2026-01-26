@@ -38,6 +38,10 @@ const getSubtitleDisplayName = (
     const track = subtitleTracks.find(t => t.id === subtitleId)
     if (!track) return 'On'
 
+    if (track.external) {
+        return track.title
+    }
+
     const filteredStreams = currentTrack?.MediaStreams?.filter(stream => !stream.IsExternal) || []
 
     // Use array position since ff-index is the index in this filtered list
