@@ -83,6 +83,17 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [rememberFilters, setRememberFilters] = useState(localStorage.getItem('rememberFilters') === 'on')
     useEffect(() => localStorage.setItem('rememberFilters', rememberFilters ? 'on' : 'off'), [rememberFilters])
 
+    const [rememberSubtitleTrack, setRememberSubtitleTrack] = useState(
+        localStorage.getItem('rememberSubtitleTrack') !== 'off'
+    )
+    useEffect(
+        () => localStorage.setItem('rememberSubtitleTrack', rememberSubtitleTrack ? 'on' : 'off'),
+        [rememberSubtitleTrack]
+    )
+
+    const [rememberAudioTrack, setRememberAudioTrack] = useState(localStorage.getItem('rememberAudioTrack') !== 'off')
+    useEffect(() => localStorage.setItem('rememberAudioTrack', rememberAudioTrack ? 'on' : 'off'), [rememberAudioTrack])
+
     // Next Episode Autoplay Settings
     const [autoplayNextEpisode, setAutoplayNextEpisode] = useState(
         localStorage.getItem('autoplayNextEpisode') !== 'off'
@@ -335,8 +346,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     // Initialize MPV and observe properties
     useEffect(() => {
-        let unlisten: (() => void) | undefined
-
         async function initMpv() {
             try {
                 // Wait a bit for the window to be fully ready
@@ -357,154 +366,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                     observedProperties: OBSERVED_PROPERTIES,
                 })
 
-                // Listen to property changes
-                unlisten = await observeProperties(OBSERVED_PROPERTIES, ({ name, data }) => {
-                    console.log(`[MPV] Property changed: ${name} =`, data)
-
-                    switch (name) {
-                        case 'pause':
-                            if (typeof data === 'boolean') {
-                                setIsPaused(data)
-                            }
-                            break
-                        case 'time-pos':
-                            if (typeof data === 'number') {
-                                setTimePos(data)
-                            }
-                            break
-                        case 'duration':
-                            if (typeof data === 'number') {
-                                setDuration(data)
-                                if (data > 0) {
-                                    setVideoLoaded(true)
-                                    setIsPending(false)
-                                }
-                            }
-                            break
-                        case 'track-list':
-                            if (Array.isArray(data)) {
-                                const subs = data.filter((track: any) => track.type === 'sub')
-                                setSubtitleTracks(subs)
-
-                                const audio = data.filter((track: any) => track.type === 'audio')
-                                setAudioTracks(audio)
-
-                                const selectedSubtitle = subs.find((track: any) => track.selected)
-
-                                if (selectedSubtitle) {
-                                    setCurrentSubtitleId(selectedSubtitle.id)
-                                }
-
-                                const selectedAudio = audio.find((track: any) => track.selected)
-
-                                if (selectedAudio) {
-                                    setCurrentAudioTrackId(selectedAudio.id)
-                                }
-                            }
-                            break
-                        case 'sid':
-                            if (typeof data === 'number' || data === null) {
-                                setCurrentSubtitleId(data)
-                            }
-                            break
-                        case 'aid':
-                            if (typeof data === 'number' || data === null) {
-                                setCurrentAudioTrackId(data)
-                            }
-                            break
-                        case 'volume':
-                            if (typeof data === 'number') {
-                                setVolume(data)
-                            }
-                            break
-                        case 'speed':
-                            if (typeof data === 'number') {
-                                setSpeed(data)
-                            }
-                            break
-                        case 'video-codec':
-                            if (typeof data === 'string') {
-                                setVideoCodec(data)
-                            }
-                            break
-                        case 'audio-codec':
-                            if (typeof data === 'string') {
-                                setAudioCodec(data)
-                            }
-                            break
-                        case 'width':
-                            if (typeof data === 'number') {
-                                setVideoWidth(data)
-                            }
-                            break
-                        case 'height':
-                            if (typeof data === 'number') {
-                                setVideoHeight(data)
-                            }
-                            break
-                        case 'estimated-vf-fps':
-                            if (typeof data === 'number') {
-                                setFps(data)
-                            }
-                            break
-                        case 'video-bitrate':
-                            if (typeof data === 'number') {
-                                setVideoBitrate(data)
-                            }
-                            break
-                        case 'audio-bitrate':
-                            if (typeof data === 'number') {
-                                setAudioBitrate(data)
-                            }
-                            break
-                        case 'audio-params/channel-count':
-                            if (typeof data === 'number') {
-                                setAudioChannels(data)
-                            }
-                            break
-                        case 'audio-params/samplerate':
-                            if (typeof data === 'number') {
-                                setAudioSampleRate(data)
-                            }
-                            break
-                        case 'hwdec-current':
-                            if (typeof data === 'string') {
-                                setHwdec(data)
-                            }
-                            break
-                        case 'container-fps':
-                            if (typeof data === 'number') {
-                                setContainerFps(data)
-                            }
-                            break
-                        case 'video-format':
-                            if (typeof data === 'string') {
-                                setVideoFormat(data)
-                            }
-                            break
-                        case 'audio-codec-name':
-                            if (typeof data === 'string') {
-                                setAudioCodecName(data)
-                            }
-                            break
-                        case 'file-size':
-                            if (typeof data === 'number') {
-                                setFileSize(data)
-                            }
-                            break
-                        case 'paused-for-cache':
-                            if (typeof data === 'boolean') {
-                                setIsBuffering(data)
-                            }
-                            break
-                        case 'demuxer-cache-duration':
-                            if (typeof data === 'number') {
-                                setCacheDuration(data)
-                            }
-                            break
-                    }
-                })
-
                 setIsInitialized(true)
                 setMpvError(null)
             } catch (error) {
@@ -520,15 +381,240 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         }
 
         return () => {
-            if (unlisten) {
-                unlisten()
-            }
-
             if (isTauri()) {
                 destroy().catch(console.error)
             }
         }
     }, [])
+
+    // Initialize MPV and observe properties
+    useEffect(() => {
+        let unlisten: (() => void) | undefined
+
+        async function initListen() {
+            // Listen to property changes
+            unlisten = await observeProperties(OBSERVED_PROPERTIES, ({ name, data }) => {
+                // console.log(`[MPV] Property changed: ${name} =`, data)
+
+                switch (name) {
+                    case 'pause':
+                        if (typeof data === 'boolean') {
+                            setIsPaused(data)
+                        }
+                        break
+                    case 'time-pos':
+                        if (typeof data === 'number') {
+                            setTimePos(data)
+                        }
+                        break
+                    case 'duration':
+                        if (typeof data === 'number') {
+                            setDuration(data)
+                            if (data > 0) {
+                                setVideoLoaded(true)
+                                setIsPending(false)
+                            }
+                        }
+                        break
+                    case 'track-list':
+                        if (Array.isArray(data)) {
+                            const subs = data.filter((track: any) => track.type === 'sub')
+                            setSubtitleTracks(subs)
+
+                            const audio = data.filter((track: any) => track.type === 'audio')
+                            setAudioTracks(audio)
+
+                            const selectedSubtitle = subs.find((track: any) => track.selected)
+
+                            if (selectedSubtitle) {
+                                setCurrentSubtitleId(selectedSubtitle.id)
+                            }
+
+                            const selectedAudio = audio.find((track: any) => track.selected)
+
+                            if (selectedAudio) {
+                                setCurrentAudioTrackId(selectedAudio.id)
+                            }
+
+                            // Restore saved track selections
+                            if (subs.length > 0 || audio.length > 0) {
+                                const savedSubtitleJson = localStorage.getItem('last_track_subtitle')
+                                const savedAudioTrackJson = localStorage.getItem('last_track_audio')
+
+                                if (subs.length > 0 && savedSubtitleJson && rememberSubtitleTrack) {
+                                    try {
+                                        const savedSubtitle = JSON.parse(savedSubtitleJson)
+                                        let matchingSub
+
+                                        // If trackId matches exactly, use the saved subtitleTrackId directly
+                                        if (savedSubtitle.trackId === currentTrack?.Id) {
+                                            matchingSub = subs.find((t: any) => t.id === savedSubtitle.subtitleTrackId)
+                                        } else {
+                                            // Otherwise, try to find a matching subtitle by language/title
+                                            matchingSub = subs.find(
+                                                (t: any) =>
+                                                    t.lang === savedSubtitle.lang || t.title === savedSubtitle.title
+                                            )
+                                        }
+
+                                        if (matchingSub) {
+                                            console.log(
+                                                `[MPV] Restoring subtitle track: ${matchingSub.id}`,
+                                                matchingSub
+                                            )
+                                            command('set', ['sid', matchingSub.id.toString()]).catch(console.error)
+                                        }
+                                    } catch (e) {
+                                        console.error('[MPV] Failed to parse saved subtitle:', e)
+                                    }
+                                }
+
+                                if (audio.length > 0 && savedAudioTrackJson && rememberAudioTrack) {
+                                    try {
+                                        const savedAudioTrack = JSON.parse(savedAudioTrackJson)
+                                        let matchingAudio
+
+                                        // If trackId matches exactly, use the saved audioTrackId directly
+                                        if (savedAudioTrack.trackId === currentTrack?.Id) {
+                                            matchingAudio = audio.find(
+                                                (t: any) => t.id === savedAudioTrack.audioTrackId
+                                            )
+                                        } else {
+                                            // Otherwise, try to find a matching audio track by language/title
+                                            matchingAudio = audio.find(
+                                                (t: any) =>
+                                                    t.lang === savedAudioTrack.lang || t.title === savedAudioTrack.title
+                                            )
+                                        }
+
+                                        if (matchingAudio) {
+                                            console.log(
+                                                `[MPV] Restoring audio track: ${matchingAudio.id}`,
+                                                matchingAudio
+                                            )
+                                            command('set', ['aid', matchingAudio.id.toString()]).catch(console.error)
+                                        }
+                                    } catch (e) {
+                                        console.error('[MPV] Failed to parse saved audio track:', e)
+                                    }
+                                }
+                            }
+                        }
+                        break
+                    case 'sid':
+                        if (typeof data === 'number' || data === null) {
+                            setCurrentSubtitleId(data)
+                        }
+                        break
+                    case 'aid':
+                        if (typeof data === 'number' || data === null) {
+                            setCurrentAudioTrackId(data)
+                        }
+                        break
+                    case 'volume':
+                        if (typeof data === 'number') {
+                            setVolume(data)
+                        }
+                        break
+                    case 'speed':
+                        if (typeof data === 'number') {
+                            setSpeed(data)
+                        }
+                        break
+                    case 'video-codec':
+                        if (typeof data === 'string') {
+                            setVideoCodec(data)
+                        }
+                        break
+                    case 'audio-codec':
+                        if (typeof data === 'string') {
+                            setAudioCodec(data)
+                        }
+                        break
+                    case 'width':
+                        if (typeof data === 'number') {
+                            setVideoWidth(data)
+                        }
+                        break
+                    case 'height':
+                        if (typeof data === 'number') {
+                            setVideoHeight(data)
+                        }
+                        break
+                    case 'estimated-vf-fps':
+                        if (typeof data === 'number') {
+                            setFps(data)
+                        }
+                        break
+                    case 'video-bitrate':
+                        if (typeof data === 'number') {
+                            setVideoBitrate(data)
+                        }
+                        break
+                    case 'audio-bitrate':
+                        if (typeof data === 'number') {
+                            setAudioBitrate(data)
+                        }
+                        break
+                    case 'audio-params/channel-count':
+                        if (typeof data === 'number') {
+                            setAudioChannels(data)
+                        }
+                        break
+                    case 'audio-params/samplerate':
+                        if (typeof data === 'number') {
+                            setAudioSampleRate(data)
+                        }
+                        break
+                    case 'hwdec-current':
+                        if (typeof data === 'string') {
+                            setHwdec(data)
+                        }
+                        break
+                    case 'container-fps':
+                        if (typeof data === 'number') {
+                            setContainerFps(data)
+                        }
+                        break
+                    case 'video-format':
+                        if (typeof data === 'string') {
+                            setVideoFormat(data)
+                        }
+                        break
+                    case 'audio-codec-name':
+                        if (typeof data === 'string') {
+                            setAudioCodecName(data)
+                        }
+                        break
+                    case 'file-size':
+                        if (typeof data === 'number') {
+                            setFileSize(data)
+                        }
+                        break
+                    case 'paused-for-cache':
+                        if (typeof data === 'boolean') {
+                            setIsBuffering(data)
+                        }
+                        break
+                    case 'demuxer-cache-duration':
+                        if (typeof data === 'number') {
+                            setCacheDuration(data)
+                        }
+                        break
+                }
+            })
+        }
+
+        if (isTauri() && isInitialized) {
+            initListen()
+        }
+
+        return () => {
+            if (unlisten) {
+                unlisten()
+            }
+        }
+    }, [currentTrack?.Id, isInitialized, rememberAudioTrack, rememberSubtitleTrack])
 
     // Report playback progress to Jellyfin
     useEffect(() => {
@@ -761,15 +847,28 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 try {
                     if (subtitleId === 'no') {
                         await command('set', ['sid', 'no'])
+                        localStorage.removeItem('last_track_subtitle')
                     } else {
                         await command('set', ['sid', subtitleId])
+
+                        // Find the subtitle track to save its details
+                        const selectedTrack = subtitleTracks.find(t => t.id.toString() === subtitleId)
+                        if (selectedTrack && currentTrack) {
+                            const trackInfo = {
+                                trackId: currentTrack.Id,
+                                subtitleTrackId: selectedTrack.id,
+                                lang: selectedTrack.lang || null,
+                                title: selectedTrack.title || null,
+                            }
+                            localStorage.setItem('last_track_subtitle', JSON.stringify(trackInfo))
+                        }
                     }
                 } catch (error) {
                     console.error('Failed to change subtitle track:', error)
                 }
             }
         },
-        [isInitialized]
+        [isInitialized, subtitleTracks, currentTrack]
     )
 
     const handleAudioTrackChange = useCallback(
@@ -777,12 +876,24 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             if (isInitialized) {
                 try {
                     await command('set', ['aid', audioTrackId])
+
+                    // Find the audio track to save its details
+                    const selectedTrack = audioTracks.find(t => t.id.toString() === audioTrackId)
+                    if (selectedTrack && currentTrack) {
+                        const trackInfo = {
+                            trackId: currentTrack.Id,
+                            audioTrackId: selectedTrack.id,
+                            lang: selectedTrack.lang || null,
+                            title: selectedTrack.title || null,
+                        }
+                        localStorage.setItem('last_track_audio', JSON.stringify(trackInfo))
+                    }
                 } catch (error) {
                     console.error('Failed to change audio track:', error)
                 }
             }
         },
-        [isInitialized]
+        [isInitialized, audioTracks, currentTrack]
     )
 
     const handleVolumeChange = useCallback(
@@ -1102,6 +1213,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         setBitrate,
         rememberFilters,
         setRememberFilters,
+        rememberSubtitleTrack,
+        setRememberSubtitleTrack,
+        rememberAudioTrack,
+        setRememberAudioTrack,
 
         // Next Episode Autoplay
         autoplayNextEpisode,

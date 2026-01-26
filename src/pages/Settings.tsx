@@ -46,6 +46,10 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         setSeekBackIncrement,
         seekForwardIncrement,
         setSeekForwardIncrement,
+        rememberSubtitleTrack,
+        setRememberSubtitleTrack,
+        rememberAudioTrack,
+        setRememberAudioTrack,
     } = usePlaybackContext()
 
     const { theme, toggleTheme } = useThemeContext()
@@ -275,10 +279,30 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
             </div>
 
-            {/*
             <div className="section audio ui">
                 <div className="title">Audio</div>
-                
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Remember audio track</div>
+                            <div className="subdesc">
+                                Set audio track based on previous item. Try to set the audio track to the closest match
+                                to the last video
+                            </div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={rememberAudioTrack}
+                                    onChange={e => setRememberAudioTrack(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {/*
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
@@ -318,11 +342,32 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                     </div>
                 </div>
+                */}
             </div>
-            */}
 
             <div className="section subs ui">
                 <div className="title">Subtitles</div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Remember subtitle track</div>
+                            <div className="subdesc">
+                                Set subtitle track based on previous item. Try to set the subtitle track to the closest
+                                match to the last video
+                            </div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={rememberSubtitleTrack}
+                                    onChange={e => setRememberSubtitleTrack(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
                 {/*
                 <div className="inner row">
                     <div className="container">
