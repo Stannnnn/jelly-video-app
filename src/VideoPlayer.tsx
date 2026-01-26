@@ -1203,13 +1203,11 @@ export const VideoPlayer = ({
                 isVisible={!!(showNextEpisodeOverlay && nextEpisode)}
             />
 
-            {showIntroSkip && (
-                <div className="intro-skip-container">
-                    <button className="intro-skip-button" onClick={handleSkipIntro}>
-                        Skip Intro
-                    </button>
-                </div>
-            )}
+            <div className={`intro-skip-container ${showIntroSkip ? 'visible' : 'hidden'}`}>
+                <button className="intro-skip-button" onClick={handleSkipIntro}>
+                    Skip Intro
+                </button>
+            </div>
         </div>
     )
 }
