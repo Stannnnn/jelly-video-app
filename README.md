@@ -55,7 +55,7 @@ A lightweight & elegant video client for Jellyfin, designed to eliminate server 
 Jelly Video App is available as a native desktop application, available on our [GitHub release page](https://github.com/Stannnnn/jelly-video-app/releases).
 
 > [!NOTE]
-> Unfortunately, Windows is currently the only supported platform for video playback, as Linux & Mac have issues with the mpv backend. [Reference](https://github.com/nini22P/tauri-plugin-libmpv?tab=readme-ov-file#platform-support).
+> Unfortunately, Windows is currently the only supported platform for video playback, as Linux & Mac have issues with the mpv backend. [Reference](<https://docs.rs/crate/tauri-plugin-libmpv/latest#:~:text=unlisten()%0A//%20await%20destroy()-,Platform%20Support,-Platform>).
 
 <br />
 

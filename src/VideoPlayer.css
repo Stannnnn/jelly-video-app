@@ -167,9 +167,6 @@
     transform: translateY(24px);
 }
 
-.video-container > .video-controls.visible {
-}
-
 .video-container > .video-controls .controls-btn {
     position: relative;
     z-index: 3;
@@ -608,6 +605,9 @@
 
 .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item > .text {
     flex: 1;
+}
+
+.video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view.episodes .menu-item > .text {
     font-variant-numeric: tabular-nums;
 }
 
@@ -692,46 +692,55 @@
     color-scheme: dark;
 }
 
-/* Skip Intro Button */
-.video-container > .intro-skip-container {
+/* Skip Intro Overlay */
+.video-container.fullscreen > .intro-skip-overlay {
+    right: 72px;
+    bottom: 90px;
+}
+
+.video-container > .video-controls.hidden ~ .intro-skip-overlay.visible {
+    transform: translateY(0);
+}
+
+.video-container > .video-controls.visible ~ .intro-skip-overlay.visible {
+    transform: translateY(-20px);
+}
+
+.video-container > .intro-skip-overlay {
     position: absolute;
-    bottom: 120px;
-    right: 30px;
-    z-index: 10;
-    animation: fadeInUp 0.3s ease-out;
+    right: 52px;
+    bottom: 70px;
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition:
+        opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+    pointer-events: none;
 }
 
-.video-container > .intro-skip-container > .intro-skip-button {
-    background: rgba(0, 0, 0, 0.85);
-    color: var(--font-color-inverted);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 12px 24px;
-    font-size: 16px;
+.video-container > .intro-skip-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.video-container > .intro-skip-overlay > .intro-skip-button {
+    font-size: 0.9rem;
     font-weight: 600;
-    border-radius: 6px;
+    letter-spacing: 0.5px;
+    color: var(--font-color-inverted);
     cursor: pointer;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(10px);
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgba(16, 16, 16, 0.92);
+    transition: background-color 0.2s ease-out;
 }
 
-.video-container > .intro-skip-container > .intro-skip-button:hover {
-    background: rgba(255, 255, 255, 0.95);
-    color: var(--font-color);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: scale(1.05);
-}
-
-.video-container > .intro-skip-container > .intro-skip-button:active {
-    transform: scale(0.98);
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.video-container > .intro-skip-overlay > .intro-skip-button:hover {
+    background-color: rgba(26, 26, 26, 0.92);
 }

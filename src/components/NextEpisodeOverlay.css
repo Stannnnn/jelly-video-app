@@ -3,11 +3,11 @@
     bottom: 90px;
 }
 
-.video-container > .video-controls.hidden ~ .next-episode-overlay {
+.video-container > .video-controls.hidden ~ .next-episode-overlay.visible {
     transform: translateY(0);
 }
 
-.video-container > .video-controls.visible ~ .next-episode-overlay {
+.video-container > .video-controls.visible ~ .next-episode-overlay.visible {
     transform: translateY(-20px);
 }
 
