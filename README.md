@@ -13,8 +13,8 @@ A lightweight & elegant video client for Jellyfin, designed to eliminate server 
   <br/>
   <b>Sidenav search</b>
   <p>Search for movies, tv shows, collections</p>
-  <img src="public/sidenav-search-light.png" alt="Sidenav search light variant" width="49%">
-  <img src="public/sidenav-search-dark.png" alt="Sidenav search dark variant" width="49%">
+  <img src="public/sidenav-search-light.png" alt="Sidenav search light variant" width="30%">
+  <img src="public/sidenav-search-dark.png" alt="Sidenav search dark variant" width="30%">
   <br/>
   <br/>
   <b>Search results</b>
@@ -41,14 +41,14 @@ A lightweight & elegant video client for Jellyfin, designed to eliminate server 
 - **Direct Playback:** Powered by libmpv for reliable, hardware-accelerated video playback.
 - **Seamless Library Access:** Connect to your Jellyfin server to access your personal video collection with ease.
 - **Discover Your Favorites:**
-    - **Home:** Continue watching where you left off, discover new movies and tv shows, and see what?s next up.
+    - **Home:** Continue watching where you left off, discover new movies and tv shows, and see what's next up.
     - **Adventure:** Explore your media through a journey of beautifully crafted visuals, quick, digestible information, and smart recommendations, a stunning new way to experience your library.
     - **Quick Search:** Find movies, tv shows, or collections effortlessly using the convenient side navigation.
     - **Collections:** Browse existing curated collections, or create new collections for your media.
-    - **Specials:** Specials are available and can be played or viewed from individual movie and TV show pages.
+    - **Specials:** Specials are available and can be played or viewed from individual movie and tv show pages.
 - **Versions:** Multiple versions of media are fully supported - you can choose a version before starting playback or within the video player.
 - **Downloads:** Download individual media for offline playback, with support for multiple versions.
-- **Elegant Player:** Extensive but clean player interface allowing you to change video, audio, and subtitle streams on the fly. For TV shows, an episode list for the current season is available, along with a next episode display at the end (using chapters).
+- **Elegant Player:** Extensive but clean player interface allowing you to change video, audio, and subtitle streams on the fly. For tv shows, an episode list for the current season is available, along with a next episode display at the end (using chapters).
 
 ### Installation
 
@@ -101,4 +101,3 @@ The built application will be available in `src-tauri/target/release/bundle/`.
 ### Contributing
 
 We're open to pull requests, please merge them to the `develop` branch. If you have any suggestions or improvements, feel free to open an issue or submit a pull request. Your contributions are welcome and appreciated!
-
