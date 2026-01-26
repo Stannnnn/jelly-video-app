@@ -167,6 +167,8 @@ export const VideoPlayer = ({
     const [isHoveringControls, setIsHoveringControls] = useState(false)
     const [currentMenuView, setCurrentMenuView] = useState<MenuView>('home')
     const menuContainerRef = useRef<HTMLDivElement | null>(null)
+    const [showIntroSkip, setShowIntroSkip] = useState(false)
+    const [introEndTime, setIntroEndTime] = useState<number | null>(null)
 
     const shouldShowControls = showControls || showMenu || isPaused || isHoveringProgress || isHoveringControls
 
@@ -423,6 +425,47 @@ export const VideoPlayer = ({
         userCanceledCountdownRef.current = false
     }, [currentTrack?.Id])
 
+    // Intro Detection - Monitor time position and detect intro chapter
+    useEffect(() => {
+        if (!currentTrack || !duration || !timePos || !videoLoaded) {
+            setShowIntroSkip(false)
+            setIntroEndTime(null)
+            return
+        }
+
+        // Check for intro chapter
+        if (currentTrack.Chapters && currentTrack.Chapters.length > 0) {
+            const introChapterIndex = currentTrack.Chapters.findIndex(
+                chapter =>
+                    chapter.Name?.toLowerCase().includes('intro') ||
+                    chapter.Name?.toLowerCase().includes('opening') ||
+                    chapter.Name?.toLowerCase().includes('op')
+            )
+
+            if (introChapterIndex !== -1) {
+                const introChapter = currentTrack.Chapters[introChapterIndex]
+                const introStartTime = (introChapter.StartPositionTicks || 0) / 10000000 // Convert ticks to seconds
+                const introEndTimeCalc =
+                    (currentTrack.Chapters[introChapterIndex + 1].StartPositionTicks || 0) / 10000000
+
+                // Show skip button if we're within the intro chapter
+                if (introStartTime && introEndTimeCalc && timePos >= introStartTime && timePos < introEndTimeCalc) {
+                    setShowIntroSkip(true)
+                    setIntroEndTime(introEndTimeCalc)
+                } else {
+                    setShowIntroSkip(false)
+                    setIntroEndTime(null)
+                }
+            } else {
+                setShowIntroSkip(false)
+                setIntroEndTime(null)
+            }
+        } else {
+            setShowIntroSkip(false)
+            setIntroEndTime(null)
+        }
+    }, [currentTrack, duration, timePos, videoLoaded])
+
     // If video ends naturally (timePos reaches duration), immediately go to next episode
     useEffect(() => {
         if (!currentTrack || !duration || !timePos || !videoLoaded || !autoplayNextEpisode || !nextEpisode) {
@@ -514,6 +557,15 @@ export const VideoPlayer = ({
     }
 
     const displayTitle = useDisplayTitle(currentTrack)
+
+    // Handler to skip intro
+    const handleSkipIntro = () => {
+        if (introEndTime !== null) {
+            handleSeek(introEndTime)
+            setShowIntroSkip(false)
+            setIntroEndTime(null)
+        }
+    }
 
     // Get and sort video sources
     const videoSources = sourceItem?.MediaSources || []
@@ -1146,6 +1198,14 @@ export const VideoPlayer = ({
                 }}
                 isVisible={!!(showNextEpisodeOverlay && nextEpisode)}
             />
+
+            {showIntroSkip && (
+                <div className="intro-skip-container">
+                    <button className="intro-skip-button" onClick={handleSkipIntro}>
+                        Skip Intro
+                    </button>
+                </div>
+            )}
         </div>
     )
 }

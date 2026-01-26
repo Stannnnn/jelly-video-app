@@ -458,10 +458,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                                         }
 
                                         if (matchingSub) {
-                                            console.log(
-                                                `[MPV] Restoring subtitle track: ${matchingSub.id}`,
-                                                matchingSub
-                                            )
+                                            // console.log(
+                                            //     `[MPV] Restoring subtitle track: ${matchingSub.id}`,
+                                            //     matchingSub
+                                            // )
                                             command('set', ['sid', matchingSub.id.toString()]).catch(console.error)
                                         }
                                     } catch (e) {
@@ -488,10 +488,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                                         }
 
                                         if (matchingAudio) {
-                                            console.log(
-                                                `[MPV] Restoring audio track: ${matchingAudio.id}`,
-                                                matchingAudio
-                                            )
+                                            // console.log(
+                                            //     `[MPV] Restoring audio track: ${matchingAudio.id}`,
+                                            //     matchingAudio
+                                            // )
                                             command('set', ['aid', matchingAudio.id.toString()]).catch(console.error)
                                         }
                                     } catch (e) {
