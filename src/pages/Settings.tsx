@@ -50,6 +50,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         setRememberSubtitleTrack,
         rememberAudioTrack,
         setRememberAudioTrack,
+        rememberFilters,
+        setRememberFilters,
     } = usePlaybackContext()
 
     const { theme, toggleTheme } = useThemeContext()
@@ -496,8 +498,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <label className="switch">
                                 <input
                                     type="checkbox"
-                                    //checked={playback.isPreloadActive}
-                                    //onChange={e => playback.setIsPreloadActive(e.target.checked)}
+                                    checked={rememberFilters}
+                                    onChange={e => setRememberFilters(e.target.checked)}
                                 ></input>
                                 <span className="slider"></span>
                             </label>

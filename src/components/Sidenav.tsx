@@ -3,6 +3,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import '../App.css'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
+import { buildUrlWithSavedFilters } from '../context/FilterContext/FilterContext'
 import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
@@ -84,22 +85,22 @@ export const Sidenav = (props: { username: string }) => {
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/movies" onClick={closeSidenav}>
+                            <NavLink to={buildUrlWithSavedFilters('/movies')} onClick={closeSidenav}>
                                 Movies
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/series" onClick={closeSidenav} end>
+                            <NavLink to={buildUrlWithSavedFilters('/series')} onClick={closeSidenav} end>
                                 Series
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/favorites" onClick={closeSidenav}>
+                            <NavLink to={buildUrlWithSavedFilters('/favorites')} onClick={closeSidenav}>
                                 Favorites
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/collections" onClick={closeSidenav}>
+                            <NavLink to={buildUrlWithSavedFilters('/collections')} onClick={closeSidenav}>
                                 Collections
                             </NavLink>
                         </li>
