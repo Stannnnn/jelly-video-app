@@ -161,9 +161,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         return savedVolume ? parseFloat(savedVolume) : initialVolume
     })
 
-    const [playlistTitle, setPlaylistTitle] = useState(localStorage.getItem('playlistTitle') || '')
-    const [playlistUrl, setPlaylistUrl] = useState(localStorage.getItem('playlistUrl') || '')
-
     const [bitrate, setBitrate] = useState(Number(localStorage.getItem('bitrate')))
 
     const audioStorage = useAudioStorageContext()
@@ -1246,10 +1243,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         // Session
         sessionPlayCount,
         resetSessionCount,
-
-        // Playlist (legacy)
-        playlistTitle,
-        playlistUrl,
 
         // Settings
         bitrate,
