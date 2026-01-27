@@ -1066,7 +1066,6 @@ export const VideoPlayer = ({
                                                 className={`menu-item ${isCurrentEpisode ? 'selected' : ''}`}
                                                 onClick={async () => {
                                                     if (!isCurrentEpisode) {
-                                                        await clearCurrentTrack()
                                                         navigate(`/play/${episode.Id}`, { replace: true })
                                                         toggleMenu()
                                                     }

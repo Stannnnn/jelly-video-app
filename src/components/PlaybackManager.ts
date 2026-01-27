@@ -1187,8 +1187,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
         // Playback controls
         togglePlayPause,
-        playTrack: (track: MediaItem, mediaSourceId?: string) => {
-            clearStates()
+        playTrack: async (track: MediaItem, mediaSourceId?: string) => {
+            await clearCurrentTrack()
             setUserInteracted(true)
             setCurrentTrack(track)
             setCurrentMediaSourceId(mediaSourceId || track.Id)
