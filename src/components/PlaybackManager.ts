@@ -146,6 +146,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [isFullscreen, setIsFullscreen] = useState(false)
     const [showMenu, setShowMenu] = useState(false)
     const hideControlsTimeoutRef = useRef<number | null>(null)
+    const tracklistRef = useRef<boolean | null>(false)
 
     const [volume, setVolume] = useState(() => {
         const savedVolume = localStorage.getItem('volume')
@@ -435,7 +436,9 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                             }
 
                             // Restore saved track selections
-                            if (subs.length > 0 || audio.length > 0) {
+                            if (!tracklistRef.current && (subs.length > 0 || audio.length > 0)) {
+                                tracklistRef.current = true
+
                                 const savedSubtitleJson = localStorage.getItem('last_track_subtitle')
                                 const savedAudioTrackJson = localStorage.getItem('last_track_audio')
 
@@ -461,10 +464,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                                         }
 
                                         if (matchingSub) {
-                                            // console.log(
-                                            //     `[MPV] Restoring subtitle track: ${matchingSub.id}`,
-                                            //     matchingSub
-                                            // )
+                                            console.log(
+                                                `[MPV] Restoring subtitle track: ${matchingSub.id}`,
+                                                matchingSub
+                                            )
                                             command('set', ['sid', matchingSub.id.toString()]).catch(console.error)
                                         }
                                     } catch (e) {
