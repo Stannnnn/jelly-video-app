@@ -36,6 +36,11 @@ export const useWatchedState = () => {
                 }
             }
 
+            // Update parent
+            if (item.SeriesId) {
+                queryClient.invalidateQueries({ queryKey: ['mediaItem', item.SeriesId] })
+            }
+
             // Clear nextEpisode cache, preferably with id but we don't know which parent
             queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
 
@@ -65,6 +70,11 @@ export const useWatchedState = () => {
                         },
                     }))
                 }
+            }
+
+            // Update parent
+            if (item.SeriesId) {
+                queryClient.invalidateQueries({ queryKey: ['mediaItem', item.SeriesId] })
             }
 
             // Clear nextEpisode cache, preferably with id but we don't know which parent
