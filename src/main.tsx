@@ -7,8 +7,6 @@ const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
 const themeClass = savedTheme === 'system' ? (isSystemDark ? 'dark' : 'light') : savedTheme
 document.documentElement.classList.add(themeClass)
 
-document.getElementById('initial-loader')?.remove()
-
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <App />

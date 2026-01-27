@@ -20,6 +20,7 @@
                 "decorations": true,
                 "resizable": true,
                 "fullscreen": false,
+                "visible": false,
                 "minWidth": 600,
                 "minHeight": 600
             }

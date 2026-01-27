@@ -1,6 +1,7 @@
 import '@fontsource-variable/inter'
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import './App.css'
@@ -45,6 +46,10 @@ import { VideoPlayerPage } from './pages/VideoPlayerPage'
 import { persister, queryClient } from './queryClient'
 
 export const App = () => {
+    useEffect(() => {
+        getCurrentWindow().show()
+    }, [])
+
     return (
         <ErrorBoundary>
             {window.__NPM_LIFECYCLE_EVENT__ === 'dev:nocache' ||

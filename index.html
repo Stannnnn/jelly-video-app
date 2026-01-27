@@ -12,72 +12,7 @@
     </head>
 
     <body>
-        <div id="root">
-            <!-- Initial loading spinner shown before React hydrates -->
-            <div
-                id="initial-loader"
-                style="
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    background: var(--bg-color, #f8f8f8);
-                "
-            >
-                <svg style="width: 28px; height: 28px; overflow: visible">
-                    <circle
-                        cx="14"
-                        cy="14"
-                        r="14"
-                        fill="none"
-                        stroke="#e0e0e0"
-                        stroke-width="3"
-                        stroke-dasharray="88"
-                        stroke-linecap="round"
-                        style="transform: rotate(-90deg); transform-origin: 50% 50%"
-                    ></circle>
-                    <circle
-                        cx="14"
-                        cy="14"
-                        r="14"
-                        fill="none"
-                        stroke="#0066cc"
-                        stroke-width="3"
-                        stroke-dasharray="88"
-                        stroke-dashoffset="22"
-                        stroke-linecap="round"
-                        style="
-                            transform: rotate(-90deg);
-                            transform-origin: 50% 50%;
-                            animation: spin 0.8s linear infinite;
-                        "
-                    ></circle>
-                </svg>
-            </div>
-            <style>
-                @keyframes spin {
-                    0% {
-                        transform: rotate(-90deg);
-                    }
-                    100% {
-                        transform: rotate(270deg);
-                    }
-                }
-                html.dark #initial-loader {
-                    background: #161616;
-                }
-                html.dark #initial-loader circle:first-child {
-                    stroke: #2a2a2a;
-                }
-                html.dark #initial-loader circle:last-child {
-                    stroke: #4a9eff;
-                }
-            </style>
-        </div>
+        <div id="root"></div>
         <script type="module" src="/src/main.tsx"></script>
     </body>
 </html>
