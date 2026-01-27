@@ -59,6 +59,14 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const versionButtonRef = useRef<HTMLDivElement>(null)
     const downloadButtonRef = useRef<HTMLDivElement>(null)
 
+    useEffect(() => {
+        setIsFavorited(item.UserData?.IsFavorite || false)
+    }, [item.Id, item.UserData?.IsFavorite])
+
+    useEffect(() => {
+        setIsPlayed(item.UserData?.Played || false)
+    }, [item.Id, item.UserData?.Played])
+
     // Load downloaded media source ID
     useEffect(() => {
         const loadDownloadedSource = async () => {

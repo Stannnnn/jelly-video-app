@@ -14,6 +14,7 @@ import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStor
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { usePatchQueries } from '../hooks/usePatchQueries'
+import { useWatchedState } from '../hooks/useWatchedState'
 
 // Define observed properties with their types
 const OBSERVED_PROPERTIES = [
@@ -70,6 +71,7 @@ export type PlaybackManagerProps = {
 export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackManagerProps) => {
     const api = useJellyfinContext()
     const { patchMediaItem } = usePatchQueries()
+    const { markAsPlayed, markAsUnplayed } = useWatchedState()
     const {
         configuration: { minResumePercentage, maxResumePercentage },
     } = useJellyfinServerConfiguration()
@@ -228,24 +230,35 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 const isPlayedComplete = playedPercentage > maxResumePercentage
                 const isPlayedStart = playedPercentage < minResumePercentage
 
-                patchMediaItem(track.Id, item => ({
-                    ...item,
-                    UserData: {
-                        ...item.UserData,
-                        PlaybackPositionTicks: isPlayedComplete || isPlayedStart ? 0 : positionTicks,
-                        PlayedPercentage: isPlayedComplete || isPlayedStart ? 0 : playedPercentage,
-                        Played: isPlayedComplete,
-                    },
-                }))
+                if (isPlayedComplete) {
+                    await markAsPlayed(track)
+                } else if (isPlayedStart) {
+                    await markAsUnplayed(track)
+                } else {
+                    patchMediaItem(track.Id, item => ({
+                        ...item,
+                        UserData: {
+                            ...item.UserData,
+                            PlaybackPositionTicks: positionTicks,
+                            PlayedPercentage: playedPercentage,
+                            Played: false,
+                        },
+                    }))
+                }
 
                 queryClient.invalidateQueries({ queryKey: ['recentlyPlayed'] })
-
-                if (isPlayedComplete || isPlayedStart) {
-                    queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
-                }
             }
         },
-        [api, duration, maxResumePercentage, minResumePercentage, patchMediaItem, queryClient]
+        [
+            api,
+            duration,
+            maxResumePercentage,
+            minResumePercentage,
+            patchMediaItem,
+            queryClient,
+            markAsPlayed,
+            markAsUnplayed,
+        ]
     )
 
     // Update Media Session metadata
