@@ -38,11 +38,12 @@ export const useWatchedState = () => {
 
             // Update parent
             if (item.SeriesId) {
-                queryClient.invalidateQueries({ queryKey: ['mediaItem', item.SeriesId] })
+                // Would prefer to invalidate but causes timing issues in playback.reportTrackStopped
+                await queryClient.refetchQueries({ queryKey: ['mediaItem', item.SeriesId] })
             }
 
             // Clear nextEpisode cache, preferably with id but we don't know which parent
-            queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
+            await queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
 
             return res
         },
@@ -74,11 +75,12 @@ export const useWatchedState = () => {
 
             // Update parent
             if (item.SeriesId) {
-                queryClient.invalidateQueries({ queryKey: ['mediaItem', item.SeriesId] })
+                // Would prefer to invalidate but causes timing issues in playback.reportTrackStopped
+                await queryClient.refetchQueries({ queryKey: ['mediaItem', item.SeriesId] })
             }
 
             // Clear nextEpisode cache, preferably with id but we don't know which parent
-            queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
+            await queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
 
             return res
         },

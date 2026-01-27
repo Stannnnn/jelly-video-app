@@ -235,6 +235,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 } else if (isPlayedStart) {
                     await markAsUnplayed(track)
                 } else {
+                    await markAsUnplayed(track)
+
                     patchMediaItem(track.Id, item => ({
                         ...item,
                         UserData: {
