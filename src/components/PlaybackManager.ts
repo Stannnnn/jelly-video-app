@@ -464,10 +464,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                                         }
 
                                         if (matchingSub) {
-                                            console.log(
-                                                `[MPV] Restoring subtitle track: ${matchingSub.id}`,
-                                                matchingSub
-                                            )
+                                            // console.log(
+                                            //     `[MPV] Restoring subtitle track: ${matchingSub.id}`,
+                                            //     matchingSub
+                                            // )
                                             command('set', ['sid', matchingSub.id.toString()]).catch(console.error)
                                         }
                                     } catch (e) {
