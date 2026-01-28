@@ -654,22 +654,24 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                         </div>
                                         {collections.length > 0 && <div className="dropdown-separator" />}
 
-                                        <div className="dropdown-content" onClick={e => e.stopPropagation()}>
-                                            {isLoadingCollections && collections.length === 0 && (
-                                                <div className="loading">
-                                                    <InlineLoader />
-                                                </div>
-                                            )}
-                                            {collections.map(collection => (
-                                                <div
-                                                    key={collection.Id}
-                                                    className="dropdown-item"
-                                                    onClick={() => handleSelectCollection(collection.Id)}
-                                                >
-                                                    {collection.Name}
-                                                </div>
-                                            ))}
-                                        </div>
+                                        {(isLoadingCollections || collections.length > 0) && (
+                                            <div className="dropdown-content" onClick={e => e.stopPropagation()}>
+                                                {isLoadingCollections && collections.length === 0 && (
+                                                    <div className="loading">
+                                                        <InlineLoader />
+                                                    </div>
+                                                )}
+                                                {collections.map(collection => (
+                                                    <div
+                                                        key={collection.Id}
+                                                        className="dropdown-item"
+                                                        onClick={() => handleSelectCollection(collection.Id)}
+                                                    >
+                                                        {collection.Name}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 {item.Type === BaseItemKind.BoxSet && (
