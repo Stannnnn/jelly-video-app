@@ -15,6 +15,7 @@ import { MediaItem } from '../api/jellyfin'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useJellyfinCollections } from '../hooks/Jellyfin/useJellyfinCollections'
+import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import { useJellyfinNextEpisode } from '../hooks/Jellyfin/useJellyfinNextEpisode'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { useCollections } from '../hooks/useCollections'
@@ -297,12 +298,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const endyear = item.EndDate ? new Date(item.EndDate).getFullYear() : null
     //const officialRating = item.OfficialRating || ''
     const communityRating = item.CommunityRating ? item.CommunityRating.toFixed(1) : null
-    const playedPercentage = item.UserData?.PlayedPercentage || 0
-    const hasProgressbar = item.UserData?.Played || (playedPercentage > 0 && playedPercentage < 100)
-    const progressbarPercentage = item.UserData?.Played ? 100 : playedPercentage
     const videoQuality = getVideoQuality(item)
-
-    const shouldShowResume = playedPercentage >= minResumePercentage && playedPercentage <= maxResumePercentage
 
     const displayTitle = useDisplayTitle(item)
     const runTimeTicks = item.RunTimeTicks || 0
@@ -314,7 +310,14 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         return heightB - heightA
     })
 
+    const videoSourceItem = useJellyfinMediaItem(sortedVideoSources[0].Id || item.Id).mediaItem
     const defaultMediaSourceId = sortedVideoSources[0]?.Id ?? undefined
+
+    const playedPercentage = videoSourceItem?.UserData?.PlayedPercentage || 0
+    const hasProgressbar = videoSourceItem?.UserData?.Played || (playedPercentage > 0 && playedPercentage < 100)
+    const progressbarPercentage = videoSourceItem?.UserData?.Played ? 100 : playedPercentage
+
+    const shouldShowResume = playedPercentage >= minResumePercentage && playedPercentage <= maxResumePercentage
 
     return (
         <div className="media-info">
