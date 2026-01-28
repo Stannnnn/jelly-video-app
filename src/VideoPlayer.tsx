@@ -23,6 +23,7 @@ import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
 import { useJellyfinEpisodes } from './hooks/Jellyfin/useJellyfinEpisodes'
 import { useJellyfinSequentialNextEpisode } from './hooks/Jellyfin/useJellyfinSequentialNextEpisode'
 import { useDisplayTitle } from './hooks/useDisplayTitle'
+import { useJellyfinSortedVideoSources } from './hooks/useJellyfinSortedVideoSources'
 import { getVideoQuality } from './utils/getVideoQuality'
 import './VideoPlayer.css'
 
@@ -571,13 +572,7 @@ export const VideoPlayer = ({
         }
     }
 
-    // Get and sort video sources
-    const videoSources = sourceItem?.MediaSources || []
-    const sortedVideoSources = [...videoSources].sort((a, b) => {
-        const heightA = a.MediaStreams?.find(s => s.Type === 'Video')?.Height || 0
-        const heightB = b.MediaStreams?.find(s => s.Type === 'Video')?.Height || 0
-        return heightB - heightA
-    })
+    const { sortedVideoSources } = useJellyfinSortedVideoSources(sourceItem)
 
     return (
         <div

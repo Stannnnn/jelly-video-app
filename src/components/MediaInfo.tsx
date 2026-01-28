@@ -15,12 +15,12 @@ import { MediaItem } from '../api/jellyfin'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useJellyfinCollections } from '../hooks/Jellyfin/useJellyfinCollections'
-import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import { useJellyfinNextEpisode } from '../hooks/Jellyfin/useJellyfinNextEpisode'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { useCollections } from '../hooks/useCollections'
 import { useDisplayTitle } from '../hooks/useDisplayTitle'
 import { useFavorites } from '../hooks/useFavorites'
+import { useJellyfinSortedVideoSources } from '../hooks/useJellyfinSortedVideoSources'
 import { useWatchedState } from '../hooks/useWatchedState'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
 import { getVideoQuality } from '../utils/getVideoQuality'
@@ -302,20 +302,14 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
     const displayTitle = useDisplayTitle(item)
     const runTimeTicks = item.RunTimeTicks || 0
-    const videoSources = item.MediaSources || []
 
-    const sortedVideoSources = [...videoSources].sort((a, b) => {
-        const heightA = a.MediaStreams?.find(s => s.Type === 'Video')?.Height || 0
-        const heightB = b.MediaStreams?.find(s => s.Type === 'Video')?.Height || 0
-        return heightB - heightA
-    })
+    const { sortedVideoSources } = useJellyfinSortedVideoSources(item)
 
-    const videoSourceItem = useJellyfinMediaItem(sortedVideoSources[0].Id || item.Id).mediaItem
     const defaultMediaSourceId = sortedVideoSources[0]?.Id ?? undefined
 
-    const playedPercentage = videoSourceItem?.UserData?.PlayedPercentage || 0
-    const hasProgressbar = videoSourceItem?.UserData?.Played || (playedPercentage > 0 && playedPercentage < 100)
-    const progressbarPercentage = videoSourceItem?.UserData?.Played ? 100 : playedPercentage
+    const playedPercentage = item.UserData?.PlayedPercentage || 0
+    const hasProgressbar = item.UserData?.Played || (playedPercentage > 0 && playedPercentage < 100)
+    const progressbarPercentage = item.UserData?.Played ? 100 : playedPercentage
 
     const shouldShowResume = playedPercentage >= minResumePercentage && playedPercentage <= maxResumePercentage
 
@@ -526,10 +520,10 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                     item.Type === BaseItemKind.Episode) && (
                                     <>
                                         <div
-                                            className={`more-dropdown-item ${videoSources.length > 1 ? 'download-item' : ''} ${item.offlineState === 'downloaded' ? 'delete-item' : ''} ${item.offlineState === 'downloading' || item.offlineState === 'deleting' ? 'disabled' : ''}`}
+                                            className={`more-dropdown-item ${sortedVideoSources.length > 1 ? 'download-item' : ''} ${item.offlineState === 'downloaded' ? 'delete-item' : ''} ${item.offlineState === 'downloading' || item.offlineState === 'deleting' ? 'disabled' : ''}`}
                                             ref={downloadButtonRef}
                                             onClick={e =>
-                                                videoSources.length > 1
+                                                sortedVideoSources.length > 1
                                                     ? toggleDownloadDropdown(e)
                                                     : toggleDownload(e, defaultMediaSourceId)
                                             }

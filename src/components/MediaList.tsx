@@ -167,19 +167,7 @@ export const MediaList = ({
                                 <VideoPlayIcon width={24} height={24} />
                             </div>
                         </div>
-                        {item.UserData?.PlayedPercentage &&
-                            item.UserData.PlayedPercentage > 0 &&
-                            item.UserData.PlayedPercentage < 100 && (
-                                <div
-                                    className="progress-indicator"
-                                    title="Played duration"
-                                    style={
-                                        {
-                                            '--progress-percent': `${item.UserData.PlayedPercentage}%`,
-                                        } as React.CSSProperties
-                                    }
-                                />
-                            )}
+                        <ProgressBar item={item} />
                     </Squircle>
                     <div
                         className="media-details"
@@ -233,19 +221,7 @@ export const MediaList = ({
                                 <VideoPlayIcon width={28} height={28} />
                             </div>
                         </div>
-                        {item.UserData?.PlayedPercentage &&
-                            item.UserData.PlayedPercentage > 0 &&
-                            item.UserData.PlayedPercentage < 100 && (
-                                <div
-                                    className="progress-indicator"
-                                    title="Played duration"
-                                    style={
-                                        {
-                                            '--progress-percent': `${item.UserData.PlayedPercentage}%`,
-                                        } as React.CSSProperties
-                                    }
-                                />
-                            )}
+                        <ProgressBar item={item} />
                     </Squircle>
                     <div
                         className="media-details"
@@ -327,19 +303,7 @@ export const MediaList = ({
                                 <VideoPlayIcon width={24} height={24} />
                             </div>
                         </div>
-                        {item.UserData?.PlayedPercentage &&
-                            item.UserData.PlayedPercentage > 0 &&
-                            item.UserData.PlayedPercentage < 100 && (
-                                <div
-                                    className="progress-indicator"
-                                    title="Played duration"
-                                    style={
-                                        {
-                                            '--progress-percent': `${item.UserData.PlayedPercentage}%`,
-                                        } as React.CSSProperties
-                                    }
-                                />
-                            )}
+                        <ProgressBar item={item} />
                     </Squircle>
                     <div
                         className="media-details"
@@ -412,19 +376,7 @@ export const MediaList = ({
                                 <VideoPlayIcon width={24} height={24} />
                             </div>
                         </div>
-                        {item.UserData?.PlayedPercentage &&
-                            item.UserData.PlayedPercentage > 0 &&
-                            item.UserData.PlayedPercentage < 100 && (
-                                <div
-                                    className="progress-indicator"
-                                    title="Played duration"
-                                    style={
-                                        {
-                                            '--progress-percent': `${item.UserData.PlayedPercentage}%`,
-                                        } as React.CSSProperties
-                                    }
-                                />
-                            )}
+                        <ProgressBar item={item} />
                     </Squircle>
                     <div className="media-details" {...(disableEvents ? {} : { onClick: () => handleItemClick(item) })}>
                         {item.Type === 'Episode' ? (
@@ -562,5 +514,25 @@ const MediaIndicators = ({
                 </div>
             )}
         </div>
+    )
+}
+
+const ProgressBar = ({ item }: { item: MediaItem }) => {
+    return (
+        <>
+            {item.UserData?.PlayedPercentage &&
+                item.UserData.PlayedPercentage > 0 &&
+                item.UserData.PlayedPercentage < 100 && (
+                    <div
+                        className="progress-indicator"
+                        title="Played duration"
+                        style={
+                            {
+                                '--progress-percent': `${item.UserData.PlayedPercentage}%`,
+                            } as React.CSSProperties
+                        }
+                    />
+                )}
+        </>
     )
 }

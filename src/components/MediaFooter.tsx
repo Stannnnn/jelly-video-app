@@ -1,13 +1,8 @@
 import { MediaItem } from '../api/jellyfin'
+import { useJellyfinSortedVideoSources } from '../hooks/useJellyfinSortedVideoSources'
 
 export const MediaFooter = ({ item }: { item: MediaItem }) => {
-    const videoSources = item.MediaSources || []
-
-    const sortedVideoSources = [...videoSources].sort((a, b) => {
-        const heightA = a.MediaStreams?.find(s => s.Type === 'Video')?.Height || 0
-        const heightB = b.MediaStreams?.find(s => s.Type === 'Video')?.Height || 0
-        return heightB - heightA
-    })
+    const { sortedVideoSources } = useJellyfinSortedVideoSources(item)
 
     return (
         <div className="media-footer">
