@@ -768,15 +768,19 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
     }
 
     const renameCollection = async (collectionId: string, newName: string) => {
+        const item = await getItemById(collectionId)
+
         // Jellyfin doesn't have a direct API for renaming. We need to use the raw API endpoint
         await fetch(`${serverUrl}/Items/${collectionId}`, {
             method: 'POST',
             headers: {
-                'X-Emby-Authorization': `MediaBrowser Client="Jelly Video App", Device="Web", DeviceId="${deviceId}", Version="${__VERSION__}"`,
-                'X-Emby-Token': token,
+                authorization: `MediaBrowser Client="Jelly Video App", Device="Web", DeviceId="${deviceId}", Version="${__VERSION__}", Token="${token}"`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ Name: newName }),
+            body: JSON.stringify({
+                ...item,
+                Name: newName,
+            }),
         })
     }
 
