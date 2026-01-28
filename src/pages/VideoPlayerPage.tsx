@@ -55,12 +55,15 @@ export const VideoPlayerPage = () => {
                     break
                 case 'f':
                 case 'F':
+                    e.preventDefault()
                     playback.toggleFullscreen()
                     break
                 case 'ArrowLeft':
+                    e.preventDefault()
                     playback.skip(-playback.seekBackIncrement)
                     break
                 case 'ArrowRight':
+                    e.preventDefault()
                     playback.skip(playback.seekForwardIncrement)
                     break
                 case 'ArrowUp':
@@ -77,6 +80,7 @@ export const VideoPlayerPage = () => {
                     break
                 case 'm':
                 case 'M':
+                    e.preventDefault()
                     playback.toggleMute()
                     break
             }
