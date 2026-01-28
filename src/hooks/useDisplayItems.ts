@@ -1,14 +1,30 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { MediaItem } from '../api/jellyfin'
 
-export const useDisplayItems = (tracks: MediaItem[], isLoading: boolean) => {
+export const useDisplayItems = (
+    tracks: MediaItem[],
+    isLoading: boolean,
+    type: 'movie' | 'series' | 'episode' | 'mixed' | 'mixedSmall' | 'specials' | 'collection' | 'person'
+) => {
+    const placeholderCounts = {
+        movie: 6,
+        series: 6,
+        collection: 6,
+        episode: 8,
+        mixed: 10,
+        mixedSmall: 4,
+        specials: 4,
+        person: 16,
+    }
+
     const displayItems = useMemo(() => {
         if (isLoading) {
-            return [...tracks, ...Array(6).fill({ isPlaceholder: true })]
+            const count = placeholderCounts[type] || 6
+            return [...tracks, ...Array(count).fill({ isPlaceholder: true })]
         } else {
             return tracks
         }
-    }, [tracks, isLoading])
+    }, [tracks, isLoading, type])
 
     const sizeMap = useRef<{ [index: number]: number }>({})
     const rowRefs = useRef<(HTMLElement | null)[]>([])

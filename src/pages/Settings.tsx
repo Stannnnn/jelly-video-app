@@ -234,7 +234,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         <div className="desc">
                             <div className="subtitle">Remember audio track</div>
                             <div className="subdesc">
-                                Set audio track based on the previous title, choosing the closest match
+                                Set audio track based on the previous title, choosing closest match
                             </div>
                         </div>
                         <div className="option">

@@ -43,7 +43,7 @@ export const MediaList = ({
     onRangeChange?: (range: { startIndex: number; endIndex: number }) => void
     overscan?: number
 }) => {
-    const { displayItems, setRowRefs } = useDisplayItems(items, isLoading)
+    const { displayItems, setRowRefs } = useDisplayItems(items, isLoading, type)
     const navigate = useNavigate()
 
     const handleItemClick = (item: MediaItem) => {

@@ -48,7 +48,7 @@ A lightweight & elegant video client for Jellyfin, designed to eliminate server 
     - **Specials:** Specials are available and can be played or viewed from individual movie and tv show pages.
 - **Versions:** Multiple versions of media are fully supported - you can choose a version before starting playback or within the video player.
 - **Downloads:** Download individual media for offline playback, with support for multiple versions.
-- **Elegant Player:** Extensive but clean player interface allowing you to change video, audio, and subtitle streams on the fly. For tv shows, an episode list for the current season is available, along with a next episode display at the end (using chapters).
+- **Elegant Player:** Extensive but clean player interface allowing you to change video, audio, and subtitle streams on the fly. For tv shows, an episode list for the current season is available, along with a next episode display at the end (using chapters). Trickplay preview thumbnails are fully supported.
 
 ### Installation
 
