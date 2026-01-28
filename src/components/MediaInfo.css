@@ -574,6 +574,20 @@
     > .secondary
     > .more-container
     > .more-dropdown
+    > .more-dropdown-item
+    > .sub-dropdown
+    > .input-container:has(> input.has-text)
+    ~ .dropdown-separator {
+    width: calc(100% - 12px);
+}
+
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
     > .more-dropdown-item {
     position: relative;
     font-size: 0.75rem;
@@ -756,6 +770,22 @@
     background-color: var(--bg-color);
 }
 
+/* different style if collection is empty */
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item.add-item
+    > .sub-dropdown
+    > .input-container:not(:has(~ .dropdown-content))
+    > .input {
+    padding: 6px 10px;
+    padding-left: 6px;
+}
+
 .media-page
     > .media-info
     > .media-actions
@@ -778,7 +808,36 @@
     > .secondary
     > .more-container
     > .more-dropdown
-    > .more-dropdown-item
+    > .more-dropdown-item.add-item
+    > .sub-dropdown
+    > .input-container:has(> .create-btn)
+    > .input {
+    max-width: calc(100% - 58px);
+}
+
+/* different style if collection is empty */
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item.add-item
+    > .sub-dropdown
+    > .input-container:has(> .create-btn):not(:has(~ .dropdown-content))
+    > .input {
+    max-width: calc(100% - 56px);
+}
+
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item.rename-item
     > .sub-dropdown
     > .input-container:has(> .create-btn)
     > .input {
@@ -797,7 +856,7 @@
     > .input-container
     > .create-btn {
     position: absolute;
-    right: 12px;
+    right: 6px;
     font-size: 0.75rem;
     font-weight: 500;
     cursor: pointer;
@@ -805,20 +864,6 @@
     border-radius: 5px;
     background-color: var(--bg-color-tertiary);
     transition: background-color 0.2s ease-out;
-}
-
-.media-page
-    > .media-info
-    > .media-actions
-    > .actions
-    > .secondary
-    > .more-container
-    > .more-dropdown
-    > .more-dropdown-item.rename-item
-    > .sub-dropdown
-    > .input-container
-    > .create-btn {
-    right: 6px;
 }
 
 .media-page
