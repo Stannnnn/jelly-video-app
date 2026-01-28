@@ -9,6 +9,19 @@ export const useWatchedState = () => {
     const { patchMediaItem, patchMediaItems } = usePatchQueries()
     const queryClient = useQueryClient()
 
+    // When the last item in a series is marked as played it'll affect the series' watched state, or when an episode was played the nextEpisode should be recalculated
+    const invalidateRelated = async (item: MediaItem) => {
+        // Update parent
+        if (item.SeriesId) {
+            queryClient.invalidateQueries({ queryKey: ['mediaItem', item.SeriesId] })
+        }
+
+        queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
+        queryClient.invalidateQueries({ queryKey: ['sequentialNextEpisode'] })
+        queryClient.invalidateQueries({ queryKey: ['series-seasons'] })
+        queryClient.invalidateQueries({ queryKey: ['season-episodes'] })
+    }
+
     return {
         markAsPlayed: async (item: MediaItem) => {
             const res = await api.markAsPlayed(item)
@@ -36,14 +49,7 @@ export const useWatchedState = () => {
                 }
             }
 
-            // Update parent
-            if (item.SeriesId) {
-                // Would prefer to invalidate but causes timing issues in playback.reportTrackStopped
-                await queryClient.refetchQueries({ queryKey: ['mediaItem', item.SeriesId] })
-            }
-
-            // Clear nextEpisode cache, preferably with id but we don't know which parent
-            await queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
+            await invalidateRelated(item)
 
             return res
         },
@@ -73,16 +79,22 @@ export const useWatchedState = () => {
                 }
             }
 
-            // Update parent
-            if (item.SeriesId) {
-                // Would prefer to invalidate but causes timing issues in playback.reportTrackStopped
-                await queryClient.refetchQueries({ queryKey: ['mediaItem', item.SeriesId] })
-            }
-
-            // Clear nextEpisode cache, preferably with id but we don't know which parent
-            await queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
+            await invalidateRelated(item)
 
             return res
+        },
+        markAsProgress: async (item: MediaItem, positionTicks: number, playedPercentage: number) => {
+            patchMediaItem(item.Id, c => ({
+                ...c,
+                UserData: {
+                    ...c.UserData,
+                    PlaybackPositionTicks: positionTicks,
+                    PlayedPercentage: playedPercentage,
+                    Played: false,
+                },
+            }))
+
+            await invalidateRelated(item)
         },
     }
 }

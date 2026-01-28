@@ -13,7 +13,6 @@ import { MediaItem } from '../api/jellyfin'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
-import { usePatchQueries } from '../hooks/usePatchQueries'
 import { useWatchedState } from '../hooks/useWatchedState'
 
 // Define observed properties with their types
@@ -70,8 +69,7 @@ export type PlaybackManagerProps = {
 
 export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackManagerProps) => {
     const api = useJellyfinContext()
-    const { patchMediaItem } = usePatchQueries()
-    const { markAsPlayed, markAsUnplayed } = useWatchedState()
+    const { markAsPlayed, markAsUnplayed, markAsProgress } = useWatchedState()
     const {
         configuration: { minResumePercentage, maxResumePercentage },
     } = useJellyfinServerConfiguration()
@@ -235,17 +233,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 } else if (isPlayedStart) {
                     await markAsUnplayed(track)
                 } else {
-                    await markAsUnplayed(track)
-
-                    patchMediaItem(track.Id, item => ({
-                        ...item,
-                        UserData: {
-                            ...item.UserData,
-                            PlaybackPositionTicks: positionTicks,
-                            PlayedPercentage: playedPercentage,
-                            Played: false,
-                        },
-                    }))
+                    await markAsProgress(track, positionTicks, playedPercentage)
                 }
 
                 queryClient.invalidateQueries({ queryKey: ['recentlyPlayed'] })
@@ -254,12 +242,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         [
             api,
             duration,
+            markAsPlayed,
+            markAsProgress,
+            markAsUnplayed,
             maxResumePercentage,
             minResumePercentage,
-            patchMediaItem,
             queryClient,
-            markAsPlayed,
-            markAsUnplayed,
         ]
     )
 
