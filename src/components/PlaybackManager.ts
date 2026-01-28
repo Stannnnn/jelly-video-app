@@ -1027,13 +1027,14 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         async (seconds: number) => {
             if (isInitialized) {
                 try {
-                    await command('seek', [seconds.toString(), 'relative'])
+                    // await command('seek', [seconds.toString(), 'relative']) // = busted, seeks twice..
+                    await setProperty('time-pos', timePos + seconds)
                 } catch (error) {
                     console.error('Failed to skip:', error)
                 }
             }
         },
-        [isInitialized]
+        [isInitialized, timePos]
     )
 
     const handleMouseMove = useCallback(() => {
