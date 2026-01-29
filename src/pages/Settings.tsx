@@ -519,12 +519,22 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     <option value="100">100%</option>
                                     <option value="105">105%</option>
                                     <option value="110">110%</option>
+                                    <option value="115">115%</option>
+                                    <option value="120">120%</option>
                                 </select>
                                 <div className="icon">
                                     <ChevronDownIcon size={12} />
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div className="desc">
+                    <div className="note">
+                        Subtitle formats are rendered differently; position and styling may vary. Values above 100% may
+                        fit image-based subtitles (PGS, DVD) while pushing text subtitles (SRT, ASS) outside the
+                        viewport
                     </div>
                 </div>
             </div>

@@ -274,10 +274,7 @@ export const MediaList = ({
             )
         } else if (type === 'mixedSmall') {
             return (
-                <div
-                    className={`media-item landscape recently-played ${className || ''}`}
-                    ref={el => setRowRefs(index, el)}
-                >
+                <div className={`media-item landscape small ${className || ''}`} ref={el => setRowRefs(index, el)}>
                     <Squircle
                         width={240}
                         height={135}
