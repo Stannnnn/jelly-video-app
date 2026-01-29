@@ -340,8 +340,21 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .additional {
     font-size: 0.725rem;
-    margin-top: 5px;
+    line-height: 1.4;
+    margin-top: 4px;
     margin-left: 3px;
+}
+
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .additional
+    > .textlink
+    > .keyword {
+    font-weight: 500;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .indicator {

@@ -214,7 +214,7 @@ export const Sidenav = (props: { username: string }) => {
                                                     to={`/search/${encodeURIComponent(searchQuery)}`}
                                                     className="textlink"
                                                 >
-                                                    See all results for '{searchQuery}'
+                                                    See all results for <span className="keyword">'{searchQuery}'</span>
                                                 </Link>
                                             </div>
                                         </div>

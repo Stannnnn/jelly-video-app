@@ -782,8 +782,7 @@
     > .sub-dropdown
     > .input-container:not(:has(~ .dropdown-content))
     > .input {
-    padding: 6px 10px;
-    padding-left: 6px;
+    padding: 6px;
 }
 
 .media-page
@@ -797,8 +796,7 @@
     > .sub-dropdown
     > .input-container
     > .input {
-    padding: 6px 10px;
-    padding-left: 6px;
+    padding: 6px;
 }
 
 .media-page
@@ -828,6 +826,7 @@
     > .input-container:has(> .create-btn):not(:has(~ .dropdown-content))
     > .input {
     max-width: calc(100% - 56px);
+    padding-right: 10px;
 }
 
 .media-page
@@ -842,6 +841,7 @@
     > .input-container:has(> .create-btn)
     > .input {
     max-width: calc(100% - 64px);
+    padding-right: 10px;
 }
 
 .media-page
