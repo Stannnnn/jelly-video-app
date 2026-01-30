@@ -323,8 +323,8 @@ export const VideoPlayer = ({
 
         const handleClickOutside = (e: MouseEvent) => {
             if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-                setCurrentMenuView('home')
-                animateMenu()
+                // setCurrentMenuView('home')
+                // animateMenu()
                 toggleMenu()
             }
         }
