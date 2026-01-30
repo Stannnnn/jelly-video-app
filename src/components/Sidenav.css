@@ -258,7 +258,31 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     > .result
     > .thumbnail-container
     > .fallback-thumbnail {
+    position: relative;
     background-color: var(--bg-color-tertiary);
+}
+
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
+    > .thumbnail-container
+    > .fallback-thumbnail::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    mask-image: url('/public/fallback-portrait.svg');
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: 52%;
+    background-color: var(--font-color-secondary);
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .details {
