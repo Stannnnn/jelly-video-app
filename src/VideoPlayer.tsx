@@ -1052,7 +1052,7 @@ export const VideoPlayer = ({
                                     {allEpisodes.map((episode, index) => {
                                         const isCurrentEpisode = episode.Id === currentTrack?.Id
                                         const season = String(episode.ParentIndexNumber || 0).padStart(2, '0')
-                                        const episodeNum = String(episode.IndexNumber || index + 1).padStart(2, '0')
+                                        const episodeNum = String(episode.IndexNumber ?? index + 1).padStart(2, '0')
                                         const episodeName = episode.Name || 'Untitled'
 
                                         return (
