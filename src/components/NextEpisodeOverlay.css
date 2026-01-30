@@ -1,13 +1,13 @@
-.video-container.fullscreen > .next-episode-overlay {
+.video-app > .video-container.fullscreen > .next-episode-overlay {
     right: 90px;
     bottom: 90px;
 }
 
-.video-container > .video-controls.hidden ~ .next-episode-overlay.visible {
+.video-app > .video-container > .video-controls.hidden ~ .next-episode-overlay.visible {
     transform: translateY(0);
 }
 
-.video-container > .video-controls.visible ~ .next-episode-overlay.visible {
+.video-app > .video-container > .video-controls.visible ~ .next-episode-overlay.visible {
     transform: translateY(-20px);
 }
 
