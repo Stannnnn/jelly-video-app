@@ -259,10 +259,11 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-/* Isolate volume scroll */
+/* Isolate volume scroll
 body.lockscroll {
     overflow: hidden !important;
 }
+*/
 
 #root {
     height: 100%;

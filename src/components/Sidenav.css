@@ -25,15 +25,17 @@
         filter 0.2s ease;
 }
 
-/* Isolate volume scroll */
+/* Isolate volume scroll
 .sidenav > .sidenav_wrapper.lockscroll {
     overflow: hidden !important;
 }
+*/
 
-/* Prevent sidenav content from jumping on windows/chrome when scrolling volume */
+/* Prevent sidenav content from jumping on windows/chrome when scrolling volume
 html.winOS .sidenav > .sidenav_wrapper.lockscroll {
     scrollbar-gutter: stable;
 }
+*/
 
 /* Sidenav specific scroll */
 html.winOS .sidenav > .sidenav_wrapper {

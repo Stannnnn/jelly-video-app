@@ -789,7 +789,6 @@ body:has(.video-app > .video-container) {
     overflow-x: hidden;
     scrollbar-width: thin;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
     color-scheme: dark;
 }
 
