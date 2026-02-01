@@ -28,7 +28,7 @@ export const PersonMovies = () => {
     return (
         <div className="search-results-page">
             <div className="search-content">
-                {items.length > 0 && (
+                {(isLoading || items.length > 0) && (
                     <div className="section movies">
                         <div className="title">{person?.Name} - Movies & Series</div>
                         <MediaList items={items} isLoading={isLoading} type="mixed" loadMore={loadMore} />

@@ -25,7 +25,7 @@ export const SearchSeries = () => {
     return (
         <div className="search-results-page">
             <div className="search-content">
-                {items.length > 0 && (
+                {(isLoading || items.length > 0) && (
                     <MediaList items={items} isLoading={isLoading} type="series" loadMore={loadMore} />
                 )}
 

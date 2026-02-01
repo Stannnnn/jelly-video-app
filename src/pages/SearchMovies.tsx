@@ -25,7 +25,9 @@ export const SearchMovies = () => {
     return (
         <div className="search-results-page">
             <div className="search-content">
-                {items.length > 0 && <MediaList items={items} isLoading={isLoading} type="movie" loadMore={loadMore} />}
+                {(isLoading || items.length > 0) && (
+                    <MediaList items={items} isLoading={isLoading} type="movie" loadMore={loadMore} />
+                )}
 
                 {items.length === 0 && !isLoading && <div>No movies found for '{query}'.</div>}
             </div>

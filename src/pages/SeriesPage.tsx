@@ -158,7 +158,7 @@ export const SeriesPage = () => {
                         <MediaList items={episodes || []} isLoading={isLoadingEpisodes} type="episode" />
                     )}
                 </div>
-                {specials && specials.length > 0 && (
+                {(isLoadingSpecials || (specials && specials.length > 0)) && (
                     <div className="section specials">
                         <div className="container">
                             <div className="title">Specials</div>
@@ -166,7 +166,7 @@ export const SeriesPage = () => {
                         <MediaList items={specials} isLoading={isLoadingSpecials} type="specials" />
                     </div>
                 )}
-                {people && people.length > 0 && (
+                {(isLoadingCastCrew || (people && people.length > 0)) && (
                     <div className="section cast-crew">
                         <div className="container">
                             <div className="title">Cast & Crew</div>
@@ -174,7 +174,7 @@ export const SeriesPage = () => {
                         <MediaList items={people} isLoading={isLoadingCastCrew} type="person" />
                     </div>
                 )}
-                {similarItems && similarItems.length > 0 && (
+                {(isLoadingSimilar || (similarItems && similarItems.length > 0)) && (
                     <div className="section recommended">
                         <div className="container">
                             <div className="title">Recommended</div>

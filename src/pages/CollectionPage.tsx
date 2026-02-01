@@ -43,7 +43,7 @@ export const CollectionPage = () => {
                     />
                     {childrenError && <div className="error">{childrenError || 'Collection items not found'}</div>}
                 </div>
-                {people && people.length > 0 && (
+                {(isLoadingCastCrew || (people && people.length > 0)) && (
                     <div className="section cast-crew">
                         <div className="container">
                             <div className="title">Cast & Crew</div>
