@@ -446,31 +446,55 @@ export const VideoPlayer = ({
             return
         }
 
+        // Helper function to check if a chapter is intro-related
+        const isIntroChapter = (chapterName: string | undefined | null) => {
+            if (!chapterName) return false
+            const name = chapterName.toLowerCase()
+            return (
+                name.includes('intro') ||
+                name.includes('opening') ||
+                name.includes('op theme') ||
+                name.includes('main title') ||
+                name.includes('title sequence') ||
+                name.includes('prologue') ||
+                name.includes('prelude') ||
+                name.includes('recap') ||
+                name.includes('previously') ||
+                name.includes('review') ||
+                name.includes('preview') ||
+                name.includes('summary') ||
+                name.includes('last time') ||
+                name.includes('flashback') ||
+                name === 'op' ||
+                new RegExp('\\bop\\d+\\b').test(name)
+            )
+        }
+
         // Check for intro chapter
         if (currentTrack.Chapters && currentTrack.Chapters.length > 0) {
-            const introChapterIndex = currentTrack.Chapters.findIndex(chapter => {
-                const name = chapter.Name?.toLowerCase()
-                if (!name) return false
-                return (
-                    name.includes('intro') ||
-                    name.includes('opening') ||
-                    name.includes('op theme') ||
-                    name.includes('main title') ||
-                    name.includes('title sequence') ||
-                    name.includes('prologue') ||
-                    name.includes('prelude') ||
-                    name === 'op' ||
-                    new RegExp('\\bop\\d+\\b').test(name)
-                )
-            })
+            const introChapterIndex = currentTrack.Chapters.findIndex(chapter => isIntroChapter(chapter.Name))
 
             if (introChapterIndex !== -1) {
                 const introChapter = currentTrack.Chapters[introChapterIndex]
                 const introStartTime = (introChapter.StartPositionTicks || 0) / 10000000 // Convert ticks to seconds
-                const introEndTimeCalc =
-                    (currentTrack.Chapters[introChapterIndex + 1].StartPositionTicks || 0) / 10000000
 
-                // Show skip button if we're within the intro chapter
+                // Find all consecutive intro chapters
+                let lastIntroIndex = introChapterIndex
+                for (let i = introChapterIndex + 1; i < currentTrack.Chapters.length; i++) {
+                    if (isIntroChapter(currentTrack.Chapters[i].Name)) {
+                        lastIntroIndex = i
+                    } else {
+                        break
+                    }
+                }
+
+                // Get the end time of the last consecutive intro chapter
+                const introEndTimeCalc =
+                    lastIntroIndex + 1 < currentTrack.Chapters.length
+                        ? (currentTrack.Chapters[lastIntroIndex + 1].StartPositionTicks || 0) / 10000000
+                        : 0
+
+                // Show skip button if we're within any of the consecutive intro chapters
                 if (introStartTime && introEndTimeCalc && timePos >= introStartTime && timePos < introEndTimeCalc) {
                     setShowIntroSkip(true)
                     setIntroEndTime(introEndTimeCalc)
