@@ -486,14 +486,20 @@ export const VideoPlayer = ({
                     } else {
                         // Check if this non-intro chapter is short (< 5 seconds)
                         const currentChapterStart = (currentTrack.Chapters[i].StartPositionTicks || 0) / 10000000
-                        const currentChapterEnd = i + 1 < currentTrack.Chapters.length
-                            ? (currentTrack.Chapters[i + 1].StartPositionTicks || 0) / 10000000
-                            : 0
-                        
-                        const chapterDuration = currentChapterEnd > 0 ? currentChapterEnd - currentChapterStart : Infinity
-                        
+                        const currentChapterEnd =
+                            i + 1 < currentTrack.Chapters.length
+                                ? (currentTrack.Chapters[i + 1].StartPositionTicks || 0) / 10000000
+                                : 0
+
+                        const chapterDuration =
+                            currentChapterEnd > 0 ? currentChapterEnd - currentChapterStart : Infinity
+
                         // If this chapter is less than 5 seconds and there's a following intro chapter, skip over it
-                        if (chapterDuration < 5 && i + 1 < currentTrack.Chapters.length && isIntroChapter(currentTrack.Chapters[i + 1].Name)) {
+                        if (
+                            chapterDuration < 5 &&
+                            i + 1 < currentTrack.Chapters.length &&
+                            isIntroChapter(currentTrack.Chapters[i + 1].Name)
+                        ) {
                             // Continue to check the next chapter (which we know is an intro)
                             continue
                         } else {
