@@ -216,8 +216,26 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
+                            <div className="subtitle">Next episode</div>
+                            <div className="subdesc">Automatically play next episode when the current one ends</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={autoplayNextEpisode}
+                                    onChange={e => setAutoplayNextEpisode(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
                             <div className="subtitle">Skip intro</div>
-                            <div className="subdesc">Show skip button when an intro is detected during playback</div>
+                            <div className="subdesc">Show a skip button for intro/recap segments when available</div>
                         </div>
                         <div className="option">
                             <label className="switch">
@@ -235,7 +253,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     <div className="container">
                         <div className="desc">
                             <div className="subtitle">Skip outro</div>
-                            <div className="subdesc">Show next episode overlay during end credits if available</div>
+                            <div className="subdesc">Show next episode overlay during end credits when available</div>
                         </div>
                         <div className="option">
                             <label className="switch">
@@ -243,24 +261,6 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     type="checkbox"
                                     checked={skipOutro}
                                     onChange={e => setSkipOutro(e.target.checked)}
-                                ></input>
-                                <span className="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div className="inner row">
-                    <div className="container">
-                        <div className="desc">
-                            <div className="subtitle">Autoplay next episode</div>
-                            <div className="subdesc">Automatically play next episode when countdown reaches zero</div>
-                        </div>
-                        <div className="option">
-                            <label className="switch">
-                                <input
-                                    type="checkbox"
-                                    checked={autoplayNextEpisode}
-                                    onChange={e => setAutoplayNextEpisode(e.target.checked)}
                                 ></input>
                                 <span className="slider"></span>
                             </label>

@@ -104,7 +104,6 @@ body:has(.video-app > .video-container) {
 
 .video-app > .video-container > .video-overlay {
     position: relative;
-    z-index: 1;
     width: 100%;
     height: 100%;
     transition:
@@ -835,7 +834,7 @@ body:has(.video-app > .video-container) {
     cursor: pointer;
     padding: 10px 24px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     background-color: rgba(255, 255, 255, 0.92);
     transition: background-color 0.2s ease-out;
 }
