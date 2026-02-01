@@ -19,10 +19,8 @@
     min-width: 320px;
     max-width: 360px;
     border-radius: 14px;
-    backdrop-filter: blur(8px);
     background-color: rgba(16, 16, 16, 0.92);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    z-index: 1;
     opacity: 0;
     visibility: hidden;
     transform: translateY(20px);
