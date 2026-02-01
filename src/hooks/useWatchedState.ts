@@ -20,6 +20,9 @@ export const useWatchedState = () => {
         queryClient.invalidateQueries({ queryKey: ['sequentialNextEpisode'] })
         queryClient.invalidateQueries({ queryKey: ['series-seasons'] })
         queryClient.invalidateQueries({ queryKey: ['season-episodes'] })
+
+        queryClient.invalidateQueries({ queryKey: ['recentlyPlayed'] })
+        queryClient.invalidateQueries({ queryKey: ['nextUp'] })
     }
 
     return {

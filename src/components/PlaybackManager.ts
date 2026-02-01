@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { isTauri } from '@tauri-apps/api/core'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -207,7 +206,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     const [currentTrack, setCurrentTrack] = useState<MediaItem | undefined>(undefined)
     const [currentMediaSourceId, setCurrentMediaSourceId] = useState<string | undefined>(undefined)
-    const queryClient = useQueryClient()
 
     // Helper function to report playback stopped, avoiding duplicate reports
     const reportTrackStopped = useCallback(
@@ -235,21 +233,9 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 } else {
                     await markAsProgress(track, positionTicks, playedPercentage)
                 }
-
-                queryClient.invalidateQueries({ queryKey: ['recentlyPlayed'] })
-                queryClient.invalidateQueries({ queryKey: ['nextUp'] })
             }
         },
-        [
-            api,
-            duration,
-            markAsPlayed,
-            markAsProgress,
-            markAsUnplayed,
-            maxResumePercentage,
-            minResumePercentage,
-            queryClient,
-        ]
+        [api, duration, markAsPlayed, markAsProgress, markAsUnplayed, maxResumePercentage, minResumePercentage]
     )
 
     // Update Media Session metadata
