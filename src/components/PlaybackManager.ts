@@ -237,6 +237,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 }
 
                 queryClient.invalidateQueries({ queryKey: ['recentlyPlayed'] })
+                queryClient.invalidateQueries({ queryKey: ['nextUp'] })
             }
         },
         [
