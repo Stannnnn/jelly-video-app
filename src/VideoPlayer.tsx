@@ -478,13 +478,28 @@ export const VideoPlayer = ({
                 const introChapter = currentTrack.Chapters[introChapterIndex]
                 const introStartTime = (introChapter.StartPositionTicks || 0) / 10000000 // Convert ticks to seconds
 
-                // Find all consecutive intro chapters
+                // Find all consecutive intro chapters (allowing gaps of up to 5 seconds)
                 let lastIntroIndex = introChapterIndex
                 for (let i = introChapterIndex + 1; i < currentTrack.Chapters.length; i++) {
                     if (isIntroChapter(currentTrack.Chapters[i].Name)) {
                         lastIntroIndex = i
                     } else {
-                        break
+                        // Check if this non-intro chapter is short (< 5 seconds)
+                        const currentChapterStart = (currentTrack.Chapters[i].StartPositionTicks || 0) / 10000000
+                        const currentChapterEnd = i + 1 < currentTrack.Chapters.length
+                            ? (currentTrack.Chapters[i + 1].StartPositionTicks || 0) / 10000000
+                            : 0
+                        
+                        const chapterDuration = currentChapterEnd > 0 ? currentChapterEnd - currentChapterStart : Infinity
+                        
+                        // If this chapter is less than 5 seconds and there's a following intro chapter, skip over it
+                        if (chapterDuration < 5 && i + 1 < currentTrack.Chapters.length && isIntroChapter(currentTrack.Chapters[i + 1].Name)) {
+                            // Continue to check the next chapter (which we know is an intro)
+                            continue
+                        } else {
+                            // This gap is too long or there's no intro after it
+                            break
+                        }
                     }
                 }
 
