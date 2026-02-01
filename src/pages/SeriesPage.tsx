@@ -8,7 +8,6 @@ import { MediaFooter } from '../components/MediaFooter'
 import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
 import { SortingIcon } from '../components/SvgIcons'
-import { SortState } from '../context/FilterContext/FilterContext'
 import { useJellyfinCastCrew } from '../hooks/Jellyfin/useJellyfinCastCrew'
 import { useJellyfinEpisodes } from '../hooks/Jellyfin/useJellyfinEpisodes'
 import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
@@ -21,8 +20,8 @@ export const SeriesPage = () => {
     const { id } = useParams<{ id: string }>()
 
     const [selectedSeasonId, setSelectedSeasonId] = useState<string | null>(null)
-    const [uiSortBy, setUiSortBy] = useState<SortState>(SortState.Released)
-    const [sortBy, setSortBy] = useState<ItemSortBy[]>([ItemSortBy.PremiereDate])
+    const [uiSortBy, setUiSortBy] = useState<ItemSortBy>(ItemSortBy.IndexNumber)
+    const [sortBy, setSortBy] = useState<ItemSortBy[]>([ItemSortBy.IndexNumber])
     const [sortOrder, setSortOrder] = useState<SortOrder[]>([SortOrder.Descending])
 
     const { mediaItem: series, isLoading: isLoadingSeries, error: seriesError } = useJellyfinMediaItem(id)
@@ -38,7 +37,7 @@ export const SeriesPage = () => {
 
     /* Flipping sort order for PremiereDate so it makes sense visually */
     const effectiveSortOrder =
-        sortBy[0] === ItemSortBy.PremiereDate
+        sortBy[0] === ItemSortBy.IndexNumber
             ? sortOrder[0] === SortOrder.Descending
                 ? SortOrder.Ascending
                 : SortOrder.Descending
@@ -70,29 +69,9 @@ export const SeriesPage = () => {
     }
 
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = e.target.value as SortState
+        const value = e.target.value as ItemSortBy
         setUiSortBy(value)
-
-        let newSortBy: ItemSortBy[]
-
-        switch (value) {
-            case SortState.Added:
-                newSortBy = [ItemSortBy.DateCreated]
-                break
-            case SortState.Released:
-                newSortBy = [ItemSortBy.PremiereDate]
-                break
-            case SortState.Runtime:
-                newSortBy = [ItemSortBy.Runtime]
-                break
-            case SortState.Name:
-                newSortBy = [ItemSortBy.Name]
-                break
-            default:
-                newSortBy = [ItemSortBy.PremiereDate]
-        }
-
-        setSortBy(newSortBy)
+        setSortBy([value])
     }
 
     const handleSortOrderToggle = () => {
@@ -127,10 +106,10 @@ export const SeriesPage = () => {
                                     <div className="sorting date">
                                         <div className="filter">
                                             <select value={uiSortBy} onChange={handleSortChange}>
-                                                <option value={SortState.Released}>Premiered</option>
-                                                <option value={SortState.Runtime}>Runtime</option>
-                                                <option value={SortState.Name}>Name</option>
-                                                <option value={SortState.Added}>Added</option>
+                                                <option value={ItemSortBy.IndexNumber}>Premiered</option>
+                                                <option value={ItemSortBy.Runtime}>Runtime</option>
+                                                <option value={ItemSortBy.Name}>Name</option>
+                                                <option value={ItemSortBy.DateCreated}>Added</option>
                                             </select>
                                             <div className="icon">
                                                 <ChevronDownIcon size={12} />
