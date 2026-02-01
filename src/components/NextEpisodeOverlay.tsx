@@ -1,5 +1,5 @@
 import { MediaItem } from '../api/jellyfin'
-import { useDisplayTitle } from '../hooks/useDisplayTitle'
+import { getDisplayTitle } from '../hooks/useDisplayTitle'
 import './NextEpisodeOverlay.css'
 
 interface NextEpisodeOverlayProps {
@@ -17,7 +17,7 @@ export const NextEpisodeOverlay = ({
     onCancel,
     isVisible,
 }: NextEpisodeOverlayProps) => {
-    const displayTitle = useDisplayTitle(nextEpisode)
+    const displayTitle = getDisplayTitle(nextEpisode)
 
     if (!nextEpisode) return null
 
