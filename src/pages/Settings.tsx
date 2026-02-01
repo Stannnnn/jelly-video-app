@@ -32,6 +32,10 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
     const {
         autoplayNextEpisode,
         setAutoplayNextEpisode,
+        skipIntro,
+        setSkipIntro,
+        skipOutro,
+        setSkipOutro,
         checkForUpdates,
         setCheckForUpdates,
         subtitleFontSize,
@@ -212,10 +216,44 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
-                            <div className="subtitle">Next episode</div>
-                            <div className="subdesc">
-                                Play next episode automatically, next up during end credits if available
-                            </div>
+                            <div className="subtitle">Skip intro</div>
+                            <div className="subdesc">Show skip button when an intro is detected during playback</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={skipIntro}
+                                    onChange={e => setSkipIntro(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Skip outro</div>
+                            <div className="subdesc">Show next episode overlay during end credits if available</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={skipOutro}
+                                    onChange={e => setSkipOutro(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Autoplay next episode</div>
+                            <div className="subdesc">Automatically play next episode when countdown reaches zero</div>
                         </div>
                         <div className="option">
                             <label className="switch">

@@ -135,6 +135,8 @@ export const VideoPlayer = ({
         nextEpisodeCountdown,
         startNextEpisodeCountdown,
         cancelNextEpisodeCountdown,
+        skipIntro,
+        skipOutro,
     } = usePlaybackContext()
 
     const isLoading = _isLoading || isPending
@@ -363,17 +365,22 @@ export const VideoPlayer = ({
 
     // Next Episode Detection - Monitor time position and detect credits or near end
     useEffect(() => {
-        if (!currentTrack || !duration || !timePos || !videoLoaded || !autoplayNextEpisode || !nextEpisode) {
+        if (!currentTrack || !duration || !timePos || !videoLoaded || !nextEpisode) {
             return
         }
 
         // Check if we're already showing the overlay or if countdown reached 0
         if (showNextEpisodeOverlay) {
             // Auto-navigate when countdown reaches 0
-            if (nextEpisodeCountdown === 0 && nextEpisode?.Id) {
+            if (nextEpisodeCountdown === 0 && nextEpisode?.Id && autoplayNextEpisode) {
                 cancelNextEpisodeCountdown()
                 navigate(`/play/${nextEpisode.Id}`, { replace: true })
             }
+            return
+        }
+
+        // Only proceed if skipOutro is enabled
+        if (!skipOutro) {
             return
         }
 
@@ -423,6 +430,7 @@ export const VideoPlayer = ({
         duration,
         timePos,
         videoLoaded,
+        skipOutro,
         autoplayNextEpisode,
         nextEpisode,
         showNextEpisodeOverlay,
@@ -440,7 +448,7 @@ export const VideoPlayer = ({
 
     // Intro Detection - Monitor time position and detect intro chapter
     useEffect(() => {
-        if (!currentTrack || !duration || !timePos || !videoLoaded) {
+        if (!currentTrack || !duration || !timePos || !videoLoaded || !skipIntro) {
             setShowIntroSkip(false)
             setIntroEndTime(null)
             return
@@ -538,7 +546,7 @@ export const VideoPlayer = ({
             setShowIntroSkip(false)
             setIntroEndTime(null)
         }
-    }, [currentTrack, duration, timePos, videoLoaded])
+    }, [currentTrack, duration, timePos, videoLoaded, skipIntro])
 
     // If video ends naturally (timePos reaches duration), immediately go to next episode
     useEffect(() => {

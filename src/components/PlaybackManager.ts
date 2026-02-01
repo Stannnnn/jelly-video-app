@@ -103,6 +103,14 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         [autoplayNextEpisode]
     )
 
+    // Skip Intro Settings
+    const [skipIntro, setSkipIntro] = useState(localStorage.getItem('skipIntro') !== 'off')
+    useEffect(() => localStorage.setItem('skipIntro', skipIntro ? 'on' : 'off'), [skipIntro])
+
+    // Skip Outro Settings
+    const [skipOutro, setSkipOutro] = useState(localStorage.getItem('skipOutro') !== 'off')
+    useEffect(() => localStorage.setItem('skipOutro', skipOutro ? 'on' : 'off'), [skipOutro])
+
     // Next Episode Overlay State
     const [showNextEpisodeOverlay, setShowNextEpisodeOverlay] = useState(false)
     const [nextEpisodeCountdown, setNextEpisodeCountdown] = useState(20)
@@ -1258,6 +1266,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         nextEpisodeCountdown,
         startNextEpisodeCountdown,
         cancelNextEpisodeCountdown,
+
+        // Skip Intro/Outro
+        skipIntro,
+        setSkipIntro,
+        skipOutro,
+        setSkipOutro,
 
         // Video statistics
         videoCodec,
