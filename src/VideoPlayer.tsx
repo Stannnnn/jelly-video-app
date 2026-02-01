@@ -516,7 +516,14 @@ export const VideoPlayer = ({
                         : 0
 
                 // Show skip button if we're within any of the consecutive intro chapters
-                if (introStartTime && introEndTimeCalc && timePos >= introStartTime && timePos < introEndTimeCalc) {
+                if (
+                    introStartTime !== null &&
+                    introStartTime !== undefined &&
+                    introEndTimeCalc !== null &&
+                    introEndTimeCalc !== undefined &&
+                    timePos >= introStartTime &&
+                    timePos < introEndTimeCalc - 1 // 1 second buffer to avoid showing after skip during video buffer
+                ) {
                     setShowIntroSkip(true)
                     setIntroEndTime(introEndTimeCalc)
                 } else {
