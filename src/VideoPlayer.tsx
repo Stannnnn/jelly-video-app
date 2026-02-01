@@ -388,12 +388,20 @@ export const VideoPlayer = ({
         // Check for credits chapter
         let creditsStartTime: number | null = null
         if (currentTrack.Chapters && currentTrack.Chapters.length > 0) {
-            const creditsChapter = currentTrack.Chapters.find(
-                chapter =>
-                    chapter.Name?.toLowerCase().includes('credit') ||
-                    chapter.Name?.toLowerCase().includes('ending') ||
-                    chapter.Name?.toLowerCase().includes('outro')
-            )
+            const creditsChapter = currentTrack.Chapters.find(chapter => {
+                const name = chapter.Name?.toLowerCase()
+
+                if (!name) return false
+
+                return (
+                    name.includes('ending') ||
+                    name.includes('outro') ||
+                    name.includes('closing') ||
+                    name.includes('credit') ||
+                    name === 'ed' ||
+                    new RegExp('\\bed\\d+\\b').test(name)
+                )
+            })
             if (creditsChapter && creditsChapter.StartPositionTicks) {
                 creditsStartTime = creditsChapter.StartPositionTicks / 10000000 // Convert ticks to seconds
             }
@@ -440,12 +448,21 @@ export const VideoPlayer = ({
 
         // Check for intro chapter
         if (currentTrack.Chapters && currentTrack.Chapters.length > 0) {
-            const introChapterIndex = currentTrack.Chapters.findIndex(
-                chapter =>
-                    chapter.Name?.toLowerCase().includes('intro') ||
-                    chapter.Name?.toLowerCase().includes('opening') ||
-                    chapter.Name?.toLowerCase().includes('op')
-            )
+            const introChapterIndex = currentTrack.Chapters.findIndex(chapter => {
+                const name = chapter.Name?.toLowerCase()
+                if (!name) return false
+                return (
+                    name.includes('intro') ||
+                    name.includes('opening') ||
+                    name.includes('op theme') ||
+                    name.includes('main title') ||
+                    name.includes('title sequence') ||
+                    name.includes('prologue') ||
+                    name.includes('prelude') ||
+                    name === 'op' ||
+                    new RegExp('\\bop\\d+\\b').test(name)
+                )
+            })
 
             if (introChapterIndex !== -1) {
                 const introChapter = currentTrack.Chapters[introChapterIndex]
