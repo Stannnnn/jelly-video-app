@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { Loader } from '../components/Loader'
-import { MediaInfo } from '../components/MediaInfo'
 import { MediaFooter } from '../components/MediaFooter'
+import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
 import { useJellyfinCastCrew } from '../hooks/Jellyfin/useJellyfinCastCrew'
 import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
@@ -29,7 +29,7 @@ export const MoviePage = () => {
         <div className="media-page movie">
             <MediaInfo item={movie} />
             <div className="media-content">
-                {specials && specials.length > 0 && (
+                {(isLoadingSpecials || (specials && specials.length > 0)) && (
                     <div className="section specials">
                         <div className="container">
                             <div className="title">Specials</div>
@@ -37,7 +37,7 @@ export const MoviePage = () => {
                         <MediaList items={specials} isLoading={isLoadingSpecials} type="specials" />
                     </div>
                 )}
-                {people && people.length > 0 && (
+                {(isLoadingCastCrew || (people && people.length > 0)) && (
                     <div className="section cast-crew">
                         <div className="container">
                             <div className="title">Cast & Crew</div>
@@ -45,7 +45,7 @@ export const MoviePage = () => {
                         <MediaList items={people} isLoading={isLoadingCastCrew} type="person" />
                     </div>
                 )}
-                {similarItems && similarItems.length > 0 && (
+                {(isLoadingSimilar || (similarItems && similarItems.length > 0)) && (
                     <div className="section recommended">
                         <div className="container">
                             <div className="title">Recommended</div>
