@@ -1129,49 +1129,52 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         cancelNextEpisodeCountdown()
     }, [cancelNextEpisodeCountdown])
 
-    const clearCurrentTrack = useCallback(async () => {
-        if (currentTrack) {
-            // Exit fullscreen only if it was enabled by the app
-            if (isFullscreen && document.fullscreenElement) {
-                try {
-                    await document.exitFullscreen()
-                    setIsFullscreen(false)
-                } catch (error) {
-                    console.error('Failed to exit fullscreen:', error)
+    const clearCurrentTrack = useCallback(
+        async (exitFullscreen: boolean = true) => {
+            if (currentTrack) {
+                // Exit fullscreen only if it was enabled by the app and exitFullscreen is true
+                if (exitFullscreen && isFullscreen && document.fullscreenElement) {
+                    try {
+                        await document.exitFullscreen()
+                        setIsFullscreen(false)
+                    } catch (error) {
+                        console.error('Failed to exit fullscreen:', error)
+                    }
+                }
+
+                // Report playback stopped to Jellyfin
+                reportTrackStopped(currentTrack, timePos, undefined, currentMediaSourceId)
+
+                // Stop and clear the video
+                if (isInitialized) {
+                    try {
+                        await command('stop', [])
+                        setVideoLoaded(false)
+                    } catch (error) {
+                        console.error('Failed to stop playback:', error)
+                    }
+                }
+
+                // Clear the current track
+                setCurrentTrack(undefined)
+                previousTrackRef.current = undefined
+                isPlayingTrackRef.current = undefined
+                lastStoppedTrackIdRef.current = undefined
+
+                // Abort any ongoing API requests
+                abortControllerRef.current?.abort('clearCurrentTrack')
+                abortControllerRef.current = null
+
+                clearStates()
+
+                // Clear Media Session metadata
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = null
                 }
             }
-
-            // Report playback stopped to Jellyfin
-            reportTrackStopped(currentTrack, timePos, undefined, currentMediaSourceId)
-
-            // Stop and clear the video
-            if (isInitialized) {
-                try {
-                    await command('stop', [])
-                    setVideoLoaded(false)
-                } catch (error) {
-                    console.error('Failed to stop playback:', error)
-                }
-            }
-
-            // Clear the current track
-            setCurrentTrack(undefined)
-            previousTrackRef.current = undefined
-            isPlayingTrackRef.current = undefined
-            lastStoppedTrackIdRef.current = undefined
-
-            // Abort any ongoing API requests
-            abortControllerRef.current?.abort('clearCurrentTrack')
-            abortControllerRef.current = null
-
-            clearStates()
-
-            // Clear Media Session metadata
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = null
-            }
-        }
-    }, [clearStates, currentMediaSourceId, currentTrack, isFullscreen, isInitialized, reportTrackStopped, timePos])
+        },
+        [clearStates, currentMediaSourceId, currentTrack, isFullscreen, isInitialized, reportTrackStopped, timePos]
+    )
 
     return {
         // Track info
@@ -1192,7 +1195,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         // Playback controls
         togglePlayPause,
         playTrack: async (track: MediaItem, mediaSourceId?: string) => {
-            await clearCurrentTrack()
+            await clearCurrentTrack(false)
             setUserInteracted(true)
             setCurrentTrack(track)
             setCurrentMediaSourceId(mediaSourceId || track.Id)
