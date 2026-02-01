@@ -305,7 +305,7 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
     const { sortedVideoSources } = useJellyfinSortedVideoSources(item)
 
-    const defaultMediaSourceId = sortedVideoSources[0]?.Id ?? undefined
+    const defaultMediaSourceId = item.MediaSources?.[0]?.Id ?? undefined
 
     const playedPercentage = item.UserData?.PlayedPercentage || 0
     const hasProgressbar = item.UserData?.Played || (playedPercentage > 0 && playedPercentage < 100)
