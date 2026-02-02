@@ -1,7 +1,7 @@
 {
     "name": "jelly-video-app",
     "private": true,
-    "version": "0.1.0",
+    "version": "1.0.0",
     "type": "module",
     "packageManager": "yarn@1.22.22",
     "scripts": {
