@@ -180,7 +180,7 @@ export const MediaList = ({
                         <span className="title" title={item.Name}>
                             {item.Name}
                         </span>
-                        {item.IndexNumber && (
+                        {item.IndexNumber !== undefined && item.IndexNumber !== null && (
                             <div className="container">
                                 <div className="subtitle episode-number" title={`Episode ${item.IndexNumber}`}>
                                     Episode {item.IndexNumber}
