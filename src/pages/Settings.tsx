@@ -234,24 +234,6 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
-                            <div className="subtitle">Skip intro</div>
-                            <div className="subdesc">Show a skip button for intro/recap segments when available</div>
-                        </div>
-                        <div className="option">
-                            <label className="switch">
-                                <input
-                                    type="checkbox"
-                                    checked={skipIntro}
-                                    onChange={e => setSkipIntro(e.target.checked)}
-                                ></input>
-                                <span className="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div className="inner row">
-                    <div className="container">
-                        <div className="desc">
                             <div className="subtitle">Skip outro</div>
                             <div className="subdesc">Show next episode overlay during end credits when available</div>
                         </div>
@@ -261,6 +243,26 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     type="checkbox"
                                     checked={skipOutro}
                                     onChange={e => setSkipOutro(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Skip intro</div>
+                            <div className="subdesc">
+                                Show skip button for opening/intro/recap segments when available
+                            </div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={skipIntro}
+                                    onChange={e => setSkipIntro(e.target.checked)}
                                 ></input>
                                 <span className="slider"></span>
                             </label>
