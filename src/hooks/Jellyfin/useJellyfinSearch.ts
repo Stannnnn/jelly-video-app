@@ -2,10 +2,12 @@ import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { MediaItem } from '../../api/jellyfin'
+import { useAudioStorageContext } from '../../context/AudioStorageContext/AudioStorageContext'
 import { useJellyfinContext } from '../../context/JellyfinContext/JellyfinContext'
 
 export const useJellyfinSearch = (searchQuery: string) => {
     const api = useJellyfinContext()
+    const audioStorage = useAudioStorageContext()
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery)
 
     // Debounce the search query
@@ -24,16 +26,21 @@ export const useJellyfinSearch = (searchQuery: string) => {
                 return []
             }
 
-            // Fetch each type separately
-            const [movies, series, episodes, collections] = await Promise.all([
-                api.searchItems(debouncedSearchQuery, 4, [BaseItemKind.Movie]),
-                api.searchItems(debouncedSearchQuery, 4, [BaseItemKind.Series]),
-                api.searchItems(debouncedSearchQuery, 4, [BaseItemKind.Episode]),
-                api.searchItems(debouncedSearchQuery, 4, [BaseItemKind.BoxSet]),
-            ])
+            if (navigator.onLine) {
+                // Fetch each type separately
+                const [movies, series, collections] = await Promise.all([
+                    api.searchItems(debouncedSearchQuery, 6, [BaseItemKind.Movie]),
+                    api.searchItems(debouncedSearchQuery, 6, [BaseItemKind.Series]),
+                    api.searchItems(debouncedSearchQuery, 6, [BaseItemKind.BoxSet]),
+                ])
 
-            const limitedResults = [...movies, ...series, ...episodes, ...collections]
-            return limitedResults
+                const limitedResults = [...movies, ...series, ...collections]
+                return limitedResults
+            } else {
+                // Use offline search when no network
+                const offlineResults = await audioStorage.searchOfflineItems(debouncedSearchQuery, 10)
+                return offlineResults
+            }
         },
     })
 

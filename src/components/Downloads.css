@@ -1,0 +1,94 @@
+.downloads-page {
+    display: grid;
+    gap: 40px;
+}
+
+.downloads-page > .queue-list > .download-info {
+    margin: 0 2px;
+    margin-bottom: 12px;
+}
+
+.downloads-page > .queue-list > .download-info > .time {
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 4px;
+}
+
+.downloads-page > .queue-list > .download-info > .stats {
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--font-color-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.downloads-page > .queue-list > .download-info > .stats > .speed {
+    color: var(--brand-color);
+    font-weight: 600;
+}
+
+.downloads-page > .queue-list > .download-info > .stats > .separator {
+    width: 2px;
+    height: 2px;
+    border-radius: 4px;
+    background-color: var(--font-color-secondary);
+}
+
+.downloads-page > .queue-list > .media-list {
+    margin: 0;
+}
+
+.downloads-page > .queue-list > .media-list .media-item {
+    user-select: none;
+    cursor: unset;
+    background-color: unset;
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .thumbnail {
+    opacity: 0.6;
+    filter: grayscale(0.6);
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .progress-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    margin: 8px;
+    height: 5px;
+    width: calc(100% - 16px);
+    border-radius: 8px;
+    backdrop-filter: blur(2px);
+    background-color: rgba(255, 255, 255, 0.16);
+    background: linear-gradient(
+        to right,
+        var(--brand-color) 0%,
+        var(--brand-color) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.16) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.16) 100%
+    );
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-details {
+    opacity: 0.6;
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .media-indicators {
+    backdrop-filter: unset;
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .media-indicators > .icon {
+    cursor: pointer;
+    transition: opacity 0.2s ease-out;
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .media-indicators > .icon.remove {
+    color: var(--font-color-active);
+}
+
+.downloads-page > .queue-list > .media-list .media-item > .media-thumbnail > .media-indicators > .icon.remove:hover {
+    opacity: 0.7;
+}

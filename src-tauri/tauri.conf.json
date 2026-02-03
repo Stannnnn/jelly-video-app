@@ -14,12 +14,13 @@
             {
                 "label": "main",
                 "title": "Jelly Video App",
-                "width": 1290,
-                "height": 780,
+                "width": 1300,
+                "height": 790,
                 "transparent": true,
                 "decorations": true,
                 "resizable": true,
                 "fullscreen": false,
+                "visible": false,
                 "minWidth": 600,
                 "minHeight": 600
             }
@@ -33,5 +34,10 @@
         "targets": "all",
         "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
         "resources": ["lib/*"]
+    },
+    "plugins": {
+        "shell": {
+            "open": ".*"
+        }
     }
 }

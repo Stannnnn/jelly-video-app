@@ -1,3 +1,4 @@
+import { isTauri } from '@tauri-apps/api/core'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
     command,
@@ -10,8 +11,8 @@ import {
 import { MediaItem } from '../api/jellyfin'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
-;(window as any).command = command
-;(window as any).setProperty = setProperty
+import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
+import { useWatchedState } from '../hooks/useWatchedState'
 
 // Define observed properties with their types
 const OBSERVED_PROPERTIES = [
@@ -20,6 +21,7 @@ const OBSERVED_PROPERTIES = [
     ['duration', 'double', 'none'],
     ['track-list', 'node'],
     ['sid', 'int64'],
+    ['aid', 'int64'],
     ['volume', 'int64'],
     ['speed', 'double'],
     ['video-codec', 'string'],
@@ -47,6 +49,16 @@ export interface SubtitleTrack {
     title?: string
     lang?: string
     selected?: boolean
+    external?: boolean
+}
+
+export interface AudioTrack {
+    id: number
+    'ff-index': number
+    type: string
+    title?: string
+    lang?: string
+    selected?: boolean
 }
 
 export type PlaybackManagerProps = {
@@ -56,6 +68,11 @@ export type PlaybackManagerProps = {
 
 export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackManagerProps) => {
     const api = useJellyfinContext()
+    const { markAsPlayed, markAsUnplayed, markAsProgress } = useWatchedState()
+    const {
+        configuration: { minResumePercentage, maxResumePercentage },
+    } = useJellyfinServerConfiguration()
+
     // Session based play count for settings page
     const [sessionPlayCount, setSessionPlayCount] = useState(() => {
         const saved = localStorage.getItem('sessionPlayCount')
@@ -66,6 +83,39 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [rememberFilters, setRememberFilters] = useState(localStorage.getItem('rememberFilters') === 'on')
     useEffect(() => localStorage.setItem('rememberFilters', rememberFilters ? 'on' : 'off'), [rememberFilters])
 
+    const [rememberSubtitleTrack, setRememberSubtitleTrack] = useState(
+        localStorage.getItem('rememberSubtitleTrack') !== 'off'
+    )
+    useEffect(
+        () => localStorage.setItem('rememberSubtitleTrack', rememberSubtitleTrack ? 'on' : 'off'),
+        [rememberSubtitleTrack]
+    )
+
+    const [rememberAudioTrack, setRememberAudioTrack] = useState(localStorage.getItem('rememberAudioTrack') !== 'off')
+    useEffect(() => localStorage.setItem('rememberAudioTrack', rememberAudioTrack ? 'on' : 'off'), [rememberAudioTrack])
+
+    // Next Episode Autoplay Settings
+    const [autoplayNextEpisode, setAutoplayNextEpisode] = useState(
+        localStorage.getItem('autoplayNextEpisode') !== 'off'
+    )
+    useEffect(
+        () => localStorage.setItem('autoplayNextEpisode', autoplayNextEpisode ? 'on' : 'off'),
+        [autoplayNextEpisode]
+    )
+
+    // Skip Intro Settings
+    const [skipIntro, setSkipIntro] = useState(localStorage.getItem('skipIntro') !== 'off')
+    useEffect(() => localStorage.setItem('skipIntro', skipIntro ? 'on' : 'off'), [skipIntro])
+
+    // Skip Outro Settings
+    const [skipOutro, setSkipOutro] = useState(localStorage.getItem('skipOutro') !== 'off')
+    useEffect(() => localStorage.setItem('skipOutro', skipOutro ? 'on' : 'off'), [skipOutro])
+
+    // Next Episode Overlay State
+    const [showNextEpisodeOverlay, setShowNextEpisodeOverlay] = useState(false)
+    const [nextEpisodeCountdown, setNextEpisodeCountdown] = useState(20)
+    const nextEpisodeTimerRef = useRef<number | null>(null)
+
     // MPV state
     const [isPaused, setIsPaused] = useState(false)
     const [timePos, setTimePos] = useState(0)
@@ -73,10 +123,14 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [isInitialized, setIsInitialized] = useState(false)
     const [subtitleTracks, setSubtitleTracks] = useState<SubtitleTrack[]>([])
     const [currentSubtitleId, setCurrentSubtitleId] = useState<number | null>(null)
+    const [audioTracks, setAudioTracks] = useState<AudioTrack[]>([])
+    const [currentAudioTrackId, setCurrentAudioTrackId] = useState<number | null>(null)
     const [speed, setSpeed] = useState(1.0)
     const [videoLoaded, setVideoLoaded] = useState(false)
+    const [isPending, setIsPending] = useState(true)
     const [isBuffering, setIsBuffering] = useState(false)
     const [cacheDuration, setCacheDuration] = useState(0)
+    const [mpvError, setMpvError] = useState<string | null>(null)
 
     // Video statistics
     const [videoCodec, setVideoCodec] = useState<string>('N/A')
@@ -99,6 +153,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [isFullscreen, setIsFullscreen] = useState(false)
     const [showMenu, setShowMenu] = useState(false)
     const hideControlsTimeoutRef = useRef<number | null>(null)
+    const tracklistRef = useRef<boolean | null>(false)
 
     const [volume, setVolume] = useState(() => {
         const savedVolume = localStorage.getItem('volume')
@@ -114,9 +169,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         return savedVolume ? parseFloat(savedVolume) : initialVolume
     })
 
-    const [playlistTitle, setPlaylistTitle] = useState(localStorage.getItem('playlistTitle') || '')
-    const [playlistUrl, setPlaylistUrl] = useState(localStorage.getItem('playlistUrl') || '')
-
     const [bitrate, setBitrate] = useState(Number(localStorage.getItem('bitrate')))
 
     const audioStorage = useAudioStorageContext()
@@ -124,6 +176,33 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const abortControllerRef = useRef<AbortController | null>(null)
 
     const [userInteracted, setUserInteracted] = useState(false)
+
+    // Update Checker Setting
+    const [checkForUpdates, setCheckForUpdates] = useState(localStorage.getItem('checkForUpdates') === 'on')
+
+    useEffect(() => localStorage.setItem('checkForUpdates', checkForUpdates ? 'on' : 'off'), [checkForUpdates])
+
+    // Subtitle Settings
+    const [subtitleFontSize, setSubtitleFontSize] = useState(localStorage.getItem('subtitleFontSize') || 'normal')
+    useEffect(() => localStorage.setItem('subtitleFontSize', subtitleFontSize), [subtitleFontSize])
+
+    const [subtitleFontWeight, setSubtitleFontWeight] = useState(localStorage.getItem('subtitleFontWeight') || 'normal')
+    useEffect(() => localStorage.setItem('subtitleFontWeight', subtitleFontWeight), [subtitleFontWeight])
+
+    const [subtitleFontColor, setSubtitleFontColor] = useState(localStorage.getItem('subtitleFontColor') || 'white')
+    useEffect(() => localStorage.setItem('subtitleFontColor', subtitleFontColor), [subtitleFontColor])
+
+    const [subtitlePosition, setSubtitlePosition] = useState(Number(localStorage.getItem('subtitlePosition')) || 100)
+    useEffect(() => localStorage.setItem('subtitlePosition', String(subtitlePosition)), [subtitlePosition])
+
+    // Seek Increment Settings
+    const [seekBackIncrement, setSeekBackIncrement] = useState(Number(localStorage.getItem('seekBackIncrement')) || 5)
+    useEffect(() => localStorage.setItem('seekBackIncrement', String(seekBackIncrement)), [seekBackIncrement])
+
+    const [seekForwardIncrement, setSeekForwardIncrement] = useState(
+        Number(localStorage.getItem('seekForwardIncrement')) || 5
+    )
+    useEffect(() => localStorage.setItem('seekForwardIncrement', String(seekForwardIncrement)), [seekForwardIncrement])
 
     // Track user-initiated pause to prevent unwanted auto-resume on devicechange
     const lastUserPauseRef = useRef<number>(0)
@@ -134,18 +213,37 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const isPlayingTrackRef = useRef<string | undefined>(undefined)
 
     const [currentTrack, setCurrentTrack] = useState<MediaItem | undefined>(undefined)
+    const [currentMediaSourceId, setCurrentMediaSourceId] = useState<string | undefined>(undefined)
 
     // Helper function to report playback stopped, avoiding duplicate reports
     const reportTrackStopped = useCallback(
-        (track: MediaItem | undefined, currentTime: number, signal?: AbortSignal) => {
+        async (track: MediaItem | undefined, currentTime: number, signal?: AbortSignal, mediaSourceId?: string) => {
             if (!track || track.Id === lastStoppedTrackIdRef.current) {
                 return
             }
 
             lastStoppedTrackIdRef.current = track.Id
-            api.reportPlaybackStopped(track.Id, currentTime, signal)
+            await api.reportPlaybackStopped(track.Id, currentTime, signal, mediaSourceId)
+
+            if (duration) {
+                // Update cached item with new progress percentage
+                const positionTicks = currentTime * 10000000
+                const playedPercentage = track.RunTimeTicks ? (positionTicks / track.RunTimeTicks) * 100 : 0
+
+                // Calculate Played status based on min/max resume percentages
+                const isPlayedComplete = playedPercentage > maxResumePercentage
+                const isPlayedStart = playedPercentage < minResumePercentage
+
+                if (isPlayedComplete) {
+                    await markAsPlayed(track)
+                } else if (isPlayedStart) {
+                    await markAsUnplayed(track)
+                } else {
+                    await markAsProgress(track, positionTicks, playedPercentage)
+                }
+            }
         },
-        [api]
+        [api, duration, markAsPlayed, markAsProgress, markAsUnplayed, maxResumePercentage, minResumePercentage]
     )
 
     // Update Media Session metadata
@@ -186,10 +284,65 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         [isInitialized]
     )
 
+    // Helper function to apply subtitle settings to MPV
+    const applySubtitleSettings = useCallback(async () => {
+        if (!isInitialized) return
+
+        try {
+            // Convert font size to MPV scale
+            const fontSizeMap: Record<string, number> = {
+                smaller: 0.6,
+                small: 0.8,
+                normal: 1.0,
+                large: 1.2,
+                larger: 1.4,
+            }
+            const fontSize = fontSizeMap[subtitleFontSize] || 1.0
+
+            // Convert font weight to MPV bold flag
+            const isBold = subtitleFontWeight === 'bold'
+
+            // Convert color to hex (MPV uses &HAABBGGRR format)
+            const colorMap: Record<string, string> = {
+                white: '#FFFFFF',
+                yellow: '#eecf1d',
+                green: '#1d881a',
+                blue: '#2a4fb6',
+                magenta: '#b919b9',
+                red: '#c21e1e',
+            }
+            const color = colorMap[subtitleFontColor] || '#FFFFFF'
+
+            // Convert opacity percentage to hex alpha (00-FF)
+
+            // Apply settings to MPV
+            await setProperty('sub-scale', fontSize)
+            await setProperty('sub-bold', isBold)
+            await setProperty('sub-color', color)
+            // await setProperty('sub-border-color', '#000000')
+            // await setProperty('sub-border-size', 3)
+            // await setProperty('sub-shadow-offset', 1)
+            // await setProperty('sub-shadow-color', '#000000')
+            await setProperty('sub-pos', subtitlePosition)
+
+            console.log('[MPV] Applied subtitle settings:', {
+                fontSize,
+                isBold,
+                color,
+                position: subtitlePosition,
+            })
+        } catch (error) {
+            console.error('Failed to apply subtitle settings:', error)
+        }
+    }, [isInitialized, subtitleFontSize, subtitleFontWeight, subtitleFontColor, subtitlePosition])
+
+    // Apply subtitle settings when they change
+    useEffect(() => {
+        applySubtitleSettings()
+    }, [applySubtitleSettings])
+
     // Initialize MPV and observe properties
     useEffect(() => {
-        let unlisten: (() => void) | undefined
-
         async function initMpv() {
             try {
                 // Wait a bit for the window to be fully ready
@@ -210,157 +363,285 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                     observedProperties: OBSERVED_PROPERTIES,
                 })
 
-                // Listen to property changes
-                unlisten = await observeProperties(OBSERVED_PROPERTIES, ({ name, data }) => {
-                    console.log(`[MPV] Property changed: ${name} =`, data)
-
-                    switch (name) {
-                        case 'pause':
-                            if (typeof data === 'boolean') {
-                                setIsPaused(data)
-                            }
-                            break
-                        case 'time-pos':
-                            if (typeof data === 'number') {
-                                setTimePos(data)
-                            }
-                            break
-                        case 'duration':
-                            if (typeof data === 'number') {
-                                setDuration(data)
-                                if (data > 0) setVideoLoaded(true)
-                            }
-                            break
-                        case 'track-list':
-                            if (Array.isArray(data)) {
-                                const subs = data.filter((track: any) => track.type === 'sub')
-                                setSubtitleTracks(subs)
-                            }
-                            break
-                        case 'sid':
-                            if (typeof data === 'number' || data === null) {
-                                setCurrentSubtitleId(data)
-                            }
-                            break
-                        case 'volume':
-                            if (typeof data === 'number') {
-                                setVolume(data)
-                            }
-                            break
-                        case 'speed':
-                            if (typeof data === 'number') {
-                                setSpeed(data)
-                            }
-                            break
-                        case 'video-codec':
-                            if (typeof data === 'string') {
-                                setVideoCodec(data)
-                            }
-                            break
-                        case 'audio-codec':
-                            if (typeof data === 'string') {
-                                setAudioCodec(data)
-                            }
-                            break
-                        case 'width':
-                            if (typeof data === 'number') {
-                                setVideoWidth(data)
-                            }
-                            break
-                        case 'height':
-                            if (typeof data === 'number') {
-                                setVideoHeight(data)
-                            }
-                            break
-                        case 'estimated-vf-fps':
-                            if (typeof data === 'number') {
-                                setFps(data)
-                            }
-                            break
-                        case 'video-bitrate':
-                            if (typeof data === 'number') {
-                                setVideoBitrate(data)
-                            }
-                            break
-                        case 'audio-bitrate':
-                            if (typeof data === 'number') {
-                                setAudioBitrate(data)
-                            }
-                            break
-                        case 'audio-params/channel-count':
-                            if (typeof data === 'number') {
-                                setAudioChannels(data)
-                            }
-                            break
-                        case 'audio-params/samplerate':
-                            if (typeof data === 'number') {
-                                setAudioSampleRate(data)
-                            }
-                            break
-                        case 'hwdec-current':
-                            if (typeof data === 'string') {
-                                setHwdec(data)
-                            }
-                            break
-                        case 'container-fps':
-                            if (typeof data === 'number') {
-                                setContainerFps(data)
-                            }
-                            break
-                        case 'video-format':
-                            if (typeof data === 'string') {
-                                setVideoFormat(data)
-                            }
-                            break
-                        case 'audio-codec-name':
-                            if (typeof data === 'string') {
-                                setAudioCodecName(data)
-                            }
-                            break
-                        case 'file-size':
-                            if (typeof data === 'number') {
-                                setFileSize(data)
-                            }
-                            break
-                        case 'paused-for-cache':
-                            if (typeof data === 'boolean') {
-                                setIsBuffering(data)
-                            }
-                            break
-                        case 'demuxer-cache-duration':
-                            if (typeof data === 'number') {
-                                setCacheDuration(data)
-                            }
-                            break
-                    }
-                })
-
                 setIsInitialized(true)
+                setMpvError(null)
             } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : 'Failed to initialize MPV'
                 console.error('Failed to initialize mpv:', error)
+                setMpvError(errorMessage)
+                setIsPending(false)
             }
         }
 
-        initMpv()
+        if (isTauri()) {
+            initMpv()
+        }
+
+        return () => {
+            if (isTauri()) {
+                destroy().catch(console.error)
+            }
+        }
+    }, [])
+
+    // Initialize MPV and observe properties
+    useEffect(() => {
+        let unlisten: (() => void) | undefined
+
+        async function initListen() {
+            // Listen to property changes
+            unlisten = await observeProperties(OBSERVED_PROPERTIES, ({ name, data }) => {
+                // console.log(`[MPV] Property changed: ${name} =`, data)
+
+                switch (name) {
+                    case 'pause':
+                        if (typeof data === 'boolean') {
+                            setIsPaused(data)
+                        }
+                        break
+                    case 'time-pos':
+                        if (typeof data === 'number') {
+                            setTimePos(data)
+                        }
+                        break
+                    case 'duration':
+                        if (typeof data === 'number') {
+                            setDuration(data)
+                            if (data > 0) {
+                                setVideoLoaded(true)
+                                setIsPending(false)
+                            }
+                        }
+                        break
+                    case 'track-list':
+                        if (Array.isArray(data)) {
+                            const subs = data.filter((track: any) => track.type === 'sub')
+                            setSubtitleTracks(subs)
+
+                            const audio = data.filter((track: any) => track.type === 'audio')
+                            setAudioTracks(audio)
+
+                            const selectedSubtitle = subs.find((track: any) => track.selected)
+
+                            if (selectedSubtitle) {
+                                setCurrentSubtitleId(selectedSubtitle.id)
+                            }
+
+                            const selectedAudio = audio.find((track: any) => track.selected)
+
+                            if (selectedAudio) {
+                                setCurrentAudioTrackId(selectedAudio.id)
+                            }
+
+                            // Restore saved track selections
+                            if (!tracklistRef.current && (subs.length > 0 || audio.length > 0)) {
+                                tracklistRef.current = true
+
+                                const savedSubtitleJson = localStorage.getItem('last_track_subtitle')
+                                const savedAudioTrackJson = localStorage.getItem('last_track_audio')
+
+                                if (
+                                    subs.length > 0 &&
+                                    savedSubtitleJson &&
+                                    rememberSubtitleTrack &&
+                                    !currentSubtitleId
+                                ) {
+                                    try {
+                                        const savedSubtitle = JSON.parse(savedSubtitleJson)
+                                        let matchingSub
+
+                                        // If trackId matches exactly, use the saved subtitleTrackId directly
+                                        if (savedSubtitle.trackId === currentTrack?.Id) {
+                                            matchingSub = subs.find((t: any) => t.id === savedSubtitle.subtitleTrackId)
+                                        } else {
+                                            // Otherwise, try to find a matching subtitle by language/title
+                                            matchingSub = subs.find(
+                                                (t: any) =>
+                                                    t.lang === savedSubtitle.lang || t.title === savedSubtitle.title
+                                            )
+                                        }
+
+                                        if (matchingSub) {
+                                            // console.log(
+                                            //     `[MPV] Restoring subtitle track: ${matchingSub.id}`,
+                                            //     matchingSub
+                                            // )
+                                            command('set', ['sid', matchingSub.id.toString()]).catch(console.error)
+                                        }
+                                    } catch (e) {
+                                        console.error('[MPV] Failed to parse saved subtitle:', e)
+                                    }
+                                }
+
+                                if (
+                                    audio.length > 0 &&
+                                    savedAudioTrackJson &&
+                                    rememberAudioTrack &&
+                                    !currentAudioTrackId
+                                ) {
+                                    try {
+                                        const savedAudioTrack = JSON.parse(savedAudioTrackJson)
+                                        let matchingAudio
+
+                                        // If trackId matches exactly, use the saved audioTrackId directly
+                                        if (savedAudioTrack.trackId === currentTrack?.Id) {
+                                            matchingAudio = audio.find(
+                                                (t: any) => t.id === savedAudioTrack.audioTrackId
+                                            )
+                                        } else {
+                                            // Otherwise, try to find a matching audio track by language/title
+                                            matchingAudio = audio.find(
+                                                (t: any) =>
+                                                    t.lang === savedAudioTrack.lang || t.title === savedAudioTrack.title
+                                            )
+                                        }
+
+                                        if (matchingAudio) {
+                                            // console.log(
+                                            //     `[MPV] Restoring audio track: ${matchingAudio.id}`,
+                                            //     matchingAudio
+                                            // )
+                                            command('set', ['aid', matchingAudio.id.toString()]).catch(console.error)
+                                        }
+                                    } catch (e) {
+                                        console.error('[MPV] Failed to parse saved audio track:', e)
+                                    }
+                                }
+                            }
+                        }
+                        break
+                    case 'sid':
+                        if (typeof data === 'number' || data === null) {
+                            setCurrentSubtitleId(data)
+                        }
+                        break
+                    case 'aid':
+                        if (typeof data === 'number' || data === null) {
+                            setCurrentAudioTrackId(data)
+                        }
+                        break
+                    case 'volume':
+                        if (typeof data === 'number') {
+                            setVolume(data)
+                        }
+                        break
+                    case 'speed':
+                        if (typeof data === 'number') {
+                            setSpeed(data)
+                        }
+                        break
+                    case 'video-codec':
+                        if (typeof data === 'string') {
+                            setVideoCodec(data)
+                        }
+                        break
+                    case 'audio-codec':
+                        if (typeof data === 'string') {
+                            setAudioCodec(data)
+                        }
+                        break
+                    case 'width':
+                        if (typeof data === 'number') {
+                            setVideoWidth(data)
+                        }
+                        break
+                    case 'height':
+                        if (typeof data === 'number') {
+                            setVideoHeight(data)
+                        }
+                        break
+                    case 'estimated-vf-fps':
+                        if (typeof data === 'number') {
+                            setFps(data)
+                        }
+                        break
+                    case 'video-bitrate':
+                        if (typeof data === 'number') {
+                            setVideoBitrate(data)
+                        }
+                        break
+                    case 'audio-bitrate':
+                        if (typeof data === 'number') {
+                            setAudioBitrate(data)
+                        }
+                        break
+                    case 'audio-params/channel-count':
+                        if (typeof data === 'number') {
+                            setAudioChannels(data)
+                        }
+                        break
+                    case 'audio-params/samplerate':
+                        if (typeof data === 'number') {
+                            setAudioSampleRate(data)
+                        }
+                        break
+                    case 'hwdec-current':
+                        if (typeof data === 'string') {
+                            setHwdec(data)
+                        }
+                        break
+                    case 'container-fps':
+                        if (typeof data === 'number') {
+                            setContainerFps(data)
+                        }
+                        break
+                    case 'video-format':
+                        if (typeof data === 'string') {
+                            setVideoFormat(data)
+                        }
+                        break
+                    case 'audio-codec-name':
+                        if (typeof data === 'string') {
+                            setAudioCodecName(data)
+                        }
+                        break
+                    case 'file-size':
+                        if (typeof data === 'number') {
+                            setFileSize(data)
+                        }
+                        break
+                    case 'paused-for-cache':
+                        if (typeof data === 'boolean') {
+                            setIsBuffering(data)
+                        }
+                        break
+                    case 'demuxer-cache-duration':
+                        if (typeof data === 'number') {
+                            setCacheDuration(data)
+                        }
+                        break
+                }
+            })
+        }
+
+        if (isTauri() && isInitialized) {
+            initListen()
+        }
 
         return () => {
             if (unlisten) {
                 unlisten()
             }
-            destroy().catch(console.error)
         }
-    }, [])
+    }, [
+        currentAudioTrackId,
+        currentSubtitleId,
+        currentTrack?.Id,
+        isInitialized,
+        rememberAudioTrack,
+        rememberSubtitleTrack,
+    ])
 
     // Report playback progress to Jellyfin
     useEffect(() => {
         if (isPaused || !currentTrack) return
 
         const interval = setInterval(() => {
-            api.reportPlaybackProgress(currentTrack.Id, timePos, false)
+            api.reportPlaybackProgress(currentTrack.Id, timePos, false, currentMediaSourceId)
         }, 10000)
 
         return () => clearInterval(interval)
-    }, [api, timePos, currentTrack, isPaused])
+    }, [api, timePos, currentTrack, isPaused, currentMediaSourceId])
 
     // Handle login/logout and sync to localStorage
     useEffect(() => {
@@ -379,24 +660,77 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     }
 
     const loadVideoAndPlay = useCallback(
-        async (track: MediaItem) => {
+        async (track: MediaItem, mediaSourceId?: string) => {
             if (!isInitialized) return
 
             try {
-                const offlineUrl = await audioStorage.getPlayableUrl(track.Id)
-                const streamUrl = api.getStreamUrl(track.Id, bitrate)
+                const offlineFilePath = await audioStorage.getFilePath(track.Id)
+                const streamUrl = api.getStreamUrl(track.Id, bitrate, mediaSourceId)
 
-                const videoUrl = offlineUrl?.url || streamUrl
+                const videoUrl = offlineFilePath || streamUrl
 
+                setIsPending(true)
                 await command('loadfile', [videoUrl])
+
+                let setStart = false
+
+                // Check if we need to seek to a saved position
+                const positionTicks = track.UserData?.PlaybackPositionTicks
+
+                if (positionTicks && positionTicks > 0 && track.RunTimeTicks) {
+                    const playedPercentage = (positionTicks / track.RunTimeTicks) * 100
+
+                    // Only resume if percentage is within the resume range
+                    const shouldSeek =
+                        playedPercentage >= minResumePercentage &&
+                        playedPercentage <= maxResumePercentage &&
+                        positionTicks > 10000000 && // More than 1 second
+                        positionTicks < track.RunTimeTicks - 10000000 // Less than 1 second from end
+
+                    if (shouldSeek) {
+                        const positionSeconds = positionTicks / 10000000
+                        await setProperty('start', `+${positionSeconds}`)
+                        setStart = true
+                    }
+                }
+
+                if (!setStart) {
+                    await setProperty('start', `+0`)
+                }
+
+                // Add external subtitle streams
+                if (track.MediaStreams && Array.isArray(track.MediaStreams)) {
+                    const externalSubtitles = track.MediaStreams.filter(
+                        stream =>
+                            stream.Type === 'Subtitle' &&
+                            (stream.DeliveryMethod === 'External' || stream.IsExternal) &&
+                            stream.Index !== undefined
+                    )
+
+                    for (const subtitle of externalSubtitles) {
+                        try {
+                            const subtitleUrl = `${api.auth.serverUrl}/Videos/${track.Id}/${mediaSourceId || track.Id}/Subtitles/${subtitle.Index}/Stream.${subtitle.Codec || 'srt'}?api_key=${api.auth.token}`
+
+                            // Add subtitle with title if available
+                            const title = subtitle.DisplayTitle || subtitle.Language || `Subtitle ${subtitle.Index}`
+                            await command('sub-add', [subtitleUrl, 'cached', title])
+
+                            // console.log(`[MPV] Added external subtitle: ${title}`, subtitle)
+                        } catch (error) {
+                            console.error(`[MPV] Failed to add external subtitle ${subtitle.Index}:`, error)
+                        }
+                    }
+                }
+
                 await setProperty('pause', false)
 
                 setVideoLoaded(true)
             } catch (error) {
                 console.error('Failed to load video:', error)
+                setIsPending(false)
             }
         },
-        [api, audioStorage, bitrate, isInitialized]
+        [api, audioStorage, bitrate, isInitialized, minResumePercentage, maxResumePercentage]
     )
 
     const playTrack = useCallback(async () => {
@@ -409,26 +743,27 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         const signal = abortControllerRef.current.signal
 
         if (!isPaused && previousTrackRef.current) {
-            reportTrackStopped(previousTrackRef.current, timePos, signal)
+            reportTrackStopped(previousTrackRef.current, timePos, signal, currentMediaSourceId)
         }
 
         previousTrackRef.current = currentTrack
 
         try {
-            await loadVideoAndPlay(currentTrack)
+            await loadVideoAndPlay(currentTrack, currentMediaSourceId)
 
             setSessionPlayCount(prev => prev + 1)
 
             updateMediaSessionMetadata(currentTrack)
 
             // Report playback start to Jellyfin
-            api.reportPlaybackStart(currentTrack.Id, signal)
+            api.reportPlaybackStart(currentTrack.Id, signal, currentMediaSourceId)
         } catch (error) {
             console.error('Error playing track:', error)
         }
     }, [
         api,
         currentTrack,
+        currentMediaSourceId,
         isPaused,
         isInitialized,
         loadVideoAndPlay,
@@ -452,16 +787,16 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
                 if (!isPaused) {
                     lastUserPauseRef.current = Date.now()
-                    api.reportPlaybackProgress(currentTrack.Id, timePos, true)
+                    api.reportPlaybackProgress(currentTrack.Id, timePos, true, currentMediaSourceId)
                 } else {
-                    api.reportPlaybackProgress(currentTrack.Id, timePos, false)
+                    api.reportPlaybackProgress(currentTrack.Id, timePos, false, currentMediaSourceId)
                     updateMediaSessionMetadata(currentTrack)
                 }
             } catch (error) {
                 console.error('Failed to toggle play/pause:', error)
             }
         }
-    }, [api, currentTrack, isPaused, isInitialized, timePos, updateMediaSessionMetadata])
+    }, [api, currentTrack, isPaused, isInitialized, timePos, updateMediaSessionMetadata, currentMediaSourceId])
 
     const protectedPlay = useCallback(async () => {
         const timeSinceLastPause = Date.now() - lastUserPauseRef.current
@@ -485,7 +820,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
         isPlayingTrackRef.current = currentTrack.Id
         playTrack()
-    }, [currentTrack?.Id]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [currentTrack?.Id, isInitialized]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const formatTime = (seconds: number) => {
         if (isNaN(seconds) || seconds === 0) return '0:00'
@@ -526,12 +861,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     // Handle cleanup on logout
     useEffect(() => {
         if (clearOnLogout && currentTrack) {
-            reportTrackStopped(currentTrack, timePos)
+            reportTrackStopped(currentTrack, timePos, undefined, currentMediaSourceId)
             if (isInitialized) {
                 command('stop', []).catch(console.error)
             }
         }
-    }, [clearOnLogout, currentTrack, isInitialized, reportTrackStopped, timePos])
+    }, [clearOnLogout, currentTrack, isInitialized, reportTrackStopped, timePos, currentMediaSourceId])
 
     // Video control functions
     const handleSeek = useCallback(
@@ -553,15 +888,53 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 try {
                     if (subtitleId === 'no') {
                         await command('set', ['sid', 'no'])
+                        localStorage.removeItem('last_track_subtitle')
                     } else {
                         await command('set', ['sid', subtitleId])
+
+                        // Find the subtitle track to save its details
+                        const selectedTrack = subtitleTracks.find(t => t.id.toString() === subtitleId)
+                        if (selectedTrack && currentTrack) {
+                            const trackInfo = {
+                                trackId: currentTrack.Id,
+                                subtitleTrackId: selectedTrack.id,
+                                lang: selectedTrack.lang || null,
+                                title: selectedTrack.title || null,
+                            }
+                            localStorage.setItem('last_track_subtitle', JSON.stringify(trackInfo))
+                        }
                     }
                 } catch (error) {
                     console.error('Failed to change subtitle track:', error)
                 }
             }
         },
-        [isInitialized]
+        [isInitialized, subtitleTracks, currentTrack]
+    )
+
+    const handleAudioTrackChange = useCallback(
+        async (audioTrackId: string) => {
+            if (isInitialized) {
+                try {
+                    await command('set', ['aid', audioTrackId])
+
+                    // Find the audio track to save its details
+                    const selectedTrack = audioTracks.find(t => t.id.toString() === audioTrackId)
+                    if (selectedTrack && currentTrack) {
+                        const trackInfo = {
+                            trackId: currentTrack.Id,
+                            audioTrackId: selectedTrack.id,
+                            lang: selectedTrack.lang || null,
+                            title: selectedTrack.title || null,
+                        }
+                        localStorage.setItem('last_track_audio', JSON.stringify(trackInfo))
+                    }
+                } catch (error) {
+                    console.error('Failed to change audio track:', error)
+                }
+            }
+        },
+        [isInitialized, audioTracks, currentTrack]
     )
 
     const handleVolumeChange = useCallback(
@@ -619,11 +992,13 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         async (filePath: string) => {
             try {
                 if (isInitialized) {
+                    setIsPending(true)
                     await command('loadfile', [filePath])
                     setVideoLoaded(true)
                 }
             } catch (error) {
                 console.error('Failed to open file:', error)
+                setIsPending(false)
             }
         },
         [isInitialized]
@@ -647,13 +1022,14 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         async (seconds: number) => {
             if (isInitialized) {
                 try {
-                    await command('seek', [seconds.toString(), 'relative'])
+                    // await command('seek', [seconds.toString(), 'relative']) // = busted, seeks twice..
+                    await setProperty('time-pos', timePos + seconds)
                 } catch (error) {
                     console.error('Failed to skip:', error)
                 }
             }
         },
-        [isInitialized]
+        [isInitialized, timePos]
     )
 
     const handleMouseMove = useCallback(() => {
@@ -665,145 +1041,159 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             if (!isPaused) {
                 setShowControls(false)
             }
-        }, 1000)
+        }, 2000)
     }, [isPaused])
 
     const toggleMenu = useCallback(() => {
         setShowMenu(v => !v)
     }, [])
 
-    // Keyboard controls
+    const cancelNextEpisodeCountdown = useCallback(() => {
+        if (nextEpisodeTimerRef.current) {
+            clearInterval(nextEpisodeTimerRef.current)
+            nextEpisodeTimerRef.current = null
+        }
+        setShowNextEpisodeOverlay(false)
+        setNextEpisodeCountdown(20)
+    }, [])
+
+    const startNextEpisodeCountdown = useCallback(() => {
+        setShowNextEpisodeOverlay(true)
+        setNextEpisodeCountdown(20)
+
+        if (nextEpisodeTimerRef.current) {
+            clearInterval(nextEpisodeTimerRef.current)
+        }
+
+        nextEpisodeTimerRef.current = window.setInterval(() => {
+            setNextEpisodeCountdown(prev => {
+                if (prev <= 1) {
+                    if (nextEpisodeTimerRef.current) {
+                        clearInterval(nextEpisodeTimerRef.current)
+                        nextEpisodeTimerRef.current = null
+                    }
+                    return 0
+                }
+                return prev - 1
+            })
+        }, 1000)
+    }, [])
+
+    // Cleanup countdown on unmount or when track changes
     useEffect(() => {
-        const handleKeyPress = (e: KeyboardEvent) => {
-            if (!isInitialized) return
-
-            switch (e.key) {
-                case ' ':
-                    e.preventDefault()
-                    togglePlayPause()
-                    break
-                case 'f':
-                case 'F':
-                    toggleFullscreen()
-                    break
-                case 'ArrowLeft':
-                    skip(-5)
-                    break
-                case 'ArrowRight':
-                    skip(5)
-                    break
-                case 'ArrowUp':
-                    e.preventDefault()
-                    if (volume < 100) {
-                        handleVolumeChange(Math.min(100, volume + 5))
-                    }
-                    break
-                case 'ArrowDown':
-                    e.preventDefault()
-                    if (volume > 0) {
-                        handleVolumeChange(Math.max(0, volume - 5))
-                    }
-                    break
-                case 'm':
-                case 'M':
-                    toggleMute()
-                    break
-            }
+        return () => {
+            cancelNextEpisodeCountdown()
         }
+    }, [cancelNextEpisodeCountdown, currentTrack])
 
-        window.addEventListener('keydown', handleKeyPress)
-        return () => window.removeEventListener('keydown', handleKeyPress)
-    }, [isInitialized, volume, togglePlayPause, toggleFullscreen, skip, handleVolumeChange, toggleMute])
+    const clearStates = useCallback(() => {
+        // Reset playback state
+        setTimePos(0)
+        setDuration(0)
+        setIsPaused(false)
+        setIsPending(true)
 
-    const clearCurrentTrack = useCallback(async () => {
-        if (currentTrack) {
-            // Exit fullscreen only if it was enabled by the app
-            if (isFullscreen && document.fullscreenElement) {
-                try {
-                    await document.exitFullscreen()
-                    setIsFullscreen(false)
-                } catch (error) {
-                    console.error('Failed to exit fullscreen:', error)
+        // Clear subtitle state
+        setSubtitleTracks([])
+        setCurrentSubtitleId(null)
+
+        // Clear audio track state
+        setAudioTracks([])
+        setCurrentAudioTrackId(null)
+
+        // Clear video statistics
+        setVideoCodec('N/A')
+        setAudioCodec('N/A')
+        setVideoWidth(0)
+        setVideoHeight(0)
+        setFps(0)
+        setVideoBitrate(0)
+        setAudioBitrate(0)
+        setAudioChannels(0)
+        setAudioSampleRate(0)
+        setHwdec('N/A')
+        setContainerFps(0)
+        setVideoFormat('N/A')
+        setAudioCodecName('N/A')
+        setFileSize(0)
+
+        // Clear buffering state
+        setIsBuffering(false)
+        setCacheDuration(0)
+
+        cancelNextEpisodeCountdown()
+    }, [cancelNextEpisodeCountdown])
+
+    const clearCurrentTrack = useCallback(
+        async (exitFullscreen: boolean = true) => {
+            if (currentTrack) {
+                // Exit fullscreen only if it was enabled by the app and exitFullscreen is true
+                if (exitFullscreen && isFullscreen && document.fullscreenElement) {
+                    try {
+                        await document.exitFullscreen()
+                        setIsFullscreen(false)
+                    } catch (error) {
+                        console.error('Failed to exit fullscreen:', error)
+                    }
+                }
+
+                // Report playback stopped to Jellyfin
+                reportTrackStopped(currentTrack, timePos, undefined, currentMediaSourceId)
+
+                // Stop and clear the video
+                if (isInitialized) {
+                    try {
+                        await command('stop', [])
+                        setVideoLoaded(false)
+                    } catch (error) {
+                        console.error('Failed to stop playback:', error)
+                    }
+                }
+
+                // Clear the current track
+                setCurrentTrack(undefined)
+                previousTrackRef.current = undefined
+                isPlayingTrackRef.current = undefined
+                lastStoppedTrackIdRef.current = undefined
+
+                // Abort any ongoing API requests
+                abortControllerRef.current?.abort('clearCurrentTrack')
+                abortControllerRef.current = null
+
+                clearStates()
+
+                // Clear Media Session metadata
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = null
                 }
             }
-
-            // Report playback stopped to Jellyfin
-            reportTrackStopped(currentTrack, timePos)
-
-            // Stop and clear the video
-            if (isInitialized) {
-                try {
-                    await command('stop', [])
-                    setVideoLoaded(false)
-                } catch (error) {
-                    console.error('Failed to stop playback:', error)
-                }
-            }
-
-            // Clear the current track
-            setCurrentTrack(undefined)
-            previousTrackRef.current = undefined
-            isPlayingTrackRef.current = undefined
-            lastStoppedTrackIdRef.current = undefined
-
-            // Abort any ongoing API requests
-            abortControllerRef.current?.abort('clearCurrentTrack')
-            abortControllerRef.current = null
-
-            // Reset playback state
-            setTimePos(0)
-            setDuration(0)
-            setIsPaused(false)
-
-            // Clear subtitle state
-            setSubtitleTracks([])
-            setCurrentSubtitleId(null)
-
-            // Clear video statistics
-            setVideoCodec('N/A')
-            setAudioCodec('N/A')
-            setVideoWidth(0)
-            setVideoHeight(0)
-            setFps(0)
-            setVideoBitrate(0)
-            setAudioBitrate(0)
-            setAudioChannels(0)
-            setAudioSampleRate(0)
-            setHwdec('N/A')
-            setContainerFps(0)
-            setVideoFormat('N/A')
-            setAudioCodecName('N/A')
-            setFileSize(0)
-
-            // Clear buffering state
-            setIsBuffering(false)
-            setCacheDuration(0)
-
-            // Clear Media Session metadata
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = null
-            }
-        }
-    }, [currentTrack, timePos, reportTrackStopped, isInitialized, isFullscreen])
+        },
+        [clearStates, currentMediaSourceId, currentTrack, isFullscreen, isInitialized, reportTrackStopped, timePos]
+    )
 
     return {
         // Track info
         currentTrack,
+        currentMediaSourceId,
 
         // Playback state
         isPaused,
         isInitialized,
         videoLoaded,
+        isPending,
         isBuffering,
         cacheDuration,
         timePos,
         duration,
+        mpvError,
 
         // Playback controls
         togglePlayPause,
-        playTrack: (track: MediaItem) => {
+        playTrack: async (track: MediaItem, mediaSourceId?: string) => {
+            await clearCurrentTrack(false)
             setUserInteracted(true)
             setCurrentTrack(track)
+            setCurrentMediaSourceId(mediaSourceId || track.Id)
         },
         clearCurrentTrack,
         handleSeek,
@@ -826,6 +1216,27 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         currentSubtitleId,
         handleSubtitleChange,
 
+        // Subtitle settings
+        subtitleFontSize,
+        setSubtitleFontSize,
+        subtitleFontWeight,
+        setSubtitleFontWeight,
+        subtitleFontColor,
+        setSubtitleFontColor,
+        subtitlePosition,
+        setSubtitlePosition,
+
+        // Seek increment settings
+        seekBackIncrement,
+        setSeekBackIncrement,
+        seekForwardIncrement,
+        setSeekForwardIncrement,
+
+        // Audio track controls
+        audioTracks,
+        currentAudioTrackId,
+        handleAudioTrackChange,
+
         // UI state
         showControls,
         isFullscreen: isFullscreen || document.fullscreenElement,
@@ -838,15 +1249,29 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         sessionPlayCount,
         resetSessionCount,
 
-        // Playlist (legacy)
-        playlistTitle,
-        playlistUrl,
-
         // Settings
         bitrate,
         setBitrate,
         rememberFilters,
         setRememberFilters,
+        rememberSubtitleTrack,
+        setRememberSubtitleTrack,
+        rememberAudioTrack,
+        setRememberAudioTrack,
+
+        // Next Episode Autoplay
+        autoplayNextEpisode,
+        setAutoplayNextEpisode,
+        showNextEpisodeOverlay,
+        nextEpisodeCountdown,
+        startNextEpisodeCountdown,
+        cancelNextEpisodeCountdown,
+
+        // Skip Intro/Outro
+        skipIntro,
+        setSkipIntro,
+        skipOutro,
+        setSkipOutro,
 
         // Video statistics
         videoCodec,
@@ -863,5 +1288,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         videoFormat,
         audioCodecName,
         fileSize,
+
+        checkForUpdates,
+        setCheckForUpdates,
     }
 }

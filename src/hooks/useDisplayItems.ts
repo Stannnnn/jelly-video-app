@@ -1,19 +1,34 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { MediaItem } from '../api/jellyfin'
 
-export const useDisplayItems = (tracks: MediaItem[], isLoading: boolean) => {
-    const [displayItems, setDisplayItems] = useState<(MediaItem | { isPlaceholder: true })[]>(tracks)
+export const useDisplayItems = (
+    tracks: MediaItem[],
+    isLoading: boolean,
+    type: 'movie' | 'series' | 'episode' | 'mixed' | 'mixedSmall' | 'specials' | 'collection' | 'person'
+) => {
+    const placeholderCounts = {
+        movie: 6,
+        series: 6,
+        collection: 6,
+        episode: 8,
+        mixed: 10,
+        mixedSmall: 4,
+        specials: 4,
+        person: 16,
+    }
+
+    const displayItems = useMemo(() => {
+        if (isLoading) {
+            const count = placeholderCounts[type] || 6
+            return [...tracks, ...Array(count).fill({ isPlaceholder: true })]
+        } else {
+            return tracks
+        }
+    }, [tracks, isLoading, type])
+
     const sizeMap = useRef<{ [index: number]: number }>({})
     const rowRefs = useRef<(HTMLElement | null)[]>([])
     const resizeObservers = useRef<ResizeObserver[]>([])
-
-    useEffect(() => {
-        if (isLoading) {
-            setDisplayItems([...tracks, ...Array(4).fill({ isPlaceholder: true })])
-        } else {
-            setDisplayItems(tracks)
-        }
-    }, [tracks, isLoading])
 
     const setSize = (index: number, height: number) => {
         sizeMap.current = { ...sizeMap.current, [index]: height }
@@ -76,7 +91,6 @@ export const useDisplayItems = (tracks: MediaItem[], isLoading: boolean) => {
 
     return {
         displayItems,
-        setDisplayItems,
         setRowRefs: (index: number, el: HTMLElement | null) => {
             rowRefs.current[index] = el
         },

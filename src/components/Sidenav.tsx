@@ -1,11 +1,14 @@
 import { GearIcon } from '@primer/octicons-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { MediaItem } from '../api/jellyfin'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import '../App.css'
+import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
+import { buildUrlWithSavedFilters } from '../context/FilterContext/FilterContext'
+import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
 import { useJellyfinSearch } from '../hooks/Jellyfin/useJellyfinSearch'
+import { useUpdateChecker } from '../hooks/useUpdateChecker'
 import { InlineLoader } from './InlineLoader'
 import { JellyImg } from './JellyImg'
 import './Sidenav.css'
@@ -14,12 +17,17 @@ import { DownloadingIcon, SearchClearIcon, SearchIcon } from './SvgIcons'
 
 export const Sidenav = (props: { username: string }) => {
     const navigate = useNavigate()
+    const { checkForUpdates } = usePlaybackContext()
+
+    const { updateStatus } = useUpdateChecker(checkForUpdates)
+    const location = useLocation()
     const searchInputRef = useRef<HTMLInputElement>(null)
     const { showSidenav, closeSidenav } = useSidenavContext()
 
     const { disabled, setDisabled } = useScrollContext()
     const [searchQuery, setSearchQuery] = useState(new URLSearchParams(location.search).get('search') || '')
     const { searchResults, searchLoading, searchError, searchAttempted } = useJellyfinSearch(searchQuery)
+    const { storageStats, queueCount } = useDownloadContext()
 
     const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value)
@@ -27,19 +35,6 @@ export const Sidenav = (props: { username: string }) => {
 
     const handleClearSearch = () => {
         setSearchQuery('')
-    }
-
-    const handleItemClick = (item: MediaItem) => {
-        if (item.Type === 'Movie') {
-            navigate(`/movie/${item.Id}`)
-        } else if (item.Type === 'Series') {
-            navigate(`/series/${item.Id}`)
-        } else if (item.Type === 'Episode') {
-            navigate(`/episode/${item.Id}`)
-        } else if (item.Type === 'BoxSet') {
-            navigate(`/collection/${item.Id}`)
-        }
-        closeSidenav()
     }
 
     // Debounced URL update for search query
@@ -90,22 +85,22 @@ export const Sidenav = (props: { username: string }) => {
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/movies" onClick={closeSidenav}>
+                            <NavLink to={buildUrlWithSavedFilters('/movies')} onClick={closeSidenav}>
                                 Movies
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/series" onClick={closeSidenav}>
+                            <NavLink to={buildUrlWithSavedFilters('/series')} onClick={closeSidenav} end>
                                 Series
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/favorites" onClick={closeSidenav}>
+                            <NavLink to={buildUrlWithSavedFilters('/favorites')} onClick={closeSidenav}>
                                 Favorites
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/collections" onClick={closeSidenav}>
+                            <NavLink to={buildUrlWithSavedFilters('/collections')} onClick={closeSidenav}>
                                 Collections
                             </NavLink>
                         </li>
@@ -151,13 +146,22 @@ export const Sidenav = (props: { username: string }) => {
                                     {!searchLoading && !searchError && searchResults.length > 0 && (
                                         <div className="results noSelect">
                                             {searchResults.map(item => {
-                                                const itemClass = ''
-
                                                 return (
-                                                    <div
+                                                    <NavLink
                                                         key={`${item.Type}-${item.Id}`}
-                                                        onClick={() => handleItemClick(item)}
-                                                        className={`result ${itemClass}`}
+                                                        to={
+                                                            item.Type === 'Movie'
+                                                                ? `/movie/${item.Id}`
+                                                                : item.Type === 'Series'
+                                                                  ? `/series/${item.Id}`
+                                                                  : item.Type === 'Episode'
+                                                                    ? `/episode/${item.Id}`
+                                                                    : item.Type === 'BoxSet'
+                                                                      ? `/collection/${item.Id}`
+                                                                      : '#'
+                                                        }
+                                                        onClick={closeSidenav}
+                                                        className="result"
                                                     >
                                                         <Squircle
                                                             width={36}
@@ -202,7 +206,7 @@ export const Sidenav = (props: { username: string }) => {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </NavLink>
                                                 )
                                             })}
                                             <div className="additional">
@@ -210,7 +214,7 @@ export const Sidenav = (props: { username: string }) => {
                                                     to={`/search/${encodeURIComponent(searchQuery)}`}
                                                     className="textlink"
                                                 >
-                                                    See all results for '{searchQuery}'
+                                                    See all results for <span className="keyword">'{searchQuery}'</span>
                                                 </Link>
                                             </div>
                                         </div>
@@ -229,11 +233,32 @@ export const Sidenav = (props: { username: string }) => {
                             </div>
                         </div>
                         <div className="actions">
-                            <NavLink to="/synced" className="icon synced" onClick={closeSidenav} title="Synced">
+                            <NavLink
+                                to="/downloads"
+                                className={`icon downloads ${queueCount > 0 ? 'downloading' : ''}`}
+                                onClick={closeSidenav}
+                                title={`Downloads - ${storageStats.trackCount} Video${
+                                    storageStats.trackCount === 1 ? '' : 's'
+                                }${
+                                    queueCount > 0
+                                        ? ` (${queueCount} video${queueCount === 1 ? '' : 's'} in queue)`
+                                        : ''
+                                }`}
+                            >
                                 <DownloadingIcon width={16} height={16} />
                             </NavLink>
-                            <NavLink to="/settings" className="icon settings" onClick={closeSidenav} title="Settings">
+                            <NavLink
+                                to="/settings"
+                                className="icon settings"
+                                onClick={closeSidenav}
+                                title={updateStatus === 'available' ? 'Settings - Update available!' : 'Settings'}
+                            >
                                 <GearIcon size={16} />
+                                {updateStatus === 'available' && (
+                                    <div className="update-checker">
+                                        <div className="dot" />
+                                    </div>
+                                )}
                             </NavLink>
                         </div>
                     </div>

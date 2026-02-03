@@ -4,78 +4,181 @@
     margin-bottom: -4px;
 }
 
-.media-list .virtuoso-grid-list {
+.media-list:has(.media-item.portrait) .virtuoso-grid-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
     gap: 30px 24px;
 }
 
+.media-list:has(.media-item > .skeleton-loading.portrait) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+    gap: 30px 24px;
+}
+
+.media-list:has(.media-item.square) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+    gap: 30px 24px;
+}
+
+.media-list:has(.media-item > .skeleton-loading.square) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+    gap: 30px 24px;
+}
+
+.media-list:has(.media-item.landscape) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px 24px;
+}
+
+.media-list:has(.media-item > .skeleton-loading.landscape) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px 24px;
+}
+
+.media-list:has(.media-item.continue-watching) .continue-watching-row {
+    margin-right: -24px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+.media-list:has(.media-item.continue-watching) .continue-watching-row::-webkit-scrollbar {
+    display: none;
+}
+
 .media-list .media-item {
     position: relative;
-    max-width: 152px;
     cursor: pointer;
 }
 
-.media-list .media-item > .media-portrait {
+.media-list .media-item.portrait {
+    max-width: 152px;
+}
+
+.media-list .media-item.square {
+    max-width: 108px;
+}
+
+.media-list .media-item.landscape {
+    max-width: 240px;
+}
+
+.media-list .media-item.continue-watching {
+    max-width: 280px;
+    margin-right: 24px;
+}
+
+.media-list .media-item > .media-thumbnail {
     position: relative;
-    width: 152px;
-    height: 228px;
     margin-bottom: 8px;
     border-radius: 8px;
 }
 
-.media-list .media-item > .media-portrait > .thumbnail {
-    display: block;
+.media-list .media-item.portrait > .media-thumbnail {
     width: 152px;
     height: 228px;
+}
+
+.media-list .media-item.square > .media-thumbnail {
+    width: 108px;
+    height: 108px;
+    border-radius: 12px;
+}
+
+.media-list .media-item.landscape > .media-thumbnail {
+    width: 240px;
+    height: 135px;
+}
+
+.media-list .media-item.continue-watching > .media-thumbnail {
+    width: 280px;
+    height: 158px;
+}
+
+.media-list .media-item > .media-thumbnail > .thumbnail {
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     border-radius: 8px;
     background-color: var(--bg-color-secondary);
 }
 
-.media-list .media-item > .media-portrait > .media-indicators {
+.media-list .media-item > .media-thumbnail > .media-indicators {
     position: absolute;
     top: 0;
     right: 0;
     z-index: 1;
-    margin: 5px;
+    margin: 4px;
+    padding: 2px;
     display: flex;
     align-items: center;
     border-radius: 20px;
     backdrop-filter: blur(2px);
 }
 
-.media-list .media-item > .media-portrait > .media-indicators > .favorited {
-    padding: 6px;
-    color: var(--font-color-tertiary);
+.media-list .media-item > .media-thumbnail > .media-indicators:empty {
+    display: none;
+}
+
+.media-list .media-item > .media-thumbnail > .media-indicators > .icon {
+    position: relative;
+    padding: 4px;
     color: var(--brand-color);
+    fill: var(--brand-color);
 }
 
-.media-list .media-item > .media-portrait > .media-indicators > .download-state {
-    display: flex;
-    align-items: center;
+.media-list .media-item > .media-thumbnail > .media-indicators > .icon.watched::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
-.media-list .media-item > .media-portrait > .media-indicators > .download-state > .icon {
-    padding: 6px;
+.media-list .media-item > .media-thumbnail > .media-indicators > .icon.download-state {
+    padding: 4px;
     fill: var(--font-color-tertiary);
-    fill: white;
+    fill: var(--brand-color);
     transition: fill 0.2s ease-out;
+}
+
+.media-list .media-item > .media-thumbnail > .media-indicators > .icon.download-state.downloaded::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
 .media-list
     .media-item
-    > .media-portrait
+    > .media-thumbnail
     > .media-indicators
-    > .download-state
-    > .icon.downloading.active-sync
+    > .icon.download-state.downloading
     > svg
     path:last-child {
     clip-path: inset(100% 0 0 0);
-    animation: syncColorSweepML 1.6s linear infinite;
+    animation: downloadColorSweepML 1.6s linear infinite;
 }
 
-@keyframes syncColorSweepML {
+@keyframes downloadColorSweepML {
     0% {
         clip-path: inset(0 0 100% 0);
     }
@@ -87,55 +190,13 @@
     }
 }
 
-/*
-.media-list .media-item > .media-portrait > .overlay {
-    position: absolute;
-    opacity: 0;
-    visibility: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 6px;
-    background-color: var(--overlay-bg);
-    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1);
-}
-
-.media-list .media-item:hover > .media-portrait > .overlay {
-    opacity: 1;
-    visibility: visible;
-}
-
-.media-list .media-item > .media-portrait > .overlay > .container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.media-list .media-item > .media-portrait > .overlay > .play {
-    cursor: pointer;
-    transition: opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1), visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
-        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
-}
-
-.media-list .media-item:hover > .media-portrait > .overlay > .play {
-    transform: scale(1.2);
-}
-*/
-
 .media-list .media-item > .media-details {
     display: flex;
     flex-direction: column;
     margin: 0 2px;
 }
 
-.media-list .media-item > .media-details > .name {
+.media-list .media-item > .media-details > .title {
     font-size: 0.85rem;
     font-weight: 600;
     margin-bottom: 2px;
@@ -144,8 +205,171 @@
     text-overflow: ellipsis;
 }
 
-.media-list .media-item > .media-details > .date {
+.media-list .media-item.specials > .media-details > .title {
+    font-size: 0.8125rem;
+    margin-bottom: 0;
+}
+
+.media-list .media-item.square > .media-details > .title {
+    font-size: 0.75rem;
+}
+
+.media-list .media-item > .media-details > .subtitle {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--font-color-tertiary);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.media-list .media-item.square > .media-details > .subtitle {
+    font-size: 0.725rem;
+}
+
+.media-list .media-item > .media-details > .container {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.75rem;
+    color: var(--font-color-tertiary);
+}
+
+.media-list .media-item > .media-details > .container > .subtitle {
+    font-weight: 600;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.media-list .media-item > .media-details > .container > .divider {
+    font-weight: 800;
+}
+
+.media-list .media-item > .media-details > .container > .dot {
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+    width: 2px;
+    height: 2px;
+    margin: 0 4px;
+    border-radius: 4px;
+    background-color: var(--font-color-tertiary);
+}
+
+.media-list .media-item > .media-details > .container > .subtitle.season-episode {
+    flex-shrink: 0;
+}
+
+.media-list .media-item.landscape > .media-thumbnail > .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background-color: var(--overlay-bg);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.media-list .media-item.landscape > .media-thumbnail:hover > .overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.media-list .media-item.landscape > .media-thumbnail > .overlay > .play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transition:
+        opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.media-list .media-item.landscape > .media-thumbnail:hover > .overlay > .play {
+    transform: scale(1.2);
+}
+
+.media-list .media-item.landscape > .media-thumbnail > .overlay > .play > svg {
+    fill: #ffffff;
+}
+
+.media-list .media-item.landscape > .media-thumbnail > .progress-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    margin: 8px;
+    height: 5px;
+    width: calc(100% - 16px);
+    border-radius: 8px;
+    backdrop-filter: blur(2px);
+    background-color: rgba(255, 255, 255, 0.16);
+    background: linear-gradient(
+        to right,
+        var(--brand-color) 0%,
+        var(--brand-color) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.16) var(--progress-percent, 0%),
+        rgba(255, 255, 255, 0.16) 100%
+    );
+}
+
+/* active state for selected episode */
+.media-list .media-item.episode-item.active > .media-thumbnail > .thumbnail {
+    opacity: 0.6;
+    filter: grayscale(1);
+}
+
+.media-list .media-item.episode-item.active > .media-thumbnail > .media-indicators {
+    backdrop-filter: unset;
+}
+
+.media-list .media-item.episode-item.active > .media-details {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Fallback image for cast thumbnails */
+.media-list .media-item.square > .media-thumbnail > .fallback-thumbnail::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    mask-image: url('/public/fallback-cast-crew2.svg');
+    mask-image: url('/public/fallback-cast-crew.svg');
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: 60%;
+    background-color: var(--font-color-secondary);
+}
+
+/* Fallback image for portrait thumbnails */
+.media-list .media-item.portrait > .media-thumbnail > .fallback-thumbnail::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    mask-image: url('/public/fallback-portrait.svg');
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: 42%;
+    background-color: var(--font-color-secondary);
 }

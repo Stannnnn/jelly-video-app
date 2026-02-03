@@ -25,11 +25,8 @@ export const SearchEpisodes = () => {
     return (
         <div className="search-results-page">
             <div className="search-content">
-                {items.length > 0 && (
-                    <div className="section episodes">
-                        <div className="title">Episodes matching '{query}'</div>
-                        <MediaList items={items} isLoading={isLoading} type="episode" loadMore={loadMore} />
-                    </div>
+                {(isLoading || items.length > 0) && (
+                    <MediaList items={items} isLoading={isLoading} type="episode" loadMore={loadMore} />
                 )}
 
                 {items.length === 0 && !isLoading && <div>No episodes found for '{query}'.</div>}

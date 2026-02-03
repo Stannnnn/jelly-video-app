@@ -1,15 +1,18 @@
 import '@fontsource-variable/inter'
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import './App.css'
+import { Downloads } from './components/Downloads'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Main } from './components/Main'
 import './components/MediaList.css'
 import { SearchResults } from './components/SearchResults'
 import { Sidenav } from './components/Sidenav'
 import { AudioStorageContextProvider } from './context/AudioStorageContext/AudioStorageContextProvider'
+import { DownloadContextProvider } from './context/DownloadContext/DownloadContextProvider'
 import { HistoryContextProvider } from './context/HistoryContext/HistoryContextProvider'
 import { JellyfinContextProvider } from './context/JellyfinContext/JellyfinContextProvider'
 import { PageTitleProvider } from './context/PageTitleContext/PageTitleProvider'
@@ -18,7 +21,6 @@ import { ScrollContextProvider } from './context/ScrollContext/ScrollContextProv
 import { useSidenavContext } from './context/SidenavContext/SidenavContext'
 import { SidenavContextProvider } from './context/SidenavContext/SidenavContextProvider'
 import { ThemeContextProvider } from './context/ThemeContext/ThemeContextProvider'
-import { useDocumentTitle } from './hooks/useDocumentTitle'
 import { CollectionPage } from './pages/CollectionPage'
 import { Collections } from './pages/Collections'
 import { EpisodePage } from './pages/EpisodePage'
@@ -27,22 +29,31 @@ import { Home } from './pages/Home'
 import { Login } from './pages/Login'
 import { MoviePage } from './pages/MoviePage'
 import { Movies } from './pages/Movies'
-import { RecentlyAdded } from './pages/RecentlyAdded'
+import { NextUp } from './pages/NextUp'
+import { PersonMovies } from './pages/PersonMovies'
+import { PersonPage } from './pages/PersonPage'
+import { RecentlyAddedMovies } from './pages/RecentlyAddedMovies'
+import { RecentlyAddedSeries } from './pages/RecentlyAddedSeries'
 import { RecentlyPlayed } from './pages/RecentlyPlayed'
 import { SearchCollections } from './pages/SearchCollections'
-import { SearchEpisodes } from './pages/SearchEpisodes'
 import { SearchMovies } from './pages/SearchMovies'
 import { SearchSeries } from './pages/SearchSeries'
+import { Series } from './pages/Series'
 import { SeriesPage } from './pages/SeriesPage'
 import { Settings } from './pages/Settings'
-import { Series } from './pages/Series'
+import { SpecialPage } from './pages/SpecialPage'
 import { VideoPlayerPage } from './pages/VideoPlayerPage'
 import { persister, queryClient } from './queryClient'
 
 export const App = () => {
+    useEffect(() => {
+        getCurrentWindow().show()
+    }, [])
+
     return (
         <ErrorBoundary>
-            {window.__NPM_LIFECYCLE_EVENT__ === 'dev:nocache' ? (
+            {window.__NPM_LIFECYCLE_EVENT__ === 'dev:nocache' ||
+            window.__NPM_LIFECYCLE_EVENT__ === 'tauri:dev:nocache' ? (
                 <QueryClientProvider client={queryClient}>
                     <RoutedApp />
                 </QueryClientProvider>
@@ -88,47 +99,8 @@ const RoutedApp = () => {
         const isWindows = /Win/.test(navigator.userAgent)
         const isChromium = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)
         const isEdge = /Edg/.test(navigator.userAgent) && /Microsoft Corporation/.test(navigator.vendor)
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream // eslint-disable-line @typescript-eslint/no-explicit-any
-        const isAndroidPWA =
-            /Android/.test(navigator.userAgent) &&
-            (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) // eslint-disable-line @typescript-eslint/no-explicit-any
-
         if (isWindows && (isChromium || isEdge)) {
             document.getElementsByTagName('html')[0].classList.add('winOS')
-        }
-
-        if (isIOS) {
-            document.getElementsByTagName('html')[0].classList.add('iOS')
-        }
-
-        // env safe area inset not supported or unreliable in android pwa?
-        if (isAndroidPWA) {
-            document.getElementsByTagName('html')[0].classList.add('safeAreaFallback')
-        }
-
-        // Needed for iOS, else you need to refresh page after changing orientation mode
-        const updateOrientation = () => {
-            const isIOSSafariNonPWA =
-                isIOS &&
-                !window.matchMedia('(display-mode: standalone)').matches &&
-                !(navigator as any).standalone && // eslint-disable-line @typescript-eslint/no-explicit-any
-                !window.matchMedia('(orientation: landscape)').matches
-            const htmlElement = document.getElementsByTagName('html')[0]
-
-            if (isIOS) {
-                if (isIOSSafariNonPWA) {
-                    htmlElement.classList.add('safeAreaFallback')
-                } else {
-                    htmlElement.classList.remove('safeAreaFallback')
-                }
-            }
-        }
-
-        updateOrientation()
-        window.matchMedia('(orientation: landscape)').addEventListener('change', updateOrientation)
-
-        return () => {
-            window.matchMedia('(orientation: landscape)').removeEventListener('change', updateOrientation)
         }
     }, [])
 
@@ -144,7 +116,9 @@ const RoutedApp = () => {
                                 <AudioStorageContextProvider>
                                     <SidenavContextProvider>
                                         <PlaybackContextProvider initialVolume={0.5} clearOnLogout={isLoggingOut}>
-                                            <MainLayout auth={auth} handleLogout={handleLogout} />
+                                            <DownloadContextProvider>
+                                                <MainLayout auth={auth} handleLogout={handleLogout} />
+                                            </DownloadContextProvider>
                                         </PlaybackContextProvider>
                                     </SidenavContextProvider>
                                 </AudioStorageContextProvider>
@@ -161,11 +135,9 @@ const RoutedApp = () => {
     return (
         <Router basename={import.meta.env.BASE_URL}>
             <HistoryContextProvider>
-                <PageTitleProvider>
-                    <ScrollContextProvider>
-                        <ThemeContextProvider>{actualApp}</ThemeContextProvider>
-                    </ScrollContextProvider>
-                </PageTitleProvider>
+                <ScrollContextProvider>
+                    <ThemeContextProvider>{actualApp}</ThemeContextProvider>
+                </ScrollContextProvider>
             </HistoryContextProvider>
         </Router>
     )
@@ -179,8 +151,6 @@ interface AuthData {
 }
 
 const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () => void }) => {
-    useDocumentTitle()
-
     const { showSidenav, toggleSidenav } = useSidenavContext()
 
     const memoSettings = useCallback(() => {
@@ -189,7 +159,14 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
 
     return (
         <Routes>
-            <Route path="/play/:id" element={<VideoPlayerPage />} />
+            <Route
+                path="/play/:id/:mediaSourceId?"
+                element={
+                    <PageTitleProvider pageTitle="Playing">
+                        <VideoPlayerPage />
+                    </PageTitleProvider>
+                }
+            />
             <Route
                 path="*"
                 element={
@@ -202,23 +179,70 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                         <Sidenav username={auth.username} />
 
                         <Routes>
-                            <Route path="/" element={<Main content={Home}></Main>} />
-                            <Route path="/settings" element={<Main content={memoSettings} />} />
-                            <Route path="/movies" element={<Main content={Movies} filterType={'movies'} />} />
-                            <Route path="/movie/:id" element={<Main content={MoviePage} />} />
-                            <Route path="/series" element={<Main content={Series} filterType={'movies'} />} />
-                            <Route path="/series/:id" element={<Main content={SeriesPage} />} />
-                            <Route path="/episode/:id" element={<Main content={EpisodePage} />} />
-                            <Route path="/collections" element={<Main content={Collections} filterType={'movies'} />} />
-                            <Route path="/collection/:id" element={<Main content={CollectionPage} />} />
-                            <Route path="/favorites" element={<Main content={Favorites} filterType={'favorites'} />} />
-                            <Route path="/recently-played" element={<Main content={RecentlyPlayed} />} />
-                            <Route path="/recently-added" element={<Main content={RecentlyAdded} />} />
-                            <Route path="/search/:query" element={<Main content={SearchResults} />} />
-                            <Route path="/search/:query/movies" element={<Main content={SearchMovies} />} />
-                            <Route path="/search/:query/series" element={<Main content={SearchSeries} />} />
-                            <Route path="/search/:query/episodes" element={<Main content={SearchEpisodes} />} />
-                            <Route path="/search/:query/collections" element={<Main content={SearchCollections} />} />
+                            <Route path="/" element={<Main pageTitle="Home" content={Home}></Main>} />
+                            <Route path="/settings" element={<Main pageTitle="Settings" content={memoSettings} />} />
+                            <Route
+                                path="/downloads"
+                                element={<Main pageTitle="Downloads" content={Downloads} filterType={'favorites'} />}
+                            />
+                            <Route
+                                path="/movies"
+                                element={<Main pageTitle="Movies" content={Movies} filterType={'movies'} />}
+                            />
+                            <Route path="/movie/:id" element={<Main pageTitle="Movie" content={MoviePage} />} />
+                            <Route
+                                path="/series"
+                                element={<Main pageTitle="Series" content={Series} filterType={'movies'} />}
+                            />
+                            <Route path="/series/:id" element={<Main pageTitle="Serie" content={SeriesPage} />} />
+                            <Route path="/episode/:id" element={<Main pageTitle="Episode" content={EpisodePage} />} />
+                            <Route path="/special/:id" element={<Main pageTitle="Special" content={SpecialPage} />} />
+                            <Route path="/person/:id" element={<Main pageTitle="Person" content={PersonPage} />} />
+                            <Route
+                                path="/person/:id/movies"
+                                element={<Main pageTitle="Person Movies" content={PersonMovies} />}
+                            />
+                            <Route
+                                path="/collections"
+                                element={<Main pageTitle="Collections" content={Collections} filterType={'movies'} />}
+                            />
+                            <Route
+                                path="/collection/:id"
+                                element={<Main pageTitle="Collection" content={CollectionPage} />}
+                            />
+                            <Route
+                                path="/favorites"
+                                element={<Main pageTitle="Favorites" content={Favorites} filterType={'favorites'} />}
+                            />
+                            <Route
+                                path="/recently-played"
+                                element={<Main pageTitle="Continue Watching" content={RecentlyPlayed} />}
+                            />
+                            <Route
+                                path="/recently-added-movies"
+                                element={<Main pageTitle="Latest Movies" content={RecentlyAddedMovies} />}
+                            />
+                            <Route
+                                path="/recently-added-series"
+                                element={<Main pageTitle="Latest Series" content={RecentlyAddedSeries} />}
+                            />
+                            <Route path="/next-up" element={<Main pageTitle="Next Up" content={NextUp} />} />
+                            <Route
+                                path="/search/:query"
+                                element={<Main pageTitle="Search" content={SearchResults} />}
+                            />
+                            <Route
+                                path="/search/:query/movies"
+                                element={<Main pageTitle="Search Movies" content={SearchMovies} />}
+                            />
+                            <Route
+                                path="/search/:query/series"
+                                element={<Main pageTitle="Search Series" content={SearchSeries} />}
+                            />
+                            <Route
+                                path="/search/:query/collections"
+                                element={<Main pageTitle="Search Collections" content={SearchCollections} />}
+                            />
                             <Route path="*" element={<Navigate to="/" />} />
                         </Routes>
                     </div>

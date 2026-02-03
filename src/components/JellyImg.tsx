@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { MediaItem } from '../api/jellyfin'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 
@@ -8,23 +8,35 @@ export const JellyImg = ({
     width,
     height,
     imageProps,
+    fallback,
 }: {
     item: MediaItem
-    type: 'Primary' | 'Backdrop'
+    type: 'Primary' | 'Backdrop' | 'Logo' | 'Thumb'
     width: number
     height: number
     imageProps?: React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>
+    fallback?: React.ReactNode
 }) => {
     const api = useJellyfinContext()
-    const [hasError, setError] = useState(false)
-
     const onlineImageUrl = api.getImageUrl(item, type, { width, height })
-
     const src = item.downloadedImageUrl || onlineImageUrl
 
-    useEffect(() => {
-        setError(false)
-    }, [src])
+    return <InternalJellyImg key={src} item={item} imageProps={imageProps} fallback={fallback} src={src} />
+}
+
+const InternalJellyImg = ({
+    item,
+    imageProps,
+    fallback,
+    src,
+}: {
+    item: MediaItem
+    imageProps?: React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>
+    fallback?: React.ReactNode
+    src?: string
+}) => {
+    const [hasError, setError] = useState(false)
+    const [isLoaded, setIsLoaded] = useState(false)
 
     return (
         <>
@@ -35,11 +47,14 @@ export const JellyImg = ({
                     alt={item.Name}
                     className="thumbnail"
                     loading="lazy"
+                    style={{ opacity: isLoaded ? undefined : 0, ...imageProps?.style }}
+                    onLoad={() => setIsLoaded(true)}
                     onError={() => setError(true)}
                 />
             )}
 
-            {(hasError || !src) && <div className="fallback-thumbnail"></div>}
+            {(hasError || !src) &&
+                (fallback || <div className="fallback-thumbnail" data-orig-src={src || 'undefined'}></div>)}
         </>
     )
 }

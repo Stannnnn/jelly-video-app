@@ -1,10 +1,20 @@
-import { ReactNode, useState } from 'react'
+import { isTauri } from '@tauri-apps/api/core'
+import { getCurrentWindow } from '@tauri-apps/api/window'
+import { ReactNode, useEffect, useState } from 'react'
 import { PageTitleContext } from './PageTitleContext'
 
 export type IPageTitleContext = ReturnType<typeof useInitialState>
 
-const useInitialState = () => {
-    const [pageTitle, setPageTitle] = useState('')
+const useInitialState = ({ pageTitle: initialPageTitle }: { pageTitle?: string }) => {
+    const [pageTitle, setPageTitle] = useState(initialPageTitle)
+
+    useEffect(() => {
+        document.title = [pageTitle, 'Jelly Video App'].filter(Boolean).join(' - ')
+
+        if (isTauri()) {
+            getCurrentWindow().setTitle(['Jelly Video App', pageTitle].filter(Boolean).join(' - '))
+        }
+    }, [pageTitle])
 
     return {
         pageTitle,
@@ -12,8 +22,8 @@ const useInitialState = () => {
     }
 }
 
-export const PageTitleProvider = ({ children }: { children: ReactNode }) => {
-    const initialState = useInitialState()
+export const PageTitleProvider = ({ pageTitle, children }: { pageTitle?: string; children: ReactNode }) => {
+    const initialState = useInitialState({ pageTitle })
 
     return <PageTitleContext.Provider value={initialState}>{children}</PageTitleContext.Provider>
 }

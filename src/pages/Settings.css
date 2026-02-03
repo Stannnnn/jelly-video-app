@@ -3,17 +3,16 @@
 }
 
 .settings-page > .section {
-    padding: 12px 16px;
+    padding: 14px 16px;
     margin-bottom: 20px;
     border-radius: 12px;
-    border-bottom: 1px solid var(--border-color);
-    background-color: var(--bg-color-secondary);
+    border: 1px solid var(--border-color);
 }
 
 .settings-page > .section > .title {
     font-size: 0.85rem;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .settings-page > .section .btn {
@@ -121,8 +120,9 @@
     bottom: 0;
     border-radius: 20px;
     border: 1px solid var(--border-color-secondary);
-    background-color: var(--bg-color-tertiary);
-    transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
+    transition:
+        border-color 0.2s ease-out,
+        background-color 0.2s ease-out;
 }
 
 .switch > input:checked + .slider {
@@ -139,40 +139,15 @@
     bottom: 2px;
     border-radius: 50%;
     background-color: var(--font-color-tertiary);
-    transition: transform 0.2s ease-out, background-color 0.2s ease-out;
+    transition:
+        transform 0.2s ease-out,
+        background-color 0.2s ease-out;
 }
 
 .switch > input:checked + .slider:before {
     transform: translateX(11px);
     background-color: var(--font-color-inverted);
 }
-
-/* Offline Sync and Crossfade
-.settings-page > .section > .primary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.settings-page > .section > .primary > .container > .title {
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.settings-page > .section > .primary > .container > .desc {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--font-color-secondary);
-}
-
-.settings-page > .section > .primary > .container > .desc > .number {
-    font-variant-numeric: tabular-nums;
-}
-*/
 
 .settings-page > .section.ui > .inner:not(:last-child) {
     margin-bottom: 10px;
@@ -293,6 +268,143 @@
     background-color: var(--volume-dot-color-active);
 }
 */
+
+/* Downloads */
+.settings-page > .section > .primary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.settings-page > .section > .primary > .container > .title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.settings-page > .section > .primary > .container > .desc {
+    font-weight: 500;
+}
+
+.settings-page > .section > .primary > .container > .desc > .number {
+    font-variant-numeric: tabular-nums;
+}
+
+.settings-page > .section .desc > .note {
+    margin-top: 8px;
+    color: var(--font-color-tertiary);
+}
+
+/* Shortcuts */
+.settings-page > .section.shortcuts > .title {
+    margin-bottom: 4px;
+}
+
+.settings-page > .section.shortcuts > .desc > .subtitle {
+    margin-bottom: 8px;
+}
+
+.settings-page > .section.shortcuts > .desc > .keys > .container {
+    margin-bottom: 10px;
+}
+
+.settings-page > .section.shortcuts > .desc > .keys > .container:last-child {
+    margin-bottom: 0;
+}
+
+.settings-page > .section.shortcuts > .desc > .keys > .container > .key {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-align: center;
+    display: inline-block;
+    min-width: 48px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--brand-color);
+    background-color: var(--bg-color-secondary);
+}
+
+.settings-page > .section.shortcuts > .desc > .keys > .container > .key:last-child {
+    margin-right: 2px;
+}
+
+.settings-page > .section.shortcuts > .desc > .keys > .container > .key > svg {
+    display: inline-block;
+}
+
+/* Updates */
+.settings-page > .section.updates > .inner:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.settings-page > .section.updates .desc > .subtitle {
+    margin-bottom: 0;
+}
+
+.settings-page > .section.updates .desc > .subdesc {
+    color: var(--font-color-tertiary);
+}
+
+.settings-page > .section.updates > .inner {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.settings-page > .section.updates > .inner > .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc {
+    font-size: 0.725rem;
+    font-weight: 500;
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon {
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: -3px;
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon.success {
+    margin-right: 6px;
+    color: var(--success-color);
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon.error {
+    color: var(--font-color-error-light);
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon.available {
+    color: var(--brand-color);
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon.checking {
+    color: var(--brand-color);
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .icon.checking > svg {
+    animation: iconCheckingSpin 1.4s linear infinite;
+}
+
+@keyframes iconCheckingSpin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.settings-page > .section.updates > .inner > .container > .subdesc > .text > .divider {
+    font-weight: 700;
+}
 
 /* About and Session */
 .settings-page > .section .desc {

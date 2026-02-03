@@ -1,0 +1,124 @@
+.video-app > .video-container.fullscreen > .next-episode-overlay {
+    right: 90px;
+    bottom: 90px;
+}
+
+.video-app > .video-container > .video-controls.hidden ~ .next-episode-overlay.visible {
+    transform: translateY(0);
+}
+
+.video-app > .video-container > .video-controls.visible ~ .next-episode-overlay.visible {
+    transform: translateY(-20px);
+}
+
+.next-episode-overlay {
+    position: absolute;
+    right: 60px;
+    bottom: 60px;
+    padding: 14px;
+    min-width: 320px;
+    max-width: 360px;
+    border-radius: 14px;
+    background-color: rgba(16, 16, 16, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition:
+        opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.next-episode-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.next-episode-overlay > .next-episode-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2px;
+    margin-top: -3px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-header > .title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--font-color-inverted);
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-header > .countdown {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--brand-color);
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-info {
+    display: flex;
+    flex-direction: column;
+    margin: 0 2px;
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-info > .series {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 6px;
+    word-break: break-word;
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-info > .episode {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    word-break: break-word;
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-actions > .btn {
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+    padding: 9px 16px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-out;
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-actions > .btn.play-now {
+    color: var(--font-color-inverted);
+    background-color: var(--btn-brand-color);
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-actions > .btn.play-now:hover {
+    background-color: var(--btn-brand-color-hover);
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-actions > .btn.cancel {
+    background-color: #303030;
+}
+
+.next-episode-overlay > .next-episode-content > .next-episode-actions > .btn.cancel:hover {
+    background-color: #3b3b3b;
+}

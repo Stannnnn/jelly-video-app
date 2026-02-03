@@ -1,26 +1,16 @@
-import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { Loader } from '../components/Loader'
-import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
+import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import { VideoPlayer } from '../VideoPlayer'
 
 export const VideoPlayerPage = () => {
-    const { id } = useParams<{ id: string }>()
-    const api = useJellyfinContext()
+    const { id, mediaSourceId } = useParams<{ id: string; mediaSourceId?: string }>()
     const playback = usePlaybackContext()
     const playbackRef = useRef(playback)
 
-    const {
-        data: item,
-        isLoading,
-        error,
-    } = useQuery({
-        queryKey: ['item', id],
-        queryFn: () => api.getItemById(id!),
-        enabled: !!id,
-    })
+    const { mediaItem: item, isLoading, error } = useJellyfinMediaItem(mediaSourceId || id)
+    const { mediaItem: sourceItem } = useJellyfinMediaItem(id)
 
     useEffect(() => {
         playbackRef.current = playback
@@ -28,9 +18,9 @@ export const VideoPlayerPage = () => {
 
     useEffect(() => {
         if (item) {
-            playbackRef.current.playTrack(item)
+            playbackRef.current.playTrack(item, mediaSourceId)
         }
-    }, [item])
+    }, [item, mediaSourceId])
 
     useEffect(() => {
         return () => {
@@ -38,26 +28,67 @@ export const VideoPlayerPage = () => {
         }
     }, [])
 
-    if (isLoading) {
-        return <Loader />
-    }
+    // Keyboard controls
+    useEffect(() => {
+        const handleKeyPress = (e: KeyboardEvent) => {
+            if (!playback.isInitialized) return
 
-    if (error || !item) {
-        return (
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh',
-                    color: 'white',
-                    fontSize: '1.5rem',
-                }}
-            >
-                Error loading video
-            </div>
-        )
-    }
+            switch (e.key) {
+                case ' ':
+                    e.preventDefault()
+                    playback.togglePlayPause()
+                    break
+                case 'k':
+                case 'K':
+                    e.preventDefault()
+                    playback.togglePlayPause()
+                    break
+                case 'j':
+                case 'J':
+                    e.preventDefault()
+                    playback.skip(-playback.seekBackIncrement * 2)
+                    break
+                case 'l':
+                case 'L':
+                    e.preventDefault()
+                    playback.skip(playback.seekForwardIncrement * 2)
+                    break
+                case 'f':
+                case 'F':
+                    e.preventDefault()
+                    playback.toggleFullscreen()
+                    break
+                case 'ArrowLeft':
+                    e.preventDefault()
+                    playback.skip(-playback.seekBackIncrement)
+                    break
+                case 'ArrowRight':
+                    e.preventDefault()
+                    playback.skip(playback.seekForwardIncrement)
+                    break
+                case 'ArrowUp':
+                    e.preventDefault()
+                    if (playback.volume < 100) {
+                        playback.handleVolumeChange(Math.min(100, playback.volume + 5))
+                    }
+                    break
+                case 'ArrowDown':
+                    e.preventDefault()
+                    if (playback.volume > 0) {
+                        playback.handleVolumeChange(Math.max(0, playback.volume - 5))
+                    }
+                    break
+                case 'm':
+                case 'M':
+                    e.preventDefault()
+                    playback.toggleMute()
+                    break
+            }
+        }
 
-    return <VideoPlayer />
+        window.addEventListener('keydown', handleKeyPress)
+        return () => window.removeEventListener('keydown', handleKeyPress)
+    }, [playback])
+
+    return <VideoPlayer isLoading={isLoading} error={error} sourceItem={sourceItem} />
 }

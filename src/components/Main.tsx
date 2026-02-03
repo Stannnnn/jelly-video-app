@@ -5,15 +5,17 @@ import { useFilterContext } from '../context/FilterContext/FilterContext'
 import { FilterContextProvider } from '../context/FilterContext/FilterContextProvider'
 import { useHistoryContext } from '../context/HistoryContext/HistoryContext'
 import { usePageTitle } from '../context/PageTitleContext/PageTitleContext'
+import { PageTitleProvider } from '../context/PageTitleContext/PageTitleProvider'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
-import { getPageTitle } from '../utils/titleUtils'
 import { SortingIcon } from './SvgIcons'
 
-export const Main = (props: Parameters<typeof MainContent>[0]) => {
+export const Main = (props: Parameters<typeof MainContent>[0] & { pageTitle?: string }) => {
     return (
-        <FilterContextProvider key={(props.content as { name?: string })?.name}>
-            <MainContent {...props} />
-        </FilterContextProvider>
+        <PageTitleProvider key={props.pageTitle} pageTitle={props.pageTitle}>
+            <FilterContextProvider key={(props.content as { name?: string })?.name}>
+                <MainContent {...props} />
+            </FilterContextProvider>
+        </PageTitleProvider>
     )
 }
 
@@ -43,8 +45,8 @@ export const MainContent = ({
                     </div>
                     <div className="container">
                         <div className="page_title">
-                            <div className="text" title={getPageTitle(pageTitle, location)}>
-                                {getPageTitle(pageTitle, location)}
+                            <div className="text" title={pageTitle}>
+                                {pageTitle}
                             </div>
                         </div>
                     </div>
@@ -147,17 +149,7 @@ export const MainContent = ({
                 </div>
             </div>
         )
-    }, [
-        filter.kind,
-        filter.order,
-        filter.sort,
-        filterType,
-        location,
-        pageTitle,
-        previousPage,
-        setFilter,
-        toggleSidenav,
-    ])
+    }, [filter.kind, filter.order, filter.sort, filterType, pageTitle, previousPage, setFilter, toggleSidenav])
 
     const memoContent = useMemo(() => {
         return (
@@ -178,7 +170,6 @@ export const MainContent = ({
 export const Progressbar = () => {
     const progressRef = useRef<HTMLInputElement>(null)
     const trackRef = useRef<HTMLDivElement>(null)
-    const bufferRef = useRef(false)
 
     return (
         <div className="progress" ref={trackRef}>
@@ -191,7 +182,6 @@ export const Progressbar = () => {
                 min="0"
                 max={0}
                 style={{} as React.CSSProperties}
-                onChange={e => {}}
             />
         </div>
     )

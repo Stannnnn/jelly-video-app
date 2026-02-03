@@ -52,20 +52,6 @@ export const SearchResults = () => {
                 </div>
             )}
 
-            {results.episodes.length > 0 && (
-                <div className="section episodes">
-                    <div className="container">
-                        <div className="title">Episodes</div>
-                        {results.episodes.length >= 12 && (
-                            <Link to={`/search/${encodeURIComponent(query)}/episodes`} className="see-more noSelect">
-                                See more
-                            </Link>
-                        )}
-                    </div>
-                    <MediaList items={results.episodes} isLoading={loading} type="episode" />
-                </div>
-            )}
-
             {results.collections.length > 0 && (
                 <div className="section collections">
                     <div className="container">
@@ -80,10 +66,9 @@ export const SearchResults = () => {
                 </div>
             )}
 
-            {results.movies.length === 0 &&
-                results.series.length === 0 &&
-                results.episodes.length === 0 &&
-                results.collections.length === 0 && <div>No results found for '{query}'.</div>}
+            {results.movies.length === 0 && results.series.length === 0 && results.collections.length === 0 && (
+                <div>No results found for '{query}'.</div>
+            )}
         </div>
     )
 }

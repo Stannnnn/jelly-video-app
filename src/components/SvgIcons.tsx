@@ -407,3 +407,53 @@ export class MinimizeIcon extends Component<IconProps> {
         )
     }
 }
+
+export class ChevronCompactLeftIcon extends Component<IconProps> {
+    static defaultProps = {
+        width: '100%',
+        height: '100%',
+    }
+
+    render() {
+        const { width, height, className } = this.props
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 3.60938 11.1641"
+                width={width}
+                height={height}
+                className={className}
+            >
+                <g>
+                    <rect height="11.1641" opacity="0" width="3.60938" x="0" y="0" />
+                    <path d="M1.86719 10.6641C1.96875 10.9297 2.21094 11.1094 2.46875 11.1094C2.89062 11.1094 3.20312 10.8047 3.20312 10.3906C3.20312 10.1719 3.08594 9.89844 3.01562 9.71875L1.19531 5.04688L1.19531 6.0625L3.01562 1.39062C3.08594 1.21094 3.20312 0.929688 3.20312 0.71875C3.20312 0.304688 2.89062 0 2.46875 0C2.21094 0 1.96875 0.179688 1.86719 0.453125L0.28125 4.52344C0.15625 4.84375 0 5.24219 0 5.55469C0 5.86719 0.15625 6.25781 0.28125 6.58594Z" />
+                </g>
+            </svg>
+        )
+    }
+}
+
+export class ChevronCompactRightIcon extends Component<IconProps> {
+    static defaultProps = {
+        width: '100%',
+        height: '100%',
+    }
+
+    render() {
+        const { width, height, className } = this.props
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 3.60938 11.1641"
+                width={width}
+                height={height}
+                className={className}
+            >
+                <g>
+                    <rect height="11.1641" opacity="0" width="3.60938" x="0" y="0" />
+                    <path d="M1.33594 10.6641L2.92188 6.58594C3.04688 6.25781 3.20312 5.86719 3.20312 5.55469C3.20312 5.24219 3.04688 4.84375 2.92188 4.52344L1.33594 0.453125C1.23438 0.179688 0.992188 0 0.734375 0C0.3125 0 0 0.304688 0 0.71875C0 0.929688 0.117188 1.21094 0.1875 1.39062L2.00781 6.0625L2.00781 5.04688L0.1875 9.71875C0.117188 9.89844 0 10.1719 0 10.3906C0 10.8047 0.3125 11.1094 0.734375 11.1094C0.992188 11.1094 1.23438 10.9297 1.33594 10.6641Z" />
+                </g>
+            </svg>
+        )
+    }
+}

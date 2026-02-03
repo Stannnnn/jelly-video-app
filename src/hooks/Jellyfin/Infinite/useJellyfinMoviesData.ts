@@ -5,7 +5,7 @@ import { useJellyfinInfiniteData } from './useJellyfinInfiniteData'
 export const useJellyfinMoviesData = () => {
     const api = useJellyfinContext()
     const { jellySort } = useFilterContext()
-    const itemsPerPage = 40
+    const itemsPerPage = 36
 
     return useJellyfinInfiniteData({
         queryKey: ['movies', jellySort.sortBy, jellySort.sortOrder],

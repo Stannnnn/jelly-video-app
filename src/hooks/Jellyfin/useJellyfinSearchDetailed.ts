@@ -2,17 +2,18 @@ import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { MediaItem } from '../../api/jellyfin'
+import { useAudioStorageContext } from '../../context/AudioStorageContext/AudioStorageContext'
 import { useJellyfinContext } from '../../context/JellyfinContext/JellyfinContext'
 
 interface SearchResults {
     movies: MediaItem[]
     series: MediaItem[]
-    episodes: MediaItem[]
     collections: MediaItem[]
 }
 
 export const useJellyfinSearchDetailed = (searchQuery: string | undefined) => {
     const api = useJellyfinContext()
+    const audioStorage = useAudioStorageContext()
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery)
 
     // Debounce the search query
@@ -31,24 +32,30 @@ export const useJellyfinSearchDetailed = (searchQuery: string | undefined) => {
                 return {
                     movies: [],
                     series: [],
-                    episodes: [],
                     collections: [],
                 }
             }
 
-            // Fetch each type separately with specific limits
-            const [movies, series, episodes, collections] = await Promise.all([
-                api.searchItems(debouncedSearchQuery, 20, [BaseItemKind.Movie]),
-                api.searchItems(debouncedSearchQuery, 20, [BaseItemKind.Series]),
-                api.searchItems(debouncedSearchQuery, 20, [BaseItemKind.Episode]),
-                api.searchItems(debouncedSearchQuery, 20, [BaseItemKind.BoxSet]),
-            ])
+            if (navigator.onLine) {
+                // Fetch each type separately with specific limits
+                const [movies, series, collections] = await Promise.all([
+                    api.searchItems(debouncedSearchQuery, 12, [BaseItemKind.Movie]),
+                    api.searchItems(debouncedSearchQuery, 12, [BaseItemKind.Series]),
+                    api.searchItems(debouncedSearchQuery, 12, [BaseItemKind.BoxSet]),
+                ])
 
-            return {
-                movies,
-                series,
-                episodes,
-                collections,
+                return {
+                    movies,
+                    series,
+                    collections,
+                }
+            } else {
+                const offlineSongs = await audioStorage.searchOfflineItems(debouncedSearchQuery, 50)
+                return {
+                    movies: offlineSongs,
+                    series: [],
+                    collections: [],
+                }
             }
         },
     })
@@ -57,7 +64,6 @@ export const useJellyfinSearchDetailed = (searchQuery: string | undefined) => {
         results: data || {
             movies: [],
             series: [],
-            episodes: [],
             collections: [],
         },
         loading: isFetching,

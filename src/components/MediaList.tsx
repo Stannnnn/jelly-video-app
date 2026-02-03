@@ -1,12 +1,13 @@
-import { HeartFillIcon } from '@primer/octicons-react'
+import { CheckCircleFillIcon, HeartFillIcon } from '@primer/octicons-react'
 import { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { VirtuosoHandle } from 'react-virtuoso'
 import { MediaItem } from '../api/jellyfin'
 import { useDisplayItems } from '../hooks/useDisplayItems'
 import { JellyImg } from './JellyImg'
-import { Loader } from './Loader'
 import { Skeleton } from './Skeleton'
 import { Squircle } from './Squircle'
+import { DownloadedIcon, DownloadingIcon, VideoPlayIcon } from './SvgIcons'
 import { VirtuosoWindow } from './VirtuosoWindow'
 
 export const MediaList = ({
@@ -16,26 +17,42 @@ export const MediaList = ({
     virtuosoType,
     loadMore,
     disableActions = false,
+    disableEvents = false,
     removeButton,
     className,
+    parentItem,
+    progressBarRef,
+    currentDownloadingId,
+    virtuosoRef,
+    onRangeChange,
+    overscan,
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
-    type: 'movie' | 'series' | 'episode' | 'collection' | 'mixed'
+    type: 'movie' | 'series' | 'episode' | 'collection' | 'mixed' | 'mixedSmall' | 'specials' | 'person'
     virtuosoType?: 'vertical' | 'horizontal' | 'grid'
     loadMore?: () => void
     disableActions?: boolean
+    disableEvents?: boolean
     removeButton?: (item: MediaItem) => ReactNode
     className?: string
+    parentItem?: MediaItem
+    progressBarRef?: React.RefObject<HTMLDivElement | null>
+    currentDownloadingId?: string
+    virtuosoRef?: React.RefObject<VirtuosoHandle | null>
+    onRangeChange?: (range: { startIndex: number; endIndex: number }) => void
+    overscan?: number
 }) => {
-    const { displayItems, setRowRefs } = useDisplayItems(items, isLoading)
+    const { displayItems, setRowRefs } = useDisplayItems(items, isLoading, type)
     const navigate = useNavigate()
 
     const handleItemClick = (item: MediaItem) => {
         // Determine the route based on item type
         const itemType = item.Type?.toLowerCase()
 
-        if (itemType === 'movie') {
+        if (type === 'specials') {
+            navigate(`/special/${item.Id}`)
+        } else if (itemType === 'movie') {
             navigate(`/movie/${item.Id}`)
         } else if (itemType === 'series') {
             navigate(`/series/${item.Id}`)
@@ -43,6 +60,8 @@ export const MediaList = ({
             navigate(`/episode/${item.Id}`)
         } else if (itemType === 'boxset') {
             navigate(`/collection/${item.Id}`)
+        } else if (itemType === 'person' || type === 'person') {
+            navigate(`/person/${item.Id}`)
         } else {
             // Fallback to play route for other types
             navigate(`/play/${item.Id}`)
@@ -52,43 +71,369 @@ export const MediaList = ({
     const renderItem = (index: number, item: MediaItem | { isPlaceholder: true } | undefined) => {
         if (!item || 'isPlaceholder' in item) {
             return (
-                <div className={`media-item movie-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
-                    <Skeleton type="movie" />
+                <div className={`media-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
+                    <Skeleton type={type === 'series' || type === 'collection' || type === 'person' ? 'movie' : type} />
                 </div>
             )
         }
 
-        return (
-            <div
-                className={`media-item movie-item ${className || ''}`}
-                ref={el => setRowRefs(index, el)}
-                onClick={() => handleItemClick(item)}
-            >
-                <Squircle width={152} height={228} cornerRadius={8} className="media-portrait">
-                    <JellyImg item={item} type={'Primary'} width={152} height={228} />
-                    <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
-                </Squircle>
-                <div className="media-details">
-                    <span className="name" title={item.Name}>
-                        {item.Name}
-                    </span>
-                    <div
-                        className="date"
-                        title={
-                            item.PremiereDate && !isNaN(Date.parse(item.PremiereDate))
-                                ? new Date(item.PremiereDate).getFullYear().toString()
-                                : ''
-                        }
-                    >
-                        {item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : ''}
+        if (type === 'movie' || type === 'series' || type === 'collection') {
+            //  const isSeriesLike = type === 'series' || (type === 'collection' && item.CollectionType === 'tvshows')
+            const isSeriesLike = type === 'series' || type === 'collection'
+
+            return (
+                <div
+                    className={`media-item portrait ${isSeriesLike ? 'series-item' : 'movie-item'} ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                    {...(disableEvents
+                        ? {}
+                        : {
+                              onClick: () => handleItemClick(item),
+                          })}
+                >
+                    <Squircle width={152} height={228} cornerRadius={8} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={152} height={228} />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                        {currentDownloadingId === item.Id && item.offlineState === 'downloading' && (
+                            <div
+                                ref={progressBarRef as React.RefObject<HTMLDivElement>}
+                                className="progress-indicator"
+                                title="Download progress"
+                                style={
+                                    {
+                                        '--progress-percent': '0%',
+                                    } as React.CSSProperties
+                                }
+                            />
+                        )}
+                    </Squircle>
+                    <div className="media-details">
+                        <span className="title" title={item.Name}>
+                            {item.Name}
+                        </span>
+                        {item.PremiereDate && (
+                            <div className="container">
+                                <div
+                                    className="subtitle date premiere"
+                                    title={new Date(item.PremiereDate).getFullYear().toString()}
+                                >
+                                    {new Date(item.PremiereDate).getFullYear()}
+                                </div>
+
+                                {isSeriesLike &&
+                                    item.EndDate &&
+                                    new Date(item.EndDate).getFullYear() !==
+                                        new Date(item.PremiereDate).getFullYear() && (
+                                        <>
+                                            <div className="divider">-</div>
+                                            <div
+                                                className="subtitle date end"
+                                                title={new Date(item.EndDate).getFullYear().toString()}
+                                            >
+                                                {new Date(item.EndDate).getFullYear()}
+                                            </div>
+                                        </>
+                                    )}
+                            </div>
+                        )}
                     </div>
                 </div>
-            </div>
-        )
-    }
+            )
+        } else if (type === 'episode') {
+            const isActive = parentItem && item.Id === parentItem.Id
 
-    if (isLoading && items.length === 0) {
-        return <Loader />
+            return (
+                <div
+                    className={`media-item landscape episode-item ${isActive ? 'active' : ''} ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                >
+                    <Squircle
+                        width={240}
+                        height={135}
+                        cornerRadius={8}
+                        className="media-thumbnail"
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () => {
+                                      navigate(`/play/${item.Id}`)
+                                  },
+                              })}
+                    >
+                        <JellyImg item={item} type={'Primary'} width={240} height={135} />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                        <div className="overlay">
+                            <div className="play">
+                                <VideoPlayIcon width={24} height={24} />
+                            </div>
+                        </div>
+                        <ProgressBar item={item} />
+                    </Squircle>
+                    <div
+                        className="media-details"
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () => handleItemClick(item),
+                              })}
+                    >
+                        <span className="title" title={item.Name}>
+                            {item.Name}
+                        </span>
+                        {item.IndexNumber !== undefined && item.IndexNumber !== null && (
+                            <div className="container">
+                                <div className="subtitle episode-number" title={`Episode ${item.IndexNumber}`}>
+                                    Episode {item.IndexNumber}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )
+        } else if (type === 'mixed') {
+            return (
+                <div
+                    className={`media-item landscape continue-watching ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                >
+                    <Squircle
+                        width={280}
+                        height={158}
+                        cornerRadius={8}
+                        className="media-thumbnail"
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () => {
+                                      navigate(`/play/${item.Id}`)
+                                  },
+                              })}
+                    >
+                        <JellyImg
+                            item={item}
+                            type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
+                            width={280}
+                            height={158}
+                        />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                        <div className="overlay">
+                            <div className="play">
+                                <VideoPlayIcon width={28} height={28} />
+                            </div>
+                        </div>
+                        <ProgressBar item={item} />
+                    </Squircle>
+                    <div
+                        className="media-details"
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () => handleItemClick(item),
+                              })}
+                    >
+                        {item.Type === 'Episode' ? (
+                            <>
+                                <span className="title" title={item.SeriesName?.toString()}>
+                                    {item.SeriesName}
+                                </span>
+                                <div className="container">
+                                    <div
+                                        className="subtitle season-episode"
+                                        title={`Season ${String(item.ParentIndexNumber)} - Episode ${String(
+                                            item.IndexNumber
+                                        )}`}
+                                    >
+                                        S{String(item.ParentIndexNumber).padStart(2, '0')} E
+                                        {String(item.IndexNumber).padStart(2, '0')}
+                                    </div>
+                                    {item.Name && (
+                                        <>
+                                            <div className="dot"></div>
+                                            <div className="subtitle episode-name" title={item.Name}>
+                                                {item.Name}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <span className="title" title={item.Name}>
+                                {item.Name}
+                            </span>
+                        )}
+                        {item.Type === 'Movie' && item.PremiereDate && (
+                            <div
+                                className="subtitle date premiere"
+                                title={new Date(item.PremiereDate).getFullYear().toString()}
+                            >
+                                {new Date(item.PremiereDate).getFullYear()}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )
+        } else if (type === 'mixedSmall') {
+            return (
+                <div className={`media-item landscape small ${className || ''}`} ref={el => setRowRefs(index, el)}>
+                    <Squircle
+                        width={240}
+                        height={135}
+                        cornerRadius={8}
+                        className="media-thumbnail"
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () => {
+                                      navigate(`/play/${item.Id}`)
+                                  },
+                              })}
+                    >
+                        <JellyImg
+                            item={item}
+                            type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
+                            width={280}
+                            height={158}
+                        />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                        <div className="overlay">
+                            <div className="play">
+                                <VideoPlayIcon width={24} height={24} />
+                            </div>
+                        </div>
+                        <ProgressBar item={item} />
+                    </Squircle>
+                    <div
+                        className="media-details"
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () => handleItemClick(item),
+                              })}
+                    >
+                        {item.Type === 'Episode' ? (
+                            <>
+                                <span className="title" title={item.SeriesName?.toString()}>
+                                    {item.SeriesName}
+                                </span>
+                                <div className="container">
+                                    <div
+                                        className="subtitle season-episode"
+                                        title={`Season ${String(item.ParentIndexNumber)} - Episode ${String(
+                                            item.IndexNumber
+                                        )}`}
+                                    >
+                                        S{String(item.ParentIndexNumber).padStart(2, '0')} E
+                                        {String(item.IndexNumber).padStart(2, '0')}
+                                    </div>
+                                    {item.Name && (
+                                        <>
+                                            <div className="dot"></div>
+                                            <div className="subtitle episode-name" title={item.Name}>
+                                                {item.Name}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <span className="title" title={item.Name}>
+                                {item.Name}
+                            </span>
+                        )}
+                        {item.Type === 'Movie' && item.PremiereDate && (
+                            <div
+                                className="subtitle date premiere"
+                                title={new Date(item.PremiereDate).getFullYear().toString()}
+                            >
+                                {new Date(item.PremiereDate).getFullYear()}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )
+        } else if (type === 'specials') {
+            return (
+                <div className={`media-item landscape specials ${className || ''}`} ref={el => setRowRefs(index, el)}>
+                    <Squircle
+                        width={240}
+                        height={135}
+                        cornerRadius={8}
+                        className="media-thumbnail"
+                        {...(disableEvents ? {} : { onClick: () => navigate(`/play/${item.Id}`) })}
+                    >
+                        <JellyImg
+                            item={item}
+                            type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
+                            width={240}
+                            height={135}
+                        />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                        <div className="overlay">
+                            <div className="play">
+                                <VideoPlayIcon width={24} height={24} />
+                            </div>
+                        </div>
+                        <ProgressBar item={item} />
+                    </Squircle>
+                    <div className="media-details" {...(disableEvents ? {} : { onClick: () => handleItemClick(item) })}>
+                        {item.Type === 'Episode' ? (
+                            <>
+                                <span className="title" title={item.Name}>
+                                    {item.Name}
+                                </span>
+                                <div className="container">
+                                    <div className="subtitle season-episode">
+                                        S{String(item.ParentIndexNumber).padStart(2, '0')} E
+                                        {String(item.IndexNumber).padStart(2, '0')}
+                                    </div>
+                                    {item.Name && (
+                                        <>
+                                            <div className="dot"></div>
+                                            <div className="subtitle episode-name" title={item.Name}>
+                                                {item.Name}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <span className="title" title={item.Name}>
+                                {item.Name}
+                            </span>
+                        )}
+                        {item.Type === 'Movie' && item.PremiereDate && (
+                            <div className="subtitle date premiere">{new Date(item.PremiereDate).getFullYear()}</div>
+                        )}
+                    </div>
+                </div>
+            )
+        } else if (type === 'person') {
+            return (
+                <div
+                    className={`media-item square person-item ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                    {...(disableEvents
+                        ? {}
+                        : {
+                              onClick: () => handleItemClick(item),
+                          })}
+                >
+                    <Squircle width={108} height={108} cornerRadius={12} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={108} height={108} />
+                    </Squircle>
+                    <div className="media-details">
+                        <span className="title" title={item.Name}>
+                            {item.Name}
+                        </span>
+                        {(item as any).Role && (
+                            <div className="subtitle role" title={(item as any).Role}>
+                                {(item as any).Role}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )
+        }
     }
 
     if (items.length === 0 && !isLoading) {
@@ -96,11 +441,18 @@ export const MediaList = ({
             movie: 'No movies were found',
             series: 'No series were found',
             episode: 'No episodes were found',
-            collection: 'No collections were found',
+            collection: 'No items were found',
             mixed: 'No items were found',
+            mixedSmall: 'No items were found',
+            specials: 'No specials were found',
+            person: 'No people were found',
         }[type]
 
         return <div className="empty">{emptyMessage}</div>
+    }
+
+    if (!displayItems.length) {
+        return null
     }
 
     return (
@@ -110,7 +462,9 @@ export const MediaList = ({
                 data={displayItems}
                 itemContent={renderItem}
                 endReached={loadMore}
-                overscan={800}
+                overscan={overscan || 800}
+                virtuosoRef={virtuosoRef}
+                onRangeChange={onRangeChange}
             />
         </ul>
     )
@@ -127,13 +481,55 @@ const MediaIndicators = ({
 }) => {
     return (
         <div className="media-indicators">
+            {item.offlineState &&
+                (item.offlineState === 'downloaded' || item.offlineState === 'downloading') &&
+                location.pathname !== '/downloads' && (
+                    <div
+                        className={`icon download-state ${
+                            item.offlineState === 'downloaded'
+                                ? 'icon download-state downloaded'
+                                : 'icon download-state downloading'
+                        }`}
+                        title={item.offlineState === 'downloaded' ? 'Downloaded' : 'Downloading'}
+                    >
+                        {item.offlineState === 'downloaded' ? (
+                            <DownloadedIcon width={16} height={16} />
+                        ) : (
+                            <DownloadingIcon width={16} height={16} />
+                        )}
+                    </div>
+                )}
             {removeButton && removeButton(item)}
-
+            {!disableActions && item.UserData?.Played && (
+                <div className="icon watched" title="Watched">
+                    <CheckCircleFillIcon size={16} />
+                </div>
+            )}
             {!disableActions && item.UserData?.IsFavorite && location.pathname !== '/favorites' && (
-                <div className="favorited" title="Favorited">
+                <div className="icon favorited" title="Favorited">
                     <HeartFillIcon size={16} />
                 </div>
             )}
         </div>
+    )
+}
+
+const ProgressBar = ({ item }: { item: MediaItem }) => {
+    return (
+        <>
+            {item.UserData?.PlayedPercentage &&
+                item.UserData.PlayedPercentage > 0 &&
+                item.UserData.PlayedPercentage < 100 && (
+                    <div
+                        className="progress-indicator"
+                        title="Played duration"
+                        style={
+                            {
+                                '--progress-percent': `${item.UserData.PlayedPercentage}%`,
+                            } as React.CSSProperties
+                        }
+                    />
+                )}
+        </>
     )
 }

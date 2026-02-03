@@ -20,7 +20,7 @@ export const useJellyfinInfiniteData = ({
     enabled?: boolean
     staleTime?: number
 }) => {
-    const itemsPerPage = 40
+    const itemsPerPage = 36
 
     const { data, isFetching, isPending, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<
         MediaItem[],

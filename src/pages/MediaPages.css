@@ -1,0 +1,170 @@
+.media-page > .media-content {
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.media-page > .media-content > .section {
+    margin-bottom: 60px;
+}
+
+.media-page > .media-content > .section:last-of-type {
+    margin-bottom: 0;
+}
+
+.media-page > .media-content > .section > .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.media-page > .media-content > .section > .container:has(> .title) {
+    margin-bottom: 16px;
+}
+
+.media-page > .media-content > .section > .container > .title {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.media-page > .media-content > .section > .container > .see-more {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--brand-color);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 6px 11px;
+    border-radius: 6px;
+    background-color: var(--bg-color-secondary);
+    transition: background-color 0.2s ease-out;
+}
+
+.media-page > .media-content > .section > .container > .option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .filter {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .filter > select {
+    font-size: 0.725rem;
+    font-weight: 500;
+    color: var(--brand-color);
+    cursor: pointer;
+    padding: 6px 8px;
+    padding-right: 24px;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .filter > .icon {
+    position: absolute;
+    right: 6px;
+    color: var(--brand-color);
+    user-select: none;
+    pointer-events: none;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .filter > select > option {
+    font-weight: 500;
+    color: var(--font-color);
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    border-left: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort > .icon {
+    padding: 7px;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort > .icon > svg {
+    fill: var(--brand-color);
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort > .icon > svg > g > .arrow {
+    transition: opacity 0.2s ease-out;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort > .icon > svg > g > .arrow.down {
+    opacity: 0.4;
+}
+
+/* Ascending */
+.media-page
+    > .media-content
+    > .section
+    > .container
+    > .option
+    > .sorting
+    > .sort
+    > .icon.active
+    > svg
+    > g
+    > .arrow.down {
+    opacity: 1;
+}
+
+.media-page > .media-content > .section > .container > .option > .sorting > .sort > .icon.active > svg > g > .arrow.up {
+    opacity: 0.4;
+}
+
+.media-page > .media-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: auto;
+    padding-top: 80px;
+}
+
+.media-page > .media-footer > .fileinfo {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--font-color-tertiary);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 2px;
+    column-gap: 10px;
+}
+
+.media-page > .media-footer > .fileinfo > .container {
+    display: flex;
+    gap: 4px;
+}
+
+.media-page > .media-footer > .fileinfo > .container > .size {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Responsive */
+@media only screen and (max-width: 1080px) {
+    .media-page > .media-footer {
+        gap: 10px;
+    }
+
+    .media-page > .media-footer > .fileinfo {
+        flex-direction: column-reverse;
+    }
+}

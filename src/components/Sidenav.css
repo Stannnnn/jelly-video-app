@@ -1,7 +1,9 @@
 .sidenav {
     position: relative;
     flex-basis: 210px;
-    transition: flex-basis 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+    transition:
+        flex-basis 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 0.2s ease;
 }
 
 .sidenav > .sidenav_wrapper {
@@ -18,18 +20,22 @@
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
     transform: translate(0);
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+    transition:
+        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 0.2s ease;
 }
 
-/* Isolate volume scroll */
+/* Isolate volume scroll
 .sidenav > .sidenav_wrapper.lockscroll {
     overflow: hidden !important;
 }
+*/
 
-/* Prevent sidenav content from jumping on windows/chrome when scrolling volume */
+/* Prevent sidenav content from jumping on windows/chrome when scrolling volume
 html.winOS .sidenav > .sidenav_wrapper.lockscroll {
     scrollbar-gutter: stable;
 }
+*/
 
 /* Sidenav specific scroll */
 html.winOS .sidenav > .sidenav_wrapper {
@@ -109,7 +115,9 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     margin: 0 16px;
     padding: 7px 14px;
     border-radius: 8px;
-    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    transition:
+        background-color 0.2s ease-out,
+        color 0.2s ease-out;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > ul > li > a:hover {
@@ -171,7 +179,10 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     cursor: pointer;
     padding: 7px;
     fill: var(--font-color-secondary);
-    transition: opacity 0.2s ease-out, visibility 0.2s ease-out, fill 0.2s ease-out;
+    transition:
+        opacity 0.2s ease-out,
+        visibility 0.2s ease-out,
+        fill 0.2s ease-out;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_header > .input_container > .search-clear:hover {
@@ -200,13 +211,15 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     cursor: pointer;
     padding: 6px;
     margin: 0 -4px;
     margin-bottom: 6px;
     border-radius: 8px;
-    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    transition:
+        background-color 0.2s ease-out,
+        color 0.2s ease-out;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result:hover {
@@ -238,6 +251,42 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     border-radius: 5px;
 }
 
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
+    > .thumbnail-container
+    > .fallback-thumbnail {
+    position: relative;
+    background-color: var(--bg-color-tertiary);
+}
+
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
+    > .thumbnail-container
+    > .fallback-thumbnail::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    mask-image: url('/public/fallback-portrait.svg');
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: 52%;
+    background-color: var(--font-color-secondary);
+}
+
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .details {
     position: relative;
     overflow: hidden;
@@ -251,6 +300,7 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     -webkit-line-clamp: 2;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-bottom: 2px;
 }
 
 .sidenav
@@ -262,7 +312,8 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     > .result
     > .details
     > .container {
-    line-height: 1;
+    display: flex;
+    align-items: center;
 }
 
 .sidenav
@@ -278,7 +329,6 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     font-size: 0.725rem;
     font-weight: 600;
     color: var(--font-color-tertiary);
-    display: inline;
 }
 
 .sidenav
@@ -294,7 +344,6 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     font-size: 0.725rem;
     font-weight: 500;
     color: var(--font-color-tertiary);
-    display: inline;
 }
 
 .sidenav
@@ -307,8 +356,7 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     > .details
     > .container
     > .divider {
-    display: inline-block;
-    vertical-align: middle;
+    display: block;
     width: 2px;
     height: 2px;
     margin: 0 4px;
@@ -318,8 +366,21 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .additional {
     font-size: 0.725rem;
-    margin-top: 5px;
+    line-height: 1.4;
+    margin-top: 4px;
     margin-left: 3px;
+}
+
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .additional
+    > .textlink
+    > .keyword {
+    font-weight: 500;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .indicator {
@@ -365,7 +426,9 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     margin-bottom: 2px;
     padding: 6px 8px;
     border-radius: 6px;
-    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    transition:
+        background-color 0.2s ease-out,
+        color 0.2s ease-out;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_content > .playlists > .container > .playlist:hover {
@@ -392,7 +455,7 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0 12px;
+    margin: 0 8px;
 }
 
 .sidenav > .sidenav_wrapper > .sidenav_footer > .account > .status {
@@ -440,12 +503,19 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     fill: var(--font-color-active);
 }
 
-.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon.synced.active-sync > svg path:last-child {
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_footer
+    > .account
+    > .actions
+    > .icon.downloads.downloading
+    > svg
+    path:last-child {
     clip-path: inset(100% 0 0 0);
-    animation: syncColorSweep 1.6s linear infinite;
+    animation: downloadColorSweep 1.6s linear infinite;
 }
 
-@keyframes syncColorSweep {
+@keyframes downloadColorSweep {
     0% {
         clip-path: inset(0 0 100% 0);
     }
@@ -454,6 +524,47 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     }
     100% {
         clip-path: inset(100% 0 0 0);
+    }
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon.settings > .update-checker {
+    position: absolute;
+    top: -2px;
+    right: 1px;
+    padding: 2px;
+    border-radius: 20px;
+    background-color: var(--bg-color-secondary);
+    transition: background-color 0.2s ease-out;
+    pointer-events: none;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon.settings:hover .update-checker {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions > .icon.settings > .update-checker > .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 20px;
+    background-color: var(--brand-color);
+    transform: scale(1);
+    animation: dotPulseAnimation 2s infinite;
+}
+
+@keyframes dotPulseAnimation {
+    0% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 var(--brand-color);
+    }
+
+    80% {
+        transform: scale(1);
+        box-shadow: 0 0 0 7px rgba(0, 0, 0, 0);
+    }
+
+    100% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
     }
 }
 
