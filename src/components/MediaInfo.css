@@ -88,6 +88,11 @@
     font-size: 1.375rem;
     font-weight: 700;
     margin-bottom: 10px;
+    width: fit-content;
+}
+
+.media-page > .media-info > .media-header > .banner-content > .logo > .fallback-logo {
+    word-break: break-all;
 }
 
 .media-page
