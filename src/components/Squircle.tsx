@@ -45,6 +45,10 @@ export const Squircle = ({
     const [dimensions, setDimensions] = useState({ width, height })
     const ref = useRef<HTMLDivElement>(null)
 
+    useEffect(() => {
+        setDimensions({ width, height })
+    }, [width, height])
+
     // Determine default cornerRadius based on dimensions if not provided
     const effectiveCornerRadius = useMemo(() => {
         if (cornerRadius !== undefined) return cornerRadius
