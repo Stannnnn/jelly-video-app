@@ -19,6 +19,7 @@ import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStor
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
+import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
 import { useThemeContext } from '../context/ThemeContext/ThemeContext'
 import { useUpdateChecker } from '../hooks/useUpdateChecker'
 import { persister } from '../queryClient'
@@ -57,6 +58,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         rememberFilters,
         setRememberFilters,
     } = usePlaybackContext()
+
+    const { enablePlaylists, setEnablePlaylists } = useSidenavContext()
 
     const { theme, toggleTheme } = useThemeContext()
 
@@ -580,7 +583,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
             </div>
 
             <div className="section misc ui">
-                <div className="title">Misc</div>
+                <div className="title">Miscellaneous</div>
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
@@ -593,6 +596,24 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     type="checkbox"
                                     checked={rememberFilters}
                                     onChange={e => setRememberFilters(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Playlists</div>
+                            <div className="subdesc">Enable playlist view and functionality</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={enablePlaylists}
+                                    onChange={e => setEnablePlaylists(e.target.checked)}
                                 ></input>
                                 <span className="slider"></span>
                             </label>

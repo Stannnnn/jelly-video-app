@@ -22,7 +22,7 @@ export const Sidenav = (props: { username: string }) => {
     const { updateStatus } = useUpdateChecker(checkForUpdates)
     const location = useLocation()
     const searchInputRef = useRef<HTMLInputElement>(null)
-    const { showSidenav, closeSidenav } = useSidenavContext()
+    const { showSidenav, closeSidenav, enablePlaylists } = useSidenavContext()
 
     const { disabled, setDisabled } = useScrollContext()
     const [searchQuery, setSearchQuery] = useState(new URLSearchParams(location.search).get('search') || '')
@@ -104,6 +104,13 @@ export const Sidenav = (props: { username: string }) => {
                                 Collections
                             </NavLink>
                         </li>
+                        {enablePlaylists && (
+                            <li>
+                                <NavLink to={buildUrlWithSavedFilters('/playlists')} onClick={closeSidenav}>
+                                    Playlists
+                                </NavLink>
+                            </li>
+                        )}
                     </ul>
                     <div className="search">
                         <div className="search_header">
