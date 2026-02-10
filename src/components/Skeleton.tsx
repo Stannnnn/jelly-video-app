@@ -3,9 +3,10 @@ import './Skeleton.css'
 export const Skeleton = ({
     type,
 }: {
-    type: 'movie' | 'series' | 'episode' | 'mixed' | 'mixedSmall' | 'specials' | 'collection' | 'person'
+    type: 'movie' | 'series' | 'episode' | 'mixed' | 'mixedSmall' | 'specials' | 'collection' | 'playlist' | 'person'
 }) => {
-    const isPortrait = type === 'movie' || type === 'series' || type === 'collection' || type === 'person'
+    const isPortrait =
+        type === 'movie' || type === 'series' || type === 'collection' || type === 'playlist' || type === 'person'
     const isSpecials = type === 'specials'
 
     const rootClass = `

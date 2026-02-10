@@ -4,6 +4,7 @@ import { CollectionApi } from '@jellyfin/sdk/lib/generated-client/api/collection
 import { ConfigurationApi } from '@jellyfin/sdk/lib/generated-client/api/configuration-api'
 import { ItemsApi } from '@jellyfin/sdk/lib/generated-client/api/items-api'
 import { LibraryApi } from '@jellyfin/sdk/lib/generated-client/api/library-api'
+import { PlaylistsApi } from '@jellyfin/sdk/lib/generated-client/api/playlists-api'
 import { PlaystateApi } from '@jellyfin/sdk/lib/generated-client/api/playstate-api'
 import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
 import { SystemApi } from '@jellyfin/sdk/lib/generated-client/api/system-api'
@@ -544,7 +545,8 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         sortBy: ItemSortBy[] = [ItemSortBy.PremiereDate],
         sortOrder: SortOrder[] = [SortOrder.Ascending],
         recursive = false,
-        itemTypes?: BaseItemKind[]
+        itemTypes?: BaseItemKind[],
+        excludeItemTypes?: BaseItemKind[]
     ) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
@@ -557,6 +559,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             fields: extraFields,
             recursive,
             includeItemTypes: itemTypes,
+            excludeItemTypes: excludeItemTypes,
         })
 
         return await parseItemDtos(response.data.Items)
@@ -791,11 +794,109 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         })
     }
 
+    const addToPlaylist = async (playlistId: string, items: MediaItem[]) => {
+        const playlistApi = new PlaylistsApi(api.configuration)
+        const batchSize = 200
+
+        for (let i = 0; i < items.length; i += batchSize) {
+            const batch = items.slice(i, i + batchSize)
+            await playlistApi.addItemToPlaylist(
+                {
+                    userId,
+                    playlistId,
+                    ids: batch.map(item => item.Id),
+                },
+                { signal: AbortSignal.timeout(20000) }
+            )
+        }
+
+        return true
+    }
+
+    const removeFromPlaylist = async (playlistId: string, item: MediaItem) => {
+        const playlistApi = new PlaylistsApi(api.configuration)
+
+        const response = await playlistApi.removeItemFromPlaylist(
+            {
+                playlistId,
+                entryIds: [item.Id],
+            },
+            { signal: AbortSignal.timeout(20000) }
+        )
+
+        return response.data
+    }
+
+    const createPlaylist = async (name: string) => {
+        const playlistApi = new PlaylistsApi(api.configuration)
+
+        const response = await playlistApi.createPlaylist(
+            {
+                // Seems to be bugged, need to pass both
+                createPlaylistDto: {
+                    Name: name,
+                    IsPublic: false,
+                    MediaType: 'Video',
+                },
+                name,
+                mediaType: 'Video',
+            },
+            { signal: AbortSignal.timeout(20000) }
+        )
+
+        return response.data
+    }
+
+    const renamePlaylist = async (playlistId: string, newName: string) => {
+        const playlistApi = new PlaylistsApi(api.configuration)
+
+        const response = await playlistApi.updatePlaylist({
+            playlistId,
+            // Seems to be bugged, need to pass both
+            updatePlaylistDto: {
+                Name: newName,
+                IsPublic: false,
+            },
+        })
+
+        return response.data
+    }
+
+    const deletePlaylist = async (playlistId: string) => {
+        const libraryApi = new LibraryApi(api.configuration)
+        await libraryApi.deleteItem({
+            itemId: playlistId,
+        })
+    }
+
+    const getPlaylists = async (
+        startIndex = 0,
+        limit = 36,
+        sortBy: ItemSortBy[] = [ItemSortBy.SortName],
+        sortOrder: SortOrder[] = [SortOrder.Ascending]
+    ) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            startIndex,
+            limit,
+            sortBy,
+            sortOrder,
+            recursive: true,
+            includeItemTypes: [BaseItemKind.Playlist],
+            fields: extraFields,
+            mediaTypes: ['Video'],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
     return {
         loginToJellyfin,
         getMovies,
         getSeries,
         getCollections,
+        getPlaylists,
         getFavorites,
         getRecentlyPlayed,
         getNextUp,
@@ -830,5 +931,10 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         createCollection,
         renameCollection,
         deleteCollection,
+        addToPlaylist,
+        removeFromPlaylist,
+        createPlaylist,
+        renamePlaylist,
+        deletePlaylist,
     }
 }

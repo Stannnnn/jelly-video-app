@@ -32,6 +32,8 @@ import { Movies } from './pages/Movies'
 import { NextUp } from './pages/NextUp'
 import { PersonMovies } from './pages/PersonMovies'
 import { PersonPage } from './pages/PersonPage'
+import { PlaylistPage } from './pages/PlaylistPage'
+import { Playlists } from './pages/Playlists'
 import { RecentlyAddedMovies } from './pages/RecentlyAddedMovies'
 import { RecentlyAddedSeries } from './pages/RecentlyAddedSeries'
 import { RecentlyPlayed } from './pages/RecentlyPlayed'
@@ -209,6 +211,14 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             <Route
                                 path="/collection/:id"
                                 element={<Main pageTitle="Collection" content={CollectionPage} />}
+                            />
+                            <Route
+                                path="/playlists"
+                                element={<Main pageTitle="Playlists" content={Playlists} filterType={'movies'} />}
+                            />
+                            <Route
+                                path="/playlist/:id"
+                                element={<Main pageTitle="Playlist" content={PlaylistPage} />}
                             />
                             <Route
                                 path="/favorites"

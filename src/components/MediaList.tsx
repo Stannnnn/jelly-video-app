@@ -29,7 +29,7 @@ export const MediaList = ({
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
-    type: 'movie' | 'series' | 'episode' | 'collection' | 'mixed' | 'mixedSmall' | 'specials' | 'person'
+    type: 'movie' | 'series' | 'episode' | 'collection' | 'playlist' | 'mixed' | 'mixedSmall' | 'specials' | 'person'
     virtuosoType?: 'vertical' | 'horizontal' | 'grid'
     loadMore?: () => void
     disableActions?: boolean
@@ -60,6 +60,8 @@ export const MediaList = ({
             navigate(`/episode/${item.Id}`)
         } else if (itemType === 'boxset') {
             navigate(`/collection/${item.Id}`)
+        } else if (itemType === 'playlist') {
+            navigate(`/playlist/${item.Id}`)
         } else if (itemType === 'person' || type === 'person') {
             navigate(`/person/${item.Id}`)
         } else {
@@ -72,14 +74,20 @@ export const MediaList = ({
         if (!item || 'isPlaceholder' in item) {
             return (
                 <div className={`media-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
-                    <Skeleton type={type === 'series' || type === 'collection' || type === 'person' ? 'movie' : type} />
+                    <Skeleton
+                        type={
+                            type === 'series' || type === 'collection' || type === 'playlist' || type === 'person'
+                                ? 'movie'
+                                : type
+                        }
+                    />
                 </div>
             )
         }
 
-        if (type === 'movie' || type === 'series' || type === 'collection') {
+        if (type === 'movie' || type === 'series' || type === 'collection' || type === 'playlist') {
             //  const isSeriesLike = type === 'series' || (type === 'collection' && item.CollectionType === 'tvshows')
-            const isSeriesLike = type === 'series' || type === 'collection'
+            const isSeriesLike = type === 'series' || type === 'collection' || type === 'playlist'
 
             return (
                 <div
@@ -442,6 +450,7 @@ export const MediaList = ({
             series: 'No series were found',
             episode: 'No episodes were found',
             collection: 'No items were found',
+            playlist: 'No playlists were found',
             mixed: 'No items were found',
             mixedSmall: 'No items were found',
             specials: 'No specials were found',

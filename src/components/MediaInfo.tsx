@@ -14,13 +14,16 @@ import { useNavigate } from 'react-router-dom'
 import { MediaItem } from '../api/jellyfin'
 import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStorageContext'
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
+import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
 import { useJellyfinCollections } from '../hooks/Jellyfin/useJellyfinCollections'
 import { useJellyfinNextEpisode } from '../hooks/Jellyfin/useJellyfinNextEpisode'
+import { useJellyfinPlaylists } from '../hooks/Jellyfin/useJellyfinPlaylists'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { useCollections } from '../hooks/useCollections'
 import { useDisplayTitle } from '../hooks/useDisplayTitle'
 import { useFavorites } from '../hooks/useFavorites'
 import { useJellyfinSortedVideoSources } from '../hooks/useJellyfinSortedVideoSources'
+import { usePlaylists } from '../hooks/usePlaylists'
 import { useWatchedState } from '../hooks/useWatchedState'
 import { formatDurationReadable } from '../utils/formatDurationReadable'
 import { getVideoQuality } from '../utils/getVideoQuality'
@@ -35,8 +38,11 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const { markAsPlayed, markAsUnplayed } = useWatchedState()
     const { addToDownloads, removeFromDownloads } = useDownloadContext()
     const audioStorage = useAudioStorageContext()
+    const { enablePlaylists } = useSidenavContext()
     const { addToCollection, createCollection, renameCollection, deleteCollection } = useCollections()
     const { collections, isLoading: isLoadingCollections } = useJellyfinCollections()
+    const { addToPlaylist, createPlaylist, renamePlaylist, deletePlaylist } = usePlaylists()
+    const { playlists, isLoading: isLoadingPlaylists } = useJellyfinPlaylists()
     const { nextEpisode, isLoading: isLoadingNextEpisode } = useJellyfinNextEpisode(item)
     const {
         configuration: { minResumePercentage, maxResumePercentage },
@@ -49,12 +55,19 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
     const [isCollectionDropdownOpen, setIsCollectionDropdownOpen] = useState(false)
     const [collectionName, setCollectionName] = useState('')
     const [isCreatingCollection, setIsCreatingCollection] = useState(false)
+    const [isPlaylistDropdownOpen, setIsPlaylistDropdownOpen] = useState(false)
+    const [playlistName, setPlaylistName] = useState('')
+    const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(false)
     const [isVersionDropdownOpen, setIsVersionDropdownOpen] = useState(false)
     const [isDownloadDropdownOpen, setIsDownloadDropdownOpen] = useState(false)
     const [renameCollectionName, setRenameCollectionName] = useState('')
     const [isRenamingCollection, setIsRenamingCollection] = useState(false)
     const [isRenamingCollectionOpen, setIsRenamingCollectionOpen] = useState(false)
     const [isDeletingCollection, setIsDeletingCollection] = useState(false)
+    const [renamePlaylistName, setRenamePlaylistName] = useState('')
+    const [isRenamingPlaylist, setIsRenamingPlaylist] = useState(false)
+    const [isRenamingPlaylistOpen, setIsRenamingPlaylistOpen] = useState(false)
+    const [isDeletingPlaylist, setIsDeletingPlaylist] = useState(false)
     const [downloadedMediaSourceId, setDownloadedMediaSourceId] = useState<string | undefined>(undefined)
     const moreButtonRef = useRef<HTMLDivElement>(null)
     const versionButtonRef = useRef<HTMLDivElement>(null)
@@ -86,8 +99,10 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
     const closeMoreSubdropdowns = () => {
         setIsCollectionDropdownOpen(false)
+        setIsPlaylistDropdownOpen(false)
         setIsDownloadDropdownOpen(false)
         setIsRenamingCollectionOpen(false)
+        setIsRenamingPlaylistOpen(false)
     }
 
     const closeMoreDropdown = useCallback(() => {
@@ -228,6 +243,47 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         }
     }
 
+    const handleAddToPlaylist = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        closeMoreSubdropdowns()
+        setIsPlaylistDropdownOpen(!isPlaylistDropdownOpen)
+    }
+
+    const handlePlaylistNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPlaylistName(e.target.value)
+    }
+
+    const handlePlaylistInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && playlistName.trim()) {
+            handleCreatePlaylist()
+        }
+    }
+
+    const handleCreatePlaylist = async () => {
+        if (!playlistName.trim() || isCreatingPlaylist) return
+
+        setIsCreatingPlaylist(true)
+        try {
+            const newPlaylist = await createPlaylist(playlistName.trim())
+            await addToPlaylist(item, newPlaylist.Id)
+            setPlaylistName('')
+            closeMoreDropdown()
+        } catch (error) {
+            console.error('Failed to create playlist:', error)
+        } finally {
+            setIsCreatingPlaylist(false)
+        }
+    }
+
+    const handleSelectPlaylist = async (playlistId: string) => {
+        try {
+            await addToPlaylist(item, playlistId)
+            closeMoreDropdown()
+        } catch (error) {
+            console.error('Failed to add to playlist:', error)
+        }
+    }
+
     const handleRenameCollection = async () => {
         if (!renameCollectionName.trim() || isRenamingCollection) return
 
@@ -267,6 +323,48 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
         } catch (error) {
             console.error('Failed to delete collection:', error)
             setIsDeletingCollection(false)
+        }
+    }
+
+    const handleRenamePlaylist = async () => {
+        if (!renamePlaylistName.trim() || isRenamingPlaylist) return
+
+        setIsRenamingPlaylist(true)
+        try {
+            await renamePlaylist(item.Id, renamePlaylistName.trim())
+            setRenamePlaylistName('')
+            closeMoreDropdown()
+        } catch (error) {
+            console.error('Failed to rename playlist:', error)
+        } finally {
+            setIsRenamingPlaylist(false)
+        }
+    }
+
+    const handleRenamePlaylistInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && renamePlaylistName.trim()) {
+            handleRenamePlaylist()
+        }
+    }
+
+    const handleDeletePlaylist = async () => {
+        if (isDeletingPlaylist) return
+
+        const confirmed = await ask(`Are you sure you want to delete "${item.Name}"? This cannot be undone.`, {
+            title: 'Delete Playlist',
+            kind: 'warning',
+        })
+        if (!confirmed) return
+
+        setIsDeletingPlaylist(true)
+        try {
+            await deletePlaylist(item.Id)
+            closeMoreDropdown()
+            // Navigate back to playlists page
+            navigate('/playlists')
+        } catch (error) {
+            console.error('Failed to delete playlist:', error)
+            setIsDeletingPlaylist(false)
         }
     }
 
@@ -671,6 +769,61 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                         )}
                                     </div>
                                 </div>
+                                {enablePlaylists && (
+                                    <div className="more-dropdown-item add-item" onClick={handleAddToPlaylist}>
+                                        <div className="text">Add to playlist</div>
+                                        <div className="icon">
+                                            <ChevronLeftIcon size={14} />
+                                        </div>
+                                        <div
+                                            className={`sub-dropdown ${isPlaylistDropdownOpen ? 'open' : ''}`}
+                                            onClick={e => e.stopPropagation()}
+                                        >
+                                            <div className="input-container">
+                                                <input
+                                                    value={playlistName}
+                                                    onChange={handlePlaylistNameChange}
+                                                    onKeyDown={handlePlaylistInputKeyDown}
+                                                    onClick={e => e.stopPropagation()}
+                                                    placeholder="New playlist..."
+                                                    className={`input${playlistName.trim() ? ' has-text' : ''}`}
+                                                    disabled={isCreatingPlaylist}
+                                                />
+                                                {isCreatingPlaylist && (
+                                                    <div className="loading">
+                                                        <InlineLoader />
+                                                    </div>
+                                                )}
+                                                {!isCreatingPlaylist && playlistName.trim() && (
+                                                    <button className="create-btn" onClick={handleCreatePlaylist}>
+                                                        Create
+                                                    </button>
+                                                )}
+                                            </div>
+                                            {isLoadingPlaylists && (
+                                                <div className="loading-container">
+                                                    <InlineLoader />
+                                                </div>
+                                            )}
+                                            {!isLoadingPlaylists && (
+                                                <div className="dropdown-list">
+                                                    {playlists.length === 0 && (
+                                                        <div className="dropdown-item empty">No playlists found</div>
+                                                    )}
+                                                    {playlists.map(playlist => (
+                                                        <div
+                                                            key={playlist.Id}
+                                                            className="dropdown-item"
+                                                            onClick={() => handleSelectPlaylist(playlist.Id)}
+                                                        >
+                                                            {playlist.Name}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
                                 {item.Type === BaseItemKind.BoxSet && (
                                     <>
                                         <div className="dropdown-separator" />
@@ -720,6 +873,59 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                         >
                                             <div className="text">
                                                 {isDeletingCollection ? 'Deleting...' : 'Delete collection'}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                                {item.Type === BaseItemKind.Playlist && (
+                                    <>
+                                        <div className="dropdown-separator" />
+                                        <div
+                                            className="more-dropdown-item rename-item"
+                                            onClick={e => {
+                                                e.stopPropagation()
+                                                closeMoreSubdropdowns()
+                                                setIsRenamingPlaylistOpen(!isRenamingPlaylistOpen)
+                                            }}
+                                        >
+                                            <div className="text">Rename playlist</div>
+                                            <div className="icon">
+                                                <ChevronLeftIcon size={14} />
+                                            </div>
+
+                                            <div
+                                                className={`sub-dropdown ${isRenamingPlaylistOpen ? 'open' : ''}`}
+                                                onClick={e => e.stopPropagation()}
+                                            >
+                                                <div className="input-container">
+                                                    <input
+                                                        value={renamePlaylistName}
+                                                        onChange={e => setRenamePlaylistName(e.target.value)}
+                                                        onKeyDown={handleRenamePlaylistInputKeyDown}
+                                                        onClick={e => e.stopPropagation()}
+                                                        placeholder={item.Name || 'New name...'}
+                                                        className={`input${renamePlaylistName.trim() ? ' has-text' : ''}`}
+                                                        disabled={isRenamingPlaylist}
+                                                    />
+                                                    {isRenamingPlaylist && (
+                                                        <div className="loading">
+                                                            <InlineLoader />
+                                                        </div>
+                                                    )}
+                                                    {!isRenamingPlaylist && renamePlaylistName.trim() && (
+                                                        <button className="create-btn" onClick={handleRenamePlaylist}>
+                                                            Rename
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            className={`more-dropdown-item delete-item ${isDeletingPlaylist ? 'disabled' : ''}`}
+                                            onClick={handleDeletePlaylist}
+                                        >
+                                            <div className="text">
+                                                {isDeletingPlaylist ? 'Deleting...' : 'Delete playlist'}
                                             </div>
                                         </div>
                                     </>
