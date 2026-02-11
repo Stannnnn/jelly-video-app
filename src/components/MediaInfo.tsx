@@ -717,7 +717,10 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                         <div className="dropdown-separator" />
                                     </>
                                 )}
-                                <div className="more-dropdown-item add-item" onClick={handleAddToCollection}>
+                                <div
+                                    className="more-dropdown-item collection-item add-item"
+                                    onClick={handleAddToCollection}
+                                >
                                     <div className="text">Add to collection</div>
                                     <div className="icon">
                                         <ChevronLeftIcon size={14} />
@@ -770,7 +773,10 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                     </div>
                                 </div>
                                 {enablePlaylists && (
-                                    <div className="more-dropdown-item add-item" onClick={handleAddToPlaylist}>
+                                    <div
+                                        className="more-dropdown-item playlist-item add-item"
+                                        onClick={handleAddToPlaylist}
+                                    >
                                         <div className="text">Add to playlist</div>
                                         <div className="icon">
                                             <ChevronLeftIcon size={14} />
