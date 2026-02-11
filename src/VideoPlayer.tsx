@@ -459,7 +459,9 @@ export const VideoPlayer = ({
             if (!chapterName) return false
             const name = chapterName.toLowerCase()
             return (
+                name.includes('chapter 01') ||
                 name.includes('intro') ||
+                name.includes('open') ||
                 name.includes('opening') ||
                 name.includes('op theme') ||
                 name.includes('main title') ||
