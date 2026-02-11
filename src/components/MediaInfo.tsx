@@ -806,20 +806,33 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
                                                 </div>
                                             )}
                                             {!isLoadingPlaylists && (
-                                                <div className="dropdown-list">
-                                                    {playlists.length === 0 && (
-                                                        <div className="dropdown-item empty">No playlists found</div>
+                                                <>
+                                                    {playlists.length > 0 && (
+                                                        <>
+                                                            <div className="dropdown-separator" />
+                                                            <div className="dropdown-content">
+                                                                {/*
+                                                                {playlists.length === 0 && (
+                                                                    <div className="dropdown-item empty">
+                                                                        No playlists found
+                                                                    </div>
+                                                                )}
+                                                                */}
+                                                                {playlists.map(playlist => (
+                                                                    <div
+                                                                        key={playlist.Id}
+                                                                        className="dropdown-item"
+                                                                        onClick={() =>
+                                                                            handleSelectPlaylist(playlist.Id)
+                                                                        }
+                                                                    >
+                                                                        {playlist.Name}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </>
                                                     )}
-                                                    {playlists.map(playlist => (
-                                                        <div
-                                                            key={playlist.Id}
-                                                            className="dropdown-item"
-                                                            onClick={() => handleSelectPlaylist(playlist.Id)}
-                                                        >
-                                                            {playlist.Name}
-                                                        </div>
-                                                    ))}
-                                                </div>
+                                                </>
                                             )}
                                         </div>
                                     </div>
