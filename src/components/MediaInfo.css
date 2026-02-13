@@ -398,6 +398,8 @@
     position: relative;
     font-size: 0.75rem;
     font-weight: 500;
+    /* Help with CJK letter spacing */
+    line-height: 0.9375rem;
     color: var(--brand-color);
     cursor: pointer;
     overflow: hidden;
@@ -931,6 +933,8 @@
     position: relative;
     font-size: 0.75rem;
     font-weight: 500;
+    /* Help with CJK letter spacing */
+    line-height: 0.9375rem;
     cursor: pointer;
     overflow: hidden;
     white-space: nowrap;

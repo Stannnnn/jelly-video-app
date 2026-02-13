@@ -199,6 +199,8 @@
 .media-list .media-item > .media-details > .title {
     font-size: 0.85rem;
     font-weight: 600;
+    /* Help with CJK letter spacing */
+    line-height: 1rem;
     margin-bottom: 2px;
     overflow: hidden;
     white-space: nowrap;
@@ -212,6 +214,8 @@
 
 .media-list .media-item.square > .media-details > .title {
     font-size: 0.75rem;
+    /* Help with CJK letter spacing */
+    line-height: 0.9375rem;
 }
 
 .media-list .media-item > .media-details > .subtitle {

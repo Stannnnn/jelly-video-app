@@ -478,6 +478,8 @@ body.lockscroll {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    /* Help with CJK letter spacing */
+    line-height: 1.25rem;
 }
 
 .main > .main_header > .secondary {
