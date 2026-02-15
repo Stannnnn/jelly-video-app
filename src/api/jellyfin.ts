@@ -565,6 +565,21 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
+    const getPlaylistItems = async (playlistId: string, startIndex = 0, limit = 36) => {
+        const playlistsApi = new PlaylistsApi(api.configuration)
+        const response = await playlistsApi.getPlaylistItems(
+            {
+                userId,
+                playlistId,
+                startIndex,
+                limit,
+            },
+            { signal: AbortSignal.timeout(20000) }
+        )
+
+        return await parseItemDtos(response.data.Items)
+    }
+
     const getSeasons = async (seriesId: string, startIndex?: number, limit?: number) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
@@ -936,5 +951,6 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         createPlaylist,
         renamePlaylist,
         deletePlaylist,
+        getPlaylistItems,
     }
 }

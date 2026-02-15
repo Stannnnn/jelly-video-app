@@ -12,6 +12,7 @@ export enum SortState {
     Random = 'Random',
     Name = 'Name',
     None = '',
+    Inherit = 'Inherit',
 }
 
 export enum OrderState {

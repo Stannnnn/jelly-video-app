@@ -218,7 +218,9 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             />
                             <Route
                                 path="/playlist/:id"
-                                element={<Main pageTitle="Playlist" content={PlaylistPage} />}
+                                element={
+                                    <Main pageTitle="Playlist" content={PlaylistPage} filterType={'moviesPlaylist'} />
+                                }
                             />
                             <Route
                                 path="/favorites"
