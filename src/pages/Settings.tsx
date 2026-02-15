@@ -708,7 +708,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <div className="key">M</div> to mute or unmute
                         </div>
                         <div className="container">
-                            <div className="key">F</div> to fullscreen or undo
+                            <div className="key">F</div> <div className="key">F11</div> to toggle fullscreen
                         </div>
                         <div className="container">
                             <div className="key">ESC</div> to exit fullscreen

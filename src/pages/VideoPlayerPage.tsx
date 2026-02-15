@@ -58,6 +58,16 @@ export const VideoPlayerPage = () => {
                     e.preventDefault()
                     playback.toggleFullscreen()
                     break
+                case 'F11':
+                    e.preventDefault()
+                    playback.toggleFullscreen()
+                    break
+                case 'Escape':
+                    e.preventDefault()
+                    if (playback.isFullscreen) {
+                        playback.toggleFullscreen()
+                    }
+                    break
                 case 'ArrowLeft':
                     e.preventDefault()
                     playback.skip(-playback.seekBackIncrement)

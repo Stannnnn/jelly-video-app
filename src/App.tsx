@@ -3,7 +3,7 @@ import { QueryClientProvider, useQueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useCallback, useEffect, useState } from 'react'
-import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { Navigate, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom'
 import './App.css'
 import { Downloads } from './components/Downloads'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -154,6 +154,38 @@ interface AuthData {
 
 const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () => void }) => {
     const { showSidenav, toggleSidenav } = useSidenavContext()
+    const location = useLocation()
+
+    useEffect(() => {
+        const onKeyDown = async (e: KeyboardEvent) => {
+            if (location.pathname.startsWith('/play/')) {
+                return
+            }
+
+            if (e.key === 'F11') {
+                e.preventDefault()
+                try {
+                    if (!document.fullscreenElement) {
+                        await document.documentElement.requestFullscreen()
+                    } else {
+                        await document.exitFullscreen()
+                    }
+                } catch (error) {
+                    console.error('Failed to toggle fullscreen:', error)
+                }
+            } else if (e.key === 'Escape' && document.fullscreenElement) {
+                e.preventDefault()
+                try {
+                    await document.exitFullscreen()
+                } catch (error) {
+                    console.error('Failed to exit fullscreen:', error)
+                }
+            }
+        }
+
+        window.addEventListener('keydown', onKeyDown)
+        return () => window.removeEventListener('keydown', onKeyDown)
+    }, [location.pathname])
 
     const memoSettings = useCallback(() => {
         return <Settings onLogout={handleLogout} />
