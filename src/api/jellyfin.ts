@@ -565,19 +565,43 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
-    const getPlaylistItems = async (playlistId: string, startIndex = 0, limit = 36) => {
+    const getPlaylistItems = async (
+        playlistId: string,
+        startIndex = 0,
+        limit = 36,
+        sortBy: 'Inherit' | ItemSortBy[] = [ItemSortBy.DateCreated],
+        sortOrder: SortOrder[] = [SortOrder.Descending]
+    ) => {
+        const itemsApi = new ItemsApi(api.configuration)
         const playlistsApi = new PlaylistsApi(api.configuration)
-        const response = await playlistsApi.getPlaylistItems(
-            {
-                userId,
-                playlistId,
-                startIndex,
-                limit,
-            },
-            { signal: AbortSignal.timeout(20000) }
-        )
 
-        return await parseItemDtos(response.data.Items)
+        const response =
+            sortBy === 'Inherit'
+                ? await playlistsApi.getPlaylistItems(
+                      {
+                          userId,
+                          playlistId,
+                          startIndex,
+                          limit,
+                      },
+                      { signal: AbortSignal.timeout(20000) }
+                  )
+                : await itemsApi.getItems(
+                      {
+                          userId,
+                          parentId: playlistId,
+                          includeItemTypes: [BaseItemKind.Video, BaseItemKind.Movie, BaseItemKind.Episode],
+                          sortBy,
+                          sortOrder,
+                          startIndex,
+                          limit,
+                      },
+                      { signal: AbortSignal.timeout(20000) }
+                  )
+
+        const items = await parseItemDtos(response.data.Items)
+
+        return items
     }
 
     const getSeasons = async (seriesId: string, startIndex?: number, limit?: number) => {
