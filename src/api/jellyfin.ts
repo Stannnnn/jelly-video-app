@@ -699,7 +699,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             startIndex,
             limit,
             includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series],
-            sortBy: [ItemSortBy.SortName],
+            sortBy: [ItemSortBy.PremiereDate],
             sortOrder: [SortOrder.Ascending],
             fields: extraFields,
         })
