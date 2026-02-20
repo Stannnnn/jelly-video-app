@@ -99,8 +99,8 @@ export const MediaList = ({
                               onClick: () => handleItemClick(item),
                           })}
                 >
-                    <Squircle width={152} height={228} cornerRadius={8} className="media-thumbnail">
-                        <JellyImg item={item} type={'Primary'} width={152} height={228} />
+                    <Squircle width={180} height={270} cornerRadius={8} isResponsive={true} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={180} height={270} />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         {currentDownloadingId === item.Id && item.offlineState === 'downloading' && (
                             <div
@@ -156,9 +156,10 @@ export const MediaList = ({
                     ref={el => setRowRefs(index, el)}
                 >
                     <Squircle
-                        width={240}
-                        height={135}
+                        width={320}
+                        height={180}
                         cornerRadius={8}
+                        isResponsive={true}
                         className="media-thumbnail"
                         {...(disableEvents
                             ? {}
@@ -168,7 +169,7 @@ export const MediaList = ({
                                   },
                               })}
                     >
-                        <JellyImg item={item} type={'Primary'} width={240} height={135} />
+                        <JellyImg item={item} type={'Primary'} width={320} height={180} />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         <div className="overlay">
                             <div className="play">
@@ -284,9 +285,10 @@ export const MediaList = ({
             return (
                 <div className={`media-item landscape small ${className || ''}`} ref={el => setRowRefs(index, el)}>
                     <Squircle
-                        width={240}
-                        height={135}
+                        width={320}
+                        height={180}
                         cornerRadius={8}
+                        isResponsive={true}
                         className="media-thumbnail"
                         {...(disableEvents
                             ? {}
@@ -299,8 +301,8 @@ export const MediaList = ({
                         <JellyImg
                             item={item}
                             type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
-                            width={280}
-                            height={158}
+                            width={320}
+                            height={180}
                         />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         <div className="overlay">
@@ -363,17 +365,18 @@ export const MediaList = ({
             return (
                 <div className={`media-item landscape specials ${className || ''}`} ref={el => setRowRefs(index, el)}>
                     <Squircle
-                        width={240}
-                        height={135}
+                        width={320}
+                        height={180}
                         cornerRadius={8}
+                        isResponsive={true}
                         className="media-thumbnail"
                         {...(disableEvents ? {} : { onClick: () => navigate(`/play/${item.Id}`) })}
                     >
                         <JellyImg
                             item={item}
                             type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
-                            width={240}
-                            height={135}
+                            width={320}
+                            height={180}
                         />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         <div className="overlay">
@@ -426,8 +429,14 @@ export const MediaList = ({
                               onClick: () => handleItemClick(item),
                           })}
                 >
-                    <Squircle width={108} height={108} cornerRadius={12} className="media-thumbnail">
-                        <JellyImg item={item} type={'Primary'} width={108} height={108} />
+                    <Squircle
+                        width={120}
+                        height={120}
+                        cornerRadius={12}
+                        isResponsive={true}
+                        className="media-thumbnail"
+                    >
+                        <JellyImg item={item} type={'Primary'} width={120} height={120} />
                     </Squircle>
                     <div className="media-details">
                         <span className="title" title={item.Name}>

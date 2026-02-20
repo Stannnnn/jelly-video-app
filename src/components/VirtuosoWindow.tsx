@@ -64,9 +64,42 @@ export const VirtuosoWindow = ({
     const savedOffset = saved?.pathname === window.location.pathname ? saved.offset : 0
 
     if (isGrid) {
+        const [resizeKey, setResizeKey] = useState(0)
+        const lastScroll = useRef(savedOffset)
+
+        useEffect(() => {
+            const debounce = (fn: () => void, ms: number) => {
+                let timer: NodeJS.Timeout | null = null
+                return () => {
+                    if (timer) clearTimeout(timer)
+                    timer = setTimeout(fn, ms)
+                }
+            }
+
+            const handleResize = debounce(() => {
+                lastScroll.current = window.scrollY - initialOffset
+                setResizeKey(k => k + 1)
+            }, 100)
+
+            window.addEventListener('resize', handleResize)
+            document.addEventListener('fullscreenchange', handleResize)
+
+            return () => {
+                window.removeEventListener('resize', handleResize)
+                document.removeEventListener('fullscreenchange', handleResize)
+            }
+        }, [initialOffset])
+
+        useEffect(() => {
+            if (virtuosoRef.current) {
+                ;(virtuosoRef.current as VirtuosoGridHandle).scrollTo({ top: lastScroll.current })
+            }
+        }, [resizeKey])
+
         return (
             <div ref={wrapperRef}>
                 <VirtuosoGrid
+                    key={resizeKey}
                     {...(virtuosoProps as IVirtuosoGridProps)}
                     ref={virtuosoRef as React.RefObject<VirtuosoGridHandle>}
                     useWindowScroll
