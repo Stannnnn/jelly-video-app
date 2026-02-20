@@ -670,6 +670,23 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
             <div className="section shortcuts">
                 <div className="title">Shortcuts</div>
                 <div className="desc">
+                    <div className="subtitle">Available shortcuts for the interface</div>
+                    <div className="keys">
+                        <div className="container">
+                            <div className="key">Ctrl</div> <div className="key">K</div> to quick search
+                        </div>
+                        <div className="container">
+                            <div className="key">ESC</div> to clear search input
+                        </div>
+                        <div className="container">
+                            <div className="key">F11</div> to toggle borderless fullscreen
+                        </div>
+                        <div className="container">
+                            <div className="key">ESC</div> to exit borderless fullscreen
+                        </div>
+                    </div>
+                </div>
+                <div className="desc last">
                     <div className="subtitle">Available shortcuts in the video player</div>
                     <div className="keys">
                         <div className="container">
@@ -708,10 +725,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <div className="key">M</div> to mute or unmute
                         </div>
                         <div className="container">
-                            <div className="key">F</div> to toggle fullscreen in video player
-                        </div>
-                        <div className="container">
-                            <div className="key">F11</div> to toggle borderless fullscreen
+                            <div className="key">F</div> to toggle fullscreen
                         </div>
                         <div className="container">
                             <div className="key">ESC</div> to exit fullscreen

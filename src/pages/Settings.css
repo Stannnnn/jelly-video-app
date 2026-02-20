@@ -303,6 +303,10 @@
     margin-bottom: 4px;
 }
 
+.settings-page > .section.shortcuts > .desc.last {
+    margin-top: 20px;
+}
+
 .settings-page > .section.shortcuts > .desc > .subtitle {
     margin-bottom: 8px;
 }
