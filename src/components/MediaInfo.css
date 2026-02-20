@@ -762,6 +762,7 @@
     > .input-container {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
 }
 
@@ -827,6 +828,20 @@
     > .input-container:has(> .create-btn)
     > .input {
     max-width: calc(100% - 58px);
+}
+
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item.add-item
+    > .sub-dropdown
+    > .input-container:has(> .loading)
+    > .input {
+    max-width: calc(100% - 24px);
 }
 
 /* different style if collection is empty */
@@ -986,7 +1001,8 @@
     > .sub-dropdown
     > .input-container
     > .loading {
-    flex-shrink: 0;
+    position: absolute;
+    right: 0;
     padding: 7px 10px;
     display: flex;
     justify-content: center;
