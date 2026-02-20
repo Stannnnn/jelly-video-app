@@ -65,33 +65,45 @@ export const VirtuosoWindow = ({
 
     if (isGrid) {
         const [resizeKey, setResizeKey] = useState(0)
-        const lastScroll = useRef(savedOffset)
+        const lastScroll = useRef<number>(savedOffset)
+        const isInitialMount = useRef(true)
+
+        const debounce = <T extends (...args: any[]) => void>(fn: T, ms: number) => {
+            let timer: NodeJS.Timeout | null = null
+            return (...args: Parameters<T>) => {
+                if (timer) clearTimeout(timer)
+                timer = setTimeout(() => fn(...args), ms)
+            }
+        }
 
         useEffect(() => {
-            const debounce = (fn: () => void, ms: number) => {
-                let timer: NodeJS.Timeout | null = null
-                return () => {
-                    if (timer) clearTimeout(timer)
-                    timer = setTimeout(fn, ms)
+            if (isInitialMount.current && wrapperRef.current) {
+                lastScroll.current = window.scrollY - (wrapperRef.current.getBoundingClientRect().top || 0)
+                isInitialMount.current = false
+            }
+        }, [])
+
+        useEffect(() => {
+            const handleResize = () => {
+                if (!isInitialMount.current) {
+                    lastScroll.current = window.scrollY - initialOffset
+                    setResizeKey(k => k + 1)
                 }
             }
 
-            const handleResize = debounce(() => {
-                lastScroll.current = window.scrollY - initialOffset
-                setResizeKey(k => k + 1)
-            }, 100)
+            const debouncedResize = debounce(handleResize, 100)
 
-            window.addEventListener('resize', handleResize)
-            document.addEventListener('fullscreenchange', handleResize)
+            window.addEventListener('resize', debouncedResize)
+            document.addEventListener('fullscreenchange', debouncedResize)
 
             return () => {
-                window.removeEventListener('resize', handleResize)
-                document.removeEventListener('fullscreenchange', handleResize)
+                window.removeEventListener('resize', debouncedResize)
+                document.removeEventListener('fullscreenchange', debouncedResize)
             }
         }, [initialOffset])
 
         useEffect(() => {
-            if (virtuosoRef.current) {
+            if (virtuosoRef.current && resizeKey > 0) {
                 ;(virtuosoRef.current as VirtuosoGridHandle).scrollTo({ top: lastScroll.current })
             }
         }, [resizeKey])
