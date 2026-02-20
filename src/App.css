@@ -158,10 +158,13 @@ svg {
     --inter-font: 'Inter Variable', sans-serif;
 }
 
-/* Site Theme */
-html.light {
+html {
     --system-fonts: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     --inter-font: 'Inter Variable', sans-serif;
+}
+
+/* Site Theme */
+html.light {
     color-scheme: light;
     --bg-color: #ffffff;
     --bg-color-secondary: #f8f8f8;
@@ -231,6 +234,10 @@ html.dark {
     --scrollbar-color: #78767c;
     --scrollbar-color-hover: #aba9af;
     --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+html:has(> body > #root > .video-app > .interface) {
+    background-color: var(--bg-color);
 }
 
 html,
