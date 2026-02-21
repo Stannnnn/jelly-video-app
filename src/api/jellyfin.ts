@@ -706,7 +706,6 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
         return {
             items: await parseItemDtos(response.data.Items),
-            totalCount: response.data.TotalRecordCount || 0,
         }
     }
 
