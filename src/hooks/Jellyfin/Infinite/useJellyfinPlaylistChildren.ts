@@ -2,7 +2,7 @@ import { useFilterContextUnsafe } from '../../../context/FilterContext/FilterCon
 import { useJellyfinContext } from '../../../context/JellyfinContext/JellyfinContext'
 import { useJellyfinInfiniteData } from './useJellyfinInfiniteData'
 
-export const useJellyfinPlaylistChildren = (itemId: string | undefined) => {
+export const useJellyfinPlaylistChildren = (itemId: string | undefined, sortBy?: 'Inherit') => {
     const api = useJellyfinContext()
     const filterContext = useFilterContextUnsafe()
     const itemsPerPage = 36
@@ -16,7 +16,7 @@ export const useJellyfinPlaylistChildren = (itemId: string | undefined) => {
                 itemId,
                 startIndex,
                 itemsPerPage,
-                filterContext?.jellySort.sortBy,
+                sortBy || filterContext?.jellySort.sortBy,
                 filterContext?.jellySort.sortOrder
             )
         },

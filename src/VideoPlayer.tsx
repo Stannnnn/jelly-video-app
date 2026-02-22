@@ -165,7 +165,8 @@ export const VideoPlayer = ({
     // If parentId is provided (playing from a collection/playlist), fetch those items
     const { mediaItem: parentItem } = useJellyfinMediaItem(parentId)
     const { items: playlistItems } = useJellyfinPlaylistChildren(
-        parentItem?.Type === BaseItemKind.Playlist ? parentId : undefined
+        parentItem?.Type === BaseItemKind.Playlist ? parentId : undefined,
+        'Inherit'
     )
     const { items: collectionItems } = useJellyfinItemChildren(
         parentItem?.Type !== BaseItemKind.Playlist ? parentId : undefined
@@ -1077,9 +1078,12 @@ export const VideoPlayer = ({
                                                 }`}
                                                 onClick={() => {
                                                     if (source.Id) {
-                                                        navigate(`/play/${sourceItem?.Id}/${source.Id}`, {
-                                                            replace: true,
-                                                        })
+                                                        navigate(
+                                                            parentId
+                                                                ? `/play/${sourceItem?.Id}/${source.Id}/${parentId}`
+                                                                : `/play/${sourceItem?.Id}/${source.Id}`,
+                                                            { replace: true }
+                                                        )
                                                         toggleMenu()
                                                     }
                                                 }}
