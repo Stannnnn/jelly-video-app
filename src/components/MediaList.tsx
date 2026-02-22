@@ -104,6 +104,7 @@ export const MediaList = ({
         if (type === 'movie' || type === 'series' || type === 'collection' || type === 'playlist') {
             //  const isSeriesLike = type === 'series' || (type === 'collection' && item.CollectionType === 'tvshows')
             const isSeriesLike = type === 'series' || type === 'collection' || type === 'playlist'
+            const isPlaylist = type === 'playlist'
 
             return (
                 <div
@@ -158,6 +159,13 @@ export const MediaList = ({
                                             </div>
                                         </>
                                     )}
+                            </div>
+                        )}
+                        {isPlaylist && (
+                            <div className="container">
+                                <div className="subtitle date created">
+                                    {new Date(item.DateCreated ?? 0).getFullYear()}
+                                </div>
                             </div>
                         )}
                     </div>

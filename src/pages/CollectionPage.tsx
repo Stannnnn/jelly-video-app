@@ -40,7 +40,7 @@ export const CollectionPage = () => {
                         isLoading={isLoadingChildren}
                         type="collection"
                         loadMore={loadMore}
-                        playParentId={id}
+                        // playParentId={id}
                     />
                     {childrenError && <div className="error">{childrenError || 'Collection items not found'}</div>}
                 </div>

@@ -219,6 +219,24 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
+                            <div className="subtitle">Next title</div>
+                            <div className="subdesc">Automatically play next title in a playlist or collection</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={autoplayNextEpisode}
+                                    onChange={e => setAutoplayNextEpisode(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
                             <div className="subtitle">Next episode</div>
                             <div className="subdesc">Automatically play next episode when the current one ends</div>
                         </div>
