@@ -1154,9 +1154,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
                 // Clear the current track
                 setCurrentTrack(undefined)
+                setCurrentMediaSourceId(undefined)
                 previousTrackRef.current = undefined
                 isPlayingTrackRef.current = undefined
                 lastStoppedTrackIdRef.current = undefined
+                tracklistRef.current = false
 
                 // Abort any ongoing API requests
                 abortControllerRef.current?.abort('clearCurrentTrack')
