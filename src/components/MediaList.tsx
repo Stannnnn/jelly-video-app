@@ -53,19 +53,6 @@ export const MediaList = ({
         // Determine the route based on item type
         const itemType = item.Type?.toLowerCase()
 
-        // When a playParentId is set, playable items navigate directly to the player
-        // with the parent context encoded in the URL
-        if (playParentId) {
-            const playUrl = `/play/${item.Id}/default/${playParentId}`
-            if (itemType === 'movie' || itemType === 'video') {
-                navigate(playUrl)
-                return
-            } else if (itemType === 'episode') {
-                navigate(playUrl)
-                return
-            }
-        }
-
         if (type === 'specials') {
             navigate(`/special/${item.Id}`)
         } else if (itemType === 'movie') {
@@ -82,7 +69,7 @@ export const MediaList = ({
             navigate(`/person/${item.Id}`)
         } else {
             // Fallback to play route for other types
-            navigate(`/play/${item.Id}`)
+            navigate(playParentId ? `/play/${item.Id}/default/${playParentId}` : `/play/${item.Id}`)
         }
     }
 
