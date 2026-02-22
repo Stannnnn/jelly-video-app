@@ -922,7 +922,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             sortOrder,
             recursive: true,
             includeItemTypes: [BaseItemKind.Playlist],
-            fields: [ItemFields.DateCreated, ItemFields.DateLastMediaAdded],
+            fields: [...extraFields, ItemFields.DateCreated, ItemFields.DateLastMediaAdded],
             mediaTypes: ['Video'],
         })
 
