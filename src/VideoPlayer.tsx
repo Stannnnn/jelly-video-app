@@ -1188,7 +1188,7 @@ export const VideoPlayer = ({
                                 <div className="menu-divider"></div>
                                 <div className="container">
                                     {menuListItems.map((item, index) => {
-                                        const isCurrentItem = item.Id === currentTrack?.Id
+                                        const isCurrentItem = item.Id === currentTrack?.Id || item.Id === sourceItem?.Id
 
                                         let label: string
                                         if (parentItems.length > 0) {
