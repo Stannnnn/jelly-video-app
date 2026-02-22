@@ -169,7 +169,8 @@ export const VideoPlayer = ({
         'Inherit'
     )
     const { items: collectionItems } = useJellyfinItemChildren(
-        parentItem?.Type !== BaseItemKind.Playlist ? parentId : undefined
+        parentItem?.Type !== BaseItemKind.Playlist ? parentId : undefined,
+        [BaseItemKind.Video, BaseItemKind.Movie, BaseItemKind.Episode]
     )
     const parentItems = parentItem?.Type === BaseItemKind.Playlist ? playlistItems : collectionItems
 

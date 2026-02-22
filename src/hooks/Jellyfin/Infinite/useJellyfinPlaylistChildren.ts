@@ -8,7 +8,12 @@ export const useJellyfinPlaylistChildren = (itemId: string | undefined, sortBy?:
     const itemsPerPage = 36
 
     return useJellyfinInfiniteData({
-        queryKey: ['playlist-children', itemId, filterContext?.jellySort.sortBy, filterContext?.jellySort.sortOrder],
+        queryKey: [
+            'playlist-children',
+            itemId,
+            sortBy || filterContext?.jellySort.sortBy,
+            filterContext?.jellySort.sortOrder,
+        ],
         queryFn: async ({ pageParam = 0 }) => {
             if (!itemId) throw new Error('Item ID is required')
             const startIndex = (pageParam as number) * itemsPerPage
