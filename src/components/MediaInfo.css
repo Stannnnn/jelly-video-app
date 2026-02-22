@@ -944,6 +944,10 @@
     > .sub-dropdown
     > .dropdown-content
     > .dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
     flex-shrink: 0;
     position: relative;
     font-size: 0.75rem;
@@ -951,9 +955,6 @@
     /* Help with CJK letter spacing */
     line-height: 0.9375rem;
     cursor: pointer;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     padding: 6px 12px;
     border-radius: 6px;
     transition:
@@ -1025,6 +1026,42 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .sub-dropdown
+    > .dropdown-content
+    > .dropdown-item
+    > .text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .secondary
+    > .more-container
+    > .more-dropdown
+    > .more-dropdown-item
+    > .sub-dropdown
+    > .dropdown-content
+    > .dropdown-item:hover
+    > .loading
+    > .inline-loader
+    > .loading
+    > circle:nth-child(1) {
+    transition: stroke 0.2s ease-out;
+    stroke: var(--bg-color-quaternary);
 }
 
 /* Responsive */

@@ -69,6 +69,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
     const [clientIp, setClientIp] = useState<string | null>(null)
     const [latency, setLatency] = useState<number | null>(null)
     const [serverVersion, setServerVersion] = useState<string | null>(null)
+    const { sessionPlayCount, resetSessionCount } = usePlaybackContext()
     const queryClient = useQueryClient()
     const { storageStats, refreshStorageStats, queueCount, clearQueue } = useDownloadContext()
 
@@ -115,6 +116,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
     }, [api])
 
     const handleLogout = () => {
+        resetSessionCount()
         onLogout()
         navigate('/login')
     }
@@ -869,6 +871,15 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     </p>
                     <p>
                         Last login: {lastLogin} {clientIp ? ` from ${clientIp}` : ''}
+                    </p>
+                    <p>
+                        Watched{' '}
+                        {sessionPlayCount !== null && (
+                            <span>
+                                {sessionPlayCount} {sessionPlayCount === 1 ? 'title' : 'titles'}
+                            </span>
+                        )}{' '}
+                        since login
                     </p>
                 </div>
                 <div className="actions noSelect">

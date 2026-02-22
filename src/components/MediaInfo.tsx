@@ -55,9 +55,11 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
     const [isCollectionDropdownOpen, setIsCollectionDropdownOpen] = useState(false)
     const [collectionName, setCollectionName] = useState('')
     const [isCreatingCollection, setIsCreatingCollection] = useState(false)
+    const [loadingCollectionId, setLoadingCollectionId] = useState<string | null>(null)
     const [isPlaylistDropdownOpen, setIsPlaylistDropdownOpen] = useState(false)
     const [playlistName, setPlaylistName] = useState('')
     const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(false)
+    const [loadingPlaylistId, setLoadingPlaylistId] = useState<string | null>(null)
     const [isVersionDropdownOpen, setIsVersionDropdownOpen] = useState(false)
     const [isDownloadDropdownOpen, setIsDownloadDropdownOpen] = useState(false)
     const [renameCollectionName, setRenameCollectionName] = useState('')
@@ -237,11 +239,14 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
     }
 
     const handleSelectCollection = async (collectionId: string) => {
+        setLoadingCollectionId(collectionId)
         try {
             await addToCollection(item, collectionId)
             closeMoreDropdown()
         } catch (error) {
             console.error('Failed to add to collection:', error)
+        } finally {
+            setLoadingCollectionId(null)
         }
     }
 
@@ -278,11 +283,14 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
     }
 
     const handleSelectPlaylist = async (playlistId: string) => {
+        setLoadingPlaylistId(playlistId)
         try {
             await addToPlaylist(item, playlistId)
             closeMoreDropdown()
         } catch (error) {
             console.error('Failed to add to playlist:', error)
+        } finally {
+            setLoadingPlaylistId(null)
         }
     }
 
@@ -767,7 +775,12 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
                                                         className="dropdown-item"
                                                         onClick={() => handleSelectCollection(collection.Id)}
                                                     >
-                                                        {collection.Name}
+                                                        <div className="text">{collection.Name}</div>
+                                                        {loadingCollectionId === collection.Id && (
+                                                            <div className="loading">
+                                                                <InlineLoader />
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 ))}
                                             </div>
@@ -834,7 +847,12 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
                                                                             handleSelectPlaylist(playlist.Id)
                                                                         }
                                                                     >
-                                                                        {playlist.Name}
+                                                                        <div className="text">{playlist.Name}</div>
+                                                                        {loadingPlaylistId === playlist.Id && (
+                                                                            <div className="loading">
+                                                                                <InlineLoader />
+                                                                            </div>
+                                                                        )}
                                                                     </div>
                                                                 ))}
                                                             </div>
