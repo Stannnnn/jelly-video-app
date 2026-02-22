@@ -136,6 +136,7 @@ export const VideoPlayer = ({
         fileSize,
         mpvError,
         autoplayNextEpisode,
+        autoplayNextTitle,
         showNextEpisodeOverlay,
         nextEpisodeCountdown,
         startNextEpisodeCountdown,
@@ -170,6 +171,22 @@ export const VideoPlayer = ({
         parentItem?.Type !== BaseItemKind.Playlist ? parentId : undefined
     )
     const parentItems = parentItem?.Type === BaseItemKind.Playlist ? playlistItems : collectionItems
+
+    // Compute next title for playlist/collection autoplay
+    const currentTrackIndexInParent = parentItems.findIndex(item => item.Id === currentTrack?.Id)
+    const nextTitle =
+        parentItems.length > 0 && currentTrackIndexInParent !== -1 && currentTrackIndexInParent < parentItems.length - 1
+            ? parentItems[currentTrackIndexInParent + 1]
+            : undefined
+
+    // Unified next item and URL for overlay + autoplay
+    const nextAutoplayItem = parentItems.length > 0 ? nextTitle : nextEpisode
+    const nextAutoplayUrl =
+        parentItems.length > 0 && nextTitle?.Id
+            ? `/play/${nextTitle.Id}/default/${parentId}`
+            : nextEpisode?.Id
+              ? `/play/${nextEpisode.Id}`
+              : null
 
     // Items shown in the episodes menu: parent items take priority over season episodes
     const menuListItems = parentItems.length > 0 ? parentItems : allEpisodes
@@ -383,18 +400,21 @@ export const VideoPlayer = ({
         animateMenu()
     }, [animateMenu, subtitleTracks, audioTracks, videoLoaded, currentTrack])
 
-    // Next Episode Detection - Monitor time position and detect credits or near end
+    // Next Episode/Title Detection - Monitor time position and detect credits or near end
     useEffect(() => {
-        if (!currentTrack || !duration || !timePos || !videoLoaded || !nextEpisode) {
+        if (!currentTrack || !duration || !timePos || !videoLoaded || !nextAutoplayItem) {
             return
         }
 
         // Check if we're already showing the overlay or if countdown reached 0
         if (showNextEpisodeOverlay) {
             // Auto-navigate when countdown reaches 0
-            if (nextEpisodeCountdown === 0 && nextEpisode?.Id && autoplayNextEpisode) {
-                cancelNextEpisodeCountdown()
-                navigate(`/play/${nextEpisode.Id}`, { replace: true })
+            if (nextEpisodeCountdown === 0 && nextAutoplayUrl) {
+                const shouldAutoplay = parentItems.length > 0 ? autoplayNextTitle : autoplayNextEpisode
+                if (shouldAutoplay) {
+                    cancelNextEpisodeCountdown()
+                    navigate(nextAutoplayUrl, { replace: true })
+                }
             }
             return
         }
@@ -452,7 +472,10 @@ export const VideoPlayer = ({
         videoLoaded,
         skipOutro,
         autoplayNextEpisode,
-        nextEpisode,
+        autoplayNextTitle,
+        nextAutoplayItem,
+        nextAutoplayUrl,
+        parentItems,
         showNextEpisodeOverlay,
         nextEpisodeCountdown,
         startNextEpisodeCountdown,
@@ -570,16 +593,23 @@ export const VideoPlayer = ({
         }
     }, [currentTrack, duration, timePos, videoLoaded, skipIntro])
 
-    // If video ends naturally (timePos reaches duration), immediately go to next episode
+    // If video ends naturally (timePos reaches duration), immediately go to next episode or title
     useEffect(() => {
-        if (!currentTrack || !duration || !timePos || !videoLoaded || !autoplayNextEpisode || !nextEpisode) {
+        if (!currentTrack || !duration || !timePos || !videoLoaded) {
             return
         }
 
-        // If we're within 1 second of the end, navigate immediately
-        if (duration - timePos < 1 && duration - timePos > 0 && nextEpisode.Id) {
+        const nearEnd = duration - timePos < 1 && duration - timePos > 0
+
+        if (!nearEnd) {
+            return
+        }
+
+        const shouldAutoplay = parentItems.length > 0 ? autoplayNextTitle : autoplayNextEpisode
+
+        if (shouldAutoplay && nextAutoplayUrl) {
             cancelNextEpisodeCountdown()
-            navigate(`/play/${nextEpisode.Id}`, { replace: true })
+            navigate(nextAutoplayUrl, { replace: true })
         }
     }, [
         currentTrack,
@@ -587,7 +617,9 @@ export const VideoPlayer = ({
         timePos,
         videoLoaded,
         autoplayNextEpisode,
-        nextEpisode,
+        autoplayNextTitle,
+        nextAutoplayUrl,
+        parentItems,
         navigate,
         cancelNextEpisodeCountdown,
     ])
@@ -1303,17 +1335,19 @@ export const VideoPlayer = ({
             </div>
 
             <NextEpisodeOverlay
-                nextEpisode={nextEpisode}
+                nextEpisode={nextAutoplayItem}
                 countdown={nextEpisodeCountdown}
                 onPlayNow={() => {
-                    cancelNextEpisodeCountdown()
-                    navigate(`/play/${nextEpisode?.Id}`, { replace: true })
+                    if (nextAutoplayUrl) {
+                        cancelNextEpisodeCountdown()
+                        navigate(nextAutoplayUrl, { replace: true })
+                    }
                 }}
                 onCancel={() => {
                     userCanceledCountdownRef.current = true
                     cancelNextEpisodeCountdown()
                 }}
-                isVisible={!!(showNextEpisodeOverlay && nextEpisode)}
+                isVisible={!!(showNextEpisodeOverlay && nextAutoplayItem)}
             />
 
             <div className={`intro-skip-overlay ${showIntroSkip ? 'visible' : ''}`}>

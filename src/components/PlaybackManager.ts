@@ -103,6 +103,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         [autoplayNextEpisode]
     )
 
+    // Next Title Autoplay Settings (playlist/collection)
+    const [autoplayNextTitle, setAutoplayNextTitle] = useState(localStorage.getItem('autoplayNextTitle') !== 'off')
+    useEffect(() => localStorage.setItem('autoplayNextTitle', autoplayNextTitle ? 'on' : 'off'), [autoplayNextTitle])
+
     // Skip Intro Settings
     const [skipIntro, setSkipIntro] = useState(localStorage.getItem('skipIntro') !== 'off')
     useEffect(() => localStorage.setItem('skipIntro', skipIntro ? 'on' : 'off'), [skipIntro])
@@ -1262,6 +1266,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         // Next Episode Autoplay
         autoplayNextEpisode,
         setAutoplayNextEpisode,
+        autoplayNextTitle,
+        setAutoplayNextTitle,
         showNextEpisodeOverlay,
         nextEpisodeCountdown,
         startNextEpisodeCountdown,

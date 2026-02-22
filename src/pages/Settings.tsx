@@ -33,6 +33,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
     const {
         autoplayNextEpisode,
         setAutoplayNextEpisode,
+        autoplayNextTitle,
+        setAutoplayNextTitle,
         skipIntro,
         setSkipIntro,
         skipOutro,
@@ -226,8 +228,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <label className="switch">
                                 <input
                                     type="checkbox"
-                                    checked={autoplayNextEpisode}
-                                    onChange={e => setAutoplayNextEpisode(e.target.checked)}
+                                    checked={autoplayNextTitle}
+                                    onChange={e => setAutoplayNextTitle(e.target.checked)}
                                 ></input>
                                 <span className="slider"></span>
                             </label>
