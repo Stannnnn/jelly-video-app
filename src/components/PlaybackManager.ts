@@ -360,9 +360,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                         'keep-open': 'yes',
                         'force-window': 'yes',
                         // Enable verbose logging
-                        'msg-level': 'all=v',
-                        terminal: 'yes',
-                        'msg-color': 'yes',
+                        ...(import.meta.env.DEV ? { 'msg-level': 'all=v', terminal: 'yes', 'msg-color': 'yes' } : {}),
                     },
                     observedProperties: OBSERVED_PROPERTIES,
                 })
