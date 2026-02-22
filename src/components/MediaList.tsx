@@ -26,6 +26,7 @@ export const MediaList = ({
     virtuosoRef,
     onRangeChange,
     overscan,
+    playParentId,
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
@@ -42,6 +43,8 @@ export const MediaList = ({
     virtuosoRef?: React.RefObject<VirtuosoHandle | null>
     onRangeChange?: (range: { startIndex: number; endIndex: number }) => void
     overscan?: number
+    /** When set, play navigations will include this parent (playlist/collection) ID */
+    playParentId?: string
 }) => {
     const { displayItems, setRowRefs } = useDisplayItems(items, isLoading, type)
     const navigate = useNavigate()
@@ -49,6 +52,19 @@ export const MediaList = ({
     const handleItemClick = (item: MediaItem) => {
         // Determine the route based on item type
         const itemType = item.Type?.toLowerCase()
+
+        // When a playParentId is set, playable items navigate directly to the player
+        // with the parent context encoded in the URL
+        if (playParentId) {
+            const playUrl = `/play/${item.Id}/default/${playParentId}`
+            if (itemType === 'movie' || itemType === 'video') {
+                navigate(playUrl)
+                return
+            } else if (itemType === 'episode') {
+                navigate(playUrl)
+                return
+            }
+        }
 
         if (type === 'specials') {
             navigate(`/special/${item.Id}`)
@@ -214,7 +230,9 @@ export const MediaList = ({
                             ? {}
                             : {
                                   onClick: () => {
-                                      navigate(`/play/${item.Id}`)
+                                      navigate(
+                                          playParentId ? `/play/${item.Id}/default/${playParentId}` : `/play/${item.Id}`
+                                      )
                                   },
                               })}
                     >
@@ -294,7 +312,9 @@ export const MediaList = ({
                             ? {}
                             : {
                                   onClick: () => {
-                                      navigate(`/play/${item.Id}`)
+                                      navigate(
+                                          playParentId ? `/play/${item.Id}/default/${playParentId}` : `/play/${item.Id}`
+                                      )
                                   },
                               })}
                     >
@@ -370,7 +390,14 @@ export const MediaList = ({
                         cornerRadius={8}
                         isResponsive={true}
                         className="media-thumbnail"
-                        {...(disableEvents ? {} : { onClick: () => navigate(`/play/${item.Id}`) })}
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () =>
+                                      navigate(
+                                          playParentId ? `/play/${item.Id}/default/${playParentId}` : `/play/${item.Id}`
+                                      ),
+                              })}
                     >
                         <JellyImg
                             item={item}

@@ -32,7 +32,7 @@ export const PlaylistPage = () => {
 
     return (
         <div className="media-page playlist">
-            <MediaInfo item={playlist} />
+            <MediaInfo item={playlist} playParentId={id} />
             <div className="media-content">
                 <div className="section items">
                     <MediaList
@@ -40,6 +40,7 @@ export const PlaylistPage = () => {
                         isLoading={isLoadingChildren}
                         type="mixedSmall"
                         loadMore={loadMore}
+                        playParentId={id}
                     />
                     {childrenError && <div className="error">{childrenError || 'Playlist items not found'}</div>}
                 </div>

@@ -32,7 +32,7 @@ export const CollectionPage = () => {
 
     return (
         <div className="media-page collection">
-            <MediaInfo item={collection} />
+            <MediaInfo item={collection} playParentId={id} />
             <div className="media-content">
                 <div className="section items">
                     <MediaList
@@ -40,6 +40,7 @@ export const CollectionPage = () => {
                         isLoading={isLoadingChildren}
                         type="collection"
                         loadMore={loadMore}
+                        playParentId={id}
                     />
                     {childrenError && <div className="error">{childrenError || 'Collection items not found'}</div>}
                 </div>

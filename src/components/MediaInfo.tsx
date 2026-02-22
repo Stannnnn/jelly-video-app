@@ -32,7 +32,7 @@ import { JellyImg } from './JellyImg'
 import './MediaInfo.css'
 import { DownloadedIcon, DownloadingIcon, MoreIcon, PlayIcon } from './SvgIcons'
 
-export const MediaInfo = ({ item }: { item: MediaItem }) => {
+export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentId?: string }) => {
     const navigate = useNavigate()
     const { addToFavorites, removeFromFavorites } = useFavorites()
     const { markAsPlayed, markAsUnplayed } = useWatchedState()
@@ -185,7 +185,9 @@ export const MediaInfo = ({ item }: { item: MediaItem }) => {
 
     const handlePlayClick = (mediaSourceId?: string) => {
         const itemId = nextEpisode?.episodeId || item.Id
-        if (mediaSourceId !== undefined) {
+        if (playParentId) {
+            navigate(`/play/${itemId}/${mediaSourceId || 'default'}/${playParentId}`)
+        } else if (mediaSourceId !== undefined) {
             navigate(`/play/${itemId}/${mediaSourceId}`)
         } else {
             navigate(`/play/${itemId}`)

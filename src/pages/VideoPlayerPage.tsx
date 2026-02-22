@@ -5,7 +5,14 @@ import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import { VideoPlayer } from '../VideoPlayer'
 
 export const VideoPlayerPage = () => {
-    const { id, mediaSourceId } = useParams<{ id: string; mediaSourceId?: string }>()
+    const { id, mediaSourceId: rawMediaSourceId, parentId } = useParams<{
+        id: string
+        mediaSourceId?: string
+        parentId?: string
+    }>()
+    // 'default' is used as a placeholder when navigating from a collection/playlist
+    // without a specific media source ID
+    const mediaSourceId = rawMediaSourceId === 'default' ? undefined : rawMediaSourceId
     const playback = usePlaybackContext()
     const playbackRef = useRef(playback)
 
@@ -100,5 +107,5 @@ export const VideoPlayerPage = () => {
         return () => window.removeEventListener('keydown', handleKeyPress)
     }, [playback])
 
-    return <VideoPlayer isLoading={isLoading} error={error} sourceItem={sourceItem} />
+    return <VideoPlayer isLoading={isLoading} error={error} sourceItem={sourceItem} parentId={parentId} />
 }

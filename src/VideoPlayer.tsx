@@ -20,7 +20,10 @@ import {
 import { useHistoryContext } from './context/HistoryContext/HistoryContext'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
+import { useJellyfinItemChildren } from './hooks/Jellyfin/Infinite/useJellyfinItemChildren'
+import { useJellyfinPlaylistChildren } from './hooks/Jellyfin/Infinite/useJellyfinPlaylistChildren'
 import { useJellyfinEpisodes } from './hooks/Jellyfin/useJellyfinEpisodes'
+import { useJellyfinMediaItem } from './hooks/Jellyfin/useJellyfinMediaItem'
 import { useJellyfinSequentialNextEpisode } from './hooks/Jellyfin/useJellyfinSequentialNextEpisode'
 import { useDisplayTitle } from './hooks/useDisplayTitle'
 import { useJellyfinSortedVideoSources } from './hooks/useJellyfinSortedVideoSources'
@@ -75,10 +78,12 @@ export const VideoPlayer = ({
     isLoading: _isLoading,
     error,
     sourceItem,
+    parentId,
 }: {
     isLoading: boolean
     error: string | null
     sourceItem: MediaItem | undefined
+    parentId?: string
 }) => {
     const api = useJellyfinContext()
     const navigate = useNavigate()
@@ -155,6 +160,21 @@ export const VideoPlayer = ({
         [ItemSortBy.ParentIndexNumber, ItemSortBy.IndexNumber],
         [SortOrder.Ascending]
     )
+
+    // If parentId is provided (playing from a collection/playlist), fetch those items
+    const { mediaItem: parentItem } = useJellyfinMediaItem(parentId)
+    const { items: playlistItems } = useJellyfinPlaylistChildren(
+        parentItem?.Type === BaseItemKind.Playlist ? parentId : undefined
+    )
+    const { items: collectionItems } = useJellyfinItemChildren(
+        parentItem?.Type !== BaseItemKind.Playlist ? parentId : undefined
+    )
+    const parentItems = parentItem?.Type === BaseItemKind.Playlist ? playlistItems : collectionItems
+
+    // Items shown in the episodes menu: parent items take priority over season episodes
+    const menuListItems = parentItems.length > 0 ? parentItems : allEpisodes
+    const menuListLabel =
+        parentItems.length > 0 ? (parentItem?.Type === BaseItemKind.Playlist ? 'Playlist' : 'Collection') : 'Episodes'
 
     const [previewTime, setPreviewTime] = useState<number | null>(null)
     const [previewPosition, setPreviewPosition] = useState(0)
@@ -888,17 +908,19 @@ export const VideoPlayer = ({
                                     </div>
                                 )}
 
-                                {allEpisodes.length > 0 && (
+                                {menuListItems.length > 0 && (
                                     <div
                                         className="menu-item"
                                         onClick={() => {
                                             setCurrentMenuView('episodes')
                                         }}
                                     >
-                                        <div className="text">Episodes</div>
+                                        <div className="text">{menuListLabel}</div>
                                         <div className="menu-item-right">
                                             <div className="menu-item-value">
-                                                {`S${String(currentTrack?.ParentIndexNumber || 0).padStart(2, '0')} E${String(currentTrack?.IndexNumber || 0).padStart(2, '0')} - ${currentTrack?.Name || 'Untitled'}`}
+                                                {parentItems.length > 0
+                                                    ? currentTrack?.Name || 'Playing'
+                                                    : `S${String(currentTrack?.ParentIndexNumber || 0).padStart(2, '0')} E${String(currentTrack?.IndexNumber || 0).padStart(2, '0')} - ${currentTrack?.Name || 'Untitled'}`}
                                             </div>
                                             <ChevronRightIcon size={16} className="icon" />
                                         </div>
@@ -1110,7 +1132,7 @@ export const VideoPlayer = ({
                                 </div>
                             </div>
 
-                            {/* Episodes Submenu */}
+                            {/* Episodes / Playlist / Collection Submenu */}
                             <div
                                 ref={el => {
                                     viewsRef.current.episodes = el
@@ -1124,32 +1146,50 @@ export const VideoPlayer = ({
                                     }}
                                 >
                                     <ChevronLeftIcon size={16} className="return-icon" />
-                                    <div className="text">Episodes</div>
+                                    <div className="text">{menuListLabel}</div>
                                 </div>
                                 <div className="menu-divider"></div>
                                 <div className="container">
-                                    {allEpisodes.map((episode, index) => {
-                                        const isCurrentEpisode = episode.Id === currentTrack?.Id
-                                        const season = String(episode.ParentIndexNumber || 0).padStart(2, '0')
-                                        const episodeNum = String(episode.IndexNumber ?? index + 1).padStart(2, '0')
-                                        const episodeName = episode.Name || 'Untitled'
+                                    {menuListItems.map((item, index) => {
+                                        const isCurrentItem = item.Id === currentTrack?.Id
+
+                                        let label: string
+                                        if (parentItems.length > 0) {
+                                            // Playlist/collection: show item name (with S/E prefix for episodes)
+                                            if (item.Type === BaseItemKind.Episode) {
+                                                const season = String(item.ParentIndexNumber || 0).padStart(2, '0')
+                                                const episodeNum = String(item.IndexNumber ?? index + 1).padStart(
+                                                    2,
+                                                    '0'
+                                                )
+                                                label = `S${season} E${episodeNum} - ${item.Name || 'Untitled'}`
+                                            } else {
+                                                label = item.Name || 'Untitled'
+                                            }
+                                        } else {
+                                            // Season episode list
+                                            const season = String(item.ParentIndexNumber || 0).padStart(2, '0')
+                                            const ep = String(item.IndexNumber ?? index + 1).padStart(2, '0')
+                                            label = `S${season} E${ep} - ${item.Name || 'Untitled'}`
+                                        }
 
                                         return (
                                             <div
-                                                key={episode.Id}
-                                                className={`menu-item ${isCurrentEpisode ? 'selected' : ''}`}
+                                                key={item.Id}
+                                                className={`menu-item ${isCurrentItem ? 'selected' : ''}`}
                                                 onClick={async () => {
-                                                    if (!isCurrentEpisode) {
-                                                        navigate(`/play/${episode.Id}`, { replace: true })
+                                                    if (!isCurrentItem) {
+                                                        const url = parentId
+                                                            ? `/play/${item.Id}/default/${parentId}`
+                                                            : `/play/${item.Id}`
+                                                        navigate(url, { replace: true })
                                                         toggleMenu()
                                                     }
                                                 }}
                                             >
                                                 <CheckIcon className="check-icon" />
-                                                <div className="text">
-                                                    S{season} E{episodeNum} - {episodeName}
-                                                </div>
-                                                {isCurrentEpisode && <div className="menu-item-right"></div>}
+                                                <div className="text">{label}</div>
+                                                {isCurrentItem && <div className="menu-item-right"></div>}
                                             </div>
                                         )
                                     })}

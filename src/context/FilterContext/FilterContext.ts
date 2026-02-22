@@ -1,9 +1,21 @@
 import { createContext, useContext } from 'react'
 import { IFilterContext } from './FilterContextProvider'
 
-export const FilterContext = createContext<IFilterContext>({} as IFilterContext)
+export const FilterContext = createContext<IFilterContext | undefined>(undefined)
 
-export const useFilterContext = () => useContext(FilterContext)
+export const useFilterContextUnsafe = () => {
+    return useContext(FilterContext)
+}
+
+export const useFilterContext = () => {
+    const context = useFilterContextUnsafe()
+
+    if (!context) {
+        throw new Error('useFilterContext must be used within a FilterContextProvider')
+    }
+
+    return context
+}
 
 export enum SortState {
     Added = 'Added',
