@@ -952,7 +952,7 @@ export const VideoPlayer = ({
                                         <div className="text">{menuListLabel}</div>
                                         <div className="menu-item-right">
                                             <div className="menu-item-value">
-                                                {parentItems.length > 0
+                                                {parentItems.length > 0 && currentTrack?.Type !== BaseItemKind.Episode
                                                     ? currentTrack?.Name || 'Playing'
                                                     : `S${String(currentTrack?.ParentIndexNumber || 0).padStart(2, '0')} E${String(currentTrack?.IndexNumber || 0).padStart(2, '0')} - ${currentTrack?.Name || 'Untitled'}`}
                                             </div>
