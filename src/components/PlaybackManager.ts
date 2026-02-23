@@ -672,7 +672,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 const videoUrl = offlineFilePath || streamUrl
 
                 setIsPending(true)
-                await command('loadfile', [videoUrl])
+                await setProperty('save-position-on-quit', false)
+                await command('loadfile', [videoUrl, 'replace'])
 
                 let setStart = false
 
@@ -990,22 +991,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         [isInitialized]
     )
 
-    const handleOpenFile = useCallback(
-        async (filePath: string) => {
-            try {
-                if (isInitialized) {
-                    setIsPending(true)
-                    await command('loadfile', [filePath])
-                    setVideoLoaded(true)
-                }
-            } catch (error) {
-                console.error('Failed to open file:', error)
-                setIsPending(false)
-            }
-        },
-        [isInitialized]
-    )
-
     const toggleFullscreen = useCallback(async () => {
         try {
             if (!document.fullscreenElement) {
@@ -1145,7 +1130,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 // Stop and clear the video
                 if (isInitialized) {
                     try {
+                        await setProperty('time-pos', 0)
+                        await setProperty('start', `+0`)
+
                         await command('stop', [])
+                        await command('playlist-clear', [])
                         setVideoLoaded(false)
                     } catch (error) {
                         console.error('Failed to stop playback:', error)
@@ -1213,7 +1202,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         // Video controls
         speed,
         handleSpeedChange,
-        handleOpenFile,
 
         // Subtitle controls
         subtitleTracks,
