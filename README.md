@@ -5,11 +5,13 @@ A lightweight & elegant video client for Jellyfin, designed to eliminate server 
 **Looking for a music player?** Check out [Jelly Music App](https://github.com/Stannnnn/jelly-app/) - the music-focused web app for your Jellyfin library!
 
 <div>
-  <img src="public/home-light.png" alt="Light variant" width="49%">
-  <img src="public/home-dark.png" alt="Dark variant" width="49%">
+  <img src="public/home-light.png" alt="Light variant" width="100%">
 </div>
 <details>
   <summary>Additional screenshots</summary>
+  <br/>
+  <img src="public/home-dark.png" alt="Dark variant" width="100%">
+  <br/>
   <br/>
   <b>Sidenav search</b>
   <p>Search for movies, tv shows, collections</p>
@@ -25,8 +27,13 @@ A lightweight & elegant video client for Jellyfin, designed to eliminate server 
   <br/>
   <b>Media Pages</b>
   <p>Beautifully crafted media pages</p>
-  <img src="public/media-page-light.png" alt="Media page light variant" width="49%">
-  <img src="public/media-page-dark.png" alt="Media page dark variant" width="49%">
+  <img src="public/media-page-light.png" alt="Media page light variant" width="100%">
+  <img src="public/media-page-dark.png" alt="Media page dark variant" width="100%">
+  <br/>
+  <br/>
+  <b>Series</b>
+  <p>Season select and overview</p>
+  <img src="public/season-ui-display.png" alt="Player interface" width="100%">
   <br/>
   <br/>
   <b>Player</b>
@@ -45,12 +52,17 @@ A lightweight & elegant video client for Jellyfin, designed to eliminate server 
     - **Adventure:** Explore your media through a journey of beautifully crafted visuals, quick, digestible information, and smart recommendations, a stunning new way to experience your library.
     - **Quick Search:** Find movies, tv shows, or collections effortlessly using the convenient side navigation.
     - **Collections:** Browse existing curated collections, or create new collections for your media.
+    - **Playlists:** Browse and create custom playlists for your media, and play your content in any order set by Jellyfin using the 'Inherit' sorting.
     - **Specials:** Specials are available and can be played or viewed from individual movie and tv show pages.
-
 - **Downloads:** Download individual media for offline playback, with support for multiple versions.
 - **Versions:** Multiple versions of media are supported - choose a version before starting playback or within the video player.
 - **Intro Skipper:** Automatically skip opening themes, recaps, or intro segments with an optional skip button, using chapter detection.
-- **Elegant Player:** Extensive but clean player interface allowing you to change video, audio, and subtitle streams on the fly. For tv shows, an episode list for the current season is available, along with a next episode display at the end (using chapters). Trickplay preview thumbnails are fully supported.
+- **Elegant Player:** Extensive but clean player interface allowing you to change video, audio, and subtitle streams on the fly.
+    - **Versions:** Available versions can be changed in the player interface.
+    - **TV shows:** An episode list for the current season is available, along with a **next episode** display at the end (using chapters).
+    - **Playlists & Collections:** Titles played from within are listed in the video player, with **autoplay** functionality to queue the next title - useful for bingewatching a custom playlist.
+    - **Trickplay** preview thumbnails are fully supported and displayed when available.
+    - **External subtitles** are fully supported.
 
 ### Installation
 

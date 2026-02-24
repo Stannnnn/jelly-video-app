@@ -197,7 +197,7 @@ html.light {
     --volume-dot-color-active: #a1a1a1; /* Not used */
     --scrollbar-color: #a8a8a8;
     --scrollbar-color-hover: #8a8a8a;
-    --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.04);
+    --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.06);
 }
 
 html.dark {
@@ -233,7 +233,7 @@ html.dark {
     --volume-dot-color-active: #c4c1c7; /* Not used */
     --scrollbar-color: #78767c;
     --scrollbar-color-hover: #aba9af;
-    --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+    --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
 }
 
 html:has(> body > #root > .video-app > .interface) {

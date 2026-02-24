@@ -562,7 +562,7 @@ const ProgressBar = ({ item }: { item: MediaItem }) => {
                 item.UserData.PlayedPercentage < 100 && (
                     <div
                         className="progress-indicator"
-                        title="Played duration"
+                        title={`${Math.round(item.UserData?.PlayedPercentage)}% watched`}
                         style={
                             {
                                 '--progress-percent': `${item.UserData.PlayedPercentage}%`,

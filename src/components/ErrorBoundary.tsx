@@ -59,7 +59,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                                 Try clearing cache and refreshing. If that fails, reveal the error details below and
                                 report them on{' '}
                                 <a
-                                    href="https://github.com/Stannnnn/jelly-app/issues"
+                                    href="https://github.com/Stannnnn/jelly-video-app/issues"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="textlink"

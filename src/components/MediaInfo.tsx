@@ -504,7 +504,7 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
                     {hasProgressbar && (
                         <div
                             className="progress-indicator"
-                            title="Played duration"
+                            title={`${Math.round(progressbarPercentage)}% watched`}
                             style={{ '--progress-percent': `${progressbarPercentage}%` } as React.CSSProperties}
                         />
                     )}
