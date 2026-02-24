@@ -149,9 +149,9 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
 
         try {
             if (newWatchedState) {
-                await markAsPlayed(item)
+                await markAsPlayed(item, playParentId)
             } else {
-                await markAsUnplayed(item)
+                await markAsUnplayed(item, playParentId)
             }
         } catch (error) {
             // Revert on error

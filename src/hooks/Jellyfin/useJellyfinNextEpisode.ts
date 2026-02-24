@@ -28,16 +28,14 @@ export const useJellyfinNextEpisode = (item: MediaItem) => {
 
             // Handle Collections/BoxSets and Playlists
             if (isCollection || isPlaylist) {
-                // Get all items in the collection
-                const collectionItems = await api.getItemChildren(
-                    item.Id,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    true,
-                    [BaseItemKind.Video, BaseItemKind.Movie, BaseItemKind.Episode]
-                )
+                // Get all items
+                const collectionItems = isPlaylist
+                    ? await api.getPlaylistItems(item.Id, 0, 36, 'Inherit')
+                    : await api.getItemChildren(item.Id, undefined, undefined, undefined, undefined, true, [
+                          BaseItemKind.Video,
+                          BaseItemKind.Movie,
+                          BaseItemKind.Episode,
+                      ])
 
                 if (collectionItems.length === 0) {
                     return null

@@ -218,6 +218,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     const [currentTrack, setCurrentTrack] = useState<MediaItem | undefined>(undefined)
     const [currentMediaSourceId, setCurrentMediaSourceId] = useState<string | undefined>(undefined)
+    const [playParentId, setPlayParentId] = useState<string | undefined>(undefined)
 
     // Helper function to report playback stopped, avoiding duplicate reports
     const reportTrackStopped = useCallback(
@@ -239,15 +240,24 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 const isPlayedStart = playedPercentage < minResumePercentage
 
                 if (isPlayedComplete) {
-                    await markAsPlayed(track)
+                    await markAsPlayed(track, playParentId)
                 } else if (isPlayedStart) {
-                    await markAsUnplayed(track)
+                    await markAsUnplayed(track, playParentId)
                 } else {
-                    await markAsProgress(track, positionTicks, playedPercentage)
+                    await markAsProgress(track, positionTicks, playedPercentage, playParentId)
                 }
             }
         },
-        [api, duration, markAsPlayed, markAsProgress, markAsUnplayed, maxResumePercentage, minResumePercentage]
+        [
+            api,
+            duration,
+            markAsPlayed,
+            markAsProgress,
+            markAsUnplayed,
+            maxResumePercentage,
+            minResumePercentage,
+            playParentId,
+        ]
     )
 
     // Update Media Session metadata
@@ -1144,6 +1154,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 // Clear the current track
                 setCurrentTrack(undefined)
                 setCurrentMediaSourceId(undefined)
+                setPlayParentId(undefined)
                 previousTrackRef.current = undefined
                 isPlayingTrackRef.current = undefined
                 lastStoppedTrackIdRef.current = undefined
@@ -1182,11 +1193,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
         // Playback controls
         togglePlayPause,
-        playTrack: async (track: MediaItem, mediaSourceId?: string) => {
+        playTrack: async (track: MediaItem, mediaSourceId?: string, playParentId?: string) => {
             await clearCurrentTrack(false)
             setUserInteracted(true)
             setCurrentTrack(track)
             setCurrentMediaSourceId(mediaSourceId || track.Id)
+            setPlayParentId(playParentId)
         },
         clearCurrentTrack,
         handleSeek,

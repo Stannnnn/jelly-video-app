@@ -10,10 +10,14 @@ export const useWatchedState = () => {
     const queryClient = useQueryClient()
 
     // When the last item in a series is marked as played it'll affect the series' watched state, or when an episode was played the nextEpisode should be recalculated
-    const invalidateRelated = async (item: MediaItem) => {
+    const invalidateRelated = async (item: MediaItem, playParentId: string | undefined) => {
         // Update parent
         if (item.SeriesId) {
             queryClient.invalidateQueries({ queryKey: ['mediaItem', item.SeriesId] })
+        }
+
+        if (playParentId) {
+            queryClient.invalidateQueries({ queryKey: ['mediaItem', playParentId] })
         }
 
         queryClient.invalidateQueries({ queryKey: ['nextEpisode'] })
@@ -26,7 +30,7 @@ export const useWatchedState = () => {
     }
 
     return {
-        markAsPlayed: async (item: MediaItem) => {
+        markAsPlayed: async (item: MediaItem, playParentId: string | undefined) => {
             const res = await api.markAsPlayed(item)
 
             patchMediaItem(item.Id, item => {
@@ -52,11 +56,11 @@ export const useWatchedState = () => {
                 }
             }
 
-            await invalidateRelated(item)
+            await invalidateRelated(item, playParentId)
 
             return res
         },
-        markAsUnplayed: async (item: MediaItem) => {
+        markAsUnplayed: async (item: MediaItem, playParentId: string | undefined) => {
             const res = await api.markAsUnplayed(item)
 
             patchMediaItem(item.Id, item => {
@@ -82,11 +86,16 @@ export const useWatchedState = () => {
                 }
             }
 
-            await invalidateRelated(item)
+            await invalidateRelated(item, playParentId)
 
             return res
         },
-        markAsProgress: async (item: MediaItem, positionTicks: number, playedPercentage: number) => {
+        markAsProgress: async (
+            item: MediaItem,
+            positionTicks: number,
+            playedPercentage: number,
+            playParentId: string | undefined
+        ) => {
             patchMediaItem(item.Id, c => ({
                 ...c,
                 UserData: {
@@ -97,7 +106,7 @@ export const useWatchedState = () => {
                 },
             }))
 
-            await invalidateRelated(item)
+            await invalidateRelated(item, playParentId)
         },
     }
 }
