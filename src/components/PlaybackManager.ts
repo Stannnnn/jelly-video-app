@@ -503,12 +503,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                                     }
                                 }
 
-                                if (
-                                    audio.length > 0 &&
-                                    savedAudioTrackJson &&
-                                    rememberAudioTrack &&
-                                    !currentAudioTrackId
-                                ) {
+                                if (audio.length > 0 && savedAudioTrackJson && rememberAudioTrack) {
                                     try {
                                         const savedAudioTrack = JSON.parse(savedAudioTrackJson)
                                         let matchingAudio
