@@ -58,7 +58,17 @@ export const Downloads = () => {
             <MediaList
                 items={items}
                 isLoading={isLoading && queueItems.length === 0}
-                type={jellyItemKind === 'Episode' ? 'episode' : 'movie'}
+                type={
+                    jellyItemKind === 'Series'
+                        ? 'series'
+                        : jellyItemKind === 'BoxSet'
+                          ? 'collection'
+                          : jellyItemKind === 'Episode'
+                            ? 'episode'
+                            : jellyItemKind === 'Video'
+                              ? 'specials'
+                              : 'movie'
+                }
                 loadMore={loadMore}
                 disableActions={true}
             />
