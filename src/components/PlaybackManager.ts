@@ -689,7 +689,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             if (!isInitialized) return
 
             try {
-                const offlineFilePath = await audioStorage.getFilePath(track.Id)
+                const storedTrack = await audioStorage.getTrack(track.Id)
+                const storedMediaSourceId = storedTrack?.type === 'video' ? storedTrack.mediaSourceId : undefined
+                const isDownloadedVersion = storedTrack && (!storedMediaSourceId || storedMediaSourceId === mediaSourceId)
+                const offlineFilePath = isDownloadedVersion ? await audioStorage.getFilePath(track.Id) : undefined
                 const streamUrl = api.getStreamUrl(track.Id, bitrate, mediaSourceId)
 
                 const videoUrl = offlineFilePath || streamUrl
