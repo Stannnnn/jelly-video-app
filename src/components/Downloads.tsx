@@ -17,8 +17,6 @@ export const Downloads = () => {
         offlineState: (task.action === 'remove' ? 'deleting' : 'downloading') as 'downloading' | 'deleting',
     }))
 
-    console.log(jellyItemKind)
-
     return (
         <div className="downloads-page">
             {error && <div className="error">{error}</div>}

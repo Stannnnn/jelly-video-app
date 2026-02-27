@@ -217,7 +217,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             <Route path="/settings" element={<Main pageTitle="Settings" content={memoSettings} />} />
                             <Route
                                 path="/downloads"
-                                element={<Main pageTitle="Downloads" content={Downloads} filterType={'favorites'} />}
+                                element={<Main pageTitle="Downloads" content={Downloads} filterType={'downloads'} />}
                             />
                             <Route
                                 path="/movies"

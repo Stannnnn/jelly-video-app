@@ -24,7 +24,7 @@ export const MainContent = ({
     filterType,
 }: {
     content: () => JSX.Element
-    filterType?: 'movies' | 'favorites' | 'moviesPlaylist'
+    filterType?: 'movies' | 'favorites' | 'moviesPlaylist' | 'downloads'
 }) => {
     const { pageTitle } = usePageTitle()
     const { goBack: previousPage } = useHistoryContext()
@@ -90,7 +90,7 @@ export const MainContent = ({
                         </div>
                     )}
 
-                    {filterType === 'favorites' && (
+                    {(filterType === 'favorites' || filterType === 'downloads') && (
                         <>
                             <div className="sorting links">
                                 <div className="filter">
@@ -102,6 +102,7 @@ export const MainContent = ({
                                         <option value="Series">Series</option>
                                         <option value="Episodes">Episodes</option>
                                         <option value="Collections">Collections</option>
+                                        {filterType === 'downloads' && <option value="Specials">Specials</option>}
                                     </select>
                                     <div className="icon">
                                         <ChevronDownIcon size={12} />
@@ -109,7 +110,7 @@ export const MainContent = ({
                                 </div>
                             </div>
 
-                            {filterType === 'favorites' && (
+                            {(filterType === 'favorites' || filterType === 'downloads') && (
                                 <div className="sorting">
                                     <div className="filter">
                                         <select
