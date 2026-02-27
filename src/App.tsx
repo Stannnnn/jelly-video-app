@@ -117,7 +117,7 @@ const RoutedApp = () => {
                             <JellyfinContextProvider auth={auth}>
                                 <AudioStorageContextProvider>
                                     <SidenavContextProvider>
-                                        <PlaybackContextProvider initialVolume={0.5} clearOnLogout={isLoggingOut}>
+                                        <PlaybackContextProvider initialVolume={50} clearOnLogout={isLoggingOut}>
                                             <DownloadContextProvider>
                                                 <MainLayout auth={auth} handleLogout={handleLogout} />
                                             </DownloadContextProvider>
