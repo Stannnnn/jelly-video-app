@@ -565,11 +565,17 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
 
                                             const displayName = details ? `${baseName} (${details})` : baseName
 
+                                            const isVersionDisabled =
+                                                item.offlineState === 'downloaded' &&
+                                                !!downloadedMediaSourceId &&
+                                                source.Id !== downloadedMediaSourceId
+
                                             return (
                                                 <div
                                                     key={source.Id || index}
-                                                    className="version-dropdown-item"
+                                                    className={`version-dropdown-item${isVersionDisabled ? ' disabled' : ''}`}
                                                     onClick={() => {
+                                                        if (isVersionDisabled) return
                                                         handlePlayClick(source.Id || undefined)
                                                         setIsVersionDropdownOpen(false)
                                                     }}
