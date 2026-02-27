@@ -377,7 +377,6 @@
 }
 
 .settings-page > .section.updates > .inner > .container > .subdesc > .icon.success {
-    margin-right: 6px;
     color: var(--success-color);
 }
 
