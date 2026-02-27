@@ -416,6 +416,20 @@
     background-color: var(--bg-color-tertiary);
 }
 
+.media-page
+    > .media-info
+    > .media-actions
+    > .actions
+    > .primary
+    > .play-media
+    > .version-container
+    > .version-dropdown
+    > .version-dropdown-item.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .media-page > .media-info > .media-actions > .actions > .primary > .icon {
     position: relative;
     z-index: 1;
