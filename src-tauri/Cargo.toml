@@ -1,6 +1,5 @@
 [package]
 name = "jelly-video-app"
-version = "0.1.0"
 description = "Jelly Video App"
 authors = ["you"]
 edition = "2021"
