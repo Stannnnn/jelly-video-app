@@ -17,26 +17,25 @@ export const useJellyfinNextEpisode = (item: MediaItem) => {
     } = useJellyfinServerConfiguration()
     const isSeries = item.Type === BaseItemKind.Series
     const isCollection = item.Type === BaseItemKind.BoxSet
+    const isPlaylist = item.Type === BaseItemKind.Playlist
 
     const { data, isLoading } = useQuery({
         queryKey: ['nextEpisode', item.Id],
         queryFn: async (): Promise<NextEpisodeInfo | null> => {
-            if (!isSeries && !isCollection) {
+            if (!isSeries && !isCollection && !isPlaylist) {
                 return null
             }
 
-            // Handle Collections/BoxSets
-            if (isCollection) {
-                // Get all items in the collection
-                const collectionItems = await api.getItemChildren(
-                    item.Id,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    true,
-                    [BaseItemKind.Video]
-                )
+            // Handle Collections/BoxSets and Playlists
+            if (isCollection || isPlaylist) {
+                // Get all items
+                const collectionItems = isPlaylist
+                    ? await api.getPlaylistItems(item.Id, 0, 36, 'Inherit')
+                    : await api.getItemChildren(item.Id, undefined, undefined, undefined, undefined, true, [
+                          BaseItemKind.Video,
+                          BaseItemKind.Movie,
+                          BaseItemKind.Episode,
+                      ])
 
                 if (collectionItems.length === 0) {
                     return null
@@ -107,7 +106,7 @@ export const useJellyfinNextEpisode = (item: MediaItem) => {
 
             return null
         },
-        enabled: isSeries || isCollection,
+        enabled: isSeries || isCollection || isPlaylist,
     })
 
     return {

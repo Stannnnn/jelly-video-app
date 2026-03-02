@@ -20,7 +20,10 @@ import {
 import { useHistoryContext } from './context/HistoryContext/HistoryContext'
 import { useJellyfinContext } from './context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from './context/PlaybackContext/PlaybackContext'
+import { useJellyfinItemChildren } from './hooks/Jellyfin/Infinite/useJellyfinItemChildren'
+import { useJellyfinPlaylistChildren } from './hooks/Jellyfin/Infinite/useJellyfinPlaylistChildren'
 import { useJellyfinEpisodes } from './hooks/Jellyfin/useJellyfinEpisodes'
+import { useJellyfinMediaItem } from './hooks/Jellyfin/useJellyfinMediaItem'
 import { useJellyfinSequentialNextEpisode } from './hooks/Jellyfin/useJellyfinSequentialNextEpisode'
 import { useDisplayTitle } from './hooks/useDisplayTitle'
 import { useJellyfinSortedVideoSources } from './hooks/useJellyfinSortedVideoSources'
@@ -75,10 +78,12 @@ export const VideoPlayer = ({
     isLoading: _isLoading,
     error,
     sourceItem,
+    parentId,
 }: {
     isLoading: boolean
     error: string | null
     sourceItem: MediaItem | undefined
+    parentId?: string
 }) => {
     const api = useJellyfinContext()
     const navigate = useNavigate()
@@ -131,6 +136,7 @@ export const VideoPlayer = ({
         fileSize,
         mpvError,
         autoplayNextEpisode,
+        autoplayNextTitle,
         showNextEpisodeOverlay,
         nextEpisodeCountdown,
         startNextEpisodeCountdown,
@@ -155,6 +161,39 @@ export const VideoPlayer = ({
         [ItemSortBy.ParentIndexNumber, ItemSortBy.IndexNumber],
         [SortOrder.Ascending]
     )
+
+    // If parentId is provided (playing from a collection/playlist), fetch those items
+    const { mediaItem: parentItem } = useJellyfinMediaItem(parentId)
+    const { items: playlistItems } = useJellyfinPlaylistChildren(
+        parentItem?.Type === BaseItemKind.Playlist ? parentId : undefined,
+        'Inherit'
+    )
+    const { items: collectionItems } = useJellyfinItemChildren(
+        parentItem?.Type !== BaseItemKind.Playlist ? parentId : undefined,
+        [BaseItemKind.Video, BaseItemKind.Movie, BaseItemKind.Episode]
+    )
+    const parentItems = parentItem?.Type === BaseItemKind.Playlist ? playlistItems : collectionItems
+
+    // Compute next title for playlist/collection autoplay
+    const currentTrackIndexInParent = parentItems.findIndex(item => item.Id === currentTrack?.Id)
+    const nextTitle =
+        parentItems.length > 0 && currentTrackIndexInParent !== -1 && currentTrackIndexInParent < parentItems.length - 1
+            ? parentItems[currentTrackIndexInParent + 1]
+            : undefined
+
+    // Unified next item and URL for overlay + autoplay
+    const nextAutoplayItem = parentItems.length > 0 ? nextTitle : nextEpisode
+    const nextAutoplayUrl =
+        parentItems.length > 0 && nextTitle?.Id
+            ? `/play/${nextTitle.Id}/default/${parentId}`
+            : nextEpisode?.Id
+              ? `/play/${nextEpisode.Id}`
+              : null
+
+    // Items shown in the episodes menu: parent items take priority over season episodes
+    const menuListItems = parentItems.length > 0 ? parentItems : allEpisodes
+    const menuListLabel =
+        parentItems.length > 0 ? (parentItem?.Type === BaseItemKind.Playlist ? 'Playlist' : 'Collection') : 'Episodes'
 
     const [previewTime, setPreviewTime] = useState<number | null>(null)
     const [previewPosition, setPreviewPosition] = useState(0)
@@ -363,18 +402,21 @@ export const VideoPlayer = ({
         animateMenu()
     }, [animateMenu, subtitleTracks, audioTracks, videoLoaded, currentTrack])
 
-    // Next Episode Detection - Monitor time position and detect credits or near end
+    // Next Episode/Title Detection - Monitor time position and detect credits or near end
     useEffect(() => {
-        if (!currentTrack || !duration || !timePos || !videoLoaded || !nextEpisode) {
+        if (!currentTrack || !duration || !timePos || !videoLoaded || !nextAutoplayItem) {
             return
         }
 
         // Check if we're already showing the overlay or if countdown reached 0
         if (showNextEpisodeOverlay) {
             // Auto-navigate when countdown reaches 0
-            if (nextEpisodeCountdown === 0 && nextEpisode?.Id && autoplayNextEpisode) {
-                cancelNextEpisodeCountdown()
-                navigate(`/play/${nextEpisode.Id}`, { replace: true })
+            if (nextEpisodeCountdown === 0 && nextAutoplayUrl) {
+                const shouldAutoplay = parentItems.length > 0 ? autoplayNextTitle : autoplayNextEpisode
+                if (shouldAutoplay) {
+                    cancelNextEpisodeCountdown()
+                    navigate(nextAutoplayUrl, { replace: true })
+                }
             }
             return
         }
@@ -432,7 +474,10 @@ export const VideoPlayer = ({
         videoLoaded,
         skipOutro,
         autoplayNextEpisode,
-        nextEpisode,
+        autoplayNextTitle,
+        nextAutoplayItem,
+        nextAutoplayUrl,
+        parentItems,
         showNextEpisodeOverlay,
         nextEpisodeCountdown,
         startNextEpisodeCountdown,
@@ -459,7 +504,9 @@ export const VideoPlayer = ({
             if (!chapterName) return false
             const name = chapterName.toLowerCase()
             return (
+                name.includes('chapter 01') ||
                 name.includes('intro') ||
+                name.includes('open') ||
                 name.includes('opening') ||
                 name.includes('op theme') ||
                 name.includes('main title') ||
@@ -548,16 +595,23 @@ export const VideoPlayer = ({
         }
     }, [currentTrack, duration, timePos, videoLoaded, skipIntro])
 
-    // If video ends naturally (timePos reaches duration), immediately go to next episode
+    // If video ends naturally (timePos reaches duration), immediately go to next episode or title
     useEffect(() => {
-        if (!currentTrack || !duration || !timePos || !videoLoaded || !autoplayNextEpisode || !nextEpisode) {
+        if (!currentTrack || !duration || !timePos || !videoLoaded) {
             return
         }
 
-        // If we're within 1 second of the end, navigate immediately
-        if (duration - timePos < 1 && duration - timePos > 0 && nextEpisode.Id) {
+        const nearEnd = duration - timePos < 1 && duration - timePos > 0
+
+        if (!nearEnd) {
+            return
+        }
+
+        const shouldAutoplay = parentItems.length > 0 ? autoplayNextTitle : autoplayNextEpisode
+
+        if (shouldAutoplay && nextAutoplayUrl) {
             cancelNextEpisodeCountdown()
-            navigate(`/play/${nextEpisode.Id}`, { replace: true })
+            navigate(nextAutoplayUrl, { replace: true })
         }
     }, [
         currentTrack,
@@ -565,7 +619,9 @@ export const VideoPlayer = ({
         timePos,
         videoLoaded,
         autoplayNextEpisode,
-        nextEpisode,
+        autoplayNextTitle,
+        nextAutoplayUrl,
+        parentItems,
         navigate,
         cancelNextEpisodeCountdown,
     ])
@@ -886,17 +942,19 @@ export const VideoPlayer = ({
                                     </div>
                                 )}
 
-                                {allEpisodes.length > 0 && (
+                                {menuListItems.length > 0 && (
                                     <div
                                         className="menu-item"
                                         onClick={() => {
                                             setCurrentMenuView('episodes')
                                         }}
                                     >
-                                        <div className="text">Episodes</div>
+                                        <div className="text">{menuListLabel}</div>
                                         <div className="menu-item-right">
                                             <div className="menu-item-value">
-                                                {`S${String(currentTrack?.ParentIndexNumber || 0).padStart(2, '0')} E${String(currentTrack?.IndexNumber || 0).padStart(2, '0')} - ${currentTrack?.Name || 'Untitled'}`}
+                                                {parentItems.length > 0 && currentTrack?.Type !== BaseItemKind.Episode
+                                                    ? currentTrack?.Name || 'Playing'
+                                                    : `S${String(currentTrack?.ParentIndexNumber || 0).padStart(2, '0')} E${String(currentTrack?.IndexNumber || 0).padStart(2, '0')} - ${currentTrack?.Name || 'Untitled'}`}
                                             </div>
                                             <ChevronRightIcon size={16} className="icon" />
                                         </div>
@@ -1021,9 +1079,12 @@ export const VideoPlayer = ({
                                                 }`}
                                                 onClick={() => {
                                                     if (source.Id) {
-                                                        navigate(`/play/${sourceItem?.Id}/${source.Id}`, {
-                                                            replace: true,
-                                                        })
+                                                        navigate(
+                                                            parentId
+                                                                ? `/play/${sourceItem?.Id}/${source.Id}/${parentId}`
+                                                                : `/play/${sourceItem?.Id}/${source.Id}`,
+                                                            { replace: true }
+                                                        )
                                                         toggleMenu()
                                                     }
                                                 }}
@@ -1108,7 +1169,7 @@ export const VideoPlayer = ({
                                 </div>
                             </div>
 
-                            {/* Episodes Submenu */}
+                            {/* Episodes / Playlist / Collection Submenu */}
                             <div
                                 ref={el => {
                                     viewsRef.current.episodes = el
@@ -1122,32 +1183,50 @@ export const VideoPlayer = ({
                                     }}
                                 >
                                     <ChevronLeftIcon size={16} className="return-icon" />
-                                    <div className="text">Episodes</div>
+                                    <div className="text">{menuListLabel}</div>
                                 </div>
                                 <div className="menu-divider"></div>
                                 <div className="container">
-                                    {allEpisodes.map((episode, index) => {
-                                        const isCurrentEpisode = episode.Id === currentTrack?.Id
-                                        const season = String(episode.ParentIndexNumber || 0).padStart(2, '0')
-                                        const episodeNum = String(episode.IndexNumber ?? index + 1).padStart(2, '0')
-                                        const episodeName = episode.Name || 'Untitled'
+                                    {menuListItems.map((item, index) => {
+                                        const isCurrentItem = item.Id === currentTrack?.Id || item.Id === sourceItem?.Id
+
+                                        let label: string
+                                        if (parentItems.length > 0) {
+                                            // Playlist/collection: show item name (with S/E prefix for episodes)
+                                            if (item.Type === BaseItemKind.Episode) {
+                                                const season = String(item.ParentIndexNumber || 0).padStart(2, '0')
+                                                const episodeNum = String(item.IndexNumber ?? index + 1).padStart(
+                                                    2,
+                                                    '0'
+                                                )
+                                                label = `S${season} E${episodeNum} - ${item.Name || 'Untitled'}`
+                                            } else {
+                                                label = item.Name || 'Untitled'
+                                            }
+                                        } else {
+                                            // Season episode list
+                                            const season = String(item.ParentIndexNumber || 0).padStart(2, '0')
+                                            const ep = String(item.IndexNumber ?? index + 1).padStart(2, '0')
+                                            label = `S${season} E${ep} - ${item.Name || 'Untitled'}`
+                                        }
 
                                         return (
                                             <div
-                                                key={episode.Id}
-                                                className={`menu-item ${isCurrentEpisode ? 'selected' : ''}`}
+                                                key={item.Id}
+                                                className={`menu-item ${isCurrentItem ? 'selected' : ''}`}
                                                 onClick={async () => {
-                                                    if (!isCurrentEpisode) {
-                                                        navigate(`/play/${episode.Id}`, { replace: true })
+                                                    if (!isCurrentItem) {
+                                                        const url = parentId
+                                                            ? `/play/${item.Id}/default/${parentId}`
+                                                            : `/play/${item.Id}`
+                                                        navigate(url, { replace: true })
                                                         toggleMenu()
                                                     }
                                                 }}
                                             >
                                                 <CheckIcon className="check-icon" />
-                                                <div className="text">
-                                                    S{season} E{episodeNum} - {episodeName}
-                                                </div>
-                                                {isCurrentEpisode && <div className="menu-item-right"></div>}
+                                                <div className="text">{label}</div>
+                                                {isCurrentItem && <div className="menu-item-right"></div>}
                                             </div>
                                         )
                                     })}
@@ -1261,17 +1340,19 @@ export const VideoPlayer = ({
             </div>
 
             <NextEpisodeOverlay
-                nextEpisode={nextEpisode}
+                nextEpisode={nextAutoplayItem}
                 countdown={nextEpisodeCountdown}
                 onPlayNow={() => {
-                    cancelNextEpisodeCountdown()
-                    navigate(`/play/${nextEpisode?.Id}`, { replace: true })
+                    if (nextAutoplayUrl) {
+                        cancelNextEpisodeCountdown()
+                        navigate(nextAutoplayUrl, { replace: true })
+                    }
                 }}
                 onCancel={() => {
                     userCanceledCountdownRef.current = true
                     cancelNextEpisodeCountdown()
                 }}
-                isVisible={!!(showNextEpisodeOverlay && nextEpisode)}
+                isVisible={!!(showNextEpisodeOverlay && nextAutoplayItem)}
             />
 
             <div className={`intro-skip-overlay ${showIntroSkip ? 'visible' : ''}`}>

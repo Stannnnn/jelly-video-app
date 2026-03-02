@@ -1,26 +1,28 @@
-import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models'
-import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by'
-import { SortOrder } from '@jellyfin/sdk/lib/generated-client/models/sort-order'
+import { useFilterContextUnsafe } from '../../../context/FilterContext/FilterContext'
 import { useJellyfinContext } from '../../../context/JellyfinContext/JellyfinContext'
 import { useJellyfinInfiniteData } from './useJellyfinInfiniteData'
 
-export const useJellyfinItemChildren = (itemId: string | undefined, itemTypes?: BaseItemKind[]) => {
+export const useJellyfinPlaylistChildren = (itemId: string | undefined, sortBy?: 'Inherit') => {
     const api = useJellyfinContext()
+    const filterContext = useFilterContextUnsafe()
     const itemsPerPage = 36
 
     return useJellyfinInfiniteData({
-        queryKey: ['collection-children', itemId, itemTypes],
+        queryKey: [
+            'playlist-children',
+            itemId,
+            sortBy || filterContext?.jellySort.sortBy,
+            filterContext?.jellySort.sortOrder,
+        ],
         queryFn: async ({ pageParam = 0 }) => {
             if (!itemId) throw new Error('Item ID is required')
             const startIndex = (pageParam as number) * itemsPerPage
-            return await api.getItemChildren(
+            return await api.getPlaylistItems(
                 itemId,
                 startIndex,
                 itemsPerPage,
-                [ItemSortBy.PremiereDate],
-                [SortOrder.Ascending],
-                false,
-                itemTypes
+                sortBy || filterContext?.jellySort.sortBy,
+                filterContext?.jellySort.sortOrder
             )
         },
         enabled: !!itemId,

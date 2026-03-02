@@ -91,6 +91,8 @@ body:has(.video-app > .video-container) {
 .video-app > .video-container > .video-header > .video-title {
     font-size: 1rem;
     font-weight: 500;
+    /* Help with CJK letter spacing */
+    line-height: 1.25rem;
 }
 
 .video-app > .video-container > .video-header > .video-title > .container > .series {
@@ -392,7 +394,7 @@ body:has(.video-app > .video-container) {
     left: 15px;
     transform: rotate(-90deg);
     transform-origin: left;
-    width: 144px;
+    width: 148px;
     height: 32px;
     border-radius: 20px;
     opacity: 0;
@@ -562,8 +564,10 @@ body:has(.video-app > .video-container) {
 }
 
 .video-app > .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item {
-    position: relative;
     font-size: 0.8125rem;
+    /* Help with CJK letter spacing */
+    line-height: 1rem;
+    position: relative;
     cursor: pointer;
     display: flex;
     align-items: center;

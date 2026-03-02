@@ -24,7 +24,7 @@ export const MainContent = ({
     filterType,
 }: {
     content: () => JSX.Element
-    filterType?: 'movies' | 'favorites'
+    filterType?: 'movies' | 'favorites' | 'moviesPlaylist' | 'downloads'
 }) => {
     const { pageTitle } = usePageTitle()
     const { goBack: previousPage } = useHistoryContext()
@@ -52,7 +52,7 @@ export const MainContent = ({
                     </div>
                 </div>
                 <div className="secondary noSelect">
-                    {filterType === 'movies' && (
+                    {(filterType === 'movies' || filterType === 'moviesPlaylist') && (
                         <div className="sorting">
                             <div className="filter">
                                 <select
@@ -64,30 +64,33 @@ export const MainContent = ({
                                     <option value="Runtime">Runtime</option>
                                     <option value="Random">Random</option>
                                     <option value="Name">Name</option>
+                                    {filterType === 'moviesPlaylist' && <option value="Inherit">Inherit</option>}
                                 </select>
                                 <div className="icon">
                                     <ChevronDownIcon size={12} />
                                 </div>
                             </div>
 
-                            <div
-                                className="sort"
-                                onClick={() => {
-                                    setFilter(c => ({
-                                        ...c,
-                                        order: c.order === 'Ascending' ? 'Descending' : 'Ascending',
-                                    }))
-                                }}
-                                title={filter.order === 'Ascending' ? 'Ascending' : 'Descending'}
-                            >
-                                <div className={'icon' + (filter.order === 'Ascending' ? ' active' : '')}>
-                                    <SortingIcon width={12} height={12} />
+                            {filter.sort !== 'Inherit' && (
+                                <div
+                                    className="sort"
+                                    onClick={() => {
+                                        setFilter(c => ({
+                                            ...c,
+                                            order: c.order === 'Ascending' ? 'Descending' : 'Ascending',
+                                        }))
+                                    }}
+                                    title={filter.order === 'Ascending' ? 'Ascending' : 'Descending'}
+                                >
+                                    <div className={'icon' + (filter.order === 'Ascending' ? ' active' : '')}>
+                                        <SortingIcon width={12} height={12} />
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     )}
 
-                    {filterType === 'favorites' && (
+                    {(filterType === 'favorites' || filterType === 'downloads') && (
                         <>
                             <div className="sorting links">
                                 <div className="filter">
@@ -99,6 +102,7 @@ export const MainContent = ({
                                         <option value="Series">Series</option>
                                         <option value="Episodes">Episodes</option>
                                         <option value="Collections">Collections</option>
+                                        {filterType === 'downloads' && <option value="Specials">Specials</option>}
                                     </select>
                                     <div className="icon">
                                         <ChevronDownIcon size={12} />
@@ -106,7 +110,7 @@ export const MainContent = ({
                                 </div>
                             </div>
 
-                            {filterType === 'favorites' && (
+                            {(filterType === 'favorites' || filterType === 'downloads') && (
                                 <div className="sorting">
                                     <div className="filter">
                                         <select

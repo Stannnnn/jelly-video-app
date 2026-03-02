@@ -103,6 +103,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         [autoplayNextEpisode]
     )
 
+    // Next Title Autoplay Settings (playlist/collection)
+    const [autoplayNextTitle, setAutoplayNextTitle] = useState(localStorage.getItem('autoplayNextTitle') !== 'off')
+    useEffect(() => localStorage.setItem('autoplayNextTitle', autoplayNextTitle ? 'on' : 'off'), [autoplayNextTitle])
+
     // Skip Intro Settings
     const [skipIntro, setSkipIntro] = useState(localStorage.getItem('skipIntro') !== 'off')
     useEffect(() => localStorage.setItem('skipIntro', skipIntro ? 'on' : 'off'), [skipIntro])
@@ -153,7 +157,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [isFullscreen, setIsFullscreen] = useState(false)
     const [showMenu, setShowMenu] = useState(false)
     const hideControlsTimeoutRef = useRef<number | null>(null)
-    const tracklistRef = useRef<boolean | null>(false)
+    const tracklistRef = useRef<{
+        restored?: boolean
+        firstSid?: number
+        isLoading?: boolean
+        matched?: boolean
+    }>({})
 
     const [volume, setVolume] = useState(() => {
         const savedVolume = localStorage.getItem('volume')
@@ -214,6 +223,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
     const [currentTrack, setCurrentTrack] = useState<MediaItem | undefined>(undefined)
     const [currentMediaSourceId, setCurrentMediaSourceId] = useState<string | undefined>(undefined)
+    const [playParentId, setPlayParentId] = useState<string | undefined>(undefined)
 
     // Helper function to report playback stopped, avoiding duplicate reports
     const reportTrackStopped = useCallback(
@@ -235,15 +245,24 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 const isPlayedStart = playedPercentage < minResumePercentage
 
                 if (isPlayedComplete) {
-                    await markAsPlayed(track)
+                    await markAsPlayed(track, playParentId)
                 } else if (isPlayedStart) {
-                    await markAsUnplayed(track)
+                    await markAsUnplayed(track, playParentId)
                 } else {
-                    await markAsProgress(track, positionTicks, playedPercentage)
+                    await markAsProgress(track, positionTicks, playedPercentage, playParentId)
                 }
             }
         },
-        [api, duration, markAsPlayed, markAsProgress, markAsUnplayed, maxResumePercentage, minResumePercentage]
+        [
+            api,
+            duration,
+            markAsPlayed,
+            markAsProgress,
+            markAsUnplayed,
+            maxResumePercentage,
+            minResumePercentage,
+            playParentId,
+        ]
     )
 
     // Update Media Session metadata
@@ -283,6 +302,17 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         },
         [isInitialized]
     )
+
+    const getExternalSubtitles = (track: MediaItem | undefined) => {
+        return (
+            track?.MediaStreams?.filter(
+                stream =>
+                    stream.Type === 'Subtitle' &&
+                    (stream.DeliveryMethod === 'External' || stream.IsExternal) &&
+                    stream.Index !== undefined
+            ) || []
+        )
+    }
 
     // Helper function to apply subtitle settings to MPV
     const applySubtitleSettings = useCallback(async () => {
@@ -356,9 +386,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                         'keep-open': 'yes',
                         'force-window': 'yes',
                         // Enable verbose logging
-                        'msg-level': 'all=v',
-                        terminal: 'yes',
-                        'msg-color': 'yes',
+                        ...(import.meta.env.DEV ? { 'msg-level': 'all=v', terminal: 'yes', 'msg-color': 'yes' } : {}),
                     },
                     observedProperties: OBSERVED_PROPERTIES,
                 })
@@ -434,18 +462,19 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                             }
 
                             // Restore saved track selections
-                            if (!tracklistRef.current && (subs.length > 0 || audio.length > 0)) {
-                                tracklistRef.current = true
+                            const externalSubtitles = getExternalSubtitles(currentTrack)
+
+                            if (
+                                subs.filter(s => s.external).length === externalSubtitles.length &&
+                                !tracklistRef.current.restored &&
+                                (subs.length > 0 || audio.length > 0)
+                            ) {
+                                tracklistRef.current.restored = true
 
                                 const savedSubtitleJson = localStorage.getItem('last_track_subtitle')
                                 const savedAudioTrackJson = localStorage.getItem('last_track_audio')
 
-                                if (
-                                    subs.length > 0 &&
-                                    savedSubtitleJson &&
-                                    rememberSubtitleTrack &&
-                                    !currentSubtitleId
-                                ) {
+                                if (subs.length > 0 && savedSubtitleJson && rememberSubtitleTrack) {
                                     try {
                                         const savedSubtitle = JSON.parse(savedSubtitleJson)
                                         let matchingSub
@@ -462,6 +491,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                                         }
 
                                         if (matchingSub) {
+                                            tracklistRef.current.matched = true
                                             // console.log(
                                             //     `[MPV] Restoring subtitle track: ${matchingSub.id}`,
                                             //     matchingSub
@@ -473,12 +503,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                                     }
                                 }
 
-                                if (
-                                    audio.length > 0 &&
-                                    savedAudioTrackJson &&
-                                    rememberAudioTrack &&
-                                    !currentAudioTrackId
-                                ) {
+                                if (audio.length > 0 && savedAudioTrackJson && rememberAudioTrack) {
                                     try {
                                         const savedAudioTrack = JSON.parse(savedAudioTrackJson)
                                         let matchingAudio
@@ -512,6 +537,13 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                         break
                     case 'sid':
                         if (typeof data === 'number' || data === null) {
+                            if (
+                                !tracklistRef.current.isLoading &&
+                                (tracklistRef.current.firstSid === undefined || tracklistRef.current.firstSid === null)
+                            ) {
+                                tracklistRef.current.firstSid = data || undefined
+                            }
+
                             setCurrentSubtitleId(data)
                         }
                         break
@@ -623,14 +655,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 unlisten()
             }
         }
-    }, [
-        currentAudioTrackId,
-        currentSubtitleId,
-        currentTrack?.Id,
-        isInitialized,
-        rememberAudioTrack,
-        rememberSubtitleTrack,
-    ])
+    }, [currentAudioTrackId, currentSubtitleId, currentTrack, isInitialized, rememberAudioTrack, rememberSubtitleTrack])
 
     // Report playback progress to Jellyfin
     useEffect(() => {
@@ -664,13 +689,17 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             if (!isInitialized) return
 
             try {
-                const offlineFilePath = await audioStorage.getFilePath(track.Id)
+                const storedTrack = await audioStorage.getTrack(track.Id)
+                const storedMediaSourceId = storedTrack?.type === 'video' ? storedTrack.mediaSourceId : undefined
+                const isDownloadedVersion = storedTrack && (!storedMediaSourceId || storedMediaSourceId === mediaSourceId)
+                const offlineFilePath = isDownloadedVersion ? await audioStorage.getFilePath(track.Id) : undefined
                 const streamUrl = api.getStreamUrl(track.Id, bitrate, mediaSourceId)
 
                 const videoUrl = offlineFilePath || streamUrl
 
                 setIsPending(true)
-                await command('loadfile', [videoUrl])
+                await setProperty('save-position-on-quit', false)
+                await command('loadfile', [videoUrl, 'replace'])
 
                 let setStart = false
 
@@ -698,14 +727,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                     await setProperty('start', `+0`)
                 }
 
+                tracklistRef.current.isLoading = true
+
                 // Add external subtitle streams
                 if (track.MediaStreams && Array.isArray(track.MediaStreams)) {
-                    const externalSubtitles = track.MediaStreams.filter(
-                        stream =>
-                            stream.Type === 'Subtitle' &&
-                            (stream.DeliveryMethod === 'External' || stream.IsExternal) &&
-                            stream.Index !== undefined
-                    )
+                    const externalSubtitles = getExternalSubtitles(track)
 
                     for (const subtitle of externalSubtitles) {
                         try {
@@ -718,6 +744,14 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                             // console.log(`[MPV] Added external subtitle: ${title}`, subtitle)
                         } catch (error) {
                             console.error(`[MPV] Failed to add external subtitle ${subtitle.Index}:`, error)
+                        }
+                    }
+
+                    if (externalSubtitles.length > 0 && !tracklistRef.current.matched) {
+                        if (tracklistRef.current.firstSid !== undefined) {
+                            await command('set', ['sid', tracklistRef.current.firstSid])
+                        } else {
+                            await command('set', ['sid', 'no'])
                         }
                     }
                 }
@@ -988,22 +1022,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         [isInitialized]
     )
 
-    const handleOpenFile = useCallback(
-        async (filePath: string) => {
-            try {
-                if (isInitialized) {
-                    setIsPending(true)
-                    await command('loadfile', [filePath])
-                    setVideoLoaded(true)
-                }
-            } catch (error) {
-                console.error('Failed to open file:', error)
-                setIsPending(false)
-            }
-        },
-        [isInitialized]
-    )
-
     const toggleFullscreen = useCallback(async () => {
         try {
             if (!document.fullscreenElement) {
@@ -1143,7 +1161,11 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 // Stop and clear the video
                 if (isInitialized) {
                     try {
+                        await setProperty('time-pos', 0)
+                        await setProperty('start', `+0`)
+
                         await command('stop', [])
+                        await command('playlist-clear', [])
                         setVideoLoaded(false)
                     } catch (error) {
                         console.error('Failed to stop playback:', error)
@@ -1152,9 +1174,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
                 // Clear the current track
                 setCurrentTrack(undefined)
+                setCurrentMediaSourceId(undefined)
+                setPlayParentId(undefined)
                 previousTrackRef.current = undefined
                 isPlayingTrackRef.current = undefined
                 lastStoppedTrackIdRef.current = undefined
+                tracklistRef.current = {}
 
                 // Abort any ongoing API requests
                 abortControllerRef.current?.abort('clearCurrentTrack')
@@ -1189,11 +1214,12 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
         // Playback controls
         togglePlayPause,
-        playTrack: async (track: MediaItem, mediaSourceId?: string) => {
+        playTrack: async (track: MediaItem, mediaSourceId?: string, playParentId?: string) => {
             await clearCurrentTrack(false)
             setUserInteracted(true)
             setCurrentTrack(track)
             setCurrentMediaSourceId(mediaSourceId || track.Id)
+            setPlayParentId(playParentId)
         },
         clearCurrentTrack,
         handleSeek,
@@ -1209,7 +1235,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         // Video controls
         speed,
         handleSpeedChange,
-        handleOpenFile,
 
         // Subtitle controls
         subtitleTracks,
@@ -1262,6 +1287,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         // Next Episode Autoplay
         autoplayNextEpisode,
         setAutoplayNextEpisode,
+        autoplayNextTitle,
+        setAutoplayNextTitle,
         showNextEpisodeOverlay,
         nextEpisodeCountdown,
         startNextEpisodeCountdown,

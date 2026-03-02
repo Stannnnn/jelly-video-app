@@ -26,10 +26,11 @@ export const MediaList = ({
     virtuosoRef,
     onRangeChange,
     overscan,
+    playParentId,
 }: {
     items: MediaItem[] | undefined
     isLoading: boolean
-    type: 'movie' | 'series' | 'episode' | 'collection' | 'mixed' | 'mixedSmall' | 'specials' | 'person'
+    type: 'movie' | 'series' | 'episode' | 'collection' | 'playlist' | 'mixed' | 'mixedSmall' | 'specials' | 'person'
     virtuosoType?: 'vertical' | 'horizontal' | 'grid'
     loadMore?: () => void
     disableActions?: boolean
@@ -42,6 +43,8 @@ export const MediaList = ({
     virtuosoRef?: React.RefObject<VirtuosoHandle | null>
     onRangeChange?: (range: { startIndex: number; endIndex: number }) => void
     overscan?: number
+    /** When set, play navigations will include this parent (playlist/collection) ID */
+    playParentId?: string
 }) => {
     const { displayItems, setRowRefs } = useDisplayItems(items, isLoading, type)
     const navigate = useNavigate()
@@ -60,11 +63,13 @@ export const MediaList = ({
             navigate(`/episode/${item.Id}`)
         } else if (itemType === 'boxset') {
             navigate(`/collection/${item.Id}`)
+        } else if (itemType === 'playlist') {
+            navigate(`/playlist/${item.Id}`)
         } else if (itemType === 'person' || type === 'person') {
             navigate(`/person/${item.Id}`)
         } else {
             // Fallback to play route for other types
-            navigate(`/play/${item.Id}`)
+            navigate(playParentId ? `/play/${item.Id}/default/${playParentId}` : `/play/${item.Id}`)
         }
     }
 
@@ -72,14 +77,21 @@ export const MediaList = ({
         if (!item || 'isPlaceholder' in item) {
             return (
                 <div className={`media-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
-                    <Skeleton type={type === 'series' || type === 'collection' || type === 'person' ? 'movie' : type} />
+                    <Skeleton
+                        type={
+                            type === 'series' || type === 'collection' || type === 'playlist' || type === 'person'
+                                ? 'movie'
+                                : type
+                        }
+                    />
                 </div>
             )
         }
 
-        if (type === 'movie' || type === 'series' || type === 'collection') {
+        if (type === 'movie' || type === 'series' || type === 'collection' || type === 'playlist') {
             //  const isSeriesLike = type === 'series' || (type === 'collection' && item.CollectionType === 'tvshows')
-            const isSeriesLike = type === 'series' || type === 'collection'
+            const isSeriesLike = type === 'series' || type === 'collection' || type === 'playlist'
+            const isPlaylist = type === 'playlist'
 
             return (
                 <div
@@ -91,8 +103,8 @@ export const MediaList = ({
                               onClick: () => handleItemClick(item),
                           })}
                 >
-                    <Squircle width={152} height={228} cornerRadius={8} className="media-thumbnail">
-                        <JellyImg item={item} type={'Primary'} width={152} height={228} />
+                    <Squircle width={180} height={270} cornerRadius={8} isResponsive={true} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={180} height={270} />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         {currentDownloadingId === item.Id && item.offlineState === 'downloading' && (
                             <div
@@ -136,6 +148,13 @@ export const MediaList = ({
                                     )}
                             </div>
                         )}
+                        {isPlaylist && (
+                            <div className="container">
+                                <div className="subtitle date created">
+                                    {new Date(item.DateCreated ?? 0).getFullYear()}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )
@@ -148,9 +167,10 @@ export const MediaList = ({
                     ref={el => setRowRefs(index, el)}
                 >
                     <Squircle
-                        width={240}
-                        height={135}
+                        width={320}
+                        height={180}
                         cornerRadius={8}
+                        isResponsive={true}
                         className="media-thumbnail"
                         {...(disableEvents
                             ? {}
@@ -160,7 +180,7 @@ export const MediaList = ({
                                   },
                               })}
                     >
-                        <JellyImg item={item} type={'Primary'} width={240} height={135} />
+                        <JellyImg item={item} type={'Primary'} width={320} height={180} />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         <div className="overlay">
                             <div className="play">
@@ -205,7 +225,9 @@ export const MediaList = ({
                             ? {}
                             : {
                                   onClick: () => {
-                                      navigate(`/play/${item.Id}`)
+                                      navigate(
+                                          playParentId ? `/play/${item.Id}/default/${playParentId}` : `/play/${item.Id}`
+                                      )
                                   },
                               })}
                     >
@@ -276,23 +298,26 @@ export const MediaList = ({
             return (
                 <div className={`media-item landscape small ${className || ''}`} ref={el => setRowRefs(index, el)}>
                     <Squircle
-                        width={240}
-                        height={135}
+                        width={320}
+                        height={180}
                         cornerRadius={8}
+                        isResponsive={true}
                         className="media-thumbnail"
                         {...(disableEvents
                             ? {}
                             : {
                                   onClick: () => {
-                                      navigate(`/play/${item.Id}`)
+                                      navigate(
+                                          playParentId ? `/play/${item.Id}/default/${playParentId}` : `/play/${item.Id}`
+                                      )
                                   },
                               })}
                     >
                         <JellyImg
                             item={item}
                             type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
-                            width={280}
-                            height={158}
+                            width={320}
+                            height={180}
                         />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         <div className="overlay">
@@ -355,17 +380,25 @@ export const MediaList = ({
             return (
                 <div className={`media-item landscape specials ${className || ''}`} ref={el => setRowRefs(index, el)}>
                     <Squircle
-                        width={240}
-                        height={135}
+                        width={320}
+                        height={180}
                         cornerRadius={8}
+                        isResponsive={true}
                         className="media-thumbnail"
-                        {...(disableEvents ? {} : { onClick: () => navigate(`/play/${item.Id}`) })}
+                        {...(disableEvents
+                            ? {}
+                            : {
+                                  onClick: () =>
+                                      navigate(
+                                          playParentId ? `/play/${item.Id}/default/${playParentId}` : `/play/${item.Id}`
+                                      ),
+                              })}
                     >
                         <JellyImg
                             item={item}
                             type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
-                            width={240}
-                            height={135}
+                            width={320}
+                            height={180}
                         />
                         <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
                         <div className="overlay">
@@ -418,8 +451,14 @@ export const MediaList = ({
                               onClick: () => handleItemClick(item),
                           })}
                 >
-                    <Squircle width={108} height={108} cornerRadius={12} className="media-thumbnail">
-                        <JellyImg item={item} type={'Primary'} width={108} height={108} />
+                    <Squircle
+                        width={120}
+                        height={120}
+                        cornerRadius={12}
+                        isResponsive={true}
+                        className="media-thumbnail"
+                    >
+                        <JellyImg item={item} type={'Primary'} width={120} height={120} />
                     </Squircle>
                     <div className="media-details">
                         <span className="title" title={item.Name}>
@@ -442,6 +481,7 @@ export const MediaList = ({
             series: 'No series were found',
             episode: 'No episodes were found',
             collection: 'No items were found',
+            playlist: 'No playlists were found',
             mixed: 'No items were found',
             mixedSmall: 'No items were found',
             specials: 'No specials were found',
@@ -522,7 +562,7 @@ const ProgressBar = ({ item }: { item: MediaItem }) => {
                 item.UserData.PlayedPercentage < 100 && (
                     <div
                         className="progress-indicator"
-                        title="Played duration"
+                        title={`${Math.round(item.UserData?.PlayedPercentage)}% watched`}
                         style={
                             {
                                 '--progress-percent': `${item.UserData.PlayedPercentage}%`,

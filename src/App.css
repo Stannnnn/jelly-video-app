@@ -158,10 +158,13 @@ svg {
     --inter-font: 'Inter Variable', sans-serif;
 }
 
-/* Site Theme */
-html.light {
+html {
     --system-fonts: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     --inter-font: 'Inter Variable', sans-serif;
+}
+
+/* Site Theme */
+html.light {
     color-scheme: light;
     --bg-color: #ffffff;
     --bg-color-secondary: #f8f8f8;
@@ -194,7 +197,7 @@ html.light {
     --volume-dot-color-active: #a1a1a1; /* Not used */
     --scrollbar-color: #a8a8a8;
     --scrollbar-color-hover: #8a8a8a;
-    --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.04);
+    --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.06);
 }
 
 html.dark {
@@ -230,7 +233,11 @@ html.dark {
     --volume-dot-color-active: #c4c1c7; /* Not used */
     --scrollbar-color: #78767c;
     --scrollbar-color-hover: #aba9af;
-    --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+    --dropdown-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+html:has(> body > #root > .video-app > .interface) {
+    background-color: var(--bg-color);
 }
 
 html,
@@ -478,12 +485,18 @@ body.lockscroll {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    /* Help with CJK letter spacing */
+    line-height: 1.25rem;
 }
 
 .main > .main_header > .secondary {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.main > .main_header > .secondary:has(> .sorting) {
+    margin-right: 8px;
 }
 
 .main > .main_header > .secondary > .sorting {
@@ -760,6 +773,10 @@ body.lockscroll {
 
     .main > .main_header > .primary > .container {
         max-width: calc(100% - 50px);
+    }
+
+    .main > .main_header > .secondary:has(> .sorting) {
+        margin-right: 0;
     }
 
     .main > .main_header > .secondary > .sidenav_toggle {

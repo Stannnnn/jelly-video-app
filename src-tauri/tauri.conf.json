@@ -22,7 +22,7 @@
                 "fullscreen": false,
                 "visible": false,
                 "minWidth": 600,
-                "minHeight": 600
+                "minHeight": 780
             }
         ],
         "security": {

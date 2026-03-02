@@ -4,12 +4,13 @@ import { MediaItem } from '../api/jellyfin'
 export const useDisplayItems = (
     tracks: MediaItem[],
     isLoading: boolean,
-    type: 'movie' | 'series' | 'episode' | 'mixed' | 'mixedSmall' | 'specials' | 'collection' | 'person'
+    type: 'movie' | 'series' | 'episode' | 'mixed' | 'mixedSmall' | 'specials' | 'collection' | 'playlist' | 'person'
 ) => {
     const placeholderCounts = {
         movie: 6,
         series: 6,
         collection: 6,
+        playlist: 6,
         episode: 8,
         mixed: 10,
         mixedSmall: 4,

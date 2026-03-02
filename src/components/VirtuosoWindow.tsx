@@ -64,9 +64,54 @@ export const VirtuosoWindow = ({
     const savedOffset = saved?.pathname === window.location.pathname ? saved.offset : 0
 
     if (isGrid) {
+        const [resizeKey, setResizeKey] = useState(0)
+        const lastScroll = useRef<number>(savedOffset)
+        const isInitialMount = useRef(true)
+
+        const debounce = <T extends (...args: any[]) => void>(fn: T, ms: number) => {
+            let timer: NodeJS.Timeout | null = null
+            return (...args: Parameters<T>) => {
+                if (timer) clearTimeout(timer)
+                timer = setTimeout(() => fn(...args), ms)
+            }
+        }
+
+        useEffect(() => {
+            if (isInitialMount.current && wrapperRef.current) {
+                lastScroll.current = window.scrollY - (wrapperRef.current.getBoundingClientRect().top || 0)
+                isInitialMount.current = false
+            }
+        }, [])
+
+        useEffect(() => {
+            const handleResize = () => {
+                if (!isInitialMount.current) {
+                    lastScroll.current = window.scrollY - initialOffset
+                    setResizeKey(k => k + 1)
+                }
+            }
+
+            const debouncedResize = debounce(handleResize, 100)
+
+            window.addEventListener('resize', debouncedResize)
+            document.addEventListener('fullscreenchange', debouncedResize)
+
+            return () => {
+                window.removeEventListener('resize', debouncedResize)
+                document.removeEventListener('fullscreenchange', debouncedResize)
+            }
+        }, [initialOffset])
+
+        useEffect(() => {
+            if (virtuosoRef.current && resizeKey > 0) {
+                ;(virtuosoRef.current as VirtuosoGridHandle).scrollTo({ top: lastScroll.current })
+            }
+        }, [resizeKey])
+
         return (
             <div ref={wrapperRef}>
                 <VirtuosoGrid
+                    key={resizeKey}
                     {...(virtuosoProps as IVirtuosoGridProps)}
                     ref={virtuosoRef as React.RefObject<VirtuosoGridHandle>}
                     useWindowScroll

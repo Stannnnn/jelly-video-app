@@ -25,11 +25,11 @@ export const NextEpisodeOverlay = ({
         <div className={`next-episode-overlay ${isVisible ? 'visible' : ''}`} onDoubleClick={e => e.stopPropagation()}>
             <div className="next-episode-content">
                 <div className="next-episode-header">
-                    <div className="title">Next Episode</div>
+                    <div className="title">{nextEpisode.SeriesName ? 'Next Episode' : 'Up Next'}</div>
                     <div className="countdown">{countdown}s</div>
                 </div>
                 <div className="next-episode-info">
-                    <div className="series">{nextEpisode.SeriesName}</div>
+                    {nextEpisode.SeriesName && <div className="series">{nextEpisode.SeriesName}</div>}
                     <div className="episode">{displayTitle}</div>
                 </div>
                 <div className="next-episode-actions">

@@ -3,7 +3,7 @@ import { QueryClientProvider, useQueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useCallback, useEffect, useState } from 'react'
-import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { Navigate, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom'
 import './App.css'
 import { Downloads } from './components/Downloads'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -32,6 +32,8 @@ import { Movies } from './pages/Movies'
 import { NextUp } from './pages/NextUp'
 import { PersonMovies } from './pages/PersonMovies'
 import { PersonPage } from './pages/PersonPage'
+import { PlaylistPage } from './pages/PlaylistPage'
+import { Playlists } from './pages/Playlists'
 import { RecentlyAddedMovies } from './pages/RecentlyAddedMovies'
 import { RecentlyAddedSeries } from './pages/RecentlyAddedSeries'
 import { RecentlyPlayed } from './pages/RecentlyPlayed'
@@ -115,7 +117,7 @@ const RoutedApp = () => {
                             <JellyfinContextProvider auth={auth}>
                                 <AudioStorageContextProvider>
                                     <SidenavContextProvider>
-                                        <PlaybackContextProvider initialVolume={0.5} clearOnLogout={isLoggingOut}>
+                                        <PlaybackContextProvider initialVolume={50} clearOnLogout={isLoggingOut}>
                                             <DownloadContextProvider>
                                                 <MainLayout auth={auth} handleLogout={handleLogout} />
                                             </DownloadContextProvider>
@@ -152,6 +154,38 @@ interface AuthData {
 
 const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () => void }) => {
     const { showSidenav, toggleSidenav } = useSidenavContext()
+    const location = useLocation()
+
+    useEffect(() => {
+        const onKeyDown = async (e: KeyboardEvent) => {
+            if (location.pathname.startsWith('/play/')) {
+                return
+            }
+
+            if (e.key === 'F11') {
+                e.preventDefault()
+                try {
+                    if (!document.fullscreenElement) {
+                        await document.documentElement.requestFullscreen()
+                    } else {
+                        await document.exitFullscreen()
+                    }
+                } catch (error) {
+                    console.error('Failed to toggle fullscreen:', error)
+                }
+            } else if (e.key === 'Escape' && document.fullscreenElement) {
+                e.preventDefault()
+                try {
+                    await document.exitFullscreen()
+                } catch (error) {
+                    console.error('Failed to exit fullscreen:', error)
+                }
+            }
+        }
+
+        window.addEventListener('keydown', onKeyDown)
+        return () => window.removeEventListener('keydown', onKeyDown)
+    }, [location.pathname])
 
     const memoSettings = useCallback(() => {
         return <Settings onLogout={handleLogout} />
@@ -160,7 +194,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
     return (
         <Routes>
             <Route
-                path="/play/:id/:mediaSourceId?"
+                path="/play/:id/:mediaSourceId?/:parentId?"
                 element={
                     <PageTitleProvider pageTitle="Playing">
                         <VideoPlayerPage />
@@ -183,7 +217,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             <Route path="/settings" element={<Main pageTitle="Settings" content={memoSettings} />} />
                             <Route
                                 path="/downloads"
-                                element={<Main pageTitle="Downloads" content={Downloads} filterType={'favorites'} />}
+                                element={<Main pageTitle="Downloads" content={Downloads} filterType={'downloads'} />}
                             />
                             <Route
                                 path="/movies"
@@ -209,6 +243,16 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             <Route
                                 path="/collection/:id"
                                 element={<Main pageTitle="Collection" content={CollectionPage} />}
+                            />
+                            <Route
+                                path="/playlists"
+                                element={<Main pageTitle="Playlists" content={Playlists} filterType={'movies'} />}
+                            />
+                            <Route
+                                path="/playlist/:id"
+                                element={
+                                    <Main pageTitle="Playlist" content={PlaylistPage} filterType={'moviesPlaylist'} />
+                                }
                             />
                             <Route
                                 path="/favorites"

@@ -5,7 +5,18 @@ import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import { VideoPlayer } from '../VideoPlayer'
 
 export const VideoPlayerPage = () => {
-    const { id, mediaSourceId } = useParams<{ id: string; mediaSourceId?: string }>()
+    const {
+        id,
+        mediaSourceId: rawMediaSourceId,
+        parentId,
+    } = useParams<{
+        id: string
+        mediaSourceId?: string
+        parentId?: string
+    }>()
+    // 'default' is used as a placeholder when navigating from a collection/playlist
+    // without a specific media source ID
+    const mediaSourceId = rawMediaSourceId === 'default' ? undefined : rawMediaSourceId
     const playback = usePlaybackContext()
     const playbackRef = useRef(playback)
 
@@ -18,9 +29,9 @@ export const VideoPlayerPage = () => {
 
     useEffect(() => {
         if (item) {
-            playbackRef.current.playTrack(item, mediaSourceId)
+            playbackRef.current.playTrack(item, mediaSourceId, parentId)
         }
-    }, [item, mediaSourceId])
+    }, [item, mediaSourceId, parentId])
 
     useEffect(() => {
         return () => {
@@ -58,6 +69,16 @@ export const VideoPlayerPage = () => {
                     e.preventDefault()
                     playback.toggleFullscreen()
                     break
+                case 'F11':
+                    e.preventDefault()
+                    playback.toggleFullscreen()
+                    break
+                case 'Escape':
+                    e.preventDefault()
+                    if (playback.isFullscreen) {
+                        playback.toggleFullscreen()
+                    }
+                    break
                 case 'ArrowLeft':
                     e.preventDefault()
                     playback.skip(-playback.seekBackIncrement)
@@ -90,5 +111,5 @@ export const VideoPlayerPage = () => {
         return () => window.removeEventListener('keydown', handleKeyPress)
     }, [playback])
 
-    return <VideoPlayer isLoading={isLoading} error={error} sourceItem={sourceItem} />
+    return <VideoPlayer isLoading={isLoading} error={error} sourceItem={sourceItem} parentId={parentId} />
 }

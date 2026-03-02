@@ -19,6 +19,7 @@ import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStor
 import { useDownloadContext } from '../context/DownloadContext/DownloadContext'
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
+import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
 import { useThemeContext } from '../context/ThemeContext/ThemeContext'
 import { useUpdateChecker } from '../hooks/useUpdateChecker'
 import { persister } from '../queryClient'
@@ -32,6 +33,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
     const {
         autoplayNextEpisode,
         setAutoplayNextEpisode,
+        autoplayNextTitle,
+        setAutoplayNextTitle,
         skipIntro,
         setSkipIntro,
         skipOutro,
@@ -58,17 +61,21 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         setRememberFilters,
     } = usePlaybackContext()
 
+    const { enablePlaylists, setEnablePlaylists } = useSidenavContext()
+
     const { theme, toggleTheme } = useThemeContext()
 
     const [lastLogin, setLastLogin] = useState<string | null>(null)
     const [clientIp, setClientIp] = useState<string | null>(null)
     const [latency, setLatency] = useState<number | null>(null)
     const [serverVersion, setServerVersion] = useState<string | null>(null)
+    const { sessionPlayCount, resetSessionCount } = usePlaybackContext()
     const queryClient = useQueryClient()
     const { storageStats, refreshStorageStats, queueCount, clearQueue } = useDownloadContext()
 
     const [clearing, setClearing] = useState(false)
-    const { latestRelease, updateStatus } = useUpdateChecker(checkForUpdates)
+    const { latestRelease, updateStatus, isCheckingUpdate } = useUpdateChecker(checkForUpdates)
+    const [forceChecking, setForceChecking] = useState(false)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -110,6 +117,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
     }, [api])
 
     const handleLogout = () => {
+        resetSessionCount()
         onLogout()
         navigate('/login')
     }
@@ -146,6 +154,13 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
             console.error('Failed to open downloads folder:', error)
         }
     }, [])
+
+    const handleCheck = () => {
+        setForceChecking(true)
+        queryClient.invalidateQueries({ queryKey: ['appUpdate'] }).finally(() => {
+            setTimeout(() => setForceChecking(false), 1500)
+        })
+    }
 
     const reloadApp = async () => {
         queryClient.clear()
@@ -213,6 +228,24 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     </div>
                 </div>
                 */}
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Next title</div>
+                            <div className="subdesc">Automatically play next title in a playlist or collection</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={autoplayNextTitle}
+                                    onChange={e => setAutoplayNextTitle(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
@@ -580,7 +613,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
             </div>
 
             <div className="section misc ui">
-                <div className="title">Misc</div>
+                <div className="title">Miscellaneous</div>
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
@@ -593,6 +626,24 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     type="checkbox"
                                     checked={rememberFilters}
                                     onChange={e => setRememberFilters(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Playlists</div>
+                            <div className="subdesc">Enable playlist view and functionality</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={enablePlaylists}
+                                    onChange={e => setEnablePlaylists(e.target.checked)}
                                 ></input>
                                 <span className="slider"></span>
                             </label>
@@ -649,6 +700,23 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
             <div className="section shortcuts">
                 <div className="title">Shortcuts</div>
                 <div className="desc">
+                    <div className="subtitle">Available shortcuts for the interface</div>
+                    <div className="keys">
+                        <div className="container">
+                            <div className="key">Ctrl</div> <div className="key">K</div> to quick search
+                        </div>
+                        <div className="container">
+                            <div className="key">ESC</div> to clear search input
+                        </div>
+                        <div className="container">
+                            <div className="key">F11</div> to toggle borderless fullscreen
+                        </div>
+                        <div className="container">
+                            <div className="key">ESC</div> to exit borderless fullscreen
+                        </div>
+                    </div>
+                </div>
+                <div className="desc last">
                     <div className="subtitle">Available shortcuts in the video player</div>
                     <div className="keys">
                         <div className="container">
@@ -687,7 +755,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                             <div className="key">M</div> to mute or unmute
                         </div>
                         <div className="container">
-                            <div className="key">F</div> to fullscreen or undo
+                            <div className="key">F</div> to toggle fullscreen
                         </div>
                         <div className="container">
                             <div className="key">ESC</div> to exit fullscreen
@@ -716,7 +784,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
                 {checkForUpdates && updateStatus && (
                     <div className="inner row update-status">
-                        {updateStatus === 'checking' && (
+                        {isCheckingUpdate || forceChecking ? (
                             <div className="container">
                                 <div className="subdesc">
                                     <div className="icon checking">
@@ -725,18 +793,26 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     <span className="text">Checking for updates...</span>
                                 </div>
                             </div>
-                        )}
-                        {updateStatus === 'current' && (
+                        ) : updateStatus === 'current' ? (
                             <div className="container">
                                 <div className="subdesc">
                                     <div className="icon success">
-                                        <CheckIcon size={16} />
+                                        <CheckIcon size={14} />
                                     </div>
-                                    <span className="text">You're up to date (v{__VERSION__})</span>
+                                    <span className="text">You're up to date (v{__VERSION__}) - </span>
+                                    <Link
+                                        to=""
+                                        onClick={e => {
+                                            e.preventDefault()
+                                            handleCheck()
+                                        }}
+                                        className="textlink"
+                                    >
+                                        Check now!
+                                    </Link>
                                 </div>
                             </div>
-                        )}
-                        {updateStatus === 'available' && latestRelease && (
+                        ) : updateStatus === 'available' && latestRelease ? (
                             <div className="container">
                                 <div className="subdesc">
                                     <div className="icon available">
@@ -755,8 +831,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     </span>
                                 </div>
                             </div>
-                        )}
-                        {updateStatus === 'error' && (
+                        ) : updateStatus === 'error' ? (
                             <div className="container">
                                 <div className="subdesc">
                                     <div className="icon error">
@@ -765,7 +840,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     <span className="text">Unable to check for updates</span>
                                 </div>
                             </div>
-                        )}
+                        ) : null}
                     </div>
                 )}
             </div>
@@ -811,6 +886,15 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     </p>
                     <p>
                         Last login: {lastLogin} {clientIp ? ` from ${clientIp}` : ''}
+                    </p>
+                    <p>
+                        Watched{' '}
+                        {sessionPlayCount !== null && (
+                            <span>
+                                {sessionPlayCount} {sessionPlayCount === 1 ? 'title' : 'titles'}
+                            </span>
+                        )}{' '}
+                        since login
                     </p>
                 </div>
                 <div className="actions noSelect">

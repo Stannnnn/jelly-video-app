@@ -4,6 +4,7 @@ import { CollectionApi } from '@jellyfin/sdk/lib/generated-client/api/collection
 import { ConfigurationApi } from '@jellyfin/sdk/lib/generated-client/api/configuration-api'
 import { ItemsApi } from '@jellyfin/sdk/lib/generated-client/api/items-api'
 import { LibraryApi } from '@jellyfin/sdk/lib/generated-client/api/library-api'
+import { PlaylistsApi } from '@jellyfin/sdk/lib/generated-client/api/playlists-api'
 import { PlaystateApi } from '@jellyfin/sdk/lib/generated-client/api/playstate-api'
 import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
 import { SystemApi } from '@jellyfin/sdk/lib/generated-client/api/system-api'
@@ -300,20 +301,22 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
     const reportPlaybackStart = async (trackId: string, signal: AbortSignal, mediaSourceId?: string) => {
         const sessionsApi = new PlaystateApi(api.configuration)
-        await sessionsApi.reportPlaybackStart(
-            {
-                playbackStartInfo: {
-                    ItemId: trackId,
-                    PlayMethod: PlayMethod.DirectStream,
-                    PositionTicks: 0,
-                    IsPaused: false,
-                    CanSeek: true,
-                    MediaSourceId: mediaSourceId || trackId,
-                    AudioStreamIndex: 1,
+        await sessionsApi
+            .reportPlaybackStart(
+                {
+                    playbackStartInfo: {
+                        ItemId: trackId,
+                        PlayMethod: PlayMethod.DirectStream,
+                        PositionTicks: 0,
+                        IsPaused: false,
+                        CanSeek: true,
+                        MediaSourceId: mediaSourceId || trackId,
+                        AudioStreamIndex: 1,
+                    },
                 },
-            },
-            { signal }
-        )
+                { signal }
+            )
+            .catch(console.error)
     }
 
     let lastProgress = new AbortController()
@@ -330,19 +333,21 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         }
 
         const sessionsApi = new PlaystateApi(api.configuration)
-        await sessionsApi.reportPlaybackProgress(
-            {
-                playbackProgressInfo: {
-                    ItemId: trackId,
-                    PositionTicks: Math.floor(position * 10000000),
-                    IsPaused: isPaused,
-                    PlayMethod: PlayMethod.DirectStream,
-                    MediaSourceId: mediaSourceId || trackId,
-                    AudioStreamIndex: 1,
+        await sessionsApi
+            .reportPlaybackProgress(
+                {
+                    playbackProgressInfo: {
+                        ItemId: trackId,
+                        PositionTicks: Math.floor(position * 10000000),
+                        IsPaused: isPaused,
+                        PlayMethod: PlayMethod.DirectStream,
+                        MediaSourceId: mediaSourceId || trackId,
+                        AudioStreamIndex: 1,
+                    },
                 },
-            },
-            { signal: lastProgress.signal }
-        )
+                { signal: lastProgress.signal }
+            )
+            .catch(console.error)
     }
 
     const reportPlaybackStopped = async (
@@ -352,16 +357,18 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         mediaSourceId?: string
     ) => {
         const sessionsApi = new PlaystateApi(api.configuration)
-        await sessionsApi.reportPlaybackStopped(
-            {
-                playbackStopInfo: {
-                    ItemId: trackId,
-                    PositionTicks: Math.floor(position * 10000000),
-                    MediaSourceId: mediaSourceId || trackId,
+        await sessionsApi
+            .reportPlaybackStopped(
+                {
+                    playbackStopInfo: {
+                        ItemId: trackId,
+                        PositionTicks: Math.floor(position * 10000000),
+                        MediaSourceId: mediaSourceId || trackId,
+                    },
                 },
-            },
-            { signal }
-        )
+                { signal }
+            )
+            .catch(console.error)
     }
 
     const getImageUrl = (
@@ -544,7 +551,8 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         sortBy: ItemSortBy[] = [ItemSortBy.PremiereDate],
         sortOrder: SortOrder[] = [SortOrder.Ascending],
         recursive = false,
-        itemTypes?: BaseItemKind[]
+        itemTypes?: BaseItemKind[],
+        excludeItemTypes?: BaseItemKind[]
     ) => {
         const itemsApi = new ItemsApi(api.configuration)
         const response = await itemsApi.getItems({
@@ -557,9 +565,49 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             fields: extraFields,
             recursive,
             includeItemTypes: itemTypes,
+            excludeItemTypes: excludeItemTypes,
         })
 
         return await parseItemDtos(response.data.Items)
+    }
+
+    const getPlaylistItems = async (
+        playlistId: string,
+        startIndex = 0,
+        limit = 36,
+        sortBy: 'Inherit' | ItemSortBy[] = [ItemSortBy.DateCreated],
+        sortOrder: SortOrder[] = [SortOrder.Descending]
+    ) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const playlistsApi = new PlaylistsApi(api.configuration)
+
+        const response =
+            sortBy === 'Inherit'
+                ? await playlistsApi.getPlaylistItems(
+                      {
+                          userId,
+                          playlistId,
+                          startIndex,
+                          limit,
+                      },
+                      { signal: AbortSignal.timeout(20000) }
+                  )
+                : await itemsApi.getItems(
+                      {
+                          userId,
+                          parentId: playlistId,
+                          includeItemTypes: [BaseItemKind.Video, BaseItemKind.Movie, BaseItemKind.Episode],
+                          sortBy,
+                          sortOrder,
+                          startIndex,
+                          limit,
+                      },
+                      { signal: AbortSignal.timeout(20000) }
+                  )
+
+        const items = await parseItemDtos(response.data.Items)
+
+        return items
     }
 
     const getSeasons = async (seriesId: string, startIndex?: number, limit?: number) => {
@@ -657,14 +705,13 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             startIndex,
             limit,
             includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series],
-            sortBy: [ItemSortBy.SortName],
+            sortBy: [ItemSortBy.PremiereDate],
             sortOrder: [SortOrder.Ascending],
             fields: extraFields,
         })
 
         return {
             items: await parseItemDtos(response.data.Items),
-            totalCount: response.data.TotalRecordCount || 0,
         }
     }
 
@@ -791,11 +838,109 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         })
     }
 
+    const addToPlaylist = async (playlistId: string, items: MediaItem[]) => {
+        const playlistApi = new PlaylistsApi(api.configuration)
+        const batchSize = 200
+
+        for (let i = 0; i < items.length; i += batchSize) {
+            const batch = items.slice(i, i + batchSize)
+            await playlistApi.addItemToPlaylist(
+                {
+                    userId,
+                    playlistId,
+                    ids: batch.map(item => item.Id),
+                },
+                { signal: AbortSignal.timeout(20000) }
+            )
+        }
+
+        return true
+    }
+
+    const removeFromPlaylist = async (playlistId: string, item: MediaItem) => {
+        const playlistApi = new PlaylistsApi(api.configuration)
+
+        const response = await playlistApi.removeItemFromPlaylist(
+            {
+                playlistId,
+                entryIds: [item.Id],
+            },
+            { signal: AbortSignal.timeout(20000) }
+        )
+
+        return response.data
+    }
+
+    const createPlaylist = async (name: string) => {
+        const playlistApi = new PlaylistsApi(api.configuration)
+
+        const response = await playlistApi.createPlaylist(
+            {
+                // Seems to be bugged, need to pass both
+                createPlaylistDto: {
+                    Name: name,
+                    IsPublic: false,
+                    MediaType: 'Video',
+                },
+                name,
+                mediaType: 'Video',
+            },
+            { signal: AbortSignal.timeout(20000) }
+        )
+
+        return response.data
+    }
+
+    const renamePlaylist = async (playlistId: string, newName: string) => {
+        const playlistApi = new PlaylistsApi(api.configuration)
+
+        const response = await playlistApi.updatePlaylist({
+            playlistId,
+            // Seems to be bugged, need to pass both
+            updatePlaylistDto: {
+                Name: newName,
+                IsPublic: false,
+            },
+        })
+
+        return response.data
+    }
+
+    const deletePlaylist = async (playlistId: string) => {
+        const libraryApi = new LibraryApi(api.configuration)
+        await libraryApi.deleteItem({
+            itemId: playlistId,
+        })
+    }
+
+    const getPlaylists = async (
+        startIndex = 0,
+        limit = 36,
+        sortBy: ItemSortBy[] = [ItemSortBy.SortName],
+        sortOrder: SortOrder[] = [SortOrder.Ascending]
+    ) => {
+        const itemsApi = new ItemsApi(api.configuration)
+        const response = await itemsApi.getItems({
+            userId,
+            startIndex,
+            limit,
+            sortBy,
+            sortOrder,
+            recursive: true,
+            includeItemTypes: [BaseItemKind.Playlist],
+            fields: [...extraFields, ItemFields.DateCreated, ItemFields.DateLastMediaAdded],
+            mediaTypes: ['Video'],
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
     return {
         loginToJellyfin,
         getMovies,
         getSeries,
         getCollections,
+        getPlaylists,
         getFavorites,
         getRecentlyPlayed,
         getNextUp,
@@ -830,5 +975,11 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         createCollection,
         renameCollection,
         deleteCollection,
+        addToPlaylist,
+        removeFromPlaylist,
+        createPlaylist,
+        renamePlaylist,
+        deletePlaylist,
+        getPlaylistItems,
     }
 }
