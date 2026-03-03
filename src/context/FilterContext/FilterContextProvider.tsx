@@ -137,6 +137,8 @@ const useInitialState = () => {
                 return BaseItemKind.Episode
             case KindState.Collections:
                 return BaseItemKind.BoxSet
+            case KindState.Playlists:
+                return BaseItemKind.Playlist
             case KindState.Specials:
                 return BaseItemKind.Video
             case KindState.Movies:

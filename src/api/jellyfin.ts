@@ -10,7 +10,7 @@ import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
 import { SystemApi } from '@jellyfin/sdk/lib/generated-client/api/system-api'
 import { TvShowsApi } from '@jellyfin/sdk/lib/generated-client/api/tv-shows-api'
 import { UserApi } from '@jellyfin/sdk/lib/generated-client/api/user-api'
-import { BaseItemDto, BaseItemKind, ItemFields } from '@jellyfin/sdk/lib/generated-client/models'
+import { BaseItemDto, BaseItemKind, ItemFields, MediaType } from '@jellyfin/sdk/lib/generated-client/models'
 import { ItemFilter } from '@jellyfin/sdk/lib/generated-client/models/item-filter'
 import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by'
 import { PlayMethod } from '@jellyfin/sdk/lib/generated-client/models/play-method'
@@ -193,6 +193,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         itemKind: BaseItemKind = BaseItemKind.Movie
     ) => {
         const itemsApi = new ItemsApi(api.configuration)
+        const mediaTypes: MediaType[] | undefined = itemKind === BaseItemKind.Playlist ? [MediaType.Video] : undefined
         const response = await itemsApi.getItems({
             userId,
             startIndex,
@@ -203,6 +204,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             filters: [ItemFilter.IsFavorite],
             includeItemTypes: [itemKind],
             fields: extraFields,
+            mediaTypes,
         })
 
         return await parseItemDtos(response.data.Items)

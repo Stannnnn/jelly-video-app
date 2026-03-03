@@ -63,11 +63,13 @@ export const Downloads = () => {
                         ? 'series'
                         : jellyItemKind === 'BoxSet'
                           ? 'collection'
-                          : jellyItemKind === 'Episode'
-                            ? 'episode'
-                            : jellyItemKind === 'Video'
-                              ? 'specials'
-                              : 'movie'
+                          : jellyItemKind === 'Playlist'
+                            ? 'playlist'
+                            : jellyItemKind === 'Episode'
+                              ? 'episode'
+                              : jellyItemKind === 'Video'
+                                ? 'specials'
+                                : 'movie'
                 }
                 loadMore={loadMore}
                 disableActions={true}

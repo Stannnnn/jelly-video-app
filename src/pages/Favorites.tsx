@@ -16,6 +16,10 @@ export const Favorites = () => {
                 return 'episode'
             case KindState.Collections:
                 return 'collection'
+            case KindState.Playlists:
+                return 'playlist'
+            case KindState.Specials:
+                return 'specials'
             default:
                 return 'mixed'
         }

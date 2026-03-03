@@ -102,7 +102,8 @@ export const MainContent = ({
                                         <option value="Series">Series</option>
                                         <option value="Episodes">Episodes</option>
                                         <option value="Collections">Collections</option>
-                                        {filterType === 'downloads' && <option value="Specials">Specials</option>}
+                                        <option value="Playlists">Playlists</option>
+                                        <option value="Specials">Specials</option>
                                     </select>
                                     <div className="icon">
                                         <ChevronDownIcon size={12} />
