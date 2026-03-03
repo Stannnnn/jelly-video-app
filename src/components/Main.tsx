@@ -31,6 +31,7 @@ export const MainContent = ({
     const location = useLocation()
     const { toggleSidenav } = useSidenavContext()
     const { filter, setFilter } = useFilterContext()
+    const { enablePlaylists } = useSidenavContext()
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'instant' })
@@ -102,7 +103,7 @@ export const MainContent = ({
                                         <option value="Series">Series</option>
                                         <option value="Episodes">Episodes</option>
                                         <option value="Collections">Collections</option>
-                                        <option value="Playlists">Playlists</option>
+                                        {enablePlaylists && <option value="Playlists">Playlists</option>}
                                         <option value="Specials">Specials</option>
                                     </select>
                                     <div className="icon">
