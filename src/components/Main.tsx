@@ -29,9 +29,8 @@ export const MainContent = ({
     const { pageTitle } = usePageTitle()
     const { goBack: previousPage } = useHistoryContext()
     const location = useLocation()
-    const { toggleSidenav } = useSidenavContext()
+    const { toggleSidenav, enablePlaylists } = useSidenavContext()
     const { filter, setFilter } = useFilterContext()
-    const { enablePlaylists } = useSidenavContext()
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'instant' })
