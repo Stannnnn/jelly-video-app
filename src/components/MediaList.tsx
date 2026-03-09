@@ -1,6 +1,6 @@
 import { CheckCircleFillIcon, HeartFillIcon } from '@primer/octicons-react'
 import { ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { VirtuosoHandle } from 'react-virtuoso'
 import { MediaItem } from '../api/jellyfin'
 import { useDisplayItems } from '../hooks/useDisplayItems'
@@ -48,6 +48,8 @@ export const MediaList = ({
 }) => {
     const { displayItems, setRowRefs } = useDisplayItems(items, isLoading, type)
     const navigate = useNavigate()
+    const { pathname } = useLocation()
+    const isPlaylistPage = pathname.startsWith('/playlist/')
 
     const handleItemClick = (item: MediaItem) => {
         // Determine the route based on item type
@@ -332,7 +334,15 @@ export const MediaList = ({
                     >
                         <JellyImg
                             item={item}
-                            type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
+                            type={
+                                item.Type === 'Episode' || item.Type === 'Video'
+                                    ? 'Primary'
+                                    : isPlaylistPage
+                                      ? item.ImageTags?.Thumb
+                                          ? 'Thumb'
+                                          : 'Backdrop'
+                                      : 'Backdrop'
+                            }
                             width={320}
                             height={180}
                         />
