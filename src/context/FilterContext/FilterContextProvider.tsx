@@ -40,7 +40,12 @@ const useInitialState = () => {
             ? (Object.values(KindState).find(v => v.toLowerCase() === queryKind.toLowerCase()) as KindState)
             : null
 
-    const pathFallback = initialSortMap[location.pathname] || SortState.None
+    const pathFallback = (() => {
+        if (location.pathname.startsWith('/playlist')) {
+            return SortState.Inherit
+        }
+        return initialSortMap[location.pathname] || SortState.None
+    })()
 
     const orderFallback =
         pathFallback === SortState.Added || pathFallback === SortState.None
