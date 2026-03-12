@@ -517,11 +517,13 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         <div className="sorting">
                             <div className="filter">
                                 <select onChange={e => setSubtitleFontSize(e.target.value)} value={subtitleFontSize}>
+                                    <option value="smallest">Smallest</option>
                                     <option value="smaller">Smaller</option>
                                     <option value="small">Small</option>
                                     <option value="normal">Normal</option>
                                     <option value="large">Large</option>
                                     <option value="larger">Larger</option>
+                                    <option value="largest">Largest</option>
                                 </select>
                                 <div className="icon">
                                     <ChevronDownIcon size={12} />

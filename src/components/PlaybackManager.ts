@@ -321,11 +321,13 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         try {
             // Convert font size to MPV scale
             const fontSizeMap: Record<string, number> = {
+                smallest: 0.48,
                 smaller: 0.6,
-                small: 0.8,
-                normal: 1.0,
-                large: 1.2,
-                larger: 1.4,
+                small: 0.7,
+                normal: 0.9,
+                large: 1,
+                larger: 1.2,
+                largest: 1.4,
             }
             const fontSize = fontSizeMap[subtitleFontSize] || 1.0
 
