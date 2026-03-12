@@ -13,7 +13,7 @@ export const useFavorites = () => {
             prependItemsToQueryData(['favorites', item.Type || ''], [item])
 
             patchMediaItem(item.Id, item => {
-                return { ...item, UserData: res.data }
+                return { ...item, UserData: { ...item.UserData, ...res.data } }
             })
         },
         removeFromFavorites: async (item: MediaItem) => {
@@ -22,7 +22,7 @@ export const useFavorites = () => {
             removeItemFromQueryData(['favorites', item.Type || ''], item.Id)
 
             patchMediaItem(item.Id, item => {
-                return { ...item, UserData: res.data }
+                return { ...item, UserData: { ...item.UserData, ...res.data } }
             })
         },
     }
