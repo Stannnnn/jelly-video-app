@@ -691,7 +691,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
             try {
                 const storedTrack = await audioStorage.getTrack(track.Id)
                 const storedMediaSourceId = storedTrack?.type === 'video' ? storedTrack.mediaSourceId : undefined
-                const isDownloadedVersion = storedTrack && (!storedMediaSourceId || storedMediaSourceId === mediaSourceId)
+                const isDownloadedVersion =
+                    storedTrack && (!storedMediaSourceId || storedMediaSourceId === mediaSourceId)
                 const offlineFilePath = isDownloadedVersion ? await audioStorage.getFilePath(track.Id) : undefined
                 const streamUrl = api.getStreamUrl(track.Id, bitrate, mediaSourceId)
 
@@ -699,12 +700,9 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
                 setIsPending(true)
                 await setProperty('save-position-on-quit', false)
-                await command('loadfile', [videoUrl, 'replace'])
 
-                let setStart = false
-
-                // Check if we need to seek to a saved position
                 const positionTicks = track.UserData?.PlaybackPositionTicks
+                let setStart = false
 
                 if (positionTicks && positionTicks > 0 && track.RunTimeTicks) {
                     const playedPercentage = (positionTicks / track.RunTimeTicks) * 100
@@ -726,6 +724,8 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 if (!setStart) {
                     await setProperty('start', `+0`)
                 }
+
+                await command('loadfile', [videoUrl, 'replace'])
 
                 tracklistRef.current.isLoading = true
 
