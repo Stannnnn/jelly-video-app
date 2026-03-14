@@ -1,7 +1,8 @@
 {
-    "$schema": "https://schema.tauri.app/config/2",
+    "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+    "mainBinaryName": "jelly-video-app",
     "productName": "Jelly Video App",
-    "version": "0.1.0",
+    "version": "../package.json",
     "identifier": "com.stan.jelly-video-app",
     "build": {
         "beforeDevCommand": "npm run dev",

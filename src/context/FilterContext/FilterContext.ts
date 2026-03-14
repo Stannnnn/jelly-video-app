@@ -38,6 +38,7 @@ export enum KindState {
     Series = 'Series',
     Episodes = 'Episodes',
     Collections = 'Collections',
+    Playlists = 'Playlists',
     Specials = 'Specials',
     None = '',
 }

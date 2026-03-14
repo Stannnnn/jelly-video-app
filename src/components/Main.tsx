@@ -29,7 +29,7 @@ export const MainContent = ({
     const { pageTitle } = usePageTitle()
     const { goBack: previousPage } = useHistoryContext()
     const location = useLocation()
-    const { toggleSidenav } = useSidenavContext()
+    const { toggleSidenav, enablePlaylists } = useSidenavContext()
     const { filter, setFilter } = useFilterContext()
 
     useEffect(() => {
@@ -102,7 +102,8 @@ export const MainContent = ({
                                         <option value="Series">Series</option>
                                         <option value="Episodes">Episodes</option>
                                         <option value="Collections">Collections</option>
-                                        {filterType === 'downloads' && <option value="Specials">Specials</option>}
+                                        {enablePlaylists && <option value="Playlists">Playlists</option>}
+                                        <option value="Specials">Specials</option>
                                     </select>
                                     <div className="icon">
                                         <ChevronDownIcon size={12} />

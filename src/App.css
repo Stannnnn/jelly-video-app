@@ -611,13 +611,8 @@ body.lockscroll {
     margin-top: -4px;
 }
 
-.person-page {
-    margin-top: -4px;
-}
-
 .home-page > .section,
-.search-results-page > .section,
-.person-page > .section {
+.search-results-page > .section {
     margin-bottom: 60px;
 }
 
@@ -626,24 +621,22 @@ body.lockscroll {
 }
 
 .home-page > .section:last-of-type,
-.search-results-page > .section:last-of-type,
-.person-page > .section:last-of-type {
+.search-results-page > .section:last-of-type {
     margin-bottom: 0;
 }
 
 .home-page > .section > .container,
-.search-results-page > .section > .container,
-.person-page > .section > .container {
+.search-results-page > .section > .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
+    min-height: 27px;
 }
 
 .home-page > .section > .container > .title,
-.search-results-page > .section > .container > .title,
-.person-page > .section > .container > .title {
+.search-results-page > .section > .container > .title {
     font-size: 1rem;
     font-weight: 700;
 }

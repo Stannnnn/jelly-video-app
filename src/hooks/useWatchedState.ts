@@ -34,7 +34,7 @@ export const useWatchedState = () => {
             const res = await api.markAsPlayed(item)
 
             patchMediaItem(item.Id, item => {
-                return { ...item, UserData: res.data }
+                return { ...item, UserData: { ...item.UserData, ...res.data } }
             })
 
             // Update children
@@ -64,7 +64,7 @@ export const useWatchedState = () => {
             const res = await api.markAsUnplayed(item)
 
             patchMediaItem(item.Id, item => {
-                return { ...item, UserData: res.data }
+                return { ...item, UserData: { ...item.UserData, ...res.data } }
             })
 
             // Update children

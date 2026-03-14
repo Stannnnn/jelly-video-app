@@ -6,30 +6,34 @@ export const Skeleton = ({
     type: 'movie' | 'series' | 'episode' | 'mixed' | 'mixedSmall' | 'specials' | 'collection' | 'playlist' | 'person'
 }) => {
     const isPortrait =
-        type === 'movie' || type === 'series' || type === 'collection' || type === 'playlist' || type === 'person'
-    const isSpecials = type === 'specials'
-
-    const rootClass = `
-        skeleton-loading
-        ${isPortrait ? 'portrait' : 'landscape'}
-        ${type === 'mixed' ? 'continue-watching' : ''}
-        ${type === 'person' ? 'square' : ''}
-    `.trim()
+        type === 'movie' || type === 'series' || type === 'collection' || type === 'person' || type === 'playlist'
 
     return (
-        <div className={rootClass}>
+        <div
+            className={`
+                skeleton-loading
+                ${isPortrait ? 'portrait' : 'landscape'}
+                ${type === 'mixed' ? 'continue-watching' : ''}
+                ${type === 'person' ? 'square' : ''}
+                ${type === 'playlist' ? 'playlist-item' : ''}
+            `.trim()}
+        >
             <div
                 className={`skeleton-effect thumbnail ${isPortrait ? 'portrait' : 'landscape'} ${
                     type === 'episode' || type === 'specials' || type === 'mixedSmall'
                         ? 'episode'
                         : type === 'mixed'
                           ? 'continue-watching'
-                          : ''
+                          : type === 'person'
+                            ? 'square'
+                            : type === 'playlist'
+                              ? 'playlist-item'
+                              : ''
                 }`}
             />
             <div className="skeleton-details">
                 <div className="skeleton-effect title" />
-                {!isSpecials && <div className="skeleton-effect subtitle" />}
+                {type !== 'specials' && type !== 'playlist' && <div className="skeleton-effect subtitle" />}
             </div>
         </div>
     )

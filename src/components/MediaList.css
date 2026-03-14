@@ -27,6 +27,18 @@
     gap: 30px 24px;
 }
 
+.media-list:has(.media-item.playlist-item) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 30px 24px;
+}
+
+.media-list:has(.media-item > .skeleton-loading.playlist-item) .virtuoso-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 30px 24px;
+}
+
 .media-list:has(.media-item.landscape) .virtuoso-grid-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -39,7 +51,8 @@
     gap: 30px 24px;
 }
 
-.media-list:has(.media-item.continue-watching) .continue-watching-row {
+.media-list:has(.media-item.continue-watching) .continue-watching-row,
+.media-list:has(.skeleton-loading.landscape.skeleton-loading.continue-watching) .continue-watching-row {
     margin-right: -24px;
     overflow-x: auto;
     overflow-y: hidden;
@@ -49,7 +62,9 @@
     overscroll-behavior: contain;
 }
 
-.media-list:has(.media-item.continue-watching) .continue-watching-row::-webkit-scrollbar {
+.media-list:has(.media-item.continue-watching) .continue-watching-row::-webkit-scrollbar,
+.media-list:has(.skeleton-loading.landscape.skeleton-loading.continue-watching)
+    .continue-watching-row::-webkit-scrollbar {
     display: none;
 }
 
@@ -86,6 +101,12 @@
     height: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 12px;
+}
+
+.media-list .media-item.playlist-item > .media-thumbnail {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
 }
 
 .media-list .media-item.continue-watching > .media-thumbnail {
@@ -384,6 +405,14 @@
 
     .media-list:has(.media-item > .skeleton-loading.square) .virtuoso-grid-list {
         grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    }
+
+    .media-list:has(.media-item.playlist-item) .virtuoso-grid-list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .media-list:has(.media-item > .skeleton-loading.playlist-item) .virtuoso-grid-list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
 
     .media-list:has(.media-item.landscape) .virtuoso-grid-list {

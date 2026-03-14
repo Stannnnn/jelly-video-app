@@ -1,6 +1,6 @@
 import { CheckCircleFillIcon, HeartFillIcon } from '@primer/octicons-react'
 import { ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { VirtuosoHandle } from 'react-virtuoso'
 import { MediaItem } from '../api/jellyfin'
 import { useDisplayItems } from '../hooks/useDisplayItems'
@@ -48,6 +48,8 @@ export const MediaList = ({
 }) => {
     const { displayItems, setRowRefs } = useDisplayItems(items, isLoading, type)
     const navigate = useNavigate()
+    const { pathname } = useLocation()
+    const isPlaylistPage = pathname.startsWith('/playlist/')
 
     const handleItemClick = (item: MediaItem) => {
         // Determine the route based on item type
@@ -77,21 +79,14 @@ export const MediaList = ({
         if (!item || 'isPlaceholder' in item) {
             return (
                 <div className={`media-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
-                    <Skeleton
-                        type={
-                            type === 'series' || type === 'collection' || type === 'playlist' || type === 'person'
-                                ? 'movie'
-                                : type
-                        }
-                    />
+                    <Skeleton type={type} />
                 </div>
             )
         }
 
-        if (type === 'movie' || type === 'series' || type === 'collection' || type === 'playlist') {
+        if (type === 'movie' || type === 'series' || type === 'collection') {
             //  const isSeriesLike = type === 'series' || (type === 'collection' && item.CollectionType === 'tvshows')
-            const isSeriesLike = type === 'series' || type === 'collection' || type === 'playlist'
-            const isPlaylist = type === 'playlist'
+            const isSeriesLike = type === 'series' || type === 'collection'
 
             return (
                 <div
@@ -148,13 +143,37 @@ export const MediaList = ({
                                     )}
                             </div>
                         )}
-                        {isPlaylist && (
-                            <div className="container">
-                                <div className="subtitle date created">
-                                    {new Date(item.DateCreated ?? 0).getFullYear()}
-                                </div>
-                            </div>
+                    </div>
+                </div>
+            )
+        } else if (type === 'playlist') {
+            return (
+                <div
+                    className={`media-item playlist-item ${className || ''}`}
+                    ref={el => setRowRefs(index, el)}
+                    {...(disableEvents ? {} : { onClick: () => handleItemClick(item) })}
+                >
+                    <Squircle width={170} height={170} cornerRadius={8} isResponsive={true} className="media-thumbnail">
+                        <JellyImg item={item} type={'Primary'} width={170} height={170} />
+                        <MediaIndicators item={item} disableActions={disableActions} removeButton={removeButton} />
+                        {currentDownloadingId === item.Id && item.offlineState === 'downloading' && (
+                            <div
+                                ref={progressBarRef as React.RefObject<HTMLDivElement>}
+                                className="progress-indicator"
+                                title="Download progress"
+                                style={{ '--progress-percent': '0%' } as React.CSSProperties}
+                            />
                         )}
+                    </Squircle>
+                    <div className="media-details">
+                        <span className="title" title={item.Name}>
+                            {item.Name}
+                        </span>
+                        {/*
+                        <div className="container">
+                            <div className="subtitle date created">{new Date(item.DateCreated ?? 0).getFullYear()}</div>
+                        </div>
+                        */}
                     </div>
                 </div>
             )
@@ -315,7 +334,15 @@ export const MediaList = ({
                     >
                         <JellyImg
                             item={item}
-                            type={item.Type === 'Episode' || item.Type === 'Video' ? 'Primary' : 'Backdrop'}
+                            type={
+                                item.Type === 'Episode' || item.Type === 'Video'
+                                    ? 'Primary'
+                                    : isPlaylistPage
+                                      ? item.ImageTags?.Thumb
+                                          ? 'Thumb'
+                                          : 'Backdrop'
+                                      : 'Backdrop'
+                            }
                             width={320}
                             height={180}
                         />
