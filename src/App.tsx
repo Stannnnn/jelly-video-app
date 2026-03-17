@@ -1,6 +1,7 @@
 import '@fontsource-variable/inter'
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { isTauri } from '@tauri-apps/api/core'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom'
@@ -49,7 +50,9 @@ import { persister, queryClient } from './queryClient'
 
 export const App = () => {
     useEffect(() => {
-        getCurrentWindow().show()
+        if (isTauri()) {
+            getCurrentWindow().show()
+        }
     }, [])
 
     return (
