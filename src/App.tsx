@@ -258,7 +258,10 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                                     <Main pageTitle="Playlist" content={PlaylistPage} filterType={'moviesPlaylist'} />
                                 }
                             />
-                            <Route path="/library/:id" element={<Main pageTitle="Library" content={LibraryPage} />} />
+                            <Route
+                                path="/library/:id"
+                                element={<Main pageTitle="Library" content={LibraryPage} filterType={'movies'} />}
+                            />
                             <Route
                                 path="/favorites"
                                 element={<Main pageTitle="Favorites" content={Favorites} filterType={'favorites'} />}

@@ -1,47 +1,35 @@
 import { useParams } from 'react-router-dom'
-import { Loader } from '../components/Loader'
-import { MediaFooter } from '../components/MediaFooter'
-import { MediaInfo } from '../components/MediaInfo'
 import { MediaList } from '../components/MediaList'
+import { useFilterContext } from '../context/FilterContext/FilterContext'
 import { useJellyfinItemChildren } from '../hooks/Jellyfin/Infinite/useJellyfinItemChildren'
 import { useJellyfinMediaItem } from '../hooks/Jellyfin/useJellyfinMediaItem'
 import './MediaPages.css'
 
 export const LibraryPage = () => {
     const { id } = useParams<{ id: string }>()
+    const { jellySort } = useFilterContext()
 
-    const { mediaItem: library, isLoading: isLoadingLibrary, error: libraryError } = useJellyfinMediaItem(id)
-
-    const {
-        items: children,
-        isLoading: isLoadingChildren,
-        error: childrenError,
-        loadMore,
-    } = useJellyfinItemChildren(id)
-
-    if (isLoadingLibrary) {
-        return <Loader />
-    }
-
-    if (libraryError || !library) {
-        return <div className="error">{libraryError || 'Library not found'}</div>
-    }
+    const { mediaItem: library } = useJellyfinMediaItem(id)
+    const { items, isLoading, error, loadMore } = useJellyfinItemChildren(
+        id,
+        undefined,
+        jellySort.sortBy,
+        jellySort.sortOrder
+    )
 
     return (
-        <div className="media-page collection">
-            <MediaInfo item={library} playParentId={id} />
+        <div className="media-page library">
             <div className="media-content">
                 <div className="section items">
-                    <MediaList
-                        items={children || []}
-                        isLoading={isLoadingChildren}
-                        type="collection"
-                        loadMore={loadMore}
-                    />
-                    {childrenError && <div className="error">{childrenError || 'Library items not found'}</div>}
+                    {library && (
+                        <div className="container">
+                            <div className="title">{library.Name}</div>
+                        </div>
+                    )}
+                    <MediaList items={items || []} isLoading={isLoading} type="collection" loadMore={loadMore} />
+                    {error && <div className="error">{error}</div>}
                 </div>
             </div>
-            <MediaFooter item={library} />
         </div>
     )
 }
