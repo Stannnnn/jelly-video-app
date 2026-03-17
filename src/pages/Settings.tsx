@@ -268,7 +268,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     <div className="container">
                         <div className="desc">
                             <div className="subtitle">Skip outro</div>
-                            <div className="subdesc">Show next episode overlay during end credits when available</div>
+                            <div className="subdesc">Show next up overlay during end credits when available</div>
                         </div>
                         <div className="option">
                             <label className="switch">
@@ -705,8 +705,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
                 <div className="desc">
                     <div className="info">
-                        Download your video library for seamless offline playback. Supports movies, tv shows, and
-                        episodes.{' '}
+                        Download your video library for seamless offline playback. Supports movies, tv shows, episodes
+                        and specials.{' '}
                         <Link to="/downloads" className="textlink">
                             View downloads
                         </Link>{' '}

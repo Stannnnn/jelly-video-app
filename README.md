@@ -56,10 +56,11 @@ A lightweight & elegant video client for Jellyfin, designed to eliminate server 
     - **Specials:** Specials are available and can be played or viewed from individual movie and tv show pages.
 - **Downloads:** Download individual media for offline playback, with support for multiple versions.
 - **Versions:** Multiple versions of media are supported - choose a version before starting playback or within the video player.
+- **Outro Skipper:** A next up overlay during end credits when available for shows, playlists and collections.
 - **Intro Skipper:** Automatically skip opening themes, recaps, or intro segments with an optional skip button, using chapter detection.
 - **Elegant Player:** Extensive but clean player interface allowing you to change video, audio, and subtitle streams on the fly.
     - **Versions:** Available versions can be changed in the player interface.
-    - **TV shows:** An episode list for the current season is available, along with a **next episode** display at the end (using chapters).
+    - **TV shows:** An episode list for the current season is available.
     - **Playlists & Collections:** Titles played from within are listed in the video player, with **autoplay** functionality to queue the next title - useful for bingewatching a custom playlist.
     - **Trickplay** preview thumbnails are fully supported and displayed when available.
     - **External subtitles** are fully supported.

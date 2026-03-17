@@ -155,6 +155,7 @@
 
 .settings-page > .section.ui > .inner.disabled {
     opacity: 0.4;
+    user-select: none;
     pointer-events: none;
 }
 
