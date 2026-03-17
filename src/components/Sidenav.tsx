@@ -8,6 +8,7 @@ import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
 import { useJellyfinSearch } from '../hooks/Jellyfin/useJellyfinSearch'
+import { useJellyfinUserViews } from '../hooks/Jellyfin/useJellyfinUserViews'
 import { useUpdateChecker } from '../hooks/useUpdateChecker'
 import { InlineLoader } from './InlineLoader'
 import { JellyImg } from './JellyImg'
@@ -22,7 +23,8 @@ export const Sidenav = (props: { username: string }) => {
     const { updateStatus } = useUpdateChecker(checkForUpdates)
     const location = useLocation()
     const searchInputRef = useRef<HTMLInputElement>(null)
-    const { showSidenav, closeSidenav, enablePlaylists } = useSidenavContext()
+    const { showSidenav, closeSidenav, enablePlaylists, enableLibraries } = useSidenavContext()
+    const { views: libraryViews } = useJellyfinUserViews()
 
     const { disabled, setDisabled } = useScrollContext()
     const [searchQuery, setSearchQuery] = useState(new URLSearchParams(location.search).get('search') || '')
@@ -84,32 +86,44 @@ export const Sidenav = (props: { username: string }) => {
                                 Home
                             </NavLink>
                         </li>
-                        <li>
-                            <NavLink to={buildUrlWithSavedFilters('/movies')} onClick={closeSidenav}>
-                                Movies
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to={buildUrlWithSavedFilters('/series')} onClick={closeSidenav} end>
-                                Series
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to={buildUrlWithSavedFilters('/favorites')} onClick={closeSidenav}>
-                                Favorites
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to={buildUrlWithSavedFilters('/collections')} onClick={closeSidenav}>
-                                Collections
-                            </NavLink>
-                        </li>
-                        {enablePlaylists && (
-                            <li>
-                                <NavLink to={buildUrlWithSavedFilters('/playlists')} onClick={closeSidenav}>
-                                    Playlists
-                                </NavLink>
-                            </li>
+                        {enableLibraries ? (
+                            libraryViews.map(library => (
+                                <li key={library.Id}>
+                                    <NavLink to={`/library/${library.Id}`} onClick={closeSidenav}>
+                                        {library.Name}
+                                    </NavLink>
+                                </li>
+                            ))
+                        ) : (
+                            <>
+                                <li>
+                                    <NavLink to={buildUrlWithSavedFilters('/movies')} onClick={closeSidenav}>
+                                        Movies
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to={buildUrlWithSavedFilters('/series')} onClick={closeSidenav} end>
+                                        Series
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to={buildUrlWithSavedFilters('/favorites')} onClick={closeSidenav}>
+                                        Favorites
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to={buildUrlWithSavedFilters('/collections')} onClick={closeSidenav}>
+                                        Collections
+                                    </NavLink>
+                                </li>
+                                {enablePlaylists && (
+                                    <li>
+                                        <NavLink to={buildUrlWithSavedFilters('/playlists')} onClick={closeSidenav}>
+                                            Playlists
+                                        </NavLink>
+                                    </li>
+                                )}
+                            </>
                         )}
                     </ul>
                     <div className="search">

@@ -10,6 +10,7 @@ import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
 import { SystemApi } from '@jellyfin/sdk/lib/generated-client/api/system-api'
 import { TvShowsApi } from '@jellyfin/sdk/lib/generated-client/api/tv-shows-api'
 import { UserApi } from '@jellyfin/sdk/lib/generated-client/api/user-api'
+import { UserViewsApi } from '@jellyfin/sdk/lib/generated-client/api/user-views-api'
 import { BaseItemDto, BaseItemKind, ItemFields, MediaType } from '@jellyfin/sdk/lib/generated-client/models'
 import { ItemFilter } from '@jellyfin/sdk/lib/generated-client/models/item-filter'
 import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by'
@@ -937,12 +938,20 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return await parseItemDtos(response.data.Items)
     }
 
+    const getUserViews = async () => {
+        const userViewsApi = new UserViewsApi(api.configuration)
+        const response = await userViewsApi.getUserViews({ userId })
+        const items = await parseItemDtos(response.data.Items)
+        return items.filter(item => !item.CollectionType || !['music', 'books', 'photos'].includes(item.CollectionType))
+    }
+
     return {
         loginToJellyfin,
         getMovies,
         getSeries,
         getCollections,
         getPlaylists,
+        getUserViews,
         getFavorites,
         getRecentlyPlayed,
         getNextUp,

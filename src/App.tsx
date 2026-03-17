@@ -27,6 +27,7 @@ import { Collections } from './pages/Collections'
 import { EpisodePage } from './pages/EpisodePage'
 import { Favorites } from './pages/Favorites'
 import { Home } from './pages/Home'
+import { LibraryPage } from './pages/LibraryPage'
 import { Login } from './pages/Login'
 import { MoviePage } from './pages/MoviePage'
 import { Movies } from './pages/Movies'
@@ -257,6 +258,7 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                                     <Main pageTitle="Playlist" content={PlaylistPage} filterType={'moviesPlaylist'} />
                                 }
                             />
+                            <Route path="/library/:id" element={<Main pageTitle="Library" content={LibraryPage} />} />
                             <Route
                                 path="/favorites"
                                 element={<Main pageTitle="Favorites" content={Favorites} filterType={'favorites'} />}

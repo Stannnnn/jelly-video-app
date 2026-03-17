@@ -67,6 +67,8 @@ export const MediaList = ({
             navigate(`/collection/${item.Id}`)
         } else if (itemType === 'playlist') {
             navigate(`/playlist/${item.Id}`)
+        } else if (itemType === 'collectionfolder' || itemType === 'userview') {
+            navigate(`/library/${item.Id}`)
         } else if (itemType === 'person' || type === 'person') {
             navigate(`/person/${item.Id}`)
         } else {

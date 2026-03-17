@@ -61,7 +61,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         setRememberFilters,
     } = usePlaybackContext()
 
-    const { enablePlaylists, setEnablePlaylists } = useSidenavContext()
+    const { enablePlaylists, setEnablePlaylists, enableLibraries, setEnableLibraries } = useSidenavContext()
 
     const { theme, toggleTheme } = useThemeContext()
 
@@ -634,7 +634,10 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                     </div>
                 </div>
-                <div className="inner row">
+                <div
+                    className={`inner row${enableLibraries ? ' disabled' : ''}`}
+                    title={enableLibraries ? 'Playlists are hidden when Libraries view is enabled' : undefined}
+                >
                     <div className="container">
                         <div className="desc">
                             <div className="subtitle">Playlists</div>
@@ -646,6 +649,25 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     type="checkbox"
                                     checked={enablePlaylists}
                                     onChange={e => setEnablePlaylists(e.target.checked)}
+                                    disabled={enableLibraries}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Libraries</div>
+                            <div className="subdesc">Enable libraries view to browse separate user views</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={enableLibraries}
+                                    onChange={e => setEnableLibraries(e.target.checked)}
                                 ></input>
                                 <span className="slider"></span>
                             </label>

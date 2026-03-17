@@ -42,7 +42,21 @@ const useInitialState = () => {
         localStorage.setItem('enablePlaylists', enablePlaylists ? 'on' : 'off')
     }, [enablePlaylists])
 
-    return { showSidenav, toggleSidenav, closeSidenav, enablePlaylists, setEnablePlaylists }
+    // Libraries link toggle
+    const [enableLibraries, setEnableLibraries] = useState(localStorage.getItem('enableLibraries') === 'on')
+    useEffect(() => {
+        localStorage.setItem('enableLibraries', enableLibraries ? 'on' : 'off')
+    }, [enableLibraries])
+
+    return {
+        showSidenav,
+        toggleSidenav,
+        closeSidenav,
+        enablePlaylists,
+        setEnablePlaylists,
+        enableLibraries,
+        setEnableLibraries,
+    }
 }
 
 export const SidenavContextProvider = ({ children }: { children: ReactNode }) => {
