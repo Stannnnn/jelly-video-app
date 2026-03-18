@@ -569,7 +569,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             recursive,
             includeItemTypes: itemTypes,
             excludeItemTypes: excludeItemTypes,
-            mediaTypes: ['Video'],
+            mediaTypes: ['Video', 'Unknown'],
         })
 
         return await parseItemDtos(response.data.Items)
@@ -933,7 +933,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             recursive: true,
             includeItemTypes: [BaseItemKind.Playlist],
             fields: [...extraFields, ItemFields.DateCreated, ItemFields.DateLastMediaAdded],
-            mediaTypes: ['Video'],
+            mediaTypes: ['Video', 'Unknown'],
         })
 
         return await parseItemDtos(response.data.Items)
