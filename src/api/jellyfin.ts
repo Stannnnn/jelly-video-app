@@ -569,6 +569,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             recursive,
             includeItemTypes: itemTypes,
             excludeItemTypes: excludeItemTypes,
+            mediaTypes: ['Video'],
         })
 
         return await parseItemDtos(response.data.Items)
