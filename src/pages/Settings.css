@@ -167,6 +167,10 @@
     color: var(--font-color-tertiary);
 }
 
+.settings-page > .section.misc.ui > .inner {
+    transition: opacity 0.2s ease-out;
+}
+
 .settings-page > .section.ui > .inner {
     width: 100%;
 }
