@@ -28,13 +28,14 @@ export const useJellyfinSearch = (searchQuery: string) => {
 
             if (navigator.onLine) {
                 // Fetch each type separately
-                const [movies, series, collections] = await Promise.all([
+                const [movies, series, collections, people] = await Promise.all([
                     api.searchItems(debouncedSearchQuery, 6, [BaseItemKind.Movie]),
                     api.searchItems(debouncedSearchQuery, 6, [BaseItemKind.Series]),
                     api.searchItems(debouncedSearchQuery, 6, [BaseItemKind.BoxSet]),
+                    api.searchPeople(debouncedSearchQuery, 4),
                 ])
 
-                const limitedResults = [...movies, ...series, ...collections]
+                const limitedResults = [...movies, ...series, ...collections, ...people]
                 return limitedResults
             } else {
                 // Use offline search when no network

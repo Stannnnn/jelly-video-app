@@ -66,9 +66,24 @@ export const SearchResults = () => {
                 </div>
             )}
 
-            {results.movies.length === 0 && results.series.length === 0 && results.collections.length === 0 && (
-                <div>No results found for '{query}'.</div>
+            {results.persons.length > 0 && (
+                <div className="section persons">
+                    <div className="container">
+                        <div className="title">Persons</div>
+                        {results.persons.length >= 12 && (
+                            <Link to={`/search/${encodeURIComponent(query)}/persons`} className="see-more noSelect">
+                                See more
+                            </Link>
+                        )}
+                    </div>
+                    <MediaList items={results.persons} isLoading={loading} type="person" />
+                </div>
             )}
+
+            {results.movies.length === 0 &&
+                results.series.length === 0 &&
+                results.collections.length === 0 &&
+                results.persons.length === 0 && <div>No results found for '{query}'.</div>}
         </div>
     )
 }

@@ -4,6 +4,7 @@ import { CollectionApi } from '@jellyfin/sdk/lib/generated-client/api/collection
 import { ConfigurationApi } from '@jellyfin/sdk/lib/generated-client/api/configuration-api'
 import { ItemsApi } from '@jellyfin/sdk/lib/generated-client/api/items-api'
 import { LibraryApi } from '@jellyfin/sdk/lib/generated-client/api/library-api'
+import { PersonsApi } from '@jellyfin/sdk/lib/generated-client/api/persons-api'
 import { PlaylistsApi } from '@jellyfin/sdk/lib/generated-client/api/playlists-api'
 import { PlaystateApi } from '@jellyfin/sdk/lib/generated-client/api/playstate-api'
 import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
@@ -719,6 +720,18 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         }
     }
 
+    const searchPeople = async (searchQuery: string, limit = 36, startIndex = 0) => {
+        const personsApi = new PersonsApi(api.configuration)
+        const response = await personsApi.getPersons({
+            userId,
+            searchTerm: searchQuery,
+            limit,
+            fields: extraFields,
+        })
+
+        return await parseItemDtos(response.data.Items)
+    }
+
     const getSimilarItems = async (itemId: string, limit = 12) => {
         const libraryApi = new LibraryApi(api.configuration)
         const response = await libraryApi.getSimilarItems({
@@ -979,6 +992,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         getEpisodes,
         getSpecials,
         searchItems,
+        searchPeople,
         getCastCrew,
         getPersonMovies,
         getSimilarItems,

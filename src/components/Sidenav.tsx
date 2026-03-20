@@ -179,7 +179,9 @@ export const Sidenav = (props: { username: string }) => {
                                                                     ? `/episode/${item.Id}`
                                                                     : item.Type === 'BoxSet'
                                                                       ? `/collection/${item.Id}`
-                                                                      : '#'
+                                                                      : item.Type === 'Person'
+                                                                        ? `/person/${item.Id}`
+                                                                        : '#'
                                                         }
                                                         onClick={closeSidenav}
                                                         className="result"
@@ -208,6 +210,7 @@ export const Sidenav = (props: { username: string }) => {
                                                                     {item.Type === 'Episode' &&
                                                                         `Episode - ${item.SeriesName || ''}`}
                                                                     {item.Type === 'BoxSet' && 'Collection'}
+                                                                    {item.Type === 'Person' && 'Person'}
                                                                 </div>
                                                                 <div className="divider"></div>
                                                                 <div
