@@ -83,7 +83,7 @@ export const MediaList = ({
         if (!item || 'isPlaceholder' in item) {
             return (
                 <div className={`media-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
-                    <Skeleton type={type} hideSubtitle={true} />
+                    <Skeleton type={type} hideSubtitle={hideSubtitle} />
                 </div>
             )
         }

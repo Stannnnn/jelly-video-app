@@ -26,7 +26,13 @@ export const SearchPersons = () => {
         <div className="search-results-page">
             <div className="search-content">
                 {(isLoading || items.length > 0) && (
-                    <MediaList items={items} isLoading={isLoading} type="person" loadMore={loadMore} />
+                    <MediaList
+                        items={items}
+                        isLoading={isLoading}
+                        type="person"
+                        hideSubtitle={true}
+                        loadMore={loadMore}
+                    />
                 )}
 
                 {items.length === 0 && !isLoading && <div>No people found for '{query}'.</div>}
