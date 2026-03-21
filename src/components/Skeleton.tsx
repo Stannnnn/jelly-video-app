@@ -2,8 +2,10 @@ import './Skeleton.css'
 
 export const Skeleton = ({
     type,
+    hideSubtitle = false,
 }: {
     type: 'movie' | 'series' | 'episode' | 'mixed' | 'mixedSmall' | 'specials' | 'collection' | 'playlist' | 'person'
+    hideSubtitle?: boolean
 }) => {
     const isPortrait =
         type === 'movie' || type === 'series' || type === 'collection' || type === 'person' || type === 'playlist'
@@ -33,7 +35,9 @@ export const Skeleton = ({
             />
             <div className="skeleton-details">
                 <div className="skeleton-effect title" />
-                {type !== 'specials' && type !== 'playlist' && <div className="skeleton-effect subtitle" />}
+                {!hideSubtitle && type !== 'specials' && type !== 'playlist' && (
+                    <div className="skeleton-effect subtitle" />
+                )}
             </div>
         </div>
     )

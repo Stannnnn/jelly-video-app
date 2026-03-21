@@ -18,6 +18,7 @@ export const MediaList = ({
     loadMore,
     disableActions = false,
     disableEvents = false,
+    hideSubtitle = false,
     removeButton,
     className,
     parentItem,
@@ -35,6 +36,7 @@ export const MediaList = ({
     loadMore?: () => void
     disableActions?: boolean
     disableEvents?: boolean
+    hideSubtitle?: boolean
     removeButton?: (item: MediaItem) => ReactNode
     className?: string
     parentItem?: MediaItem
@@ -81,7 +83,7 @@ export const MediaList = ({
         if (!item || 'isPlaceholder' in item) {
             return (
                 <div className={`media-item ${className || ''}`} ref={el => setRowRefs(index, el)}>
-                    <Skeleton type={type} />
+                    <Skeleton type={type} hideSubtitle={true} />
                 </div>
             )
         }
@@ -493,7 +495,7 @@ export const MediaList = ({
                         <span className="title" title={item.Name}>
                             {item.Name}
                         </span>
-                        {(item as any).Role && (
+                        {!hideSubtitle && (item as any).Role && (
                             <div className="subtitle role" title={(item as any).Role}>
                                 {(item as any).Role}
                             </div>

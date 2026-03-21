@@ -720,7 +720,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         }
     }
 
-    const searchPeople = async (searchQuery: string, limit = 36, startIndex = 0) => {
+    const searchPeople = async (searchQuery: string, limit = 48, startIndex = 0) => {
         const personsApi = new PersonsApi(api.configuration)
         const response = await personsApi.getPersons({
             userId,

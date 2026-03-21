@@ -227,6 +227,12 @@
     font-size: 0.75rem;
     /* Help with CJK letter spacing */
     line-height: 0.9375rem;
+    /* For people on search results page, overwritten by next selector below */
+    margin-bottom: 0;
+}
+
+.media-list .media-item.square > .media-details:has(> .subtitle) > .title {
+    margin-bottom: 2px;
 }
 
 .media-list .media-item > .media-details > .subtitle {

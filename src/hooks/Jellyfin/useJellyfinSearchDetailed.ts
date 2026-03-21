@@ -44,7 +44,7 @@ export const useJellyfinSearchDetailed = (searchQuery: string | undefined) => {
                     api.searchItems(debouncedSearchQuery, 12, [BaseItemKind.Movie]),
                     api.searchItems(debouncedSearchQuery, 12, [BaseItemKind.Series]),
                     api.searchItems(debouncedSearchQuery, 12, [BaseItemKind.BoxSet]),
-                    api.searchPeople(debouncedSearchQuery, 12),
+                    api.searchPeople(debouncedSearchQuery, 16),
                 ])
 
                 return {

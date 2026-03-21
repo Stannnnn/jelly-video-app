@@ -69,14 +69,14 @@ export const SearchResults = () => {
             {results.persons.length > 0 && (
                 <div className="section persons">
                     <div className="container">
-                        <div className="title">Persons</div>
-                        {results.persons.length >= 12 && (
+                        <div className="title">People</div>
+                        {results.persons.length >= 16 && (
                             <Link to={`/search/${encodeURIComponent(query)}/persons`} className="see-more noSelect">
                                 See more
                             </Link>
                         )}
                     </div>
-                    <MediaList items={results.persons} isLoading={loading} type="person" />
+                    <MediaList items={results.persons} isLoading={loading} type="person" hideSubtitle={true} />
                 </div>
             )}
 

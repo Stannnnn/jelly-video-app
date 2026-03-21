@@ -258,6 +258,20 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     > .search_results
     > .results
     > .result
+    > .thumbnail-container.person
+    > .thumbnail {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+}
+
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
     > .thumbnail-container
     > .fallback-thumbnail {
     position: relative;
@@ -301,6 +315,10 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 2px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .details > .title {
+    margin-bottom: 0;
 }
 
 .sidenav
