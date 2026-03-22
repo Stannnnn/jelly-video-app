@@ -652,14 +652,15 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                     </div>
                 </div>
-                <div
-                    className={`inner row${enableLibraries ? ' disabled' : ''}`}
-                    title={enableLibraries ? 'Playlists are hidden when Libraries view is enabled' : undefined}
-                >
+                <div className="inner row">
                     <div className="container">
                         <div className="desc">
                             <div className="subtitle">Playlists</div>
-                            <div className="subdesc">Enable playlist view and functionality</div>
+                            <div className="subdesc">
+                                {enableLibraries
+                                    ? 'Playlists in your library? Enable for seamless functionality'
+                                    : 'Enable playlist view and functionality'}
+                            </div>
                         </div>
                         <div className="option">
                             <label className="switch">
@@ -667,7 +668,6 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                                     type="checkbox"
                                     checked={enablePlaylists}
                                     onChange={e => setEnablePlaylists(e.target.checked)}
-                                    disabled={enableLibraries}
                                 ></input>
                                 <span className="slider"></span>
                             </label>

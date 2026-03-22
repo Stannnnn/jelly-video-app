@@ -153,22 +153,12 @@
     margin-bottom: 10px;
 }
 
-.settings-page > .section.ui > .inner.disabled {
-    opacity: 0.4;
-    user-select: none;
-    pointer-events: none;
-}
-
 .settings-page > .section.ui .desc > .subtitle {
     margin-bottom: 0;
 }
 
 .settings-page > .section.ui .desc > .subdesc {
     color: var(--font-color-tertiary);
-}
-
-.settings-page > .section.misc.ui > .inner {
-    transition: opacity 0.2s ease-out;
 }
 
 .settings-page > .section.ui > .inner {
