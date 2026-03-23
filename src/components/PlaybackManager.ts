@@ -1,4 +1,4 @@
-import { isTauri } from '@tauri-apps/api/core'
+import { invoke, isTauri } from '@tauri-apps/api/core'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
     command,
@@ -13,6 +13,44 @@ import { useAudioStorageContext } from '../context/AudioStorageContext/AudioStor
 import { useJellyfinContext } from '../context/JellyfinContext/JellyfinContext'
 import { useJellyfinServerConfiguration } from '../hooks/Jellyfin/useJellyfinServerConfiguration'
 import { useWatchedState } from '../hooks/useWatchedState'
+import { parseMpvConf } from '../utils/parseMpvConf'
+
+async function initMpvWithConfig(useConfig: boolean) {
+    let userOptions: Record<string, string | boolean | number> = {}
+    if (useConfig) {
+        try {
+            const [mpvConfContent, inputConfContent, configPath] = await Promise.all([
+                invoke<string>('mpv_config_read', { filename: 'mpv.conf' }),
+                invoke<string>('mpv_config_read', { filename: 'input.conf' }),
+                invoke<string>('mpv_config_path'),
+            ])
+            if (mpvConfContent) {
+                userOptions = parseMpvConf(mpvConfContent)
+                console.log('[MPV] Loaded user mpv.conf options:', userOptions)
+            }
+            if (inputConfContent) {
+                userOptions['input-conf'] = configPath + '/input.conf'
+                console.log('[MPV] Loaded user input.conf from:', userOptions['input-conf'])
+            }
+        } catch (e) {
+            console.warn('[MPV] Failed to load user config:', e)
+        }
+    } else {
+        console.log('[MPV] MPV config override is disabled, using defaults')
+    }
+
+    await init({
+        initialOptions: {
+            vo: 'gpu-next',
+            hwdec: 'auto-safe',
+            ...userOptions,
+            'keep-open': 'yes',
+            'force-window': 'yes',
+            ...(import.meta.env.DEV ? { 'msg-level': 'all=v', terminal: 'yes', 'msg-color': 'yes' } : {}),
+        },
+        observedProperties: OBSERVED_PROPERTIES,
+    })
+}
 
 // Define observed properties with their types
 const OBSERVED_PROPERTIES = [
@@ -190,6 +228,14 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
     const [checkForUpdates, setCheckForUpdates] = useState(localStorage.getItem('checkForUpdates') === 'on')
 
     useEffect(() => localStorage.setItem('checkForUpdates', checkForUpdates ? 'on' : 'off'), [checkForUpdates])
+
+    // MPV Config Override Setting
+    const [showMpvConfig, setShowMpvConfig] = useState(localStorage.getItem('showMpvConfig') === 'on')
+    useEffect(() => localStorage.setItem('showMpvConfig', showMpvConfig ? 'on' : 'off'), [showMpvConfig])
+    const showMpvConfigRef = useRef(showMpvConfig)
+    useEffect(() => {
+        showMpvConfigRef.current = showMpvConfig
+    }, [showMpvConfig])
 
     // Subtitle Settings
     const [subtitleFontSize, setSubtitleFontSize] = useState(localStorage.getItem('subtitleFontSize') || 'normal')
@@ -380,19 +426,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                 // Wait a bit for the window to be fully ready
                 await new Promise(resolve => setTimeout(resolve, 200))
 
-                // Initialize mpv with proper video output settings
-                await init({
-                    initialOptions: {
-                        vo: 'gpu-next',
-                        hwdec: 'auto-safe',
-                        'keep-open': 'yes',
-                        'force-window': 'yes',
-                        // Enable verbose logging
-                        ...(import.meta.env.DEV ? { 'msg-level': 'all=v', terminal: 'yes', 'msg-color': 'yes' } : {}),
-                    },
-                    observedProperties: OBSERVED_PROPERTIES,
-                })
-
+                await initMpvWithConfig(showMpvConfigRef.current)
                 setIsInitialized(true)
                 setMpvError(null)
             } catch (error) {
@@ -1106,6 +1140,26 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
         }
     }, [cancelNextEpisodeCountdown, currentTrack])
 
+    const reloadMpv = useCallback(async () => {
+        if (!isTauri()) return
+        try {
+            setIsInitialized(false)
+            await destroy()
+        } catch (e) {
+            console.warn('[MPV] reloadMpv: destroy failed:', e)
+        }
+        try {
+            await initMpvWithConfig(showMpvConfigRef.current)
+            setIsInitialized(true)
+            setMpvError(null)
+            console.log('[MPV] reloadMpv: reinitialized successfully')
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to reinitialize MPV'
+            console.error('[MPV] reloadMpv: failed to reinitialize:', error)
+            setMpvError(errorMessage)
+        }
+    }, [])
+
     const clearStates = useCallback(() => {
         // Reset playback state
         setTimePos(0)
@@ -1320,5 +1374,10 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
         checkForUpdates,
         setCheckForUpdates,
+
+        showMpvConfig,
+        setShowMpvConfig,
+
+        reloadMpv,
     }
 }

@@ -560,3 +560,39 @@ pub async fn storage_abort_downloads(
     }
     Ok(())
 }
+
+fn get_mpv_config_dir(app: &AppHandle) -> tauri::Result<PathBuf> {
+    let app_data_dir = app.path().app_data_dir()?;
+    let config_dir = app_data_dir.join("mpv");
+    fs::create_dir_all(&config_dir)?;
+    Ok(config_dir)
+}
+
+#[tauri::command]
+pub fn mpv_config_read(app: AppHandle, filename: String) -> Result<String, String> {
+    if filename != "mpv.conf" && filename != "input.conf" {
+        return Err("Invalid config filename".to_string());
+    }
+    let config_dir = get_mpv_config_dir(&app).map_err(|e| e.to_string())?;
+    let path = config_dir.join(&filename);
+    if !path.exists() {
+        return Ok(String::new());
+    }
+    fs::read_to_string(&path).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn mpv_config_write(app: AppHandle, filename: String, content: String) -> Result<(), String> {
+    if filename != "mpv.conf" && filename != "input.conf" {
+        return Err("Invalid config filename".to_string());
+    }
+    let config_dir = get_mpv_config_dir(&app).map_err(|e| e.to_string())?;
+    let path = config_dir.join(&filename);
+    fs::write(&path, content).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn mpv_config_path(app: AppHandle) -> Result<String, String> {
+    let config_dir = get_mpv_config_dir(&app).map_err(|e| e.to_string())?;
+    Ok(config_dir.to_string_lossy().to_string())
+}

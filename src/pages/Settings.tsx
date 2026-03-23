@@ -59,6 +59,9 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         setRememberAudioTrack,
         rememberFilters,
         setRememberFilters,
+        reloadMpv,
+        showMpvConfig,
+        setShowMpvConfig,
     } = usePlaybackContext()
 
     const { enablePlaylists, setEnablePlaylists, enableLibraries, setEnableLibraries } = useSidenavContext()
@@ -76,6 +79,60 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
     const [clearing, setClearing] = useState(false)
     const { latestRelease, updateStatus, isCheckingUpdate } = useUpdateChecker(checkForUpdates)
     const [forceChecking, setForceChecking] = useState(false)
+
+    const [mpvConf, setMpvConf] = useState('')
+    const [inputConf, setInputConf] = useState('')
+    const [mpvConfSaved, setMpvConfSaved] = useState(false)
+    const [inputConfSaved, setInputConfSaved] = useState(false)
+
+    useEffect(() => {
+        const loadMpvConfigs = async () => {
+            try {
+                const [mpv, input] = await Promise.all([
+                    invoke<string>('mpv_config_read', { filename: 'mpv.conf' }),
+                    invoke<string>('mpv_config_read', { filename: 'input.conf' }),
+                ])
+                setMpvConf(mpv)
+                setInputConf(input)
+            } catch (e) {
+                console.error('Failed to load MPV configs:', e)
+            }
+        }
+        loadMpvConfigs()
+    }, [])
+
+    const saveMpvConf = useCallback(async () => {
+        try {
+            setMpvConfSaved(true)
+            await invoke('mpv_config_write', { filename: 'mpv.conf', content: mpvConf })
+            await reloadMpv()
+            setMpvConfSaved(false)
+        } catch (e) {
+            console.error('Failed to save mpv.conf:', e)
+            setMpvConfSaved(false)
+        }
+    }, [mpvConf, reloadMpv])
+
+    const saveInputConf = useCallback(async () => {
+        try {
+            setInputConfSaved(true)
+            await invoke('mpv_config_write', { filename: 'input.conf', content: inputConf })
+            await reloadMpv()
+            setInputConfSaved(false)
+        } catch (e) {
+            console.error('Failed to save input.conf:', e)
+            setInputConfSaved(false)
+        }
+    }, [inputConf, reloadMpv])
+
+    const handleOpenMpvConfigFolder = useCallback(async () => {
+        try {
+            const configPath = await invoke<string>('mpv_config_path')
+            await open(configPath)
+        } catch (e) {
+            console.error('Failed to open MPV config folder:', e)
+        }
+    }, [])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -674,6 +731,96 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div className="section mpv-config ui">
+                <div className="title">MPV Configuration</div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Override MPV configs</div>
+                            <div className="subdesc">Edit mpv.conf and input.conf to customize player behavior</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={showMpvConfig}
+                                    onChange={e => {
+                                        setShowMpvConfig(e.target.checked)
+                                        reloadMpv()
+                                    }}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {showMpvConfig && (
+                    <>
+                        <div className="primary mpv-actions">
+                            <div className="actions noSelect">
+                                <button className="btn" onClick={handleOpenMpvConfigFolder}>
+                                    Open Folder
+                                </button>
+                            </div>
+                        </div>
+                        <div className="config-editor">
+                            <div className="config-file">
+                                <div className="config-header">
+                                    <div className="desc">
+                                        <div className="subtitle">mpv.conf</div>
+                                        <div className="subdesc">
+                                            Custom MPV options — one per line as <code>key=value</code>
+                                        </div>
+                                    </div>
+                                    <div className="actions noSelect">
+                                        <button className="btn save" onClick={saveMpvConf} disabled={mpvConfSaved}>
+                                            {mpvConfSaved ? 'Saving...' : 'Save'}
+                                        </button>
+                                    </div>
+                                </div>
+                                <textarea
+                                    className="config-textarea"
+                                    value={mpvConf}
+                                    onChange={e => setMpvConf(e.target.value)}
+                                    placeholder={`# Example options:\n# hwdec=auto\n# deband=yes\n# video-sync=display-resample`}
+                                    spellCheck={false}
+                                />
+                            </div>
+                            <div className="config-file">
+                                <div className="config-header">
+                                    <div className="desc">
+                                        <div className="subtitle">input.conf</div>
+                                        <div className="subdesc">
+                                            Custom key bindings — format: <code>KEY command</code>
+                                        </div>
+                                    </div>
+                                    <div className="actions noSelect">
+                                        <button className="btn save" onClick={saveInputConf} disabled={inputConfSaved}>
+                                            {inputConfSaved ? 'Saving...' : 'Save'}
+                                        </button>
+                                    </div>
+                                </div>
+                                <textarea
+                                    className="config-textarea"
+                                    value={inputConf}
+                                    onChange={e => setInputConf(e.target.value)}
+                                    placeholder={`# Example bindings:\n# WHEEL_UP add volume 2\n# WHEEL_DOWN add volume -2\n# MBTN_MID cycle pause`}
+                                    spellCheck={false}
+                                />
+                            </div>
+                        </div>
+                        <div className="desc">
+                            <div className="note">
+                                Changes take effect on next video playback. Options set here are merged with the app
+                                defaults. User options for <code>vo</code> and <code>hwdec</code> will override
+                                defaults. The <code>keep-open</code> and <code>force-window</code> options are always
+                                enforced. You can also edit these files directly in the config folder.
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
 
             <div className="section downloads">

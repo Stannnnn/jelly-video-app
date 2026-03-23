@@ -452,3 +452,62 @@
 .settings-page > .section .desc > .info {
     color: var(--font-color-tertiary);
 }
+
+/* MPV Configuration */
+.settings-page > .section.mpv-config .primary.mpv-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.settings-page > .section.mpv-config .config-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.settings-page > .section.mpv-config .config-file .config-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.settings-page > .section.mpv-config .config-file .config-header .subtitle {
+    font-weight: 600;
+    font-family: monospace;
+}
+
+.settings-page > .section.mpv-config .config-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color-secondary);
+    color: var(--font-color);
+    font-family: monospace;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    resize: vertical;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s ease-out;
+}
+
+.settings-page > .section.mpv-config .config-textarea:focus {
+    border-color: var(--brand-color);
+}
+
+.settings-page > .section.mpv-config .config-textarea::placeholder {
+    color: var(--font-color-tertiary);
+    opacity: 0.6;
+}
+
+.settings-page > .section.mpv-config code {
+    font-family: monospace;
+    font-size: 0.82em;
+    background: var(--bg-color-secondary);
+    padding: 1px 4px;
+    border-radius: 3px;
+}
