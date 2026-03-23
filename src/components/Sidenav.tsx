@@ -186,21 +186,42 @@ export const Sidenav = (props: { username: string }) => {
                                                         onClick={closeSidenav}
                                                         className="result"
                                                     >
-                                                        <Squircle
-                                                            width={36}
-                                                            height={54}
-                                                            cornerRadius={5}
-                                                            className="thumbnail-container"
-                                                        >
-                                                            <JellyImg
-                                                                item={item}
-                                                                type="Primary"
+                                                        {item.Type === 'Person' ? (
+                                                            <Squircle
+                                                                width={36}
+                                                                height={36}
+                                                                cornerRadius={8}
+                                                                className="thumbnail-container person"
+                                                            >
+                                                                <JellyImg
+                                                                    item={item}
+                                                                    type="Primary"
+                                                                    width={36}
+                                                                    height={36}
+                                                                />
+                                                            </Squircle>
+                                                        ) : (
+                                                            <Squircle
                                                                 width={36}
                                                                 height={54}
-                                                            />
-                                                        </Squircle>
+                                                                cornerRadius={5}
+                                                                className="thumbnail-container"
+                                                            >
+                                                                <JellyImg
+                                                                    item={item}
+                                                                    type="Primary"
+                                                                    width={36}
+                                                                    height={54}
+                                                                />
+                                                            </Squircle>
+                                                        )}
                                                         <div className="details">
-                                                            <div className="title" title={item.Name}>
+                                                            <div
+                                                                className={
+                                                                    item.Type === 'Person' ? 'title person' : 'title'
+                                                                }
+                                                                title={item.Name}
+                                                            >
                                                                 {item.Name}
                                                             </div>
                                                             <div className="container">
@@ -210,24 +231,29 @@ export const Sidenav = (props: { username: string }) => {
                                                                     {item.Type === 'Episode' &&
                                                                         `Episode - ${item.SeriesName || ''}`}
                                                                     {item.Type === 'BoxSet' && 'Collection'}
-                                                                    {item.Type === 'Person' && 'Person'}
                                                                 </div>
-                                                                <div className="divider"></div>
-                                                                <div
-                                                                    className="date"
-                                                                    title={
-                                                                        item.PremiereDate &&
-                                                                        !isNaN(Date.parse(item.PremiereDate))
-                                                                            ? new Date(item.PremiereDate)
-                                                                                  .getFullYear()
-                                                                                  .toString()
-                                                                            : ''
-                                                                    }
-                                                                >
-                                                                    {item.PremiereDate
-                                                                        ? new Date(item.PremiereDate).getFullYear()
-                                                                        : ''}
-                                                                </div>
+                                                                {item.Type !== 'Person' && (
+                                                                    <>
+                                                                        <div className="divider"></div>
+                                                                        <div
+                                                                            className="date"
+                                                                            title={
+                                                                                item.PremiereDate &&
+                                                                                !isNaN(Date.parse(item.PremiereDate))
+                                                                                    ? new Date(item.PremiereDate)
+                                                                                          .getFullYear()
+                                                                                          .toString()
+                                                                                    : ''
+                                                                            }
+                                                                        >
+                                                                            {item.PremiereDate
+                                                                                ? new Date(
+                                                                                      item.PremiereDate
+                                                                                  ).getFullYear()
+                                                                                : ''}
+                                                                        </div>
+                                                                    </>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </NavLink>
