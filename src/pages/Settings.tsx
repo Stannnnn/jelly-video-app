@@ -734,12 +734,12 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
             </div>
 
             <div className="section mpv-config ui">
-                <div className="title">MPV Configuration</div>
+                <div className="title">MPV Configuration - Experimental</div>
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
-                            <div className="subtitle">Override MPV configs</div>
-                            <div className="subdesc">Edit mpv.conf and input.conf to customize player behavior</div>
+                            <div className="subtitle">Override config</div>
+                            <div className="subdesc">Edit mpv.conf to customize player behavior</div>
                         </div>
                         <div className="option">
                             <label className="switch">
@@ -758,65 +758,70 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
                 {showMpvConfig && (
                     <>
-                        <div className="primary mpv-actions">
-                            <div className="actions noSelect">
-                                <button className="btn" onClick={handleOpenMpvConfigFolder}>
-                                    Open Folder
-                                </button>
-                            </div>
-                        </div>
                         <div className="config-editor">
-                            <div className="config-file">
+                            <div className="config-block">
                                 <div className="config-header">
-                                    <div className="desc">
-                                        <div className="subtitle">mpv.conf</div>
-                                        <div className="subdesc">
-                                            Custom MPV options — one per line as <code>key=value</code>
-                                        </div>
-                                    </div>
-                                    <div className="actions noSelect">
-                                        <button className="btn save" onClick={saveMpvConf} disabled={mpvConfSaved}>
-                                            {mpvConfSaved ? 'Saving...' : 'Save'}
-                                        </button>
+                                    <div className="title">mpv.conf</div>
+                                    <div className="divider"></div>
+                                    <div className="description">
+                                        Custom mpv options, one per line as <code>key=value</code>
                                     </div>
                                 </div>
                                 <textarea
                                     className="config-textarea"
                                     value={mpvConf}
                                     onChange={e => setMpvConf(e.target.value)}
-                                    placeholder={`# Example options:\n# hwdec=auto\n# deband=yes\n# video-sync=display-resample`}
+                                    placeholder={`# Example options:\n# hwdec=auto\n# deband=yes\n# video-sync=display-resample\n# sub-font=monospace\n \n# HDR in Windows\n# vo=gpu-next\n# gpu-api=d3d11\n# target-colorspace-hint=yes`}
                                     spellCheck={false}
                                 />
+                                <div className="config-actions noSelect">
+                                    <button className="btn save" onClick={saveMpvConf} disabled={mpvConfSaved}>
+                                        {mpvConfSaved ? 'Saving...' : 'Save'}
+                                    </button>
+                                </div>
                             </div>
-                            <div className="config-file">
+
+                            {/* input.conf disabled for now
+                            <div className="config-block">
                                 <div className="config-header">
-                                    <div className="desc">
-                                        <div className="subtitle">input.conf</div>
-                                        <div className="subdesc">
-                                            Custom key bindings — format: <code>KEY command</code>
-                                        </div>
-                                    </div>
-                                    <div className="actions noSelect">
-                                        <button className="btn save" onClick={saveInputConf} disabled={inputConfSaved}>
-                                            {inputConfSaved ? 'Saving...' : 'Save'}
-                                        </button>
+                                    <div className="title">input.conf</div>
+                                    <div className="divider"></div>
+                                    <div className="description">
+                                        Custom key bindings, format: <code>KEY command</code>
                                     </div>
                                 </div>
                                 <textarea
                                     className="config-textarea"
                                     value={inputConf}
                                     onChange={e => setInputConf(e.target.value)}
-                                    placeholder={`# Example bindings:\n# WHEEL_UP add volume 2\n# WHEEL_DOWN add volume -2\n# MBTN_MID cycle pause`}
+                                    placeholder={`# Example bindings:\n# WHEEL_UP add volume 2\n# WHEEL_DOWN add volume -2\n# MBTN_MID cycle pause\n# + dd video-zoom .5`}
                                     spellCheck={false}
                                 />
+                                <div className="config-actions noSelect">
+                                    <button className="btn save" onClick={saveInputConf} disabled={inputConfSaved}>
+                                        {inputConfSaved ? 'Saving...' : 'Save'}
+                                    </button>
+                                </div>
                             </div>
+                            */}
                         </div>
                         <div className="desc">
                             <div className="note">
-                                Changes take effect on next video playback. Options set here are merged with the app
-                                defaults. User options for <code>vo</code> and <code>hwdec</code> will override
-                                defaults. The <code>keep-open</code> and <code>force-window</code> options are always
-                                enforced. You can also edit these files directly in the config folder.
+                                Custom options are merged with the app defaults,{' '}
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="textlink"
+                                    href="https://github.com/mpv-player/mpv/blob/master/etc/mpv.conf"
+                                >
+                                    config example
+                                </a>
+                                . Keep in mind not all the available options have been tested, some might not work. The{' '}
+                                <code>keep-open</code> and <code>force-window</code> options are always enforced. You
+                                can also edit the configuration file directly in the{' '}
+                                <Link to="" onClick={handleOpenMpvConfigFolder} className="textlink">
+                                    config folder
+                                </Link>
                             </div>
                         </div>
                     </>
