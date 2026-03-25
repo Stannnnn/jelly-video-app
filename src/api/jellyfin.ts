@@ -15,6 +15,7 @@ import { UserViewsApi } from '@jellyfin/sdk/lib/generated-client/api/user-views-
 import { BaseItemDto, BaseItemKind, ItemFields, MediaType } from '@jellyfin/sdk/lib/generated-client/models'
 import { ItemFilter } from '@jellyfin/sdk/lib/generated-client/models/item-filter'
 import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by'
+import { PersonKind } from '@jellyfin/sdk/lib/generated-client/models/person-kind'
 import { PlayMethod } from '@jellyfin/sdk/lib/generated-client/models/play-method'
 import { SortOrder } from '@jellyfin/sdk/lib/generated-client/models/sort-order'
 
@@ -727,6 +728,13 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             searchTerm: searchQuery,
             limit,
             fields: extraFields,
+            personTypes: [
+                PersonKind.Actor,
+                PersonKind.Director,
+                PersonKind.Writer,
+                PersonKind.Producer,
+                PersonKind.GuestStar,
+            ],
         })
 
         return await parseItemDtos(response.data.Items)
