@@ -1,4 +1,4 @@
-import { GearIcon } from '@primer/octicons-react'
+import { GearIcon, PeopleIcon } from '@primer/octicons-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import '../App.css'
@@ -23,7 +23,7 @@ export const Sidenav = (props: { username: string }) => {
     const { updateStatus } = useUpdateChecker(checkForUpdates)
     const location = useLocation()
     const searchInputRef = useRef<HTMLInputElement>(null)
-    const { showSidenav, closeSidenav, enablePlaylists, enableLibraries } = useSidenavContext()
+    const { showSidenav, closeSidenav, enablePlaylists, enableLibraries, enableProfiles } = useSidenavContext()
     const { views: libraryViews } = useJellyfinUserViews()
 
     const { disabled, setDisabled } = useScrollContext()
@@ -278,8 +278,20 @@ export const Sidenav = (props: { username: string }) => {
                     <div className="account">
                         <div className="status">
                             <div className="indicator">Connected</div>
-                            <div className="username" title={props.username}>
-                                {props.username}
+                            <div className="username-row">
+                                <div className="username" title={props.username}>
+                                    {props.username}
+                                </div>
+                                {enableProfiles && (
+                                    <NavLink
+                                        to="/profiles"
+                                        className="icon switch-profile"
+                                        onClick={closeSidenav}
+                                        title="Switch profile"
+                                    >
+                                        <PeopleIcon size={14} />
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
                         <div className="actions">

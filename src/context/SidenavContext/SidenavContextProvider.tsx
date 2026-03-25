@@ -48,6 +48,12 @@ const useInitialState = () => {
         localStorage.setItem('enableLibraries', enableLibraries ? 'on' : 'off')
     }, [enableLibraries])
 
+    // Profiles toggle
+    const [enableProfiles, setEnableProfiles] = useState(localStorage.getItem('enableProfiles') === 'on')
+    useEffect(() => {
+        localStorage.setItem('enableProfiles', enableProfiles ? 'on' : 'off')
+    }, [enableProfiles])
+
     return {
         showSidenav,
         toggleSidenav,
@@ -56,6 +62,8 @@ const useInitialState = () => {
         setEnablePlaylists,
         enableLibraries,
         setEnableLibraries,
+        enableProfiles,
+        setEnableProfiles,
     }
 }
 

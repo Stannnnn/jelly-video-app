@@ -494,6 +494,43 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     overflow: hidden;
 }
 
+/* NEW PROFILE SWITCHER START */
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .status > .username-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .status > .username-row > .username {
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .status > .username-row > .switch-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 3px;
+    border-radius: 6px;
+    cursor: pointer;
+    fill: var(--font-color-secondary);
+    transition:
+        background-color 0.2s ease-out,
+        fill 0.2s ease-out;
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .status > .username-row > .switch-profile:hover {
+    background-color: var(--bg-color-tertiary);
+    fill: var(--font-color);
+}
+
+.sidenav > .sidenav_wrapper > .sidenav_footer > .account > .status > .username-row > .switch-profile.active {
+    fill: var(--font-color-active);
+}
+/* NEW PROFILE SWITCHER END */
+
 .sidenav > .sidenav_wrapper > .sidenav_footer > .account > .actions {
     display: flex;
     align-items: center;

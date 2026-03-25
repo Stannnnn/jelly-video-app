@@ -36,6 +36,7 @@ import { PersonMovies } from './pages/PersonMovies'
 import { PersonPage } from './pages/PersonPage'
 import { PlaylistPage } from './pages/PlaylistPage'
 import { Playlists } from './pages/Playlists'
+import { ProfileManager } from './pages/ProfileManager'
 import { RecentlyAddedMovies } from './pages/RecentlyAddedMovies'
 import { RecentlyAddedSeries } from './pages/RecentlyAddedSeries'
 import { RecentlyPlayed } from './pages/RecentlyPlayed'
@@ -49,6 +50,7 @@ import { Settings } from './pages/Settings'
 import { SpecialPage } from './pages/SpecialPage'
 import { VideoPlayerPage } from './pages/VideoPlayerPage'
 import { persister, queryClient } from './queryClient'
+import { syncCurrentProfile } from './utils/profileStorage'
 
 export const App = () => {
     useEffect(() => {
@@ -84,6 +86,17 @@ const RoutedApp = () => {
     const handleLogin = (authData: AuthData) => {
         setAuth(authData)
         localStorage.setItem('auth', JSON.stringify(authData))
+        syncCurrentProfile(authData)
+    }
+
+    const handleSwitch = async (authData: AuthData) => {
+        setIsLoggingOut(true)
+        localStorage.removeItem('repeatMode')
+        queryClient.clear()
+        await persister.removeClient()
+        setAuth(authData)
+        localStorage.setItem('auth', JSON.stringify(authData))
+        setIsLoggingOut(false)
     }
 
     const handleLogout = async () => {
@@ -124,7 +137,11 @@ const RoutedApp = () => {
                                     <SidenavContextProvider>
                                         <PlaybackContextProvider initialVolume={50} clearOnLogout={isLoggingOut}>
                                             <DownloadContextProvider>
-                                                <MainLayout auth={auth} handleLogout={handleLogout} />
+                                                <MainLayout
+                                                    auth={auth}
+                                                    handleLogout={handleLogout}
+                                                    handleSwitch={handleSwitch}
+                                                />
                                             </DownloadContextProvider>
                                         </PlaybackContextProvider>
                                     </SidenavContextProvider>
@@ -157,7 +174,15 @@ interface AuthData {
     username: string
 }
 
-const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () => void }) => {
+const MainLayout = ({
+    auth,
+    handleLogout,
+    handleSwitch,
+}: {
+    auth: AuthData
+    handleLogout: () => void
+    handleSwitch: (auth: AuthData) => void
+}) => {
     const { showSidenav, toggleSidenav } = useSidenavContext()
     const location = useLocation()
 
@@ -196,6 +221,10 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
         return <Settings onLogout={handleLogout} />
     }, [handleLogout])
 
+    const memoProfileManager = useCallback(() => {
+        return <ProfileManager currentAuth={auth} onSwitch={handleSwitch} />
+    }, [auth, handleSwitch])
+
     return (
         <Routes>
             <Route
@@ -220,6 +249,10 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                         <Routes>
                             <Route path="/" element={<Main pageTitle="Home" content={Home}></Main>} />
                             <Route path="/settings" element={<Main pageTitle="Settings" content={memoSettings} />} />
+                            <Route
+                                path="/profiles"
+                                element={<Main pageTitle="Profiles" content={memoProfileManager} />}
+                            />
                             <Route
                                 path="/downloads"
                                 element={<Main pageTitle="Downloads" content={Downloads} filterType={'downloads'} />}
