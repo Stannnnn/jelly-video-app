@@ -1,39 +1,62 @@
-.profile-manager {
-    max-width: 520px;
+.profiles-page {
+    display: flex;
+    align-items: flex-start;
+    gap: 26px;
+    max-width: 552px;
 }
 
-.profile-list {
+.profiles-page > .listing {
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     gap: 4px;
-    margin-bottom: 16px;
+    width: 286px;
+    margin-top: -10px;
 }
 
-.profile-empty {
-    font-size: 0.8rem;
-    color: var(--font-color-tertiary);
-    padding: 16px 0;
-    text-align: center;
+.profiles-page > .listing > .empty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 -12px;
+    padding: 10px 12px;
 }
 
-.profile-item {
+.profiles-page > .listing > .empty > .avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--bg-color-tertiary);
+}
+
+.profiles-page > .listing > .empty > .text {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.profiles-page > .listing > .item {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin: 0 -12px;
     padding: 10px 12px;
     border-radius: 10px;
     transition: background-color 0.2s ease-out;
 }
 
-.profile-item:hover {
-    background-color: var(--bg-color-tertiary);
+.profiles-page > .listing > .item:hover {
+    background-color: var(--bg-color-secondary);
 }
 
-.profile-item.current {
-    background-color: var(--bg-color-tertiary);
+.profiles-page > .listing > .item.current {
+    background-color: var(--bg-color);
 }
 
-.profile-info {
+.profiles-page > .listing > .item > .info {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -42,66 +65,60 @@
     min-width: 0;
 }
 
-.profile-avatar {
+.profiles-page > .listing > .item > .info > .avatar {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background-color: var(--bg-color-secondary);
     flex-shrink: 0;
-    fill: var(--font-color-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--bg-color-tertiary);
 }
 
-.profile-item.current .profile-avatar {
-    background-color: var(--brand-color);
-    fill: #fff;
+.profiles-page > .listing > .item.current > .info > .avatar {
+    background-color: var(--link-color);
+    color: var(--font-color-inverted);
 }
 
-.profile-details {
+.profiles-page > .listing > .item > .info > .details {
     min-width: 0;
     flex: 1;
 }
 
-.profile-name {
-    font-size: 0.8rem;
+.profiles-page > .listing > .item > .info > .details > .name {
+    font-size: 0.75rem;
     font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    margin-bottom: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.profile-badge {
-    font-size: 0.65rem;
-    font-weight: 600;
-    padding: 1px 6px;
-    border-radius: 4px;
-    background-color: var(--brand-color);
-    color: #fff;
-    flex-shrink: 0;
+.profiles-page > .listing > .item.current > .info > .details > .name {
+    color: var(--font-color-active);
 }
 
-.profile-server {
-    font-size: 0.7rem;
+.profiles-page > .listing > .item > .info > .details > .server {
+    font-size: 0.725rem;
     color: var(--font-color-tertiary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.profile-actions {
+.profiles-page > .listing > .item.current > .info > .details > .server {
+    color: var(--font-color-secondary);
+}
+
+.profiles-page > .listing > .item > .actions {
     display: flex;
     align-items: center;
-    gap: 2px;
-    margin-left: 8px;
+    margin-left: 10px;
     flex-shrink: 0;
 }
 
-.profile-action-btn {
+.profiles-page > .listing > .item > .actions > .btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -115,123 +132,118 @@
     fill: var(--font-color-secondary);
     transition:
         background-color 0.2s ease-out,
-        color 0.2s ease-out,
-        fill 0.2s ease-out;
+        color 0.2s ease-out;
 }
 
-.profile-action-btn:hover {
-    background-color: var(--bg-color);
-    color: var(--font-color);
-    fill: var(--font-color);
-}
-
-.profile-action-btn.delete:hover {
-    color: var(--font-color-error);
-    fill: var(--font-color-error);
-}
-
-.profile-add-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 500;
-    background: none;
-    border: 1px dashed var(--border-color);
-    color: var(--font-color-secondary);
-    fill: var(--font-color-secondary);
-    transition:
-        background-color 0.2s ease-out,
-        color 0.2s ease-out,
-        border-color 0.2s ease-out;
-}
-
-.profile-add-btn:hover {
+.profiles-page > .listing > .item > .actions > .btn:hover {
     background-color: var(--bg-color-tertiary);
     color: var(--font-color);
-    border-color: var(--font-color-tertiary);
 }
 
-.profile-add-form {
+.profiles-page > .listing > .item.current > .actions > .btn:hover {
+    background-color: var(--bg-color-secondary);
+}
+
+.profiles-page > .listing > .item > .actions > .btn.delete:hover {
+    color: var(--font-color-error);
+}
+
+.profiles-page > .btn.profile {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--font-color-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 6px;
+    width: 240px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: none;
+    border: 1px dashed var(--border-color);
+    transition:
+        color 0.2s ease-out,
+        border-color 0.2s ease-out,
+        background-color 0.2s ease-out;
+}
+
+.profiles-page > .btn.profile:hover {
+    color: var(--font-color);
+    border-color: var(--border-color-secondary);
+    background-color: var(--bg-color-secondary);
+}
+
+.profiles-page > .add-profile {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 14px;
+    flex-shrink: 0;
+    gap: 10px;
+    width: 240px;
+}
+
+.profiles-page > .add-profile > input {
+    font-size: 0.75rem;
+    text-overflow: ellipsis;
+    width: 100%;
+    padding: 8px 12px;
     border-radius: 10px;
-    background-color: var(--bg-color-secondary);
-    border: 1px solid var(--border-color);
-}
-
-.profile-add-form input {
-    font-size: 0.8rem;
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
     background-color: var(--bg-color);
-    color: var(--font-color);
-    outline: none;
-    transition: border-color 0.2s ease-out;
+    border: 1px solid var(--border-color);
 }
 
-.profile-add-form input:focus {
-    border-color: var(--brand-color);
-}
-
-.profile-add-form input:disabled {
+.profiles-page > .add-profile > input:disabled {
     opacity: 0.6;
 }
 
-.profile-error {
+.profiles-page > .add-profile > .actions {
     display: flex;
-    align-items: center;
-    gap: 6px;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.profiles-page > .add-profile > .actions > .btn {
     font-size: 0.75rem;
-    color: var(--font-color-error);
-    fill: var(--font-color-error);
-    padding: 6px 0;
-}
-
-.profile-form-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 4px;
-}
-
-.profile-form-actions .btn {
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 7px 14px;
-    border-radius: 8px;
+    font-weight: 600;
     cursor: pointer;
-    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
     transition:
         background-color 0.2s ease-out,
         opacity 0.2s ease-out;
 }
 
-.profile-form-actions .btn.save {
-    background-color: var(--brand-color);
-    color: #fff;
+.profiles-page > .add-profile > .actions > .btn.save {
+    background-color: var(--btn-brand-color);
+    color: var(--font-color-inverted);
+    flex: 1;
 }
 
-.profile-form-actions .btn.save:hover {
-    opacity: 0.9;
+.profiles-page > .add-profile > .actions > .btn.save:hover {
+    background-color: var(--btn-brand-color-hover);
 }
 
-.profile-form-actions .btn.save:disabled {
+.profiles-page > .add-profile > .actions > .btn.save:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-.profile-form-actions .btn.cancel {
+.profiles-page > .add-profile > .actions > .btn.cancel {
     background-color: var(--bg-color-tertiary);
-    color: var(--font-color);
 }
 
-.profile-form-actions .btn.cancel:hover {
-    opacity: 0.8;
+.profiles-page > .add-profile > .actions > .btn.cancel:hover {
+    background-color: var(--bg-color-secondary);
+}
+
+.profiles-page > .add-profile > .error {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-align: center;
+    color: var(--error-font);
+    margin-top: 4px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--error-border);
+    background-color: var(--error-background);
 }

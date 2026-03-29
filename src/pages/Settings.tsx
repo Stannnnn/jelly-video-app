@@ -880,6 +880,33 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
             </div>
 
+            <div className="section profiles ui">
+                <div className="title">Profiles</div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Quick switch</div>
+                            <div className="subdesc">Link to profiles from the username</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={enableProfiles}
+                                    onChange={e => setEnableProfiles(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="desc">
+                    <Link to="/profiles" className="textlink">
+                        Manage profiles
+                    </Link>
+                </div>
+            </div>
+
             <div className="section shortcuts">
                 <div className="title">Shortcuts</div>
                 <div className="desc">
@@ -1050,32 +1077,6 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </a>
                         <span> and is licensed under the MIT license</span>
                     </p>
-                </div>
-            </div>
-            <div className="section profiles ui">
-                <div className="title">Profiles</div>
-                <div className="inner row">
-                    <div className="container">
-                        <div className="desc">
-                            <div className="subtitle">Quick switch</div>
-                            <div className="subdesc">Enable profile switching from the sidebar</div>
-                        </div>
-                        <div className="option">
-                            <label className="switch">
-                                <input
-                                    type="checkbox"
-                                    checked={enableProfiles}
-                                    onChange={e => setEnableProfiles(e.target.checked)}
-                                ></input>
-                                <span className="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div className="desc">
-                    <Link to="/profiles" className="textlink">
-                        Manage profiles
-                    </Link>
                 </div>
             </div>
 

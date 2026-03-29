@@ -278,21 +278,27 @@ export const Sidenav = (props: { username: string }) => {
                     <div className="account">
                         <div className="status">
                             <div className="indicator">Connected</div>
-                            <div className="username-row">
-                                <div className="username" title={props.username}>
-                                    {props.username}
-                                </div>
-                                {enableProfiles && (
+                            {enableProfiles ? (
+                                <>
                                     <NavLink
                                         to="/profiles"
-                                        className="icon switch-profile"
+                                        className="username textlink"
                                         onClick={closeSidenav}
-                                        title="Switch profile"
+                                        title="Profiles"
                                     >
+                                        <div className="text" title={props.username}>
+                                            {props.username}
+                                        </div>
                                         <PeopleIcon size={14} />
                                     </NavLink>
-                                )}
-                            </div>
+                                </>
+                            ) : (
+                                <div className="username">
+                                    <div className="text" title={props.username}>
+                                        {props.username}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div className="actions">
                             <NavLink

@@ -1,4 +1,4 @@
-import { AlertIcon, CopyIcon, PersonIcon, PlusIcon, TrashIcon } from '@primer/octicons-react'
+import { CopyIcon, PersonIcon, PlusIcon, TrashIcon } from '@primer/octicons-react'
 import { ask } from '@tauri-apps/plugin-dialog'
 import { FormEvent, useCallback, useState } from 'react'
 import { ApiError, loginToJellyfin } from '../api/jellyfin'
@@ -110,44 +110,40 @@ export const ProfileManager = ({
     }
 
     return (
-        <div className="profile-manager">
-            <div className="profile-list">
-                {profiles.length === 0 && !showAddForm && <div className="profile-empty">No saved profiles yet</div>}
+        <div className="profiles-page">
+            <div className="listing">
+                {profiles.length === 0 && !showAddForm && (
+                    <div className="empty">
+                        <div className="avatar">
+                            <PersonIcon size={16} />
+                        </div>
+                        <div className="text">No saved profiles were found</div>
+                    </div>
+                )}
                 {profiles.map(profile => {
                     const isCurrent =
                         profile.userId === currentAuth.userId && profile.serverUrl === currentAuth.serverUrl
                     return (
-                        <div key={profile.id} className={`profile-item ${isCurrent ? 'current' : ''}`}>
+                        <div key={profile.id} className={`item ${isCurrent ? 'current' : ''}`}>
                             <div
-                                className="profile-info"
+                                className="info"
                                 onClick={() => handleSwitch(profile)}
                                 title={isCurrent ? 'Current profile' : `Switch to ${profile.username}`}
                             >
-                                <div className="profile-avatar">
+                                <div className="avatar">
                                     <PersonIcon size={16} />
                                 </div>
-                                <div className="profile-details">
-                                    <div className="profile-name">
-                                        {profile.username}
-                                        {isCurrent && <span className="profile-badge">Active</span>}
-                                    </div>
-                                    <div className="profile-server">{profile.serverUrl}</div>
+                                <div className="details">
+                                    <div className="name">{profile.username}</div>
+                                    <div className="server">{profile.serverUrl}</div>
                                 </div>
                             </div>
-                            <div className="profile-actions">
-                                <button
-                                    className="profile-action-btn"
-                                    onClick={() => handleClone(profile.id)}
-                                    title="Clone profile"
-                                >
+                            <div className="actions">
+                                <button className="btn clone" onClick={() => handleClone(profile.id)} title="Clone">
                                     <CopyIcon size={14} />
                                 </button>
                                 {!isCurrent && (
-                                    <button
-                                        className="profile-action-btn delete"
-                                        onClick={() => handleDelete(profile)}
-                                        title="Delete profile"
-                                    >
+                                    <button className="btn delete" onClick={() => handleDelete(profile)} title="Delete">
                                         <TrashIcon size={14} />
                                     </button>
                                 )}
@@ -158,13 +154,7 @@ export const ProfileManager = ({
             </div>
 
             {showAddForm ? (
-                <form className="profile-add-form" onSubmit={handleAdd}>
-                    {error && (
-                        <div className="profile-error">
-                            <AlertIcon size={14} />
-                            <span>{error}</span>
-                        </div>
-                    )}
+                <form className="add-profile" onSubmit={handleAdd}>
                     <input
                         type="text"
                         placeholder="Server URL (http://localhost:8096)"
@@ -186,7 +176,7 @@ export const ProfileManager = ({
                         onChange={e => setPassword(e.target.value)}
                         disabled={loading}
                     />
-                    <div className="profile-form-actions">
+                    <div className="actions">
                         <button type="submit" className="btn save" disabled={loading}>
                             {loading ? 'Validating...' : 'Add Profile'}
                         </button>
@@ -202,9 +192,10 @@ export const ProfileManager = ({
                             Cancel
                         </button>
                     </div>
+                    {error && <div className="error">{error}</div>}
                 </form>
             ) : (
-                <button className="profile-add-btn" onClick={() => setShowAddForm(true)}>
+                <button className="btn profile" onClick={() => setShowAddForm(true)}>
                     <PlusIcon size={14} />
                     <span>Add Profile</span>
                 </button>

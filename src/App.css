@@ -376,11 +376,12 @@ body.lockscroll {
 
 .login > .login_form > .input_container > input {
     font-size: 0.75rem;
+    text-overflow: ellipsis;
     width: 100%;
     padding: 8px 12px;
     border-radius: 8px;
+    background-color: var(--bg-color);
     outline: 1px solid var(--border-color);
-    text-overflow: ellipsis;
 }
 
 .login > .login_form > .submit_button {
