@@ -472,6 +472,12 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
                                     )}
                                 </div>
                             )}
+                            {(item.Type === BaseItemKind.BoxSet || item.Type === BaseItemKind.Playlist) &&
+                                item.ChildCount != null && (
+                                    <div className="items" title="Items">
+                                        {item.ChildCount} {item.ChildCount === 1 ? 'item' : 'items'}
+                                    </div>
+                                )}
                             {communityRating && (
                                 <div className="rating" title="Rating">
                                     <StarFillIcon size={14} /> {communityRating}

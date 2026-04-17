@@ -315,10 +315,20 @@ html.winOS .sidenav > .sidenav_wrapper > .sidenav_footer {
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 2px;
+    margin-right: 2px;
 }
 
-.sidenav > .sidenav_wrapper > .sidenav_content > .search > .search_results > .results > .result > .details > .title {
+.sidenav
+    > .sidenav_wrapper
+    > .sidenav_content
+    > .search
+    > .search_results
+    > .results
+    > .result
+    > .details
+    > .title.person {
     margin-bottom: 0;
+    margin-right: 4px;
 }
 
 .sidenav
