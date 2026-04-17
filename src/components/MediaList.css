@@ -59,7 +59,6 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
 }
 
 .media-list:has(.media-item.continue-watching) .continue-watching-row::-webkit-scrollbar,
