@@ -122,19 +122,27 @@ export const MediaList = ({
                         <span className="title" title={item.Name}>
                             {item.Name}
                         </span>
-                        {item.PremiereDate && (
+                        {(item.PremiereDate || item.ProductionYear) && (
                             <div className="container">
                                 <div
                                     className="subtitle date premiere"
-                                    title={new Date(item.PremiereDate).getFullYear().toString()}
+                                    title={String(
+                                        item.PremiereDate
+                                            ? new Date(item.PremiereDate).getFullYear()
+                                            : item.ProductionYear
+                                    )}
                                 >
-                                    {new Date(item.PremiereDate).getFullYear()}
+                                    {item.PremiereDate
+                                        ? new Date(item.PremiereDate).getFullYear()
+                                        : item.ProductionYear}
                                 </div>
 
                                 {isSeriesLike &&
                                     item.EndDate &&
                                     new Date(item.EndDate).getFullYear() !==
-                                        new Date(item.PremiereDate).getFullYear() && (
+                                        (item.PremiereDate
+                                            ? new Date(item.PremiereDate).getFullYear()
+                                            : item.ProductionYear) && (
                                         <>
                                             <div className="divider">-</div>
                                             <div
@@ -306,14 +314,22 @@ export const MediaList = ({
                                 {item.Name}
                             </span>
                         )}
-                        {item.Type === 'Movie' && item.PremiereDate && (
-                            <div
-                                className="subtitle date premiere"
-                                title={new Date(item.PremiereDate).getFullYear().toString()}
-                            >
-                                {new Date(item.PremiereDate).getFullYear()}
-                            </div>
-                        )}
+                        {((item.Type === 'Movie' && item.PremiereDate) ||
+                            (item.Type === 'Movie' && item.ProductionYear)) &&
+                            item.ProductionYear && (
+                                <div
+                                    className="subtitle date premiere"
+                                    title={String(
+                                        item.PremiereDate
+                                            ? new Date(item.PremiereDate).getFullYear()
+                                            : item.ProductionYear
+                                    )}
+                                >
+                                    {item.PremiereDate
+                                        ? new Date(item.PremiereDate).getFullYear()
+                                        : item.ProductionYear}
+                                </div>
+                            )}
                     </div>
                 </div>
             )
@@ -396,14 +412,22 @@ export const MediaList = ({
                                 {item.Name}
                             </span>
                         )}
-                        {item.Type === 'Movie' && item.PremiereDate && (
-                            <div
-                                className="subtitle date premiere"
-                                title={new Date(item.PremiereDate).getFullYear().toString()}
-                            >
-                                {new Date(item.PremiereDate).getFullYear()}
-                            </div>
-                        )}
+                        {((item.Type === 'Movie' && item.PremiereDate) ||
+                            (item.Type === 'Movie' && item.ProductionYear)) &&
+                            item.ProductionYear && (
+                                <div
+                                    className="subtitle date premiere"
+                                    title={String(
+                                        item.PremiereDate
+                                            ? new Date(item.PremiereDate).getFullYear()
+                                            : item.ProductionYear
+                                    )}
+                                >
+                                    {item.PremiereDate
+                                        ? new Date(item.PremiereDate).getFullYear()
+                                        : item.ProductionYear}
+                                </div>
+                            )}
                     </div>
                 </div>
             )

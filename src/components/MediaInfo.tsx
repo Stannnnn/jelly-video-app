@@ -402,8 +402,8 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
     }, [closeMoreDropdown, isDownloadDropdownOpen, isMoreDropdownOpen, isVersionDropdownOpen])
 
     //const genres = item.Genres?.join(',') || ''
-    const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : null
-    const endyear = item.EndDate ? new Date(item.EndDate).getFullYear() : null
+    const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : item.ProductionYear
+    const endyear = item.EndDate ? new Date(item.EndDate).getFullYear() : item.ProductionYear
     //const officialRating = item.OfficialRating || ''
     const communityRating = item.CommunityRating ? item.CommunityRating.toFixed(1) : null
     const videoQuality = getVideoQuality(item)
