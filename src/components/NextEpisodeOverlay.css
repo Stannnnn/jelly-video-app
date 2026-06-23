@@ -14,12 +14,12 @@
 .next-episode-overlay {
     position: absolute;
     right: 60px;
-    bottom: 60px;
+    bottom: 80px;
     padding: 14px;
     min-width: 320px;
     max-width: 360px;
     border-radius: 14px;
-    background-color: rgba(16, 16, 16, 0.92);
+    background-color: rgba(16, 16, 16, 0.9);
     border: 1px solid rgba(255, 255, 255, 0.06);
     opacity: 0;
     visibility: hidden;

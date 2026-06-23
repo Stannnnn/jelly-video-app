@@ -670,7 +670,7 @@ export const VideoPlayer = ({
         setPreviewTime(time)
 
         // Clamp preview within progress bar bounds
-        const PREVIEW_HALF_WIDTH = 100
+        const PREVIEW_HALF_WIDTH = 160
         const clampedOffsetX = Math.max(PREVIEW_HALF_WIDTH, Math.min(rect.width - PREVIEW_HALF_WIDTH, offsetX))
 
         setPreviewPosition((clampedOffsetX / rect.width) * 100)
@@ -754,19 +754,7 @@ export const VideoPlayer = ({
                 onMouseLeave={() => setIsHoveringControls(false)}
                 onDoubleClick={e => e.stopPropagation()}
             >
-                <div className="playback">
-                    <button
-                        onClick={() => {
-                            togglePlayPause()
-                        }}
-                        className="play-pause controls-btn"
-                        title={isPaused ? 'Play (Space)' : 'Pause (Space)'}
-                    >
-                        {isPaused ? <PlayIcon width={18} height={18} /> : <PauseIcon width={18} height={18} />}
-                    </button>
-                </div>
                 <div className="progress">
-                    <span className="time">{formatTime(timePos)}</span>
                     <div
                         className="progress-container"
                         onMouseEnter={() => setIsHoveringProgress(true)}
@@ -821,37 +809,35 @@ export const VideoPlayer = ({
                             <div className="preview-time">{previewTime !== null ? formatTime(previewTime) : ''}</div>
                         </div>
                     </div>
-                    <span className="time">{formatTime(duration)}</span>
                 </div>
-                <div className="actions">
-                    <div className="volume">
-                        <button
-                            className="volume-toggle controls-btn"
-                            onClick={toggleMute}
-                            title={volume === 0 ? 'Unmute (M)' : 'Mute (M)'}
-                        >
-                            {volume === 0 ? (
-                                <SpeakerMuteIcon width={18} height={18} />
-                            ) : volume < 50 ? (
-                                <SpeakerLowIcon width={18} height={18} />
-                            ) : (
-                                <SpeakerHighIcon width={18} height={18} />
-                            )}
-
-                            {volume === 0 ? (
-                                ''
-                            ) : volume < 10 ? (
-                                <div className="volume-indicator" title="Volume percentage">
-                                    0{volume}
-                                </div>
-                            ) : (
-                                <div className="volume-indicator" title="Volume percentage">
-                                    {volume}
-                                </div>
-                            )}
-                        </button>
-                        <div className="volume-container">
-                            <div className="volume-wrapper" onWheel={handleVolumeScroll}>
+                <div className="controls">
+                    <div className="primary">
+                        <div className="playback">
+                            <button
+                                onClick={() => {
+                                    togglePlayPause()
+                                }}
+                                className="play-pause controls-btn"
+                                title={isPaused ? 'Play (Space)' : 'Pause (Space)'}
+                            >
+                                {isPaused ? <PlayIcon width={18} height={18} /> : <PauseIcon width={18} height={18} />}
+                            </button>
+                        </div>
+                        <div className="volume" onWheel={handleVolumeScroll}>
+                            <button
+                                className="volume-toggle controls-btn"
+                                onClick={toggleMute}
+                                title={volume === 0 ? 'Unmute (M)' : 'Mute (M)'}
+                            >
+                                {volume === 0 ? (
+                                    <SpeakerMuteIcon width={18} height={18} />
+                                ) : volume < 50 ? (
+                                    <SpeakerLowIcon width={18} height={18} />
+                                ) : (
+                                    <SpeakerHighIcon width={18} height={18} />
+                                )}
+                            </button>
+                            <div className="volume-wrapper">
                                 <input
                                     type="range"
                                     min="0"
@@ -860,481 +846,559 @@ export const VideoPlayer = ({
                                     onChange={e => handleVolumeChange(parseInt(e.target.value))}
                                     className="volume-bar"
                                 />
+                                <div
+                                    className={
+                                        volume < 10
+                                            ? 'volume-percentage min'
+                                            : volume > 99
+                                              ? 'volume-percentage max'
+                                              : 'volume-percentage'
+                                    }
+                                    title="Volume percentage"
+                                >
+                                    {volume}
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className="video-menu" ref={menuRef}>
-                        <button
-                            className={showMenu ? 'menu-toggle controls-btn active' : 'menu-toggle controls-btn'}
-                            onClick={toggleMenu}
-                            title="Settings"
-                        >
-                            <GearIcon width={18} height={18} />
-                            <div className="quality-label">
-                                {getVideoQuality(currentTrack, true, currentMediaSourceId)}
-                            </div>
-                        </button>
-                        <div className="menu-container" ref={menuContainerRef}>
-                            {/* Home Menu */}
-                            <div
-                                ref={el => {
-                                    viewsRef.current.home = el
-                                }}
-                                className={`menu-view home ${currentMenuView === 'home' ? 'active' : 'hidden'}`}
-                            >
-                                {subtitleTracks.length > 0 && (
-                                    <div
-                                        className="menu-item"
-                                        onClick={() => {
-                                            setCurrentMenuView('subtitles')
-                                        }}
-                                    >
-                                        <div className="text">Subtitles</div>
-                                        <div className="menu-item-right">
-                                            <div className="menu-item-value">
-                                                {getSubtitleDisplayName(
-                                                    currentSubtitleId,
-                                                    subtitleTracks,
-                                                    currentTrack
-                                                )}
-                                            </div>
-                                            <ChevronRightIcon size={16} className="icon" />
-                                        </div>
-                                    </div>
-                                )}
-
-                                {sortedVideoSources.length > 1 && (
-                                    <div
-                                        className="menu-item"
-                                        onClick={() => {
-                                            setCurrentMenuView('videoSources')
-                                        }}
-                                    >
-                                        <div className="text">Version</div>
-                                        <div className="menu-item-right">
-                                            <div className="menu-item-value">
-                                                {sortedVideoSources.find(s => s.Id === currentMediaSourceId)?.Name ||
-                                                    getVideoQuality(currentTrack, true, currentMediaSourceId)}
-                                            </div>
-                                            <ChevronRightIcon size={16} className="icon" />
-                                        </div>
-                                    </div>
-                                )}
-
-                                {audioTracks.length > 1 && (
-                                    <div
-                                        className="menu-item"
-                                        onClick={() => {
-                                            setCurrentMenuView('audioTracks')
-                                        }}
-                                    >
-                                        <div className="text">Audio</div>
-                                        <div className="menu-item-right">
-                                            <div className="menu-item-value">
-                                                {getAudioTrackDisplayName(
-                                                    currentAudioTrackId,
-                                                    audioTracks,
-                                                    currentTrack
-                                                )}
-                                            </div>
-                                            <ChevronRightIcon size={16} className="icon" />
-                                        </div>
-                                    </div>
-                                )}
-
-                                {menuListItems.length > 0 && (
-                                    <div
-                                        className="menu-item"
-                                        onClick={() => {
-                                            setCurrentMenuView('episodes')
-                                        }}
-                                    >
-                                        <div className="text">{menuListLabel}</div>
-                                        <div className="menu-item-right">
-                                            <div className="menu-item-value">
-                                                {parentItems.length > 0 && currentTrack?.Type !== BaseItemKind.Episode
-                                                    ? currentTrack?.Name || 'Playing'
-                                                    : `S${String(currentTrack?.ParentIndexNumber || 0).padStart(2, '0')} E${String(currentTrack?.IndexNumber || 0).padStart(2, '0')} - ${currentTrack?.Name || 'Untitled'}`}
-                                            </div>
-                                            <ChevronRightIcon size={16} className="icon" />
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div
-                                    className="menu-item"
-                                    onClick={() => {
-                                        setCurrentMenuView('speed')
-                                    }}
+                    <div className="secondary">
+                        <div className="duration">
+                            <span className="time">{formatTime(timePos)}</span>
+                            <div className="divider">/</div>
+                            <span className="time end">{formatTime(duration)}</span>
+                        </div>
+                        <div className="actions">
+                            <div className="video-menu" ref={menuRef}>
+                                <button
+                                    className={
+                                        showMenu ? 'menu-toggle controls-btn active' : 'menu-toggle controls-btn'
+                                    }
+                                    onClick={toggleMenu}
+                                    title="Settings"
                                 >
-                                    <div className="text">Speed</div>
-                                    <div className="menu-item-right">
-                                        <div className="menu-item-value">{speed === 1 ? 'Normal' : `${speed}x`}</div>
-                                        <ChevronRightIcon size={16} className="icon" />
+                                    <GearIcon width={18} height={18} />
+                                    <div className="quality-label">
+                                        {getVideoQuality(currentTrack, true, currentMediaSourceId)}
                                     </div>
-                                </div>
-
-                                <div
-                                    className="menu-item"
-                                    onClick={() => {
-                                        setCurrentMenuView('statistics')
-                                    }}
-                                >
-                                    <div className="text">Statistics</div>
-                                    <div className="menu-item-right">
-                                        <ChevronRightIcon size={16} className="icon" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Subtitles Submenu */}
-                            <div
-                                ref={el => {
-                                    viewsRef.current.subtitles = el
-                                }}
-                                className={`menu-view subs ${currentMenuView === 'subtitles' ? 'active' : 'hidden'}`}
-                            >
-                                <div
-                                    className="menu-item back-button"
-                                    onClick={() => {
-                                        setCurrentMenuView('home')
-                                    }}
-                                >
-                                    <ChevronLeftIcon size={16} className="return-icon" />
-                                    <div className="text">Subtitles</div>
-                                </div>
-                                <div className="menu-divider"></div>
-                                <div className="container">
+                                </button>
+                                <div className="menu-container" ref={menuContainerRef}>
+                                    {/* Home Menu */}
                                     <div
-                                        className={`menu-item ${currentSubtitleId === null ? 'selected' : ''}`}
-                                        onClick={() => {
-                                            handleSubtitleChange('no')
-                                            setTimeout(() => setCurrentMenuView('home'), 60)
+                                        ref={el => {
+                                            viewsRef.current.home = el
                                         }}
+                                        className={`menu-view home ${currentMenuView === 'home' ? 'active' : 'hidden'}`}
                                     >
-                                        <CheckIcon className="check-icon" />
-                                        <div className="text">Disabled</div>
-                                    </div>
-                                    {subtitleTracks.map(track => (
-                                        <div
-                                            key={track.id}
-                                            className={`menu-item ${currentSubtitleId === track.id ? 'selected' : ''}`}
-                                            onClick={() => {
-                                                handleSubtitleChange(track.id.toString())
-                                                setTimeout(() => setCurrentMenuView('home'), 60)
-                                            }}
-                                        >
-                                            <CheckIcon className="check-icon" />
-                                            <div className="text">
-                                                {getSubtitleDisplayName(track.id, subtitleTracks, currentTrack)}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Video Sources Submenu */}
-                            <div
-                                ref={el => {
-                                    viewsRef.current.videoSources = el
-                                }}
-                                className={`menu-view versions ${currentMenuView === 'videoSources' ? 'active' : 'hidden'}`}
-                            >
-                                <div
-                                    className="menu-item back-button"
-                                    onClick={() => {
-                                        setCurrentMenuView('home')
-                                    }}
-                                >
-                                    <ChevronLeftIcon size={16} className="return-icon" />
-                                    <div className="text">Version</div>
-                                </div>
-                                <div className="menu-divider"></div>
-                                <div className="container">
-                                    {sortedVideoSources.map((source, index) => {
-                                        const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
-                                        const baseName =
-                                            source.Name || videoStream?.DisplayTitle || `Version ${index + 1}`
-
-                                        const bitrate = source.Bitrate || videoStream?.BitRate
-                                        const bitrateMbps = bitrate ? (bitrate / 1_000_000).toFixed(1) : null
-
-                                        let qualityBadge = getVideoQuality(sourceItem, false, source.Id || undefined)
-
-                                        if (videoStream?.VideoRange === 'HDR' && qualityBadge) {
-                                            qualityBadge = `${qualityBadge} HDR`
-                                        }
-
-                                        const details = [bitrateMbps ? `${bitrateMbps} Mbps` : null, qualityBadge]
-                                            .filter(Boolean)
-                                            .join(', ')
-
-                                        const displayName = details ? `${baseName} (${details})` : baseName
-
-                                        return (
+                                        {subtitleTracks.length > 0 && (
                                             <div
-                                                key={source.Id || index}
-                                                className={`menu-item ${
-                                                    currentMediaSourceId === source.Id ? 'selected' : ''
-                                                }`}
+                                                className="menu-item"
                                                 onClick={() => {
-                                                    if (source.Id) {
-                                                        navigate(
-                                                            parentId
-                                                                ? `/play/${sourceItem?.Id}/${source.Id}/${parentId}`
-                                                                : `/play/${sourceItem?.Id}/${source.Id}`,
-                                                            { replace: true }
-                                                        )
-                                                        toggleMenu()
-                                                    }
+                                                    setCurrentMenuView('subtitles')
                                                 }}
                                             >
-                                                <CheckIcon className="check-icon" />
-                                                <div className="text">{displayName}</div>
+                                                <div className="text">Subtitles</div>
+                                                <div className="menu-item-right">
+                                                    <div className="menu-item-value">
+                                                        {getSubtitleDisplayName(
+                                                            currentSubtitleId,
+                                                            subtitleTracks,
+                                                            currentTrack
+                                                        )}
+                                                    </div>
+                                                    <ChevronRightIcon size={16} className="icon" />
+                                                </div>
                                             </div>
-                                        )
-                                    })}
-                                </div>
-                            </div>
+                                        )}
 
-                            {/* Audio Tracks Submenu */}
-                            <div
-                                ref={el => {
-                                    viewsRef.current.audioTracks = el
-                                }}
-                                className={`menu-view audio ${currentMenuView === 'audioTracks' ? 'active' : 'hidden'}`}
-                            >
-                                <div
-                                    className="menu-item back-button"
-                                    onClick={() => {
-                                        setCurrentMenuView('home')
-                                    }}
-                                >
-                                    <ChevronLeftIcon size={16} className="return-icon" />
-                                    <div className="text">Audio</div>
-                                </div>
-                                <div className="menu-divider"></div>
-                                <div className="container">
-                                    {audioTracks.map(track => (
-                                        <div
-                                            key={track.id}
-                                            className={`menu-item ${
-                                                currentAudioTrackId === track.id ? 'selected' : ''
-                                            }`}
-                                            onClick={() => {
-                                                handleAudioTrackChange(track.id.toString())
-                                                setTimeout(() => setCurrentMenuView('home'), 60)
-                                            }}
-                                        >
-                                            <CheckIcon className="check-icon" />
-                                            <div className="text">
-                                                {getAudioTrackDisplayName(track.id, audioTracks, currentTrack)}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Speed Submenu */}
-                            <div
-                                ref={el => {
-                                    viewsRef.current.speed = el
-                                }}
-                                className={`menu-view speed ${currentMenuView === 'speed' ? 'active' : 'hidden'}`}
-                            >
-                                <div
-                                    className="menu-item back-button"
-                                    onClick={() => {
-                                        setCurrentMenuView('home')
-                                    }}
-                                >
-                                    <ChevronLeftIcon size={16} className="return-icon" />
-                                    <div className="text">Speed</div>
-                                </div>
-                                <div className="menu-divider"></div>
-                                <div className="container">
-                                    {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map(speedValue => (
-                                        <div
-                                            key={speedValue}
-                                            className={`menu-item ${speed === speedValue ? 'selected' : ''}`}
-                                            onClick={() => {
-                                                handleSpeedChange(speedValue)
-                                                setTimeout(() => setCurrentMenuView('home'), 60)
-                                            }}
-                                        >
-                                            <CheckIcon className="check-icon" />
-                                            <div className="text">{speedValue === 1 ? 'Normal' : `${speedValue}x`}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Episodes / Playlist / Collection Submenu */}
-                            <div
-                                ref={el => {
-                                    viewsRef.current.episodes = el
-                                }}
-                                className={`menu-view episodes ${currentMenuView === 'episodes' ? 'active' : 'hidden'}`}
-                            >
-                                <div
-                                    className="menu-item back-button"
-                                    onClick={() => {
-                                        setCurrentMenuView('home')
-                                    }}
-                                >
-                                    <ChevronLeftIcon size={16} className="return-icon" />
-                                    <div className="text">{menuListLabel}</div>
-                                </div>
-                                <div className="menu-divider"></div>
-                                <div className="container">
-                                    {menuListItems.map((item, index) => {
-                                        const isCurrentItem = item.Id === currentTrack?.Id || item.Id === sourceItem?.Id
-
-                                        let label: string
-                                        if (parentItems.length > 0) {
-                                            // Playlist/collection: show item name (with S/E prefix for episodes)
-                                            if (item.Type === BaseItemKind.Episode) {
-                                                const season = String(item.ParentIndexNumber || 0).padStart(2, '0')
-                                                const episodeNum = String(item.IndexNumber ?? index + 1).padStart(
-                                                    2,
-                                                    '0'
-                                                )
-                                                label = `S${season} E${episodeNum} - ${item.Name || 'Untitled'}`
-                                            } else {
-                                                label = item.Name || 'Untitled'
-                                            }
-                                        } else {
-                                            // Season episode list
-                                            const season = String(item.ParentIndexNumber || 0).padStart(2, '0')
-                                            const ep = String(item.IndexNumber ?? index + 1).padStart(2, '0')
-                                            label = `S${season} E${ep} - ${item.Name || 'Untitled'}`
-                                        }
-
-                                        return (
+                                        {sortedVideoSources.length > 1 && (
                                             <div
-                                                key={item.Id}
-                                                className={`menu-item ${isCurrentItem ? 'selected' : ''}`}
-                                                onClick={async () => {
-                                                    if (!isCurrentItem) {
-                                                        const url = parentId
-                                                            ? `/play/${item.Id}/default/${parentId}`
-                                                            : `/play/${item.Id}`
-                                                        navigate(url, { replace: true })
-                                                        toggleMenu()
-                                                    }
+                                                className="menu-item"
+                                                onClick={() => {
+                                                    setCurrentMenuView('videoSources')
+                                                }}
+                                            >
+                                                <div className="text">Version</div>
+                                                <div className="menu-item-right">
+                                                    <div className="menu-item-value">
+                                                        {sortedVideoSources.find(s => s.Id === currentMediaSourceId)
+                                                            ?.Name ||
+                                                            getVideoQuality(currentTrack, true, currentMediaSourceId)}
+                                                    </div>
+                                                    <ChevronRightIcon size={16} className="icon" />
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {audioTracks.length > 1 && (
+                                            <div
+                                                className="menu-item"
+                                                onClick={() => {
+                                                    setCurrentMenuView('audioTracks')
+                                                }}
+                                            >
+                                                <div className="text">Audio</div>
+                                                <div className="menu-item-right">
+                                                    <div className="menu-item-value">
+                                                        {getAudioTrackDisplayName(
+                                                            currentAudioTrackId,
+                                                            audioTracks,
+                                                            currentTrack
+                                                        )}
+                                                    </div>
+                                                    <ChevronRightIcon size={16} className="icon" />
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {menuListItems.length > 0 && (
+                                            <div
+                                                className="menu-item"
+                                                onClick={() => {
+                                                    setCurrentMenuView('episodes')
+                                                }}
+                                            >
+                                                <div className="text">{menuListLabel}</div>
+                                                <div className="menu-item-right">
+                                                    <div className="menu-item-value">
+                                                        {parentItems.length > 0 &&
+                                                        currentTrack?.Type !== BaseItemKind.Episode
+                                                            ? currentTrack?.Name || 'Playing'
+                                                            : `S${String(currentTrack?.ParentIndexNumber || 0).padStart(2, '0')} E${String(currentTrack?.IndexNumber || 0).padStart(2, '0')} - ${currentTrack?.Name || 'Untitled'}`}
+                                                    </div>
+                                                    <ChevronRightIcon size={16} className="icon" />
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div
+                                            className="menu-item"
+                                            onClick={() => {
+                                                setCurrentMenuView('speed')
+                                            }}
+                                        >
+                                            <div className="text">Speed</div>
+                                            <div className="menu-item-right">
+                                                <div className="menu-item-value">
+                                                    {speed === 1 ? 'Normal' : `${speed}x`}
+                                                </div>
+                                                <ChevronRightIcon size={16} className="icon" />
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            className="menu-item"
+                                            onClick={() => {
+                                                setCurrentMenuView('statistics')
+                                            }}
+                                        >
+                                            <div className="text">Statistics</div>
+                                            <div className="menu-item-right">
+                                                <div className="menu-item-value">
+                                                    {sortedVideoSources.map((source, index) => {
+                                                        const videoStream = source.MediaStreams?.find(
+                                                            s => s.Type === 'Video'
+                                                        )
+                                                        let qualityBadge = getVideoQuality(
+                                                            sourceItem,
+                                                            false,
+                                                            source.Id || undefined
+                                                        )
+                                                        if (videoStream?.VideoRange === 'HDR' && qualityBadge) {
+                                                            qualityBadge = `${qualityBadge} HDR`
+                                                        }
+
+                                                        const isCurrent = currentMediaSourceId === source.Id
+                                                        if (!isCurrent) return ''
+
+                                                        let bitrateDisplay = formatBitrate(videoBitrate)
+                                                        if (!bitrateDisplay || bitrateDisplay === 'N/A') {
+                                                            const fallbackBitrate =
+                                                                source.Bitrate || videoStream?.BitRate
+                                                            const fallbackMbps = fallbackBitrate
+                                                                ? (fallbackBitrate / 1_000_000).toFixed(1)
+                                                                : null
+                                                            bitrateDisplay = fallbackMbps ? `${fallbackMbps} Mbps` : ''
+                                                        }
+
+                                                        const details = [bitrateDisplay, qualityBadge]
+                                                            .filter(Boolean)
+                                                            .join(', ')
+                                                        return details
+                                                    })}
+                                                </div>
+                                                <ChevronRightIcon size={16} className="icon" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Subtitles Submenu */}
+                                    <div
+                                        ref={el => {
+                                            viewsRef.current.subtitles = el
+                                        }}
+                                        className={`menu-view subs ${currentMenuView === 'subtitles' ? 'active' : 'hidden'}`}
+                                    >
+                                        <div
+                                            className="menu-item back-button"
+                                            onClick={() => {
+                                                setCurrentMenuView('home')
+                                            }}
+                                        >
+                                            <ChevronLeftIcon size={16} className="return-icon" />
+                                            <div className="text">Subtitles</div>
+                                        </div>
+                                        <div className="menu-divider"></div>
+                                        <div className="container">
+                                            <div
+                                                className={`menu-item ${currentSubtitleId === null ? 'selected' : ''}`}
+                                                onClick={() => {
+                                                    handleSubtitleChange('no')
+                                                    setTimeout(() => setCurrentMenuView('home'), 60)
                                                 }}
                                             >
                                                 <CheckIcon className="check-icon" />
-                                                <div className="text">{label}</div>
-                                                {isCurrentItem && <div className="menu-item-right"></div>}
+                                                <div className="text">Disabled</div>
                                             </div>
-                                        )
-                                    })}
+                                            {subtitleTracks.map(track => (
+                                                <div
+                                                    key={track.id}
+                                                    className={`menu-item ${currentSubtitleId === track.id ? 'selected' : ''}`}
+                                                    onClick={() => {
+                                                        handleSubtitleChange(track.id.toString())
+                                                        setTimeout(() => setCurrentMenuView('home'), 60)
+                                                    }}
+                                                >
+                                                    <CheckIcon className="check-icon" />
+                                                    <div className="text">
+                                                        {getSubtitleDisplayName(track.id, subtitleTracks, currentTrack)}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Video Sources Submenu */}
+                                    <div
+                                        ref={el => {
+                                            viewsRef.current.videoSources = el
+                                        }}
+                                        className={`menu-view versions ${currentMenuView === 'videoSources' ? 'active' : 'hidden'}`}
+                                    >
+                                        <div
+                                            className="menu-item back-button"
+                                            onClick={() => {
+                                                setCurrentMenuView('home')
+                                            }}
+                                        >
+                                            <ChevronLeftIcon size={16} className="return-icon" />
+                                            <div className="text">Version</div>
+                                        </div>
+                                        <div className="menu-divider"></div>
+                                        <div className="container">
+                                            {sortedVideoSources.map((source, index) => {
+                                                const videoStream = source.MediaStreams?.find(s => s.Type === 'Video')
+                                                const baseName =
+                                                    source.Name || videoStream?.DisplayTitle || `Version ${index + 1}`
+
+                                                const bitrate = source.Bitrate || videoStream?.BitRate
+                                                const bitrateMbps = bitrate ? (bitrate / 1_000_000).toFixed(1) : null
+
+                                                let qualityBadge = getVideoQuality(
+                                                    sourceItem,
+                                                    false,
+                                                    source.Id || undefined
+                                                )
+
+                                                if (videoStream?.VideoRange === 'HDR' && qualityBadge) {
+                                                    qualityBadge = `${qualityBadge} HDR`
+                                                }
+
+                                                const details = [
+                                                    bitrateMbps ? `${bitrateMbps} Mbps` : null,
+                                                    qualityBadge,
+                                                ]
+                                                    .filter(Boolean)
+                                                    .join(', ')
+
+                                                const displayName = details ? `${baseName} (${details})` : baseName
+
+                                                return (
+                                                    <div
+                                                        key={source.Id || index}
+                                                        className={`menu-item ${
+                                                            currentMediaSourceId === source.Id ? 'selected' : ''
+                                                        }`}
+                                                        onClick={() => {
+                                                            if (source.Id) {
+                                                                navigate(
+                                                                    parentId
+                                                                        ? `/play/${sourceItem?.Id}/${source.Id}/${parentId}`
+                                                                        : `/play/${sourceItem?.Id}/${source.Id}`,
+                                                                    { replace: true }
+                                                                )
+                                                                toggleMenu()
+                                                            }
+                                                        }}
+                                                    >
+                                                        <CheckIcon className="check-icon" />
+                                                        <div className="text">{displayName}</div>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    {/* Audio Tracks Submenu */}
+                                    <div
+                                        ref={el => {
+                                            viewsRef.current.audioTracks = el
+                                        }}
+                                        className={`menu-view audio ${currentMenuView === 'audioTracks' ? 'active' : 'hidden'}`}
+                                    >
+                                        <div
+                                            className="menu-item back-button"
+                                            onClick={() => {
+                                                setCurrentMenuView('home')
+                                            }}
+                                        >
+                                            <ChevronLeftIcon size={16} className="return-icon" />
+                                            <div className="text">Audio</div>
+                                        </div>
+                                        <div className="menu-divider"></div>
+                                        <div className="container">
+                                            {audioTracks.map(track => (
+                                                <div
+                                                    key={track.id}
+                                                    className={`menu-item ${
+                                                        currentAudioTrackId === track.id ? 'selected' : ''
+                                                    }`}
+                                                    onClick={() => {
+                                                        handleAudioTrackChange(track.id.toString())
+                                                        setTimeout(() => setCurrentMenuView('home'), 60)
+                                                    }}
+                                                >
+                                                    <CheckIcon className="check-icon" />
+                                                    <div className="text">
+                                                        {getAudioTrackDisplayName(track.id, audioTracks, currentTrack)}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Speed Submenu */}
+                                    <div
+                                        ref={el => {
+                                            viewsRef.current.speed = el
+                                        }}
+                                        className={`menu-view speed ${currentMenuView === 'speed' ? 'active' : 'hidden'}`}
+                                    >
+                                        <div
+                                            className="menu-item back-button"
+                                            onClick={() => {
+                                                setCurrentMenuView('home')
+                                            }}
+                                        >
+                                            <ChevronLeftIcon size={16} className="return-icon" />
+                                            <div className="text">Speed</div>
+                                        </div>
+                                        <div className="menu-divider"></div>
+                                        <div className="container">
+                                            {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map(speedValue => (
+                                                <div
+                                                    key={speedValue}
+                                                    className={`menu-item ${speed === speedValue ? 'selected' : ''}`}
+                                                    onClick={() => {
+                                                        handleSpeedChange(speedValue)
+                                                        setTimeout(() => setCurrentMenuView('home'), 60)
+                                                    }}
+                                                >
+                                                    <CheckIcon className="check-icon" />
+                                                    <div className="text">
+                                                        {speedValue === 1 ? 'Normal' : `${speedValue}x`}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Episodes / Playlist / Collection Submenu */}
+                                    <div
+                                        ref={el => {
+                                            viewsRef.current.episodes = el
+                                        }}
+                                        className={`menu-view episodes ${currentMenuView === 'episodes' ? 'active' : 'hidden'}`}
+                                    >
+                                        <div
+                                            className="menu-item back-button"
+                                            onClick={() => {
+                                                setCurrentMenuView('home')
+                                            }}
+                                        >
+                                            <ChevronLeftIcon size={16} className="return-icon" />
+                                            <div className="text">{menuListLabel}</div>
+                                        </div>
+                                        <div className="menu-divider"></div>
+                                        <div className="container">
+                                            {menuListItems.map((item, index) => {
+                                                const isCurrentItem =
+                                                    item.Id === currentTrack?.Id || item.Id === sourceItem?.Id
+
+                                                let label: string
+                                                if (parentItems.length > 0) {
+                                                    // Playlist/collection: show item name (with S/E prefix for episodes)
+                                                    if (item.Type === BaseItemKind.Episode) {
+                                                        const season = String(item.ParentIndexNumber || 0).padStart(
+                                                            2,
+                                                            '0'
+                                                        )
+                                                        const episodeNum = String(
+                                                            item.IndexNumber ?? index + 1
+                                                        ).padStart(2, '0')
+                                                        label = `S${season} E${episodeNum} - ${item.Name || 'Untitled'}`
+                                                    } else {
+                                                        label = item.Name || 'Untitled'
+                                                    }
+                                                } else {
+                                                    // Season episode list
+                                                    const season = String(item.ParentIndexNumber || 0).padStart(2, '0')
+                                                    const ep = String(item.IndexNumber ?? index + 1).padStart(2, '0')
+                                                    label = `S${season} E${ep} - ${item.Name || 'Untitled'}`
+                                                }
+
+                                                return (
+                                                    <div
+                                                        key={item.Id}
+                                                        className={`menu-item ${isCurrentItem ? 'selected' : ''}`}
+                                                        onClick={async () => {
+                                                            if (!isCurrentItem) {
+                                                                const url = parentId
+                                                                    ? `/play/${item.Id}/default/${parentId}`
+                                                                    : `/play/${item.Id}`
+                                                                navigate(url, { replace: true })
+                                                                toggleMenu()
+                                                            }
+                                                        }}
+                                                    >
+                                                        <CheckIcon className="check-icon" />
+                                                        <div className="text">{label}</div>
+                                                        {isCurrentItem && <div className="menu-item-right"></div>}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    {/* Statistics Submenu */}
+                                    <div
+                                        ref={el => {
+                                            viewsRef.current.statistics = el
+                                        }}
+                                        className={`menu-view stats ${currentMenuView === 'statistics' ? 'active' : 'hidden'}`}
+                                    >
+                                        <div
+                                            className="menu-item back-button"
+                                            onClick={() => {
+                                                setCurrentMenuView('home')
+                                            }}
+                                        >
+                                            <ChevronLeftIcon size={16} className="return-icon" />
+                                            <div className="text">Statistics</div>
+                                        </div>
+                                        <div className="menu-divider"></div>
+
+                                        <div className="container">
+                                            {/* Video Section */}
+                                            <div className="menu-item stats-header">Video</div>
+                                            <div className="menu-item stats-item">
+                                                <div className="text">Resolution</div>
+                                                <div className="menu-item-value">
+                                                    {videoWidth > 0 && videoHeight > 0
+                                                        ? `${videoWidth}x${videoHeight}`
+                                                        : 'N/A'}
+                                                </div>
+                                            </div>
+                                            {/*
+                                            <div className="menu-item stats-item">
+                                                <div className="text">Codec</div>
+                                                <div className="menu-item-value">{formatCodecName(videoCodec)}</div>
+                                            </div>
+                                            */}
+                                            <div className="menu-item stats-item">
+                                                <div className="text">Codec</div>
+                                                <div className="menu-item-value">{videoFormat.toUpperCase()}</div>
+                                            </div>
+                                            <div className="menu-item stats-item">
+                                                <div className="text">FPS</div>
+                                                <div className="menu-item-value">
+                                                    {fps > 0
+                                                        ? fps.toFixed(2)
+                                                        : containerFps > 0
+                                                          ? containerFps.toFixed(2)
+                                                          : 'N/A'}
+                                                </div>
+                                            </div>
+                                            <div className="menu-item stats-item">
+                                                <div className="text">Size</div>
+                                                <div className="menu-item-value">{formatFileSize(fileSize)}</div>
+                                            </div>
+                                            <div className="menu-item stats-item">
+                                                <div className="text">Bitrate</div>
+                                                <div className="menu-item-value">{formatBitrate(videoBitrate)}</div>
+                                            </div>
+                                            {/*
+                                            <div className="menu-item stats-item">
+                                                <div className="text">Hardware Decoding</div>
+                                                <div className="menu-item-value">
+                                                    {hwdec === 'no' ? 'Disabled' : hwdec === 'N/A' ? 'N/A' : hwdec.toUpperCase()}
+                                                </div>
+                                            </div>
+                                            */}
+
+                                            <div className="menu-divider"></div>
+
+                                            {/* Audio Section */}
+                                            <div className="menu-item stats-header">Audio</div>
+                                            <div className="menu-item stats-item">
+                                                <div className="text">Codec</div>
+                                                <div className="menu-item-value">
+                                                    {formatCodecName(audioCodecName || audioCodec)}
+                                                </div>
+                                            </div>
+                                            <div className="menu-item stats-item">
+                                                <div className="text">Channels</div>
+                                                <div className="menu-item-value">
+                                                    {getAudioChannelConfig(audioChannels)}
+                                                </div>
+                                            </div>
+                                            <div className="menu-item stats-item">
+                                                <div className="text">Sample Rate</div>
+                                                <div className="menu-item-value">
+                                                    {formatSampleRate(audioSampleRate)}
+                                                </div>
+                                            </div>
+                                            <div className="menu-item stats-item">
+                                                <div className="text">Bitrate</div>
+                                                <div className="menu-item-value">{formatBitrate(audioBitrate)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-
-                            {/* Statistics Submenu */}
-                            <div
-                                ref={el => {
-                                    viewsRef.current.statistics = el
-                                }}
-                                className={`menu-view stats ${currentMenuView === 'statistics' ? 'active' : 'hidden'}`}
-                            >
-                                <div
-                                    className="menu-item back-button"
-                                    onClick={() => {
-                                        setCurrentMenuView('home')
-                                    }}
+                            <div className="fullscreen">
+                                <button
+                                    onClick={toggleFullscreen}
+                                    className="controls-btn"
+                                    title={isFullscreen ? 'Exit Fullscreen (F)' : 'Fullscreen (F)'}
                                 >
-                                    <ChevronLeftIcon size={16} className="return-icon" />
-                                    <div className="text">Statistics</div>
-                                </div>
-                                <div className="menu-divider"></div>
-
-                                <div className="container">
-                                    {/* Video Section */}
-                                    <div className="menu-item stats-header">Video</div>
-                                    <div className="menu-item stats-item">
-                                        <div className="text">Resolution</div>
-                                        <div className="menu-item-value">
-                                            {videoWidth > 0 && videoHeight > 0 ? `${videoWidth}x${videoHeight}` : 'N/A'}
-                                        </div>
-                                    </div>
-                                    {/*
-                                    <div className="menu-item stats-item">
-                                        <div className="text">Codec</div>
-                                        <div className="menu-item-value">{formatCodecName(videoCodec)}</div>
-                                    </div>
-                                    */}
-                                    <div className="menu-item stats-item">
-                                        <div className="text">Codec</div>
-                                        <div className="menu-item-value">{videoFormat.toUpperCase()}</div>
-                                    </div>
-                                    <div className="menu-item stats-item">
-                                        <div className="text">FPS</div>
-                                        <div className="menu-item-value">
-                                            {fps > 0
-                                                ? fps.toFixed(2)
-                                                : containerFps > 0
-                                                  ? containerFps.toFixed(2)
-                                                  : 'N/A'}
-                                        </div>
-                                    </div>
-                                    <div className="menu-item stats-item">
-                                        <div className="text">Size</div>
-                                        <div className="menu-item-value">{formatFileSize(fileSize)}</div>
-                                    </div>
-                                    <div className="menu-item stats-item">
-                                        <div className="text">Bitrate</div>
-                                        <div className="menu-item-value">{formatBitrate(videoBitrate)}</div>
-                                    </div>
-                                    {/*
-                                    <div className="menu-item stats-item">
-                                        <div className="text">Hardware Decoding</div>
-                                        <div className="menu-item-value">
-                                            {hwdec === 'no' ? 'Disabled' : hwdec === 'N/A' ? 'N/A' : hwdec.toUpperCase()}
-                                        </div>
-                                    </div>
-                                    */}
-
-                                    <div className="menu-divider"></div>
-
-                                    {/* Audio Section */}
-                                    <div className="menu-item stats-header">Audio</div>
-                                    <div className="menu-item stats-item">
-                                        <div className="text">Codec</div>
-                                        <div className="menu-item-value">
-                                            {formatCodecName(audioCodecName || audioCodec)}
-                                        </div>
-                                    </div>
-                                    <div className="menu-item stats-item">
-                                        <div className="text">Channels</div>
-                                        <div className="menu-item-value">{getAudioChannelConfig(audioChannels)}</div>
-                                    </div>
-                                    <div className="menu-item stats-item">
-                                        <div className="text">Sample Rate</div>
-                                        <div className="menu-item-value">{formatSampleRate(audioSampleRate)}</div>
-                                    </div>
-                                    <div className="menu-item stats-item">
-                                        <div className="text">Bitrate</div>
-                                        <div className="menu-item-value">{formatBitrate(audioBitrate)}</div>
-                                    </div>
-                                </div>
+                                    {isFullscreen ? (
+                                        <MinimizeIcon width={18} height={18} />
+                                    ) : (
+                                        <MaximizeIcon width={18} height={18} />
+                                    )}
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    <div className="fullscreen">
-                        <button
-                            onClick={toggleFullscreen}
-                            className="controls-btn"
-                            title={isFullscreen ? 'Exit Fullscreen (F)' : 'Fullscreen (F)'}
-                        >
-                            {isFullscreen ? (
-                                <MinimizeIcon width={18} height={18} />
-                            ) : (
-                                <MaximizeIcon width={18} height={18} />
-                            )}
-                        </button>
                     </div>
                 </div>
             </div>
