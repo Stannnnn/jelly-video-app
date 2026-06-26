@@ -51,7 +51,7 @@ body:has(.video-app > .video-container) {
 }
 
 .video-app > .video-container:has(> .video-header.visible ~ .video-controls.visible) {
-    background-color: rgba(0, 0, 0, 0.28);
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .video-app > .video-container:has(> .video-header.hidden ~ .video-controls.hidden) {
@@ -621,7 +621,7 @@ body:has(.video-app > .video-container) {
 .video-app > .video-container > .video-controls > .controls > .secondary > .actions > .video-menu > .menu-container {
     position: absolute;
     z-index: 1;
-    bottom: 50px;
+    bottom: 54px;
     right: 0;
     overflow: hidden;
     white-space: nowrap;
