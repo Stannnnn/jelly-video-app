@@ -433,22 +433,27 @@ export const VideoPlayer = ({
         }
 
         const timeRemaining = duration - timePos
+        const progressPercent = (timePos / duration) * 100
 
         // Check for credits chapter
         let creditsStartTime: number | null = null
-        if (currentTrack.Chapters && currentTrack.Chapters.length > 0) {
+        if (currentTrack.Chapters?.length) {
             const creditsChapter = currentTrack.Chapters.find(chapter => {
-                const name = chapter.Name?.toLowerCase()
-
+                const name = chapter.Name?.toLowerCase() || ''
                 if (!name) return false
 
+                // Only consider credits if chapter starts after 80% of the video
+                const chapterStart = (chapter.StartPositionTicks || 0) / 10000000
+                const isLateEnough = chapterStart / duration >= 0.8
+
                 return (
-                    name.includes('ending') ||
-                    name.includes('outro') ||
-                    name.includes('closing') ||
-                    name.includes('credit') ||
-                    name === 'ed' ||
-                    new RegExp('\\bed\\d+\\b').test(name)
+                    isLateEnough &&
+                    (name.includes('ending') ||
+                        name.includes('outro') ||
+                        name.includes('closing') ||
+                        name.includes('credit') ||
+                        name === 'ed' ||
+                        /\bed\d+\b/.test(name))
                 )
             })
             if (creditsChapter && creditsChapter.StartPositionTicks) {
@@ -460,8 +465,10 @@ export const VideoPlayer = ({
         // 1. Credits chapter started, OR
         // 2. Less than 30 seconds remaining (fallback for videos without chapters)
         const shouldShowOverlay =
-            (creditsStartTime !== null && timePos >= creditsStartTime) ||
-            (creditsStartTime === null && timeRemaining <= 30 && timeRemaining > 0)
+            // Must be past 80% OR in last 5 minutes (whichever comes first)
+            (progressPercent >= 80 || timeRemaining <= 300) &&
+            ((creditsStartTime !== null && timePos >= creditsStartTime) ||
+                (creditsStartTime === null && timeRemaining <= 30 && timeRemaining > 0))
 
         // Only start countdown if user hasn't manually canceled it and conditions are met
         if (shouldShowOverlay && !userCanceledCountdownRef.current) {
