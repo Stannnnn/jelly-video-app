@@ -669,9 +669,10 @@ export const VideoPlayer = ({
 
         setPreviewTime(time)
 
-        // Clamp preview within progress bar bounds
-        const PREVIEW_HALF_WIDTH = 160
-        const clampedOffsetX = Math.max(PREVIEW_HALF_WIDTH, Math.min(rect.width - PREVIEW_HALF_WIDTH, offsetX))
+        // Dynamic half-width based on current tile (with fallback to 160)
+        const previewHalfWidth = trickplayTile?.tileWidth ? Math.ceil(trickplayTile.tileWidth / 2) : 160
+
+        const clampedOffsetX = Math.max(previewHalfWidth, Math.min(rect.width - previewHalfWidth, offsetX))
 
         setPreviewPosition((clampedOffsetX / rect.width) * 100)
 
