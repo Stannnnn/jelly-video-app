@@ -457,7 +457,11 @@ export const VideoPlayer = ({
                 )
             })
             if (creditsChapter && creditsChapter.StartPositionTicks) {
-                creditsStartTime = creditsChapter.StartPositionTicks / 10000000 // Convert ticks to seconds
+                const candidateStart = creditsChapter.StartPositionTicks / 10000000 // Convert ticks to seconds
+                // Validate: if the detected credits segment is more than 20% of the total video, ignore it
+                if ((duration - candidateStart) / duration <= 0.2) {
+                    creditsStartTime = candidateStart
+                }
             }
         }
 
@@ -577,8 +581,13 @@ export const VideoPlayer = ({
                         ? (currentTrack.Chapters[lastIntroIndex + 1].StartPositionTicks || 0) / 10000000
                         : 0
 
+                // Validate: if the detected intro is more than 20% of the total video, ignore it
+                const introDuration = introEndTimeCalc - introStartTime
+                const introIsValid = introEndTimeCalc > 0 && introDuration / duration <= 0.2
+
                 // Show skip button if we're within any of the consecutive intro chapters
                 if (
+                    introIsValid &&
                     introStartTime !== null &&
                     introStartTime !== undefined &&
                     introEndTimeCalc !== null &&
