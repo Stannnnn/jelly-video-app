@@ -27,6 +27,7 @@ import { useJellyfinMediaItem } from './hooks/Jellyfin/useJellyfinMediaItem'
 import { useJellyfinSequentialNextEpisode } from './hooks/Jellyfin/useJellyfinSequentialNextEpisode'
 import { useDisplayTitle } from './hooks/useDisplayTitle'
 import { useJellyfinSortedVideoSources } from './hooks/useJellyfinSortedVideoSources'
+import { useWatchedState } from './hooks/useWatchedState'
 import { getVideoQuality } from './utils/getVideoQuality'
 import './VideoPlayer.css'
 
@@ -87,6 +88,7 @@ export const VideoPlayer = ({
 }) => {
     const api = useJellyfinContext()
     const navigate = useNavigate()
+    const { markAsPlayed } = useWatchedState()
     const {
         isPaused,
         timePos,
@@ -415,6 +417,7 @@ export const VideoPlayer = ({
                 const shouldAutoplay = parentItems.length > 0 ? autoplayNextTitle : autoplayNextEpisode
                 if (shouldAutoplay) {
                     cancelNextEpisodeCountdown()
+                    markAsPlayed(currentTrack, parentId).catch(console.error)
                     navigate(nextAutoplayUrl, { replace: true })
                 }
             }
@@ -1426,6 +1429,7 @@ export const VideoPlayer = ({
                 onPlayNow={() => {
                     if (nextAutoplayUrl) {
                         cancelNextEpisodeCountdown()
+                        if (currentTrack) markAsPlayed(currentTrack, parentId).catch(console.error)
                         navigate(nextAutoplayUrl, { replace: true })
                     }
                 }}
