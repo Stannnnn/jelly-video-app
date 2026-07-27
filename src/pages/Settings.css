@@ -298,6 +298,14 @@
     color: var(--font-color-tertiary);
 }
 
+.settings-page > .section .desc > .note > code {
+    font-family: monospace, var(--inter-font);
+    padding: 0 4px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color-secondary);
+}
+
 /* Shortcuts */
 .settings-page > .section.shortcuts > .title {
     margin-bottom: 4px;
@@ -441,4 +449,92 @@
 
 .settings-page > .section .desc > .info {
     color: var(--font-color-tertiary);
+}
+
+/* MPV Configuration */
+.settings-page > .section.mpv-config > .config-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 12px;
+}
+
+.settings-page > .section.mpv-config > .config-editor > .config-block {
+    position: relative;
+}
+
+.settings-page > .section.mpv-config > .config-editor > .config-block > .config-header {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border: 1px solid var(--border-color);
+    border-bottom: 0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    background-color: var(--bg-color-secondary);
+}
+
+.settings-page > .section.mpv-config > .config-editor > .config-block > .config-header > .title {
+    font-weight: 500;
+}
+
+.settings-page > .section.mpv-config > .config-editor > .config-block > .config-header > .divider {
+    width: 3px;
+    height: 3px;
+    border-radius: 4px;
+    background-color: var(--font-color-tertiary);
+}
+
+.settings-page > .section.mpv-config > .config-editor > .config-block > .config-header > .description {
+    font-size: 0.7rem;
+    color: var(--font-color-secondary);
+}
+
+.settings-page > .section.mpv-config > .config-editor > .config-block > .config-header > .description > code {
+    font-family: monospace, var(--inter-font);
+    font-weight: 500;
+    font-size: 0.85em;
+    padding: 1px 4px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+}
+
+.settings-page > .section.mpv-config > .config-editor > .config-block > .config-textarea {
+    font-family: monospace, var(--inter-font);
+    font-size: 0.8rem;
+    line-height: 1.7;
+    display: block;
+    padding: 8px 12px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+    width: 100%;
+    min-height: 238px;
+    max-height: 60dvh;
+    resize: vertical;
+    overflow: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.settings-page > .section.mpv-config > .config-editor > .config-block > .config-textarea::placeholder {
+    color: var(--font-color-tertiary);
+    opacity: 0.6;
+}
+
+.settings-page > .section.mpv-config > .config-editor > .config-block > .config-actions {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 10px;
+}
+
+.settings-page > .section.mpv-config > .config-editor > .config-block > .config-actions > .btn {
+    padding: 6px 12px;
 }

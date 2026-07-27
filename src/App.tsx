@@ -1,6 +1,7 @@
 import '@fontsource-variable/inter'
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { isTauri } from '@tauri-apps/api/core'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom'
@@ -26,6 +27,7 @@ import { Collections } from './pages/Collections'
 import { EpisodePage } from './pages/EpisodePage'
 import { Favorites } from './pages/Favorites'
 import { Home } from './pages/Home'
+import { LibraryPage } from './pages/LibraryPage'
 import { Login } from './pages/Login'
 import { MoviePage } from './pages/MoviePage'
 import { Movies } from './pages/Movies'
@@ -34,11 +36,13 @@ import { PersonMovies } from './pages/PersonMovies'
 import { PersonPage } from './pages/PersonPage'
 import { PlaylistPage } from './pages/PlaylistPage'
 import { Playlists } from './pages/Playlists'
+import { ProfileManager } from './pages/ProfileManager'
 import { RecentlyAddedMovies } from './pages/RecentlyAddedMovies'
 import { RecentlyAddedSeries } from './pages/RecentlyAddedSeries'
 import { RecentlyPlayed } from './pages/RecentlyPlayed'
 import { SearchCollections } from './pages/SearchCollections'
 import { SearchMovies } from './pages/SearchMovies'
+import { SearchPersons } from './pages/SearchPersons'
 import { SearchSeries } from './pages/SearchSeries'
 import { Series } from './pages/Series'
 import { SeriesPage } from './pages/SeriesPage'
@@ -46,10 +50,13 @@ import { Settings } from './pages/Settings'
 import { SpecialPage } from './pages/SpecialPage'
 import { VideoPlayerPage } from './pages/VideoPlayerPage'
 import { persister, queryClient } from './queryClient'
+import { syncCurrentProfile } from './utils/profileStorage'
 
 export const App = () => {
     useEffect(() => {
-        getCurrentWindow().show()
+        if (isTauri()) {
+            getCurrentWindow().show()
+        }
     }, [])
 
     return (
@@ -79,6 +86,17 @@ const RoutedApp = () => {
     const handleLogin = (authData: AuthData) => {
         setAuth(authData)
         localStorage.setItem('auth', JSON.stringify(authData))
+        syncCurrentProfile(authData)
+    }
+
+    const handleSwitch = async (authData: AuthData) => {
+        setIsLoggingOut(true)
+        localStorage.removeItem('repeatMode')
+        queryClient.clear()
+        await persister.removeClient()
+        setAuth(authData)
+        localStorage.setItem('auth', JSON.stringify(authData))
+        setIsLoggingOut(false)
     }
 
     const handleLogout = async () => {
@@ -119,7 +137,11 @@ const RoutedApp = () => {
                                     <SidenavContextProvider>
                                         <PlaybackContextProvider initialVolume={50} clearOnLogout={isLoggingOut}>
                                             <DownloadContextProvider>
-                                                <MainLayout auth={auth} handleLogout={handleLogout} />
+                                                <MainLayout
+                                                    auth={auth}
+                                                    handleLogout={handleLogout}
+                                                    handleSwitch={handleSwitch}
+                                                />
                                             </DownloadContextProvider>
                                         </PlaybackContextProvider>
                                     </SidenavContextProvider>
@@ -152,7 +174,15 @@ interface AuthData {
     username: string
 }
 
-const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () => void }) => {
+const MainLayout = ({
+    auth,
+    handleLogout,
+    handleSwitch,
+}: {
+    auth: AuthData
+    handleLogout: () => void
+    handleSwitch: (auth: AuthData) => void
+}) => {
     const { showSidenav, toggleSidenav } = useSidenavContext()
     const location = useLocation()
 
@@ -191,6 +221,10 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
         return <Settings onLogout={handleLogout} />
     }, [handleLogout])
 
+    const memoProfileManager = useCallback(() => {
+        return <ProfileManager currentAuth={auth} onSwitch={handleSwitch} />
+    }, [auth, handleSwitch])
+
     return (
         <Routes>
             <Route
@@ -215,6 +249,10 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                         <Routes>
                             <Route path="/" element={<Main pageTitle="Home" content={Home}></Main>} />
                             <Route path="/settings" element={<Main pageTitle="Settings" content={memoSettings} />} />
+                            <Route
+                                path="/profiles"
+                                element={<Main pageTitle="Profiles" content={memoProfileManager} />}
+                            />
                             <Route
                                 path="/downloads"
                                 element={<Main pageTitle="Downloads" content={Downloads} filterType={'downloads'} />}
@@ -255,6 +293,10 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                                 }
                             />
                             <Route
+                                path="/library/:id"
+                                element={<Main pageTitle="Library" content={LibraryPage} filterType={'movies'} />}
+                            />
+                            <Route
                                 path="/favorites"
                                 element={<Main pageTitle="Favorites" content={Favorites} filterType={'favorites'} />}
                             />
@@ -286,6 +328,10 @@ const MainLayout = ({ auth, handleLogout }: { auth: AuthData; handleLogout: () =
                             <Route
                                 path="/search/:query/collections"
                                 element={<Main pageTitle="Search Collections" content={SearchCollections} />}
+                            />
+                            <Route
+                                path="/search/:query/persons"
+                                element={<Main pageTitle="Search Persons" content={SearchPersons} />}
                             />
                             <Route path="*" element={<Navigate to="/" />} />
                         </Routes>

@@ -402,8 +402,8 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
     }, [closeMoreDropdown, isDownloadDropdownOpen, isMoreDropdownOpen, isVersionDropdownOpen])
 
     //const genres = item.Genres?.join(',') || ''
-    const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : null
-    const endyear = item.EndDate ? new Date(item.EndDate).getFullYear() : null
+    const year = item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : item.ProductionYear
+    const endyear = item.EndDate ? new Date(item.EndDate).getFullYear() : item.ProductionYear
     //const officialRating = item.OfficialRating || ''
     const communityRating = item.CommunityRating ? item.CommunityRating.toFixed(1) : null
     const videoQuality = getVideoQuality(item)
@@ -472,6 +472,12 @@ export const MediaInfo = ({ item, playParentId }: { item: MediaItem; playParentI
                                     )}
                                 </div>
                             )}
+                            {(item.Type === BaseItemKind.BoxSet || item.Type === BaseItemKind.Playlist) &&
+                                item.ChildCount != null && (
+                                    <div className="items" title="Items">
+                                        {item.ChildCount} {item.ChildCount === 1 ? 'item' : 'items'}
+                                    </div>
+                                )}
                             {communityRating && (
                                 <div className="rating" title="Rating">
                                     <StarFillIcon size={14} /> {communityRating}

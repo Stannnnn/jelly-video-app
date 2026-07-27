@@ -1,4 +1,4 @@
-import { GearIcon } from '@primer/octicons-react'
+import { GearIcon, PeopleIcon } from '@primer/octicons-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import '../App.css'
@@ -8,6 +8,7 @@ import { usePlaybackContext } from '../context/PlaybackContext/PlaybackContext'
 import { useScrollContext } from '../context/ScrollContext/ScrollContext'
 import { useSidenavContext } from '../context/SidenavContext/SidenavContext'
 import { useJellyfinSearch } from '../hooks/Jellyfin/useJellyfinSearch'
+import { useJellyfinUserViews } from '../hooks/Jellyfin/useJellyfinUserViews'
 import { useUpdateChecker } from '../hooks/useUpdateChecker'
 import { InlineLoader } from './InlineLoader'
 import { JellyImg } from './JellyImg'
@@ -22,7 +23,8 @@ export const Sidenav = (props: { username: string }) => {
     const { updateStatus } = useUpdateChecker(checkForUpdates)
     const location = useLocation()
     const searchInputRef = useRef<HTMLInputElement>(null)
-    const { showSidenav, closeSidenav, enablePlaylists } = useSidenavContext()
+    const { showSidenav, closeSidenav, enablePlaylists, enableLibraries, enableProfiles } = useSidenavContext()
+    const { views: libraryViews } = useJellyfinUserViews()
 
     const { disabled, setDisabled } = useScrollContext()
     const [searchQuery, setSearchQuery] = useState(new URLSearchParams(location.search).get('search') || '')
@@ -84,32 +86,44 @@ export const Sidenav = (props: { username: string }) => {
                                 Home
                             </NavLink>
                         </li>
-                        <li>
-                            <NavLink to={buildUrlWithSavedFilters('/movies')} onClick={closeSidenav}>
-                                Movies
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to={buildUrlWithSavedFilters('/series')} onClick={closeSidenav} end>
-                                Series
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to={buildUrlWithSavedFilters('/favorites')} onClick={closeSidenav}>
-                                Favorites
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to={buildUrlWithSavedFilters('/collections')} onClick={closeSidenav}>
-                                Collections
-                            </NavLink>
-                        </li>
-                        {enablePlaylists && (
-                            <li>
-                                <NavLink to={buildUrlWithSavedFilters('/playlists')} onClick={closeSidenav}>
-                                    Playlists
-                                </NavLink>
-                            </li>
+                        {enableLibraries ? (
+                            libraryViews.map(library => (
+                                <li key={library.Id}>
+                                    <NavLink to={`/library/${library.Id}`} onClick={closeSidenav}>
+                                        {library.Name}
+                                    </NavLink>
+                                </li>
+                            ))
+                        ) : (
+                            <>
+                                <li>
+                                    <NavLink to={buildUrlWithSavedFilters('/movies')} onClick={closeSidenav}>
+                                        Movies
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to={buildUrlWithSavedFilters('/series')} onClick={closeSidenav} end>
+                                        Series
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to={buildUrlWithSavedFilters('/favorites')} onClick={closeSidenav}>
+                                        Favorites
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to={buildUrlWithSavedFilters('/collections')} onClick={closeSidenav}>
+                                        Collections
+                                    </NavLink>
+                                </li>
+                                {enablePlaylists && (
+                                    <li>
+                                        <NavLink to={buildUrlWithSavedFilters('/playlists')} onClick={closeSidenav}>
+                                            Playlists
+                                        </NavLink>
+                                    </li>
+                                )}
+                            </>
                         )}
                     </ul>
                     <div className="search">
@@ -165,26 +179,49 @@ export const Sidenav = (props: { username: string }) => {
                                                                     ? `/episode/${item.Id}`
                                                                     : item.Type === 'BoxSet'
                                                                       ? `/collection/${item.Id}`
-                                                                      : '#'
+                                                                      : item.Type === 'Person'
+                                                                        ? `/person/${item.Id}`
+                                                                        : '#'
                                                         }
                                                         onClick={closeSidenav}
                                                         className="result"
                                                     >
-                                                        <Squircle
-                                                            width={36}
-                                                            height={54}
-                                                            cornerRadius={5}
-                                                            className="thumbnail-container"
-                                                        >
-                                                            <JellyImg
-                                                                item={item}
-                                                                type="Primary"
+                                                        {item.Type === 'Person' ? (
+                                                            <Squircle
+                                                                width={36}
+                                                                height={36}
+                                                                cornerRadius={8}
+                                                                className="thumbnail-container person"
+                                                            >
+                                                                <JellyImg
+                                                                    item={item}
+                                                                    type="Primary"
+                                                                    width={36}
+                                                                    height={36}
+                                                                />
+                                                            </Squircle>
+                                                        ) : (
+                                                            <Squircle
                                                                 width={36}
                                                                 height={54}
-                                                            />
-                                                        </Squircle>
+                                                                cornerRadius={5}
+                                                                className="thumbnail-container"
+                                                            >
+                                                                <JellyImg
+                                                                    item={item}
+                                                                    type="Primary"
+                                                                    width={36}
+                                                                    height={54}
+                                                                />
+                                                            </Squircle>
+                                                        )}
                                                         <div className="details">
-                                                            <div className="title" title={item.Name}>
+                                                            <div
+                                                                className={
+                                                                    item.Type === 'Person' ? 'title person' : 'title'
+                                                                }
+                                                                title={item.Name}
+                                                            >
                                                                 {item.Name}
                                                             </div>
                                                             <div className="container">
@@ -195,22 +232,28 @@ export const Sidenav = (props: { username: string }) => {
                                                                         `Episode - ${item.SeriesName || ''}`}
                                                                     {item.Type === 'BoxSet' && 'Collection'}
                                                                 </div>
-                                                                <div className="divider"></div>
-                                                                <div
-                                                                    className="date"
-                                                                    title={
-                                                                        item.PremiereDate &&
-                                                                        !isNaN(Date.parse(item.PremiereDate))
-                                                                            ? new Date(item.PremiereDate)
-                                                                                  .getFullYear()
-                                                                                  .toString()
-                                                                            : ''
-                                                                    }
-                                                                >
-                                                                    {item.PremiereDate
-                                                                        ? new Date(item.PremiereDate).getFullYear()
-                                                                        : ''}
-                                                                </div>
+                                                                {item.Type !== 'Person' && (
+                                                                    <>
+                                                                        <div className="divider"></div>
+                                                                        <div
+                                                                            className="date"
+                                                                            title={
+                                                                                item.PremiereDate &&
+                                                                                !isNaN(Date.parse(item.PremiereDate))
+                                                                                    ? new Date(item.PremiereDate)
+                                                                                          .getFullYear()
+                                                                                          .toString()
+                                                                                    : ''
+                                                                            }
+                                                                        >
+                                                                            {item.PremiereDate
+                                                                                ? new Date(
+                                                                                      item.PremiereDate
+                                                                                  ).getFullYear()
+                                                                                : ''}
+                                                                        </div>
+                                                                    </>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </NavLink>
@@ -235,9 +278,27 @@ export const Sidenav = (props: { username: string }) => {
                     <div className="account">
                         <div className="status">
                             <div className="indicator">Connected</div>
-                            <div className="username" title={props.username}>
-                                {props.username}
-                            </div>
+                            {enableProfiles ? (
+                                <>
+                                    <NavLink
+                                        to="/profiles"
+                                        className="username textlink"
+                                        onClick={closeSidenav}
+                                        title="Profiles"
+                                    >
+                                        <div className="text" title={props.username}>
+                                            {props.username}
+                                        </div>
+                                        <PeopleIcon size={14} />
+                                    </NavLink>
+                                </>
+                            ) : (
+                                <div className="username">
+                                    <div className="text" title={props.username}>
+                                        {props.username}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div className="actions">
                             <NavLink

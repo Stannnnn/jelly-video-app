@@ -54,6 +54,9 @@ pub fn run() {
             storage::storage_get_stats,
             storage::storage_abort_downloads,
             storage::get_storage_path,
+            storage::mpv_config_read,
+            storage::mpv_config_write,
+            storage::mpv_config_path,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

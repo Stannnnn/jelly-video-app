@@ -47,6 +47,11 @@ body:has(.video-app > .video-container) {
     overflow: hidden;
     fill: var(--font-color-inverted);
     color: var(--font-color-inverted);
+    transition: background-color 0.32s ease;
+}
+
+.video-app > .video-container:has(> .video-header.visible ~ .video-controls.visible) {
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .video-app > .video-container:has(> .video-header.hidden ~ .video-controls.hidden) {
@@ -56,16 +61,16 @@ body:has(.video-app > .video-container) {
 .video-app > .video-container > .video-header {
     position: relative;
     z-index: 1;
-    padding: 14px;
-    padding-bottom: 22px;
+    padding: 16px;
+    padding-bottom: 12px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    gap: 20px;
     transform: translateY(0);
     transition:
         opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1),
         visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
         transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
 }
 
 .video-app > .video-container > .video-header.hidden {
@@ -77,8 +82,7 @@ body:has(.video-app > .video-container) {
 .video-app > .video-container > .video-header > .return {
     position: relative;
     cursor: pointer;
-    padding: 6px;
-    margin-right: 12px;
+    padding: 7px;
     border-radius: 20px;
     transition: background-color 0.2s ease-out;
     background-color: transparent;
@@ -89,10 +93,17 @@ body:has(.video-app > .video-container) {
 }
 
 .video-app > .video-container > .video-header > .video-title {
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 1.25rem;
+    font-weight: 600;
     /* Help with CJK letter spacing */
-    line-height: 1.25rem;
+    line-height: 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    margin: 6px 0;
+    margin-right: 54px;
 }
 
 .video-app > .video-container > .video-header > .video-title > .container > .series {
@@ -100,8 +111,9 @@ body:has(.video-app > .video-container) {
 }
 
 .video-app > .video-container > .video-header > .video-title > .container > .episode {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .video-app > .video-container > .video-overlay {
@@ -149,8 +161,9 @@ body:has(.video-app > .video-container) {
 .video-app > .video-container > .video-overlay > .container > .video-play-icon > svg {
     width: 40px;
     height: 40px;
+    margin-bottom: 10px;
     transform: scale(1.2);
-    filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.4));
+    filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.2));
     transition: transform 0.24s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
@@ -160,6 +173,11 @@ body:has(.video-app > .video-container) {
 
 .video-app > .video-container > .video-overlay > .container > .loading_container {
     height: 100%;
+    margin-bottom: 10px;
+}
+
+.video-app > .video-container > .video-overlay > .container > .loading_container > .loading {
+    margin-bottom: 10px;
 }
 
 .video-app > .video-container > .video-overlay > .container > .loading_container > .loading > circle:nth-child(1) {
@@ -169,17 +187,12 @@ body:has(.video-app > .video-container) {
 .video-app > .video-container > .video-controls {
     position: relative;
     z-index: 1;
-    padding: 14px;
-    padding-top: 22px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    padding: 16px;
     transform: translateY(0);
     transition:
         opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1),
         visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
         transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
 }
 
 .video-app > .video-container > .video-controls.hidden {
@@ -188,11 +201,15 @@ body:has(.video-app > .video-container) {
     transform: translateY(24px);
 }
 
+.video-app > .video-container > .video-controls:has(.controls-btn.menu-toggle.active) .progress-preview.active {
+    display: none;
+}
+
 .video-app > .video-container > .video-controls .controls-btn {
     position: relative;
     z-index: 3;
     cursor: pointer;
-    padding: 7px;
+    padding: 8px;
     border-radius: 20px;
     background-color: transparent;
     transition: background-color 0.2s ease-out;
@@ -202,21 +219,11 @@ body:has(.video-app > .video-container) {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.video-app > .video-container > .video-controls > .playback {
-    display: flex;
-}
-
 .video-app > .video-container > .video-controls > .progress {
     width: 100%;
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.video-app > .video-container > .video-controls > .progress > .time {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
 }
 
 .video-app > .video-container > .video-controls > .progress > .progress-container {
@@ -303,7 +310,7 @@ body:has(.video-app > .video-container) {
 
 .video-app > .video-container > .video-controls > .progress > .progress-container > .progress-preview {
     position: absolute;
-    bottom: 20px;
+    bottom: 14px;
     transform: translateX(-50%);
     pointer-events: none;
     display: flex;
@@ -342,7 +349,7 @@ body:has(.video-app > .video-container) {
     height: 100%;
     overflow: hidden;
     border-radius: 12px;
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
 }
 
 .video-app
@@ -363,84 +370,99 @@ body:has(.video-app > .video-container) {
 }
 
 .video-app > .video-container > .video-controls > .progress > .progress-container > .progress-preview > .preview-time {
-    font-size: 0.725rem;
+    font-size: 0.75rem;
+    font-weight: 500;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    padding: 4px 7px;
+    padding: 5px 10px;
     border-radius: 20px;
-    background-color: rgba(46, 46, 46, 0.92);
+    background-color: rgba(255, 255, 255, 0.12);
 }
 
-.video-app > .video-container > .video-controls > .actions {
+.video-app > .video-container > .video-controls > .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+}
+
+.video-app > .video-container > .video-controls > .controls > .primary {
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-left: 2px;
 }
 
-.video-app > .video-container > .video-controls > .actions > .volume {
+.video-app > .video-container > .video-controls > .controls > .primary > .volume {
     display: flex;
     align-items: center;
-    gap: 4px;
-    position: relative;
-}
-
-.video-app > .video-container > .video-controls > .actions > .volume > .volume-container {
-    display: flex;
-    align-items: center;
-    position: absolute;
-    z-index: 2;
-    bottom: -26px;
-    left: 15px;
-    transform: rotate(-90deg);
-    transform-origin: left;
-    width: 148px;
-    height: 32px;
+    width: 34px;
     border-radius: 20px;
-    opacity: 0;
-    visibility: hidden;
     overflow: hidden;
     transition:
-        opacity 0.32s cubic-bezier(0.33, 0, 0.2, 1),
-        visibility 0.32s cubic-bezier(0.33, 0, 0.2, 1),
-        transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
+        background-color 0.2s ease-out,
+        width 0.2s linear;
 }
 
-.video-app > .video-container > .video-controls > .actions > .volume > .volume-container:hover {
-    opacity: 1;
-    visibility: visible;
-    transform: rotate(-90deg) translateX(10px);
+.video-app > .video-container > .video-controls > .controls > .primary > .volume:hover {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
-.video-app > .video-container > .video-controls > .actions > .volume > .volume-toggle:hover ~ .volume-container {
-    opacity: 1;
-    visibility: visible;
-    transform: rotate(-90deg) translateX(10px);
+.video-app > .video-container > .video-controls > .controls > .primary > .volume > .volume-toggle:hover {
+    background-color: unset;
 }
 
-.video-app > .video-container > .video-controls > .actions > .volume > .volume-container > .volume-wrapper {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    margin-left: 44px;
+.video-app > .video-container > .video-controls > .controls > .primary > .volume > .volume-toggle > .volume-indicator {
+    font-size: 0.5rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    position: absolute;
+    top: 1px;
+    right: -1px;
+    padding: 1px 3px;
     border-radius: 20px;
-    backdrop-filter: blur(2px);
-    background-color: rgba(46, 46, 46, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgba(0, 0, 0, 0.28);
+    transition: background-color 0.2s ease-out;
 }
 
 .video-app
     > .video-container
     > .video-controls
-    > .actions
-    > .volume
-    > .volume-container
-    > .volume-wrapper
-    > .volume-bar {
+    > .controls
+    > .primary
+    > .volume:hover
+    > .volume-toggle
+    > .volume-indicator {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.video-app > .video-container > .video-controls > .controls > .primary > .volume > .volume-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 4px;
+    padding-left: 0;
+    padding-right: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-4px);
+    transition:
+        opacity 0.2s cubic-bezier(0.33, 0, 0.2, 1),
+        visibility 0.2s cubic-bezier(0.33, 0, 0.2, 1),
+        transform 0.2s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.video-app > .video-container > .video-controls > .controls > .primary > .volume:hover > .volume-wrapper {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.video-app > .video-container > .video-controls > .controls > .primary > .volume > .volume-wrapper > .volume-bar {
     position: relative;
     cursor: pointer;
-    width: 100%;
-    height: 5px;
+    width: 72px;
+    height: 4px;
     border-radius: 3px;
     background: rgba(255, 255, 255, 0.2);
     background: linear-gradient(
@@ -455,14 +477,14 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
-    > .actions
+    > .controls
+    > .primary
     > .volume
-    > .volume-container
     > .volume-wrapper
     > .volume-bar::-webkit-slider-thumb {
     cursor: pointer;
-    width: 11px;
-    height: 11px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background-color: var(--font-color-inverted);
 }
@@ -470,44 +492,122 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
-    > .actions
+    > .controls
+    > .primary
     > .volume
-    > .volume-container
     > .volume-wrapper
     > .volume-bar::-moz-range-thumb {
     cursor: pointer;
-    width: 11px;
-    height: 11px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background-color: var(--font-color-inverted);
 }
 
-.video-app > .video-container > .video-controls > .actions > .volume > .volume-toggle > .volume-indicator {
-    font-size: 0.5rem;
-    font-weight: 600;
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .primary
+    > .volume
+    > .volume-wrapper
+    > .volume-percentage {
+    font-size: 0.725rem;
+    font-weight: 500;
     font-variant-numeric: tabular-nums;
-    position: absolute;
-    top: 1px;
-    right: -1px;
-    padding: 1px 3px;
-    border-radius: 20px;
-    backdrop-filter: blur(4px);
-    background-color: rgba(0, 0, 0, 0.4);
+    margin-left: 8px;
+    min-width: 22px;
+    transition: min-width 0.12s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu {
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .primary
+    > .volume
+    > .volume-wrapper
+    > .volume-percentage.min {
+    min-width: 14px;
+}
+
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .primary
+    > .volume
+    > .volume-wrapper
+    > .volume-percentage.max {
+    min-width: 28px;
+}
+
+.video-app > .video-container > .video-controls > .controls > .secondary {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.video-app > .video-container > .video-controls > .controls > .secondary > .duration {
+    display: flex;
+    gap: 4px;
+    font-weight: 500;
+    padding: 7px 11px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+}
+
+.video-app > .video-container > .video-controls > .controls > .secondary > .duration > .time {
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: -1px;
+}
+
+.video-app > .video-container > .video-controls > .controls > .secondary > .duration > .time.end {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.video-app > .video-container > .video-controls > .controls > .secondary > .duration > .divider {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.video-app > .video-container > .video-controls > .controls > .secondary > .actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 4px;
+}
+
+.video-app > .video-container > .video-controls > .controls > .secondary > .actions > .video-menu {
     position: relative;
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-toggle > svg {
+.video-app > .video-container > .video-controls > .controls > .secondary > .actions > .video-menu > .menu-toggle > svg {
     transition: transform 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-toggle.active > svg {
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .secondary
+    > .actions
+    > .video-menu
+    > .menu-toggle.active
+    > svg {
     transform: rotate(90deg);
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-toggle > .quality-label {
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .secondary
+    > .actions
+    > .video-menu
+    > .menu-toggle
+    > .quality-label {
     font-size: 0.5rem;
     font-weight: 600;
     position: absolute;
@@ -516,19 +616,19 @@ body:has(.video-app > .video-container) {
     padding: 1px 3px;
     border-radius: 20px;
     backdrop-filter: blur(4px);
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.12);
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-container {
+.video-app > .video-container > .video-controls > .controls > .secondary > .actions > .video-menu > .menu-container {
     position: absolute;
     z-index: 1;
-    bottom: 34px;
+    bottom: 54px;
     right: 0;
     overflow: hidden;
     white-space: nowrap;
     border-radius: 12px;
-    background-color: rgba(46, 46, 46, 0.92);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    background-color: rgba(48, 48, 48, 0.88);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     opacity: 0;
     visibility: hidden;
     transition:
@@ -539,14 +639,30 @@ body:has(.video-app > .video-container) {
         height 0.32s cubic-bezier(0.33, 0, 0.2, 1);
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-toggle.active ~ .menu-container {
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .secondary
+    > .actions
+    > .video-menu
+    > .menu-toggle.active
+    ~ .menu-container {
     opacity: 1;
     visibility: visible;
     transform: translateY(-10px);
 }
 
 /* Menu view container for animation */
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view {
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .secondary
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -555,15 +671,40 @@ body:has(.video-app > .video-container) {
     max-width: 60dvw;
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view.hidden {
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .secondary
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view.hidden {
     display: none;
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view.stats {
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .secondary
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view.stats {
     width: 206px;
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-item {
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .secondary
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    .menu-item {
     font-size: 0.8125rem;
     /* Help with CJK letter spacing */
     line-height: 1rem;
@@ -581,6 +722,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -598,6 +741,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -610,6 +755,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -623,6 +770,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -637,6 +786,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -649,6 +800,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -660,6 +813,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -676,6 +831,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -689,6 +846,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -701,6 +860,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -713,6 +874,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -726,6 +889,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -741,6 +906,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -751,6 +918,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -766,6 +935,8 @@ body:has(.video-app > .video-container) {
 .video-app
     > .video-container
     > .video-controls
+    > .controls
+    > .secondary
     > .actions
     > .video-menu
     > .menu-container
@@ -776,14 +947,32 @@ body:has(.video-app > .video-container) {
     margin-right: -4px;
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view .menu-divider {
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .secondary
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    .menu-divider {
     flex-shrink: 0;
     height: 1px;
     margin: 4px 10px;
     background-color: rgba(255, 255, 255, 0.06);
 }
 
-.video-app > .video-container > .video-controls > .actions > .video-menu > .menu-container > .menu-view > .container {
+.video-app
+    > .video-container
+    > .video-controls
+    > .controls
+    > .secondary
+    > .actions
+    > .video-menu
+    > .menu-container
+    > .menu-view
+    > .container {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -812,7 +1001,7 @@ body:has(.video-app > .video-container) {
 .video-app > .video-container > .intro-skip-overlay {
     position: absolute;
     right: 52px;
-    bottom: 70px;
+    bottom: 78px;
     opacity: 0;
     visibility: hidden;
     transform: translateY(20px);

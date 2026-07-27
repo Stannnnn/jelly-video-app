@@ -1,5 +1,5 @@
 import { BaseItemKind, MediaSourceInfo } from '@jellyfin/sdk/lib/generated-client/models'
-import { invoke } from '@tauri-apps/api/core'
+import { invoke, isTauri } from '@tauri-apps/api/core'
 import { ReactNode, useCallback, useRef } from 'react'
 import { MediaItem } from '../../api/jellyfin'
 import { AudioStorageContext } from './AudioStorageContext'
@@ -83,6 +83,10 @@ const useInitialState = () => {
     }, [])
 
     const hasTrack = useCallback(async (id: string) => {
+        if (!isTauri()) {
+            return false
+        }
+
         try {
             const exists = await invoke<boolean>('storage_has_track', { id })
             return exists

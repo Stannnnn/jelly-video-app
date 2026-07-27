@@ -4,15 +4,18 @@ import { CollectionApi } from '@jellyfin/sdk/lib/generated-client/api/collection
 import { ConfigurationApi } from '@jellyfin/sdk/lib/generated-client/api/configuration-api'
 import { ItemsApi } from '@jellyfin/sdk/lib/generated-client/api/items-api'
 import { LibraryApi } from '@jellyfin/sdk/lib/generated-client/api/library-api'
+import { PersonsApi } from '@jellyfin/sdk/lib/generated-client/api/persons-api'
 import { PlaylistsApi } from '@jellyfin/sdk/lib/generated-client/api/playlists-api'
 import { PlaystateApi } from '@jellyfin/sdk/lib/generated-client/api/playstate-api'
 import { SessionApi } from '@jellyfin/sdk/lib/generated-client/api/session-api'
 import { SystemApi } from '@jellyfin/sdk/lib/generated-client/api/system-api'
 import { TvShowsApi } from '@jellyfin/sdk/lib/generated-client/api/tv-shows-api'
 import { UserApi } from '@jellyfin/sdk/lib/generated-client/api/user-api'
+import { UserViewsApi } from '@jellyfin/sdk/lib/generated-client/api/user-views-api'
 import { BaseItemDto, BaseItemKind, ItemFields, MediaType } from '@jellyfin/sdk/lib/generated-client/models'
 import { ItemFilter } from '@jellyfin/sdk/lib/generated-client/models/item-filter'
 import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by'
+import { PersonKind } from '@jellyfin/sdk/lib/generated-client/models/person-kind'
 import { PlayMethod } from '@jellyfin/sdk/lib/generated-client/models/play-method'
 import { SortOrder } from '@jellyfin/sdk/lib/generated-client/models/sort-order'
 
@@ -568,6 +571,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             recursive,
             includeItemTypes: itemTypes,
             excludeItemTypes: excludeItemTypes,
+            mediaTypes: ['Video', 'Unknown'],
         })
 
         return await parseItemDtos(response.data.Items)
@@ -715,6 +719,25 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         return {
             items: await parseItemDtos(response.data.Items),
         }
+    }
+
+    const searchPeople = async (searchQuery: string, limit = 48, startIndex = 0) => {
+        const personsApi = new PersonsApi(api.configuration)
+        const response = await personsApi.getPersons({
+            userId,
+            searchTerm: searchQuery,
+            limit,
+            fields: extraFields,
+            personTypes: [
+                PersonKind.Actor,
+                PersonKind.Director,
+                PersonKind.Writer,
+                PersonKind.Producer,
+                PersonKind.GuestStar,
+            ],
+        })
+
+        return await parseItemDtos(response.data.Items)
     }
 
     const getSimilarItems = async (itemId: string, limit = 12) => {
@@ -931,10 +954,17 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             recursive: true,
             includeItemTypes: [BaseItemKind.Playlist],
             fields: [...extraFields, ItemFields.DateCreated, ItemFields.DateLastMediaAdded],
-            mediaTypes: ['Video'],
+            mediaTypes: ['Video', 'Unknown'],
         })
 
         return await parseItemDtos(response.data.Items)
+    }
+
+    const getUserViews = async () => {
+        const userViewsApi = new UserViewsApi(api.configuration)
+        const response = await userViewsApi.getUserViews({ userId })
+        const items = await parseItemDtos(response.data.Items)
+        return items.filter(item => !item.CollectionType || !['music', 'books', 'photos'].includes(item.CollectionType))
     }
 
     return {
@@ -943,6 +973,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         getSeries,
         getCollections,
         getPlaylists,
+        getUserViews,
         getFavorites,
         getRecentlyPlayed,
         getNextUp,
@@ -969,6 +1000,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         getEpisodes,
         getSpecials,
         searchItems,
+        searchPeople,
         getCastCrew,
         getPersonMovies,
         getSimilarItems,

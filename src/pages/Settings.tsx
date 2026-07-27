@@ -59,9 +59,19 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         setRememberAudioTrack,
         rememberFilters,
         setRememberFilters,
+        reloadMpv,
+        showMpvConfig,
+        setShowMpvConfig,
     } = usePlaybackContext()
 
-    const { enablePlaylists, setEnablePlaylists } = useSidenavContext()
+    const {
+        enablePlaylists,
+        setEnablePlaylists,
+        enableLibraries,
+        setEnableLibraries,
+        enableProfiles,
+        setEnableProfiles,
+    } = useSidenavContext()
 
     const { theme, toggleTheme } = useThemeContext()
 
@@ -76,6 +86,60 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
     const [clearing, setClearing] = useState(false)
     const { latestRelease, updateStatus, isCheckingUpdate } = useUpdateChecker(checkForUpdates)
     const [forceChecking, setForceChecking] = useState(false)
+
+    const [mpvConf, setMpvConf] = useState('')
+    const [inputConf, setInputConf] = useState('')
+    const [mpvConfSaved, setMpvConfSaved] = useState(false)
+    const [inputConfSaved, setInputConfSaved] = useState(false)
+
+    useEffect(() => {
+        const loadMpvConfigs = async () => {
+            try {
+                const [mpv, input] = await Promise.all([
+                    invoke<string>('mpv_config_read', { filename: 'mpv.conf' }),
+                    invoke<string>('mpv_config_read', { filename: 'input.conf' }),
+                ])
+                setMpvConf(mpv)
+                setInputConf(input)
+            } catch (e) {
+                console.error('Failed to load MPV configs:', e)
+            }
+        }
+        loadMpvConfigs()
+    }, [])
+
+    const saveMpvConf = useCallback(async () => {
+        try {
+            setMpvConfSaved(true)
+            await invoke('mpv_config_write', { filename: 'mpv.conf', content: mpvConf })
+            await reloadMpv()
+            setMpvConfSaved(false)
+        } catch (e) {
+            console.error('Failed to save mpv.conf:', e)
+            setMpvConfSaved(false)
+        }
+    }, [mpvConf, reloadMpv])
+
+    const saveInputConf = useCallback(async () => {
+        try {
+            setInputConfSaved(true)
+            await invoke('mpv_config_write', { filename: 'input.conf', content: inputConf })
+            await reloadMpv()
+            setInputConfSaved(false)
+        } catch (e) {
+            console.error('Failed to save input.conf:', e)
+            setInputConfSaved(false)
+        }
+    }, [inputConf, reloadMpv])
+
+    const handleOpenMpvConfigFolder = useCallback(async () => {
+        try {
+            const configPath = await invoke<string>('mpv_config_path')
+            await open(configPath)
+        } catch (e) {
+            console.error('Failed to open MPV config folder:', e)
+        }
+    }, [])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -268,7 +332,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     <div className="container">
                         <div className="desc">
                             <div className="subtitle">Skip outro</div>
-                            <div className="subdesc">Show next episode overlay during end credits when available</div>
+                            <div className="subdesc">Show next up overlay during end credits when available</div>
                         </div>
                         <div className="option">
                             <label className="switch">
@@ -637,8 +701,30 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 <div className="inner row">
                     <div className="container">
                         <div className="desc">
+                            <div className="subtitle">Libraries</div>
+                            <div className="subdesc">Enable split library view to browse individual libraries</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={enableLibraries}
+                                    onChange={e => setEnableLibraries(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
                             <div className="subtitle">Playlists</div>
-                            <div className="subdesc">Enable playlist view and functionality</div>
+                            <div className="subdesc">
+                                {enableLibraries
+                                    ? 'Playlists in your library? Enable for seamless functionality'
+                                    : 'Enable playlist view and functionality'}
+                            </div>
                         </div>
                         <div className="option">
                             <label className="switch">
@@ -652,6 +738,101 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div className="section mpv-config ui">
+                <div className="title">MPV Configuration - Experimental</div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Override config</div>
+                            <div className="subdesc">Edit mpv.conf to customize player behavior</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={showMpvConfig}
+                                    onChange={e => {
+                                        setShowMpvConfig(e.target.checked)
+                                        reloadMpv()
+                                    }}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {showMpvConfig && (
+                    <>
+                        <div className="config-editor">
+                            <div className="config-block">
+                                <div className="config-header">
+                                    <div className="title">mpv.conf</div>
+                                    <div className="divider"></div>
+                                    <div className="description">
+                                        Custom mpv options, one per line as <code>key=value</code>
+                                    </div>
+                                </div>
+                                <textarea
+                                    className="config-textarea"
+                                    value={mpvConf}
+                                    onChange={e => setMpvConf(e.target.value)}
+                                    placeholder={`# Example options:\n# hwdec=auto\n# deband=yes\n# video-sync=display-resample\n# sub-font=monospace\n \n# HDR in Windows\n# vo=gpu-next\n# gpu-api=d3d11\n# target-colorspace-hint=yes`}
+                                    spellCheck={false}
+                                />
+                                <div className="config-actions noSelect">
+                                    <button className="btn save" onClick={saveMpvConf} disabled={mpvConfSaved}>
+                                        {mpvConfSaved ? 'Saving...' : 'Save'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* input.conf disabled for now
+                            <div className="config-block">
+                                <div className="config-header">
+                                    <div className="title">input.conf</div>
+                                    <div className="divider"></div>
+                                    <div className="description">
+                                        Custom key bindings, format: <code>KEY command</code>
+                                    </div>
+                                </div>
+                                <textarea
+                                    className="config-textarea"
+                                    value={inputConf}
+                                    onChange={e => setInputConf(e.target.value)}
+                                    placeholder={`# Example bindings:\n# WHEEL_UP add volume 2\n# WHEEL_DOWN add volume -2\n# MBTN_MID cycle pause\n# + dd video-zoom .5`}
+                                    spellCheck={false}
+                                />
+                                <div className="config-actions noSelect">
+                                    <button className="btn save" onClick={saveInputConf} disabled={inputConfSaved}>
+                                        {inputConfSaved ? 'Saving...' : 'Save'}
+                                    </button>
+                                </div>
+                            </div>
+                            */}
+                        </div>
+                        <div className="desc">
+                            <div className="note">
+                                Custom options are merged with the app defaults,{' '}
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="textlink"
+                                    href="https://github.com/mpv-player/mpv/blob/master/etc/mpv.conf"
+                                >
+                                    config example
+                                </a>
+                                . Keep in mind not all the available options have been tested, some might not work. The{' '}
+                                <code>keep-open</code> and <code>force-window</code> options are always enforced. You
+                                can also edit the configuration file directly in the{' '}
+                                <Link to="" onClick={handleOpenMpvConfigFolder} className="textlink">
+                                    config folder
+                                </Link>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
 
             <div className="section downloads">
@@ -683,8 +864,8 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
                 <div className="desc">
                     <div className="info">
-                        Download your video library for seamless offline playback. Supports movies, tv shows, and
-                        episodes.{' '}
+                        Download your video library for seamless offline playback. Supports movies, tv shows, episodes
+                        and specials.{' '}
                         <Link to="/downloads" className="textlink">
                             View downloads
                         </Link>{' '}
@@ -698,6 +879,35 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     </div>
                 </div>
             </div>
+
+            {/*
+            <div className="section profiles ui">
+                <div className="title">Profiles</div>
+                <div className="inner row">
+                    <div className="container">
+                        <div className="desc">
+                            <div className="subtitle">Quick switch</div>
+                            <div className="subdesc">Link to profiles from the username</div>
+                        </div>
+                        <div className="option">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={enableProfiles}
+                                    onChange={e => setEnableProfiles(e.target.checked)}
+                                ></input>
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="desc">
+                    <Link to="/profiles" className="textlink">
+                        Manage profiles
+                    </Link>
+                </div>
+            </div>
+            */}
 
             <div className="section shortcuts">
                 <div className="title">Shortcuts</div>
@@ -871,6 +1081,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     </p>
                 </div>
             </div>
+
             <div className="section session">
                 <div className="title">Session</div>
                 <div className="desc">
