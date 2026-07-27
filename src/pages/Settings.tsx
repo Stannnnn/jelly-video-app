@@ -880,6 +880,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                 </div>
             </div>
 
+            {/*
             <div className="section profiles ui">
                 <div className="title">Profiles</div>
                 <div className="inner row">
@@ -906,6 +907,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
                     </Link>
                 </div>
             </div>
+            */}
 
             <div className="section shortcuts">
                 <div className="title">Shortcuts</div>
