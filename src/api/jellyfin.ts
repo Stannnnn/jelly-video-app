@@ -220,7 +220,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             startIndex,
             limit,
             fields: extraFields,
-            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Episode],
+            includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Episode],
         })
 
         return await parseItemDtos(response.data.Items)
