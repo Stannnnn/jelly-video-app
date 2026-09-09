@@ -128,8 +128,6 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
     const getAuthHeader = () =>
         `MediaBrowser Client="Jelly Video App", Device="Web", DeviceId="${deviceId}", Version="${__VERSION__}", Token="${token}"`
 
-    const getMpvAuthHeader = () => `Authorization: ${getAuthHeader()}`
-
     const getMovies = async (
         startIndex = 0,
         limit = 36,
@@ -1021,6 +1019,5 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         deletePlaylist,
         getPlaylistItems,
         getAuthHeader,
-        getMpvAuthHeader,
     }
 }

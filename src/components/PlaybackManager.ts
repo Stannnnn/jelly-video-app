@@ -761,9 +761,6 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                     await setProperty('start', `+0`)
                 }
 
-                // Set Authorization header for all MPV HTTP requests (streams, subtitles)
-                await setProperty('http-header-fields', api.getMpvAuthHeader())
-
                 await command('loadfile', [videoUrl, 'replace'])
 
                 tracklistRef.current.isLoading = true
