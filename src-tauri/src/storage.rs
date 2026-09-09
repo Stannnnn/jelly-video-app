@@ -119,6 +119,7 @@ pub async fn storage_save_track(
     data: StorageTrack,
     video_url: Option<String>,
     thumbnail_url: Option<String>,
+    auth_header: String,
 ) -> Result<(), String> {
     println!("storage_save_track: Starting to save track with id: {}", id);
     
@@ -145,7 +146,7 @@ pub async fn storage_save_track(
     if let Some(url) = video_url {
         println!("storage_save_track: Downloading video from URL for id: {}", id);
         let client = reqwest::Client::new();
-        let response = client.get(&url).send().await.map_err(|e| e.to_string())?;
+        let response = client.get(&url).header("Authorization", &auth_header).send().await.map_err(|e| e.to_string())?;
         
         if !response.status().is_success() {
             let err_msg = format!("Failed to download video: HTTP {}", response.status());
@@ -248,7 +249,7 @@ pub async fn storage_save_track(
     if let Some(url) = thumbnail_url {
         println!("storage_save_track: Downloading thumbnail from URL for id: {}", id);
         let client = reqwest::Client::new();
-        let response = client.get(&url).send().await.map_err(|e| e.to_string())?;
+        let response = client.get(&url).header("Authorization", &auth_header).send().await.map_err(|e| e.to_string())?;
         
         if response.status().is_success() {
             let thumbnail_data = response.bytes().await.map_err(|e| e.to_string())?;

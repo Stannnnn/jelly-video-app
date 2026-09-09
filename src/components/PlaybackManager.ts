@@ -761,6 +761,9 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
                     await setProperty('start', `+0`)
                 }
 
+                // Set Authorization header for all MPV HTTP requests (streams, subtitles)
+                await setProperty('http-header-fields', api.getMpvAuthHeader())
+
                 await command('loadfile', [videoUrl, 'replace'])
 
                 tracklistRef.current.isLoading = true
@@ -771,7 +774,7 @@ export const usePlaybackManager = ({ initialVolume, clearOnLogout }: PlaybackMan
 
                     for (const subtitle of externalSubtitles) {
                         try {
-                            const subtitleUrl = `${api.auth.serverUrl}/Videos/${track.Id}/${mediaSourceId || track.Id}/Subtitles/${subtitle.Index}/Stream.${subtitle.Codec || 'srt'}?api_key=${api.auth.token}`
+                            const subtitleUrl = `${api.auth.serverUrl}/Videos/${track.Id}/${mediaSourceId || track.Id}/Subtitles/${subtitle.Index}/Stream.${subtitle.Codec || 'srt'}`
 
                             // Add subtitle with title if available
                             const title = subtitle.DisplayTitle || subtitle.Language || `Subtitle ${subtitle.Index}`

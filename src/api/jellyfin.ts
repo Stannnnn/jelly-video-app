@@ -71,7 +71,7 @@ export const loginToJellyfin = async (serverUrl: string, username: string, passw
         const response = await fetch(`${serverUrl}/Users/AuthenticateByName`, {
             method: 'POST',
             headers: {
-                'X-Emby-Authorization': `MediaBrowser Client="Jelly Video App", Device="Web", DeviceId="${deviceId}", Version="${__VERSION__}"`,
+                Authorization: `MediaBrowser Client="Jelly Video App", Device="Web", DeviceId="${deviceId}", Version="${__VERSION__}"`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ Username: username, Pw: password }),
@@ -124,6 +124,11 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
     }
 
     const api = jellyfin.createApi(serverUrl, token)
+
+    const getAuthHeader = () =>
+        `MediaBrowser Client="Jelly Video App", Device="Web", DeviceId="${deviceId}", Version="${__VERSION__}", Token="${token}"`
+
+    const getMpvAuthHeader = () => `Authorization: ${getAuthHeader()}`
 
     const getMovies = async (
         startIndex = 0,
@@ -382,15 +387,15 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         size: { width: number; height: number }
     ) => {
         if (item.ImageTags?.[type]) {
-            return `${serverUrl}/Items/${item.Id}/Images/${type}?tag=${item.ImageTags[type]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+            return `${serverUrl}/Items/${item.Id}/Images/${type}?tag=${item.ImageTags[type]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp`
         }
 
         if (item.AlbumId) {
-            return `${serverUrl}/Items/${item.AlbumId}/Images/${type}?quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+            return `${serverUrl}/Items/${item.AlbumId}/Images/${type}?quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp`
         }
 
         if (type === 'Backdrop' && item.BackdropImageTags && item.BackdropImageTags.length > 0) {
-            return `${serverUrl}/Items/${item.Id}/Images/Backdrop/0?tag=${item.BackdropImageTags[0]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+            return `${serverUrl}/Items/${item.Id}/Images/Backdrop/0?tag=${item.BackdropImageTags[0]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp`
         }
 
         if (type === 'Thumb') {
@@ -398,12 +403,12 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             const tag = item.ImageTags?.Thumb || item.ParentThumbImageTag
 
             if (thumbId && tag) {
-                return `${serverUrl}/Items/${thumbId}/Images/Thumb?tag=${tag}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+                return `${serverUrl}/Items/${thumbId}/Images/Thumb?tag=${tag}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp`
             }
         }
 
         if (item.Type === 'Person') {
-            return `${serverUrl}/Items/${item.Id}/Images/${type}?quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+            return `${serverUrl}/Items/${item.Id}/Images/${type}?quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp`
         }
 
         if (item.Type === 'Episode' && item.SeriesId) {
@@ -411,18 +416,18 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
             const seriesTag = item.SeriesPrimaryImageTag
 
             if (seriesThumbId && seriesTag) {
-                return `${serverUrl}/Items/${seriesThumbId}/Images/${type}?tag=${seriesTag}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+                return `${serverUrl}/Items/${seriesThumbId}/Images/${type}?tag=${seriesTag}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp`
             }
         }
 
         if (item.Type === 'Video') {
-            return `${serverUrl}/Items/${item.ParentLogoItemId}/Images/${type}?tag=${item.ParentLogoItemId}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+            return `${serverUrl}/Items/${item.ParentLogoItemId}/Images/${type}?tag=${item.ParentLogoItemId}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp`
         }
 
         // Fallback for 'Continue watching'
         if (type === 'Backdrop' && !item.ImageTags?.[type] && item.ImageTags?.['Thumb'] && size.width <= 280) {
             const type = 'Thumb'
-            return `${serverUrl}/Items/${item.Id}/Images/${type}?tag=${item.ImageTags[type]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp&api_key=${token}`
+            return `${serverUrl}/Items/${item.Id}/Images/${type}?tag=${item.ImageTags[type]}&quality=100&fillWidth=${size.width}&fillHeight=${size.height}&format=webp`
         }
 
         return undefined
@@ -431,7 +436,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
     const getStreamUrl = (trackId: string, bitrate: number, mediaSourceId?: string) => {
         return `${serverUrl}/Videos/${trackId}/stream?MediaSourceId=${
             mediaSourceId || trackId
-        }&UserId=${userId}&api_key=${token}&static=true`
+        }&UserId=${userId}&static=true`
     }
 
     const getTrickplayUrl = (item: MediaItem, timestamp: number, preferredWidth?: number) => {
@@ -482,7 +487,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
 
         // Build the URL - format: /Videos/{itemId}/Trickplay/{width}/{sheetIndex}.jpg
         return {
-            url: `${serverUrl}/Videos/${item.Id}/Trickplay/${selectedWidth}/${sheetIndex}.jpg?api_key=${token}`,
+            url: `${serverUrl}/Videos/${item.Id}/Trickplay/${selectedWidth}/${sheetIndex}.jpg?ApiKey=${token}`,
             tileWidth: config.Width,
             tileHeight: config.Height,
             col,
@@ -828,7 +833,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         const uploadResponse = await fetch(uploadUrl, {
             method: 'POST',
             headers: {
-                authorization: `MediaBrowser Client="Jelly Video App", Device="Web", DeviceId="${deviceId}", Version="${__VERSION__}", Token="${token}"`,
+                Authorization: getAuthHeader(),
                 'content-type': validContentType,
             },
             body: base64,
@@ -846,7 +851,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         await fetch(`${serverUrl}/Items/${collectionId}`, {
             method: 'POST',
             headers: {
-                authorization: `MediaBrowser Client="Jelly Video App", Device="Web", DeviceId="${deviceId}", Version="${__VERSION__}", Token="${token}"`,
+                Authorization: getAuthHeader(),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -1015,5 +1020,7 @@ export const initJellyfinApi = ({ serverUrl, userId, token }: { serverUrl: strin
         renamePlaylist,
         deletePlaylist,
         getPlaylistItems,
+        getAuthHeader,
+        getMpvAuthHeader,
     }
 }
