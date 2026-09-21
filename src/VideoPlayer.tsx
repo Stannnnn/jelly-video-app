@@ -703,7 +703,8 @@ export const VideoPlayer = ({
         if (currentTrack.Trickplay) {
             // Get the first available width from trickplay data
             const trickplayHash = Object.keys(currentTrack.Trickplay)[0]
-            const availableWidth = trickplayHash ? Number(Object.keys(currentTrack.Trickplay[trickplayHash])[0]) : null
+            const trickplayResolutions = trickplayHash ? currentTrack.Trickplay[trickplayHash] : null
+            const availableWidth = trickplayResolutions ? Number(Object.keys(trickplayResolutions)[0]) : null
             const tileData = availableWidth ? api.getTrickplayUrl(currentTrack, time, availableWidth) : null
 
             if (tileData) {
