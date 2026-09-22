@@ -248,7 +248,8 @@ const useInitialState = () => {
                                     mediaSourceId: next.mediaSourceId,
                                 },
                                 streamUrl,
-                                thumbnailUrl
+                                thumbnailUrl,
+                                api.getAuthHeader()
                             )
                         } else {
                             const thumbnailUrl = api.getImageUrl(mediaItem, 'Primary', { width: 360, height: 360 })
@@ -262,7 +263,8 @@ const useInitialState = () => {
                                     mediaItem,
                                 },
                                 undefined,
-                                thumbnailUrl
+                                thumbnailUrl,
+                                api.getAuthHeader()
                             )
                         }
 

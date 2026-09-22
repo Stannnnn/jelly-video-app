@@ -34,8 +34,9 @@ const useInitialState = () => {
                 mediaSources?: MediaSourceInfo[]
                 mediaSourceId?: string
             },
-            videoUrl?: string,
-            thumbnailUrl?: string
+            videoUrl: string | undefined,
+            thumbnailUrl: string | undefined,
+            authHeader: string
         ) => {
             try {
                 // Prepare track data without blobs
@@ -54,6 +55,7 @@ const useInitialState = () => {
                     data: trackData,
                     videoUrl,
                     thumbnailUrl,
+                    authHeader,
                 })
             } catch (error) {
                 console.error('Failed to download and save track:', error)

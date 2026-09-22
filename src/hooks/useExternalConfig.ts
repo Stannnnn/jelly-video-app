@@ -12,6 +12,7 @@ interface ExternalConfiguration {
 export function useExternalConfig() {
     return useQuery<ExternalConfiguration, Error>({
         queryKey: ['config'],
+        networkMode: 'always',
         queryFn: async () => {
             try {
                 const result = await fetch('/config.json')

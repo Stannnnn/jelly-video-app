@@ -47,7 +47,7 @@ export const useWatchedState = () => {
                     patchMediaItems(cIds, c => ({
                         ...c,
                         UserData: {
-                            ...c.UserData,
+                            ...c.UserData!,
                             PlaybackPositionTicks: 0,
                             PlayedPercentage: 100,
                             Played: true,
@@ -77,7 +77,7 @@ export const useWatchedState = () => {
                     patchMediaItems(cIds, c => ({
                         ...c,
                         UserData: {
-                            ...c.UserData,
+                            ...c.UserData!,
                             PlaybackPositionTicks: 0,
                             PlayedPercentage: 0,
                             Played: false,
@@ -99,7 +99,7 @@ export const useWatchedState = () => {
             patchMediaItem(item.Id, c => ({
                 ...c,
                 UserData: {
-                    ...c.UserData,
+                    ...c.UserData!,
                     PlaybackPositionTicks: positionTicks,
                     PlayedPercentage: playedPercentage,
                     Played: false,
