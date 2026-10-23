@@ -199,7 +199,7 @@ export const Settings = ({ onLogout }: { onLogout: () => void }) => {
         try {
             setClearing(true)
             await audioStorage.clearAllDownloads()
-            queryClient.clear()
+            await queryClient.resetQueries()
             await persister.removeClient()
             clearQueue()
             await refreshStorageStats()

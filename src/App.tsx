@@ -92,7 +92,7 @@ const RoutedApp = () => {
     const handleSwitch = async (authData: AuthData) => {
         setIsLoggingOut(true)
         localStorage.removeItem('repeatMode')
-        queryClient.clear()
+        await queryClient.resetQueries()
         await persister.removeClient()
         setAuth(authData)
         localStorage.setItem('auth', JSON.stringify(authData))
@@ -105,7 +105,7 @@ const RoutedApp = () => {
         setAuth(null)
         localStorage.removeItem('auth')
         setIsLoggingOut(false)
-        queryClient.clear()
+        await queryClient.resetQueries()
         await persister.removeClient()
     }
 
